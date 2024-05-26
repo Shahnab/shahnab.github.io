@@ -137,7 +137,7 @@ const allSongs = [
         title: "Stillness Within",
         artist: "AI Model",
         duration: "2:00",
-        src: "music/_Stillness Within_.mp3",
+        src: "music/Stillness Within.mp3",
     },
     {
         id: 19,
