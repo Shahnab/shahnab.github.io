@@ -132,7 +132,13 @@ const allSongs = [
         duration: "1:34",
         src: "music/Rise Again (1).mp3",
     },
-    
+    {
+        id: 18,
+        title: "Stillness Within",
+        artist: "AI Model",
+        duration: "2:00",
+        src: "music/_Stillness Within_.mp3",
+    },
     {
         id: 19,
         title: "Forgotten Piece",
