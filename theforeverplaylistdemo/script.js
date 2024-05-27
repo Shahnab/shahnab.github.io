@@ -123,7 +123,7 @@ const allSongs = [
         title: "Heartfelt Melodies",
         artist: "AI Model",
         duration: "1:18",
-        src: "music/Heartfelt melodies.mpeg",
+        src: "music/Heartfelt melodies.mp3",
     },
     {
         id: 17,
@@ -209,6 +209,13 @@ const allSongs = [
         artist: "AI Model",
         duration: "2:00",
         src: "music/Whispers.mp3",
+    },
+    {
+        id: 30,
+        title: "Stillness Within",
+        artist: "AI Model",
+        duration: "2:00",
+        src: "music/Stillness Within.mp3",
     },
 ];
 
