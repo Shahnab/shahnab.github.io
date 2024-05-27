@@ -217,6 +217,20 @@ const allSongs = [
         duration: "2:00",
         src: "music/Stillness Within.mp3",
     },
+    {
+        id: 31,
+        title: "Coffee!! Oh Coffeee",
+        artist: "AI Model",
+        duration: "2:00",
+        src: "music/Coffee, Oh Coffee!!.mp3",
+    },
+    {
+        id: 32,
+        title: "AI, You have taken my job",
+        artist: "AI Model",
+        duration: "2:00",
+        src: "music/AI, You have taken my job.mp3",
+    },
 ];
 
 const audio = new Audio();
