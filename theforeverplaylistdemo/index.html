@@ -118,24 +118,10 @@
     <script src="script.js"></script>
        
   <body>
-      <div class="container">
-          <div id="visitor-counter">Visitor Count:</div>
-      </div>
-      <script>
-          // Check if the 'page_view' entry exists in localStorage
-          if (localStorage.getItem('page_view')) {
-              // If it exists, increment the count by 1
-              localStorage.setItem('page_view', Number(localStorage.getItem('page_view')) + 1);
-          } else {
-              // If not, create the 'page_view' entry and set it to 1
-              localStorage.setItem('page_view', 1);
-          }
-  
-          // Display the updated count on the webpage
-          document.getElementById('visitor-counter').textContent = 'You Visited: ' + localStorage.getItem('page_view');
-      </script>
-
-
-
+    <div class="Counter">
+      <!-- hitwebcounter Code START -->
+<a href="https://www.hitwebcounter.com" target="_blank">
+<img src="https://hitwebcounter.com/counter/counter.php?page=13691835&style=0006&nbdigits=1&type=page&initCount=0" title="Counter Widget" Alt="Visitor Counter"  border="0" /></a>
+    </div>
   </body>
 </html>
