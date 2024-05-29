@@ -64,10 +64,10 @@ const allSongs = [
     },
     {
         id: 8,
-        title: "Hello!!",
+        title: "Guys, What's wrong with my dog",
         artist: "AI Model",
         duration: "2:33",
-        src: "music/Hello!!.mp3",
+        src: "music/The dog song.mp3",
     },
     {
         id: 9,
