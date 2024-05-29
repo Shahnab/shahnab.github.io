@@ -231,6 +231,27 @@ const allSongs = [
         duration: "2:00",
         src: "music/AI, You have taken my job.mp3",
     },
+    {
+        id: 33,
+        title: "Lullaby- Constellation Dreams",
+        artist: "AI Model",
+        duration: "2:00",
+        src: "music/Constellation Lullaby.mp3",
+    },
+    {
+        id: 34,
+        title: "Lullaby- Dreamland (New Version)",
+        artist: "AI Model",
+        duration: "2:00",
+        src: "music/Dreamland Lullaby- New Version.mp3",
+    },
+    {
+        id: 35,
+        title: "Lullaby- Dreamland (Original)",
+        artist: "AI Model",
+        duration: "2:00",
+        src: "music/Dreamland Lullaby- Original.mp3",
+    },
 ];
 
 const audio = new Audio();
