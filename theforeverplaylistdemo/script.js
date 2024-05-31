@@ -329,6 +329,13 @@ const allSongs = [
         duration: "2:56",
         src: "music/Boba Bop.mp3",
     },
+    {
+        id: 47,
+        title: "Give Me a Ticket Back to Childhood",
+        artist: "Refreshed AI Model",
+        duration: "3:03",
+        src: "music/Give Me a Ticket Back to Childhood (1).mp3",
+    },
 ];
 
 const audio = new Audio();
