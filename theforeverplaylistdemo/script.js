@@ -336,6 +336,20 @@ const allSongs = [
         duration: "3:03",
         src: "music/Give Me a Ticket Back to Childhood (1).mp3",
     },
+    {
+        id: 48,
+        title: "One Night, I remembered you (Original)",
+        artist: "Refreshed AI Model",
+        duration: "3:26",
+        src: "music/One Night, I Remembered You.mp3",
+    },
+    {
+        id: 49,
+        title: "One Night, I remembered you (New Version)",
+        artist: "Refreshed AI Model",
+        duration: "3:59",
+        src: "music/One Night, I Remembered You.mp3",
+    },
 ];
 
 const audio = new Audio();
