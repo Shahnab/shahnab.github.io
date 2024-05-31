@@ -348,7 +348,7 @@ const allSongs = [
         title: "One Night, I remembered you (New Version)",
         artist: "Refreshed AI Model",
         duration: "3:59",
-        src: "music/One Night, I Remembered You.mp3",
+        src: "music/One Night, I Remembered You (1).mp3",
     },
 ];
 
