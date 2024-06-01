@@ -50,7 +50,7 @@ const allSongs = [
     },
     {
         id: 6,
-        title: "100 decimals of Pi",
+        title: "100 decimals of Pi (Pi Day Special)",
         artist: "AI Model",
         duration: "1:48",
         src: "music/100 decimals of pi .mp3",
@@ -198,10 +198,10 @@ const allSongs = [
     },
     {
         id: 28,
-        title: "Data Warriors",
+        title: "Data Wizards (celebrating Data Scientists)",
         artist: "AI Model",
-        duration: "2:00",
-        src: "music/The Data Warriors.mp3",
+        duration: "4:00",
+        src: "music/Data Wizards- celebrating data scientists_analysts.mp3",
     },
     {
         id: 29,
@@ -349,6 +349,48 @@ const allSongs = [
         artist: "Refreshed AI Model",
         duration: "3:59",
         src: "music/One Night, I Remembered You (1).mp3",
+    },
+    {
+        id: 50,
+        title: "Word's can hurt me!!! (Pride Month Special)",
+        artist: "Refreshed AI Model",
+        duration: "3:22",
+        src: "music/Word's can hurt me!!! (Pride Month Special).mp3",
+    },
+    {
+        id: 51,
+        title: "Word's can hurt me!!! Pride Month Special (New Version)",
+        artist: "Refreshed AI Model",
+        duration: "3:04",
+        src: "music/Word's can hurt me!!! Pride Month Special (New Version).mp3",
+    },
+    {
+        id: 52,
+        title: "You Are My Heart (Mothers day special)",
+        artist: "Refreshed AI Model",
+        duration: "3:22",
+        src: "music/You Are My Heart (Mothers day special).mp3",
+    },
+    {
+        id: 53,
+        title: "Thermodynamics Symphony (Engineer's day special)",
+        artist: "Refreshed AI Model",
+        duration: "4:00",
+        src: "music/Thermodynamic Symphony.mp3",
+    },
+    {
+        id: 54,
+        title: "Calculus Crusade (Maths Day Special)",
+        artist: "Refreshed AI Model",
+        duration: "3:22",
+        src: "music/Calculus Crusade (Maths Day Special).mp3",
+    },
+    {
+        id: 55,
+        title: "Saigon Sojourn (Story of an Expat in HCMC)",
+        artist: "Refreshed AI Model",
+        duration: "3:22",
+        src: "music/Saigon Sojourn.mp3",
     },
 ];
 
