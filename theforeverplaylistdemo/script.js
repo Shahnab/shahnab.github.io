@@ -392,6 +392,62 @@ const allSongs = [
         duration: "3:22",
         src: "music/Saigon Sojourn.mp3",
     },
+    {
+        id: 56,
+        title: "My GPU Goes BRRRRR..",
+        artist: "Refreshed AI Model",
+        duration: "3:05",
+        src: "music/GPU Goes BRRRRR.mp3",
+    },
+    {
+        id: 57,
+        title: "Where's my Missing Sock? ",
+        artist: "Refreshed AI Model",
+        duration: "3:25",
+        src: "music/Where's My Missing Sock_.mp3",
+    },
+    {
+        id: 58,
+        title: "Who's Laughing Now??",
+        artist: "Refreshed AI Model",
+        duration: "3:15",
+        src: "music/Who's laughing now.mp3",
+    },
+    {
+        id: 59,
+        title: "Rotary Phone Blues",
+        artist: "Refreshed AI Model",
+        duration: "3:15",
+        src: "music/Rotary Phone Blues.mp3",
+    },
+    {
+        id: 60,
+        title: "Social Media Detox",
+        artist: "Refreshed AI Model",
+        duration: "3:09",
+        src: "music/Social Media Detox.mp3",
+    },
+    {
+        id: 61,
+        title: "Mix Tape Love (Original)",
+        artist: "Refreshed AI Model",
+        duration: "3:41",
+        src: "music/Mixtape Love_ Original.mp3",
+    },
+    {
+        id: 62,
+        title: "Mix Tape Love (New Version)",
+        artist: "Refreshed AI Model",
+        duration: "3:32",
+        src: "music/Mixtape Love _New.mp3",
+    },
+    {
+        id: 63,
+        title: "Toilet Paper Crisis",
+        artist: "Refreshed AI Model",
+        duration: "2:47",
+        src: "music/Toilet Paper Crisis.mp3",
+    },
 ];
 
 const audio = new Audio();
