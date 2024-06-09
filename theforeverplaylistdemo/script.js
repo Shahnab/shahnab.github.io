@@ -310,7 +310,7 @@ const allSongs = [
     },
     {
         id: 44,
-        title: "Charge it Up!! ",
+        title: "Charge it Up!! (Low Battery Song)",
         artist: "Refreshed AI Model",
         duration: "4:00",
         src: "music/Charge It Up.mp3",
