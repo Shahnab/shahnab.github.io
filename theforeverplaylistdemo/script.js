@@ -156,17 +156,17 @@ const allSongs = [
     },
     {
         id: 22,
-        title: "Music is just codes",
-        artist: "AI Model",
-        duration: "2:00",
-        src: "music/Music is just codes.mp3",
+        title: "Creative Minds in Motion",
+        artist: "Refreshed AI Model",
+        duration: "3:23",
+        src: "music/Creative Mind in Motion.mp3",
     },
     {
         id: 23,
-        title: "The joy when the code compiles ",
-        artist: "AI Model",
-        duration: "2:00",
-        src: "music/First-Time Codes Compiled.mp3",
+        title: "Break the Chains (Female Version)",
+        artist: "Refreshed AI Model",
+        duration: "4:00",
+        src: "music/Break the Chains (Female Version).mp3",
     },
     {
         id: 24,
@@ -199,9 +199,9 @@ const allSongs = [
     {
         id: 28,
         title: "Data Wizards (celebrating Data Scientists)",
-        artist: "AI Model",
+        artist: "Refreshed AI Model",
         duration: "4:00",
-        src: "music/Data Wizards- celebrating data scientists_analysts.mp3",
+        src: "music/Data Warriors.mp3",
     },
     {
         id: 29,
@@ -212,10 +212,10 @@ const allSongs = [
     },
     {
         id: 30,
-        title: "Stillness Within",
+        title: "Break the Chains (Male Version)",
         artist: "AI Model",
-        duration: "2:00",
-        src: "music/Stillness Within.mp3",
+        duration: "4:00",
+        src: "music/Break the Chains (Male Version).mp3",
     },
     {
         id: 31,
