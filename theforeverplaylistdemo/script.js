@@ -469,6 +469,13 @@ const allSongs = [
         duration: "3:15",
         src: "music/My Wi-Fi's Got a Mind of Its Own (Original).mp3",
     },
+    {
+        id: 66,
+        title: "Echo Chambers in an Online World",
+        artist: "Refreshed AI Model",
+        duration: "3:44",
+        src: "music/Echo Chambers in an Online World.mp3",
+    },
 ];
 
 const audio = new Audio();
