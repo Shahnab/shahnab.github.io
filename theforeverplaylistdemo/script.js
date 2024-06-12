@@ -476,6 +476,21 @@ const allSongs = [
         duration: "3:44",
         src: "music/Echo Chambers in an Online World.mp3",
     },
+    {
+        id: 67,
+        title: "In the quiet, I Belong (Original)",
+        artist: "Refreshed AI Model",
+        duration: "3:00",
+        src: "music/In the quiet, I Belong (Original).mp3",
+    },
+    {
+        id: 68,
+        title: "In the quiet, I Belong (Extended)",
+        artist: "Refreshed AI Model",
+        duration: "4:00",
+        src: "music/In the quiet, I Belong (The introvert's song).mp3",
+    },
+    
 ];
 
 const audio = new Audio();
