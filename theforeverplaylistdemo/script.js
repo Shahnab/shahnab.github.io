@@ -490,6 +490,27 @@ const allSongs = [
         duration: "4:00",
         src: "music/In the quiet, I Belong (The introvert's song).mp3",
     },
+    {
+        id: 69,
+        title: "Battles within (New)",
+        artist: "Refreshed AI Model",
+        duration: "3:09",
+        src: "music/Battles within (new).mp3",
+    },
+    {
+        id: 70,
+        title: "Battles within (Original)",
+        artist: "Refreshed AI Model",
+        duration: "3:13",
+        src: "music/Battles within- (Original).mp3",
+    },
+    {
+        id: 71,
+        title: "Battles within (Cover)",
+        artist: "Refreshed AI Model",
+        duration: "3:17",
+        src: "music/Battles within- Cover.mp3",
+    },
     
 ];
 
