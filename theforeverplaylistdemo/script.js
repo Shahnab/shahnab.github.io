@@ -457,14 +457,14 @@ const allSongs = [
     },
     {
         id: 65,
-        title: "My Wi-Fi's Got a Mind of Its Own (New)",
+        title: "My Wi-Fi's Got a Mind of Its Own",
         artist: "Refreshed AI Model",
         duration: "3:02",
         src: "music/My Wi-Fi's Got a Mind of Its Own (New).mp3",
     },
     {
         id: 65,
-        title: "My Wi-Fi's Got a Mind of Its Own (Original)",
+        title: "Wi-Fi's Woes",
         artist: "Refreshed AI Model",
         duration: "3:15",
         src: "music/My Wi-Fi's Got a Mind of Its Own (Original).mp3",
