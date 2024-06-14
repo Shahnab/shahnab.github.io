@@ -511,6 +511,34 @@ const allSongs = [
         duration: "3:17",
         src: "music/Battles within- Cover.mp3",
     },
+    {
+        id: 72,
+        title: "Tomorrow's Society",
+        artist: "Refreshed AI Model",
+        duration: "3:50",
+        src: "music/Tomorrow's Society.mp3",
+    },
+    {
+        id: 73,
+        title: "Midlife Crisis",
+        artist: "Refreshed AI Model",
+        duration: "3:33",
+        src: "music/Midlife Crisis.mp3",
+    },
+    {
+        id: 74,
+        title: "Take a Breath (Male version)",
+        artist: "Refreshed AI Model",
+        duration: "2:42",
+        src: "music/Take a Breath (Male version).mp3",
+    },
+    {
+        id: 75,
+        title: "Take a Breath (Female Version)",
+        artist: "Refreshed AI Model",
+        duration: "2:58",
+        src: "music/Take a Breath (Female Version).mp3",
+    },
     
 ];
 
