@@ -539,7 +539,20 @@ const allSongs = [
         duration: "2:58",
         src: "music/Take a Breath (Female Version).mp3",
     },
-    
+    {
+        id: 76,
+        title: "Am I just a shadow in the crowd?",
+        artist: "Refreshed AI Model",
+        duration: "2:49",
+        src: "music/Letting Go!!.mp3",
+    },
+    {
+        id: 77,
+        title: "Lost and Found",
+        artist: "Refreshed AI Model",
+        duration: "2:49",
+        src: "music/Lost and Found.mp3",
+    },
 ];
 
 const audio = new Audio();
