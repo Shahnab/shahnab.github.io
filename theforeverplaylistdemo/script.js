@@ -242,7 +242,7 @@ const allSongs = [
         id: 34,
         title: "Crisis Averted",
         artist: "Refreshed AI Model",
-        duration: "4:00",
+        duration: "3:49",
         src: "music/Crisis Averted.mp3",
     },
     {
