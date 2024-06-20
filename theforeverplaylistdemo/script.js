@@ -226,10 +226,10 @@ const allSongs = [
     },
     {
         id: 32,
-        title: "AI, You have taken my job",
+        title: "Hey AI, What's your plan?",
         artist: "AI Model",
         duration: "2:00",
-        src: "music/AI, You have taken my job.mp3",
+        src: "music/Hey AI.mp3",
     },
     {
         id: 33,
