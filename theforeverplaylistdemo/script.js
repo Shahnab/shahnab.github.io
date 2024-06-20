@@ -228,7 +228,7 @@ const allSongs = [
         id: 32,
         title: "Hey AI, What's your plan?",
         artist: "AI Model",
-        duration: "2:00",
+        duration: "3:10",
         src: "music/Hey AI.mp3",
     },
     {
@@ -490,13 +490,7 @@ const allSongs = [
         duration: "4:00",
         src: "music/In the quiet, I Belong (The introvert's song).mp3",
     },
-    {
-        id: 69,
-        title: "Battles within (New)",
-        artist: "Refreshed AI Model",
-        duration: "3:09",
-        src: "music/Battles within (new).mp3",
-    },
+    
     {
         id: 70,
         title: "Battles within (Original)",
