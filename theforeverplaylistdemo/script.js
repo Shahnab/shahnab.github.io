@@ -547,6 +547,13 @@ const allSongs = [
         duration: "2:49",
         src: "music/Lost and Found.mp3",
     },
+    {
+        id: 78,
+        title: "Unity in Motion",
+        artist: "Refreshed AI Model",
+        duration: "3:11",
+        src: "music/International Yoga Day.mp3",
+    },
 ];
 
 const audio = new Audio();
