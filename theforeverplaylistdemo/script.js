@@ -554,6 +554,13 @@ const allSongs = [
         duration: "3:11",
         src: "music/International Yoga Day.mp3",
     },
+    {
+        id: 79,
+        title: "Always remember us this way!! ",
+        artist: "Refreshed AI Model",
+        duration: "2:56",
+        src: "music/Always Remember us this way.mp3",
+    },
 ];
 
 const audio = new Audio();
