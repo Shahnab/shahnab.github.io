@@ -71,10 +71,10 @@ const allSongs = [
     },
     {
         id: 9,
-        title: "404- A Web of Error",
-        artist: "AI Model",
-        duration: "2:00",
-        src: "music/404 Serenade_ A Web of Errors.mp3",
+        title: "Rap Battle",
+        artist: "Refreshed AI Model",
+        duration: "2:31",
+        src: "music/Rap battle English.mp3",
     },
     {
         id: 10,
