@@ -561,6 +561,13 @@ const allSongs = [
         duration: "2:56",
         src: "music/Always Remember us this way.mp3",
     },
+    {
+        id: 80,
+        title: "Abyss of Echoes ",
+        artist: "Refreshed AI Model",
+        duration: "3:03",
+        src: "music/Abyss of Echoes.mp3",
+    },
 ];
 
 const audio = new Audio();
