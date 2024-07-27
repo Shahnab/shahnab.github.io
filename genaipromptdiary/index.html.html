@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>The Prompt Report: A Systematic Survey of Prompting Techniques</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Montserrat', 'Montserrat';
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #292a2a, #393e46); 
+      color: #eeeeee;
+      background-color: #393e46;
+      background-image: repeating-linear-gradient(to bottom, 
+        #222831,   /* Dark stripe color */
+        #222831 5px, 
+        #393e46 5px,  /* Lighter stripe color (same as background) */ 
+        #393e46 10px); /* Total stripe width */ 
+    }
+
+    h1, h2, h3 {
+      color: #a6b500; 
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 30px;
+      background-color: rgba(57, 62, 70, 0.8); /* Semi-transparent background */
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .tab {
+      overflow: hidden;
+    }
+
+    .tab button {
+      background-color: transparent;
+      float: left;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 16px 20px;
+      transition: 0.3s;
+      font-size: 18px;
+      color: #eeeeee;
+      border-bottom: 3px solid transparent;
+      text-transform: uppercase; 
+    }
+
+    .tab button:hover {
+      color: #00adb5;
+      border-bottom: 3px solid #00adb5;
+    }
+
+    .tab button.active {
+      color: #00adb5;
+      border-bottom: 3px solid #00adb5;
+    }
+
+    .tabcontent {
+      display: none;
+      padding: 20px;
+      animation: fadeEffect 1s; /* Add fade-in animation */
+    }
+
+    @keyframes fadeEffect {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    .interactive-list {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .interactive-list li {
+      cursor: pointer;
+      padding: 15px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+      transition: 0.3s;
+      background-color: rgba(0, 173, 181, 0.1); /* Subtle teal background on hover */
+      border-radius: 5px; 
+      margin-bottom: 10px; 
+    }
+
+    .interactive-list li:hover {
+      background-color: rgba(0, 173, 181, 0.2); 
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+      transform: translateY(-2px);
+    }
+
+    .definition {
+      display: none;
+      margin-left: 30px;
+      padding: 20px;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      background-color: rgba(34, 40, 49, 0.9); 
+      border-radius: 8px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); 
+    }
+
+    .definition h3 {
+      margin-top: 0;
+      color: #00adb5;
+    }
+
+    .toggle-icon {
+      float: right;
+      margin-top: -3px; 
+      transition: transform 0.3s ease; 
+      color: #eeeeee; 
+    }
+
+    .toggle-icon.rotate {
+      transform: rotate(90deg);
+    }
+
+    /* Style for technique details */
+    .technique-details {
+      margin-top: 10px;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .technique-details ul {
+      list-style-type: disc;
+      padding-left: 20px;
+    }
+
+    pre {
+      background-color: #212121; 
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto; 
+    }
+
+    /* Add a "Back to Top" button */
+    #backToTop {
+      display: none; 
+      position: fixed; 
+      bottom: 20px; 
+      right: 30px; 
+      z-index: 99; 
+      font-size: 18px;
+      border: none;
+      outline: none;
+      background-color: #00adb5; 
+      color: #eeeeee;
+      cursor: pointer;
+      padding: 15px;
+      border-radius: 5px;
+    }
+
+    #backToTop:hover {
+      background-color: #007b80;
+    }
+
+    /* Flowchart Styling (adjust as needed) */
+    .flowchart {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .flowchart-box {
+      background-color: #212121;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 10px; 
+      text-align: center;
+    }
+    .flowchart-arrow {
+      width: 2px;
+      background-color: #00adb5;
+      height: 20px;
+      margin: 0 auto;
+    }
+
+   /* More Realistic Book Styles */ 
+   .book-container {
+      width: 400px; 
+      height: 500px; 
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      perspective: 1200px; 
+    }
+
+    .book {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d; 
+      transform-origin: 0% 100%; /* Set the transform origin to bottom-left */ 
+    }
+
+    .cover, .back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      background-color: #222831;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      
+    }
+
+    .cover {
+      z-index: 2;
+      background-image: 
+        linear-gradient(to bottom right, transparent 50%, #222831 50%), 
+        linear-gradient(to bottom right, #a6b500 50%, #222831 100%); /* Create diagonal color split */ 
+      background-size: 100% 400%; /* For double the height to cover the transition*/ 
+      background-position: 0% 0%;  
+      transition: background-position 1s ease-in-out;  
+      display: flex;
+      flex-direction: column; /* Text items stacked vertically */
+      justify-content: center; 
+      align-items: center;  
+      padding: 30px;  /* Add padding around text */
+    }  
+
+    .cover:hover {
+      background-position: 0% 100%; /* Shifts gradient on hover to create color animation */ 
+      box-shadow: 0 0 20px #00adb5, inset 0 0 30px #00adb5; 
+    }
+
+    .cover h1 {
+      color: #eeeeee;
+      text-shadow: 0 0 8px #222831;  /* Dark text shadow for better readability */
+      font-size: 36px; 
+      margin-bottom: 20px;
+    }
+    .cover h3 {
+      color: #eeeeee;
+      text-shadow: 0 0 8px #222831; 
+      font-size: 20px; 
+      margin: 0;
+    }  
+
+    .back {
+      transform: rotateY(180deg);
+      background: linear-gradient(to bottom, #00adb5, #228b22);
+      color: #021d3e;
+      padding: 30px; 
+    }
+
+    .back h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    } 
+
+    .back p {
+      font-size: 16px;
+    }
+    
+    /* Book Flipping Animation - Using Skew and Translate  */ 
+    .book.flipped { 
+      animation: flipBook 1s ease-in-out forwards; 
+    }
+
+    .cover-text { 
+        text-align: left; 
+    } 
+ 
+    
+    </style>
+</head>
+<body>
+
+<!-- Book Cover Section (Now Interactive on Hover) -->
+<div class="book-container">
+    <div class="book"> 
+        <div class="cover">
+            <div class="cover-text">  
+                <h1>Talking to<br> GenAI Models</h1> 
+                <h3> My Prompt<br>Engineering Diary  </h3>
+                <h6>--Shahnab--</h6>
+            </div> 
+        </div> 
+        </div>  
+</div>
+
+  <!-- Existing Webpage Content (Will be revealed after flip animation) -->
+  <div id="mainContent" style="display: none;">
+
+<button onclick="topFunction()" id="backToTop" title="Go to top"><i class="fas fa-arrow-up"></i></button> 
+
+<div class="container">
+  <h1>Talking to GenAI: My Prompt Engineering Diary</h1>
+
+  <div class="tab">
+    <button class="tablinks" onclick="openTab(event, 'Meta Analysis')" id="defaultOpen">Meta-Analysis</button>
+    <button class="tablinks" onclick="openTab(event, 'MultilingualPrompting')">Multilingual Prompting</button>
+    <button class="tablinks" onclick="openTab(event, 'MultimodalPrompting')">Multimodal Prompting</button>
+    <button class="tablinks" onclick="openTab(event, 'Evaluation')">Evaluation</button>
+    <button class="tablinks" onclick="openTab(event, 'Alignment')">Alignment</button>
+    
+  </div>
+
+  <!--  Meta Analysis of Prompting Tab -->
+  <div id="Meta Analysis" class="tabcontent">
+    <h2>Meta Analysis of Prompting</h2>
+    <p>A comprehensive meta-analysis of various text-based prompting techniques, exploring their classifications, characteristics, strengths, and weaknesses. Understanding these techniques is crucial for effective prompt engineering.</p>
+
+    <ul class="interactive-list">
+      <li onclick="toggleDefinition(event, 'zeroShotPromptingDefinition')">
+        Zero-Shot Prompting <i class="fas fa-chevron-right toggle-icon"></i>
+      </li>
+      <div id="zeroShotPromptingDefinition" class="definition">
+        <h3>Zero-Shot Prompting</h3>
+        <p>A technique where the LLM receives a task description or instruction without any illustrative examples. It depends solely on the LLM's inherent pre-trained knowledge to comprehend and perform the task. Zero-Shot Prompting tests the model's capacity to generalize its understanding to new, unseen tasks, making it a powerful indicator of the model's inherent capabilities.</p>
+        <div class="technique-details">
+          <p><strong>Sub-techniques:</strong></p>
+          <ul>
+            <li><strong>Role Prompting:</strong> Assigns a specific persona to the LLM (e.g., "Act as a doctor"), guiding the style and content of its response.
+              <br><em>Example:</em> "You are a renowned chef. Write a recipe for a chocolate lava cake."
+            </li>
+            <li><strong>Style Prompting:</strong> Dictates the desired style, tone, or genre of the LLM's output (e.g., "Write in a formal tone"). 
+              <br><em>Example:</em> "Compose a formal apology letter for a missed appointment."
+            </li>
+            <li><strong>Emotion Prompting:</strong>  Incorporates phrases with psychological impact (e.g., "This is urgent") to potentially influence the LLM's response.
+              <br><em>Example:</em> "This is extremely important for my career. Write a cover letter for a software engineer position."
+            </li>
+            <li><strong>System 2 Attention (S2A):</strong>  Employs a two-step process where the LLM first rewrites the prompt to remove extraneous information and then generates a response based on the refined prompt. 
+              <br><em>Example:</em> 
+              <ol>
+                <li><em>Initial Prompt:</em> "There's a lot of traffic today. How do I bake a cake?" </li>
+                <li><em>Rewritten Prompt:</em> "How do I bake a cake?" </li>
+              </ol>
+            </li>
+            <li><strong>SimToM:</strong> Designed to address complex questions involving multiple entities by isolating information relevant to each entity and then answering based on that subset.  
+              <br><em>Example:</em> "John and Mary went to the store. John bought apples and Mary bought oranges. Who bought the apples?"
+            </li>
+            <li><strong>Rephrase and Respond (RaR):</strong> Instructs the LLM to rephrase and elaborate on the question before generating an answer. 
+              <br><em>Example:</em>  Adding "Rephrase the question in your own words before you answer" to the initial prompt. 
+            </li>
+            <li><strong>Re-reading (RE2):</strong>  Simply appends "Read the question again" to the prompt, often surprisingly improving reasoning in complex questions. 
+              <br><em>Example:</em> "What is the capital of France? Read the question again."
+            </li>
+            <li><strong>Self-Ask:</strong> Prompts the LLM to determine if additional information is needed and to generate relevant follow-up questions, answering them before addressing the initial prompt. 
+              <br><em>Example:</em> 
+              <ol>
+                <li><em>Prompt:</em>  "How do I travel from New York to Paris?"</li>
+                <li><em>Self-Generated Questions:</em> "Do you prefer to travel by air or sea?", "What is your budget for the trip?"</li>
+              </ol>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <li onclick="toggleDefinition(event, 'fewShotPromptingDefinition')">
+        Few-Shot Prompting <i class="fas fa-chevron-right toggle-icon"></i>
+      </li>
+      <div id="fewShotPromptingDefinition" class="definition">
+        <h3>Few-Shot Prompting</h3>
+        <p>A prompting technique where the LLM is provided with a limited number of examples or demonstrations of the desired task, along with the instruction. This technique aims to improve the LLM's understanding of the task by providing it with concrete patterns and desired output formats.</p>
+        <div class="technique-details">
+          <p><strong>Considerations When Crafting Few-Shot Prompts:</strong></p>
+          <!-- <img src="https://via.placeholder.com/700x200" alt="Few-Shot Prompting Design Decisions">  Replace with actual image -->
+          <ul>
+            <li><strong>Exemplar Quantity:</strong> The number of exemplars impacts the LLM's performance, with more exemplars generally leading to better accuracy. However, the context window size of the LLM limits the number of examples that can be provided.</li>
+            <li><strong>Exemplar Ordering:</strong> The order in which examples are presented can affect the LLM's learning. Certain orderings may yield better performance than others.</li>
+            <li><strong>Exemplar Label Distribution:</strong> Maintaining a balanced distribution of labels across exemplars is important, as in traditional machine learning, to prevent biases towards a specific class.</li>
+            <li><strong>Exemplar Label Quality:</strong> Ensuring that exemplars are accurately labeled is crucial for effective few-shot learning. Incorrectly labeled examples can negatively impact the LLM's performance.</li>
+            <li><strong>Exemplar Format:</strong>  Choosing a suitable format for presenting examples influences clarity and comprehensibility.  Common formats include "Q: {question}, A: {answer}" or "Input: {input}, Output: {output}."</li>
+            <li><strong>Exemplar Similarity:</strong>  The similarity of exemplars to the task or target instance can impact learning. While similar examples can help the LLM grasp the task, some degree of diversity can be beneficial for generalization.</li>
+          </ul>
+
+          <p><strong>Sub-techniques in Supervised Few-Shot Setting:</strong></p>
+          <ul>
+            <li><strong>K-Nearest Neighbors (KNN):</strong> Selects training examples similar to the target instance based on a similarity metric, leveraging the concept of neighborhood in machine learning.
+              <br><em>Example:</em> For a sentiment classification task, the KNN technique might select reviews from the training data with similar wording or topic to the target review for inclusion in the few-shot prompt. 
+            </li>
+            <li><strong>Vote-K:</strong> Uses the LLM to propose unlabeled examples that an annotator then labels, enriching the pool of labeled examples used for Few-Shot Prompting.
+              <br><em>Example:</em> If the existing training data lacks examples about a particular topic, Vote-K can be used to have the LLM identify relevant text passages for humans to annotate and add to the training pool. 
+            </li>
+            <li><strong>Self-Generated In-Context Learning (SG-ICL):</strong> Leverages the LLM to automatically generate examples, potentially filling gaps in existing data but generally not as effective as using real data.  
+              <br><em>Example:</em> If limited data is available for a machine translation task, SG-ICL can be used to generate synthetic translations for inclusion as exemplars in the few-shot prompt.
+            </li>
+            <li><strong>Prompt Mining:</strong> Analyzes large corpora to discover effective patterns and formats for structuring Few-Shot prompts, potentially finding patterns that occur frequently in natural language and that LLMs are better at interpreting. 
+              <br><em>Example:</em> Prompt mining might reveal that a specific format, such as "This sentence means: {SENTENCE} Meaning:", commonly appears in textual data, making it a good candidate for structuring Few-Shot prompts. 
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <li onclick="toggleDefinition(event, 'chainOfThoughtDefinition')">
+        Chain-of-Thought (CoT) Prompting <i class="fas fa-chevron-right toggle-icon"></i>
+      </li>
+      <div id="chainOfThoughtDefinition" class="definition">
+        <h3>Chain-of-Thought (CoT) Prompting</h3>
+        <p>A prompting technique designed to elicit intermediate reasoning steps from LLMs, providing transparency into the model's problem-solving process. It's particularly effective for tasks demanding logical deductions, multi-step inferences, or complex problem-solving.</p>
+        <div class="technique-details">
+          <p><strong>How CoT Works:</strong></p>
+          <p>CoT prompting involves guiding the LLM to articulate its "thoughts" while solving a problem, mimicking the step-by-step reasoning that humans use. This encourages the model to break down the problem into smaller, more manageable chunks, improving accuracy and logical consistency.</p>
+          
+          <p><strong>Variations of CoT Prompting:</strong></p>
+          <ul class="interactive-list">
+            <li onclick="toggleDefinition(event, 'zeroShotCotDefinition')">
+              Zero-Shot CoT <i class="fas fa-chevron-right toggle-icon"></i>
+            </li>
+            <div id="zeroShotCotDefinition" class="definition">
+              <h3>Zero-Shot CoT</h3>
+              <p>Zero-Shot CoT involves appending a thought-inducing phrase to the prompt, nudging the LLM to generate reasoning steps without any explicit examples.  This tests the model's innate capacity for step-by-step thinking.  Common thought inducers include: "Let's think step by step," "Let's work this out systematically to ensure accuracy," or "Consider this logically." </p>
+              <p><strong>Example:</strong></p>
+              <p>Prompt: "If Mary has 5 apples and gives 2 to John, how many apples does Mary have left? Let's think step by step."</p> 
+            </div>
+  
+            <li onclick="toggleDefinition(event, 'fewShotCotDefinition')">
+              Few-Shot CoT <i class="fas fa-chevron-right toggle-icon"></i>
+            </li>
+            <div id="fewShotCotDefinition" class="definition">
+              <h3>Few-Shot CoT</h3>
+              <p>The LLM learns CoT from exemplars that showcase questions, intermediate reasoning chains, and final answers.  It builds upon the principles of few-shot learning, leveraging examples to demonstrate the desired output structure.  Few-Shot CoT prompts generally outperform Zero-Shot CoT, as the provided reasoning examples improve the LLM's understanding of the task and the expected output format.</p>
+              <p><strong>Example:</strong></p>
+              <pre>Q: Tom has 4 books. He buys 3 more. How many books does he have now?
+  A: Let's think step-by-step: 
+     Tom starts with 4 books.
+     He buys 3 more books.
+     So now he has 4 + 3 = 7 books.
+  
+  Q: Alice has 2 cats.  Her friend gives her 1 more.  How many cats does Alice have?
+  A:</pre>  
+            </div>
+          </ul>
+  
+          <p><strong>Advanced CoT Techniques:</strong></p> 
+          <ul>
+            <li><strong>Step-Back Prompting:</strong> Starts with a high-level question to frame the context before proceeding to detailed reasoning.
+              <br><em>Example:</em> "What are the key concepts in physics related to gravity? Now let's think step by step about how gravity affects objects on Earth."
+            </li>
+            <li><strong>Analogical Prompting:</strong> Uses the LLM to automatically create exemplars containing CoT, combining the benefits of SG-ICL with CoT.
+              <br><em>Example:</em> Given a new math problem, the LLM would generate a similar example problem with reasoning steps and then attempt to solve the new problem using an analogous thought process.
+            </li>
+            <li><strong>Thread-of-Thought (ThoT):</strong>  Uses an enhanced thought-inducing phrase for CoT, focusing on breaking down complex information into manageable steps, especially useful for longer contexts. 
+              <br><em>Example:</em>  Appending "Analyze this passage step by step, summarizing each part" to a prompt that provides a long textual passage.
+            </li>
+            <li><strong>Tabular Chain-of-Thought (Tab-CoT):</strong> Guides the LLM to present its reasoning in a structured tabular format, which may improve clarity and organization of the thought process.  
+              <br><em>Example:</em> Asking the LLM to create a table with columns like "Step," "Action," "Reason" for each reasoning step.
+            </li>
+            <li><strong>Contrastive CoT:</strong> Includes exemplars with both correct and incorrect reasoning, allowing the LLM to learn by contrasting good and bad examples of thought processes.  
+              <br><em>Example:</em> Showing the LLM examples of flawed reasoning alongside correct reasoning paths. 
+            </li>
+            <li><strong>Uncertainty-Routed CoT:</strong> Samples multiple CoT paths and selects the most common answer if a consensus exists. If no clear majority emerges, a single path is greedily chosen. 
+              <br><em>Example:</em> Generating five different reasoning chains for a question, then selecting the answer that appears most often among those chains.  If each chain produces a different answer, one of those answers is randomly chosen as the output. 
+            </li>
+            <li><strong>Complexity-Based Prompting:</strong> Prioritizes the annotation of complex examples and uses majority voting among chains that meet a minimum length threshold, assuming that longer chains imply better reasoning. 
+              <br><em>Example:</em> For a question requiring multi-step reasoning, select the most elaborate reasoning chain if multiple chains are generated by the LLM.
+            </li>
+            <li><strong>Active Prompting:</strong> Iteratively refines exemplars by having annotators focus on examples where the LLM exhibits the highest uncertainty or disagreement.  
+              <br><em>Example:</em>  If the LLM provides inconsistent answers for a specific type of question, human annotators would improve the quality of exemplars for that type of question. 
+            </li>
+            <li><strong>Memory-of-Thought:</strong>  Leverages a repository of unlabeled data and CoT inference to build few-shot prompts by retrieving instances similar to the target instance. 
+              <br><em>Example:</em> Before evaluating on the target instance, use the LLM to generate reasoning steps for a large unlabeled dataset. At test time, retrieve similar examples and their reasoning chains to include as exemplars for the target instance.
+            </li>
+            <li><strong>Automatic Chain-of-Thought (Auto-CoT):</strong> Automatically generates reasoning steps using a zero-shot prompt, which are then used to create a few-shot CoT prompt for the target task. 
+              <br><em>Example:</em> Using a zero-shot prompt like "Think step by step" to generate reasoning for existing examples in the dataset. These generated chains of thought are then used as exemplars in a few-shot CoT prompt for new questions.
+            </li>
+          </ul>
+        </div>
+      </div>
+  
+      <li onclick="toggleDefinition(event, 'decompositionPromptingDefinition')">
+        Decomposition Prompting <i class="fas fa-chevron-right toggle-icon"></i>
+      </li>
+      <div id="decompositionPromptingDefinition" class="definition">
+        <h3>Decomposition Prompting</h3>
+        <p>A technique that tackles complex problems by breaking them down into a sequence of simpler sub-problems. Decomposition mimics the problem-solving strategy that humans often use, simplifying the reasoning process for the LLM and enabling it to handle multi-faceted challenges more effectively.</p>
+        <div class="technique-details">
+          <p><strong>Techniques:</strong></p>
+          <ul>
+            <li><strong>Least-to-Most Prompting:</strong>  Guides the LLM to first break down a complex problem into simpler sub-problems without solving them initially. The LLM then solves each sub-problem sequentially, adding the answers back into the prompt to build upon its knowledge, ultimately arriving at a solution for the original problem. 
+              <br><em>Example:</em> "A train leaves station A at 8:00 AM traveling at 60 mph. Another train leaves station B at 9:00 AM traveling at 70 mph towards station A.  The distance between stations A and B is 300 miles. At what time will the trains meet? First, break this down into simpler questions without solving them."
+            </li>
+            <li><strong>Decomposed Prompting (DECOMP):</strong> Similar to Least-to-Most, but involves explicitly teaching the LLM how to use various functions (through exemplars) to break down the problem. The LLM then generates sub-problems that can be solved using the taught functions, and the responses from those functions are integrated to solve the initial problem. 
+              <br><em>Example:</em> Teaching the LLM how to use functions like "distance calculation" and "time calculation," and then prompting it to use these functions to solve the train problem described above.
+            </li>
+            <li><strong>Plan-and-Solve Prompting:</strong> Uses an extended zero-shot CoT prompt that encourages the LLM to first understand the problem, create a plan to solve it, and then execute the plan step-by-step, leading to a more robust reasoning process. 
+              <br><em>Example:</em>  "Here's a complex math problem.  First, let's analyze the problem to understand what's being asked. Then, let's develop a step-by-step plan to find the solution. Finally, let's carefully execute each step of the plan to solve the problem." 
+            </li>
+            <li><strong>Tree-of-Thought (ToT):</strong> Generates a tree-like structure of possible reasoning paths, evaluates the progress of each path, and then continues exploring the most promising ones. ToT enables the exploration of various solutions and is particularly effective for tasks that benefit from a search process, similar to how a human might brainstorm multiple strategies for solving a problem. 
+              <br><em>Example:</em> 
+              <div class="flowchart"> <div class="flowchart-box">Initial Problem</div>
+                <div class="flowchart-arrow"></div>
+                <div class="flowchart-box">Possible Thought 1</div>
+                <div class="flowchart-box">Possible Thought 2</div>
+                <div class="flowchart-arrow"></div>
+                <div class="flowchart-box">Evaluation 1.1</div> <div class="flowchart-box">Evaluation 1.2</div>
+                <div class="flowchart-box">Evaluation 2.1</div> <div class="flowchart-box">Evaluation 2.2</div>
+                </div>
+              
+            </li>
+            <li><strong>Recursion-of-Thought:</strong>  Applies the CoT approach recursively. If the LLM encounters a sub-problem within its initial reasoning chain, it creates a new prompt to address that sub-problem specifically, incorporating the sub-problem's solution back into the main reasoning process.  
+              <br><em>Example:</em> While solving a complex math equation, the LLM might create a new prompt to solve a specific algebraic expression within the equation and then use the result of that expression in its main calculation.
+            </li>
+            <li><strong>Program-of-Thoughts:</strong> Uses the LLM to generate code as a form of reasoning, where each code segment represents a step in the problem-solving process.  A code interpreter then executes the generated code to arrive at a solution. 
+              <br><em>Example:</em>  "Write a Python program to calculate the area of a triangle. The base of the triangle is 10 cm and the height is 5 cm." 
+            </li>
+            <li><strong>Faithful Chain-of-Thought:</strong>  Generates a chain of thought that incorporates both natural language and symbolic language (e.g., mathematical equations or code snippets), increasing the precision of the reasoning process.  
+              <br><em>Example:</em>  "The price of an item is \$100. There's a 20% discount.  What is the final price?  First calculate the discount: 100 * 0.2 = 20. Then subtract the discount from the original price: 100 - 20 = 80. Therefore, the final price is \$80."
+            </li>
+            <li><strong>Skeleton-of-Thought:</strong>  Accelerates answer generation by prompting the LLM to generate a skeleton outline of the problem's solution (sub-problems). These sub-problems are then sent to the LLM in parallel for independent solving, with the final output constructed by combining their solutions.  
+              <br><em>Example:</em> Given a question with multiple distinct aspects, create a skeletal outline addressing each aspect separately. The LLM would then elaborate on each point in the outline in parallel, resulting in a more comprehensive and efficient response. 
+            </li>
+          </ul>
+        </div>
+      </div>
+  
+      <li onclick="toggleDefinition(event, 'ensemblingPromptingDefinition')">
+        Ensembling Prompting <i class="fas fa-chevron-right toggle-icon"></i>
+      </li>
+      <div id="ensemblingPromptingDefinition" class="definition">
+        <h3>Ensembling Prompting</h3>
+        <p>Leveraging the concept of ensembling in machine learning, this technique involves utilizing multiple prompts or prompting strategies to solve the same problem.  The individual responses are then aggregated to produce a final, combined output.  The intuition behind ensembling is that by combining diverse perspectives or approaches, we can achieve more robust and accurate results.</p>
+        <div class="technique-details">
+          <p><strong>Common Aggregation Methods:</strong></p>
+          <ul>
+            <li>Majority Voting: Selecting the most frequent answer among the outputs from multiple prompts.</li>
+            <li>Averaging:  If responses involve numerical scores, averaging the scores to create a combined score. </li>
+            <li>Weighted Averaging: Assigning different weights to each prompt's output based on factors like confidence or estimated accuracy.  </li>
+          </ul>
+          
+          <p><strong>Benefits:</strong></p>
+          <ul>
+            <li>Increased Accuracy: Combining diverse perspectives or solutions often leads to a more accurate final output.</li>
+            <li>Reduced Variance:  Ensembles help mitigate the effects of noise or random fluctuations in a single LLM's response.</li>
+            <li>Robustness: Less sensitive to minor changes in prompt wording or format.</li>
+          </ul>
+          
+          <p><strong>Techniques:</strong></p>
+          <ul>
+            <li><strong>Demonstration Ensembling (DENSE):</strong>  Constructs several Few-Shot prompts using distinct subsets of examples from the training data and combines their outputs. </li>
+            <li><strong>Mixture of Reasoning Experts (MoRE):</strong> Uses a collection of prompts tailored to different types of reasoning (e.g., factual reasoning, commonsense reasoning). An agreement score determines the most suitable answer among the expert outputs. </li>
+            <li><strong>Max Mutual Information:</strong> Evaluates multiple prompt templates with varied styles and examples, selecting the template that maximizes the mutual information between the prompt and the LLM's output.</li>
+            <li><strong>Self-Consistency:</strong>  Prompts the LLM multiple times using CoT prompting, encouraging diverse reasoning paths by introducing a non-zero temperature.  A majority vote determines the final output.   </li>
+            <li><strong>Universal Self-Consistency:</strong>  Similar to Self-Consistency, but utilizes a prompt template to determine the majority answer from the various outputs. This approach is advantageous for situations where answers with the same meaning are phrased differently.</li>
+            <li><strong>Meta-Reasoning over Multiple CoTs:</strong>  Generates multiple reasoning chains (not necessarily complete answers) and uses a prompt to aggregate them into a final response, similar to Universal Self-Consistency.  </li>
+            <li><strong>DiVeRSe:</strong> Extends Self-Consistency by creating multiple prompts, generating multiple reasoning paths for each, and scoring them based on individual steps. </li>
+            <li><strong>Consistency-Based Self-Adaptive Prompting (COSP):</strong> Builds few-shot CoT prompts by performing Zero-Shot CoT with Self-Consistency on examples, then selecting highly consistent exemplars and applying Self-Consistency again to generate the final response.</li>
+            <li><strong>Universal Self-Adaptive Prompting (USP):</strong>  Similar to COSP, aiming to generalize to different tasks and not relying on Self-Consistency. USP utilizes unlabeled data for generating exemplars and employs a complex scoring mechanism for selecting them.</li>
+            <li><strong>Prompt Paraphrasing:</strong> Creates variations of an existing prompt by altering wording while maintaining its meaning, increasing diversity within the ensemble. </li>
+          </ul>
+        </div>
+      </div>
+  
+      <li onclick="toggleDefinition(event, 'selfCriticismPromptingDefinition')">
+        Self-Criticism Prompting <i class="fas fa-chevron-right toggle-icon"></i>
+      </li>
+      <div id="selfCriticismPromptingDefinition" class="definition">
+        <h3>Self-Criticism Prompting</h3>
+        <p>Encourages LLMs to critically assess their own responses, promoting self-correction and refinement. The idea is that by forcing LLMs to think about their responses, analyze potential shortcomings, and suggest improvements, they can generate outputs that are more accurate, reliable, and consistent with expectations. Self-criticism can involve generating feedback for improvement or simply making a judgment about the correctness of the output.  </p>
+        <div class="technique-details">
+          <p><strong>Techniques:</strong></p>
+          <ul>
+            <li><strong>Self-Calibration:</strong>  After answering a question, the LLM is prompted to judge its own response's correctness, often enhancing reliability assessment.  </li>
+            <li><strong>Self-Refine:</strong>  An iterative process where the LLM first provides a response, generates feedback on it, and then uses that feedback to refine the initial response. This cycle continues until a stop condition is met. </li>
+            <li><strong>Reversing Chain-of-Thought (RCoT):</strong>  The LLM reconstructs the problem statement based on its answer. Discrepancies between the original and reconstructed versions are then converted into feedback for response revision.   </li>
+            <li><strong>Self-Verification:</strong> Generates multiple candidate answers (with reasoning) and scores them by masking parts of the original problem, prompting the LLM to predict those masked elements based on the remaining information and the potential answer.   </li>
+            <li><strong>Chain-of-Verification (COVE):</strong>  The LLM answers related verification questions that are designed to assess the initial answer's validity, ultimately revising the answer based on those verification responses.  </li>
+            <li><strong>Cumulative Reasoning:</strong>  Generates steps toward answering a question, evaluates them, decides to either accept or reject each step, and checks if the final answer has been reached. The process repeats iteratively until a complete solution is found. </li>
+          </ul>
+        </div>
+      </div>
+    </ul>
+  </div>
+
+  <!-- Multilingual Prompting Tab --> 
+  <div id="MultilingualPrompting" class="tabcontent">
+    <h2>Multilingual Prompting</h2>
+    <p>As LLMs increasingly find application in diverse global contexts, the need to bridge language barriers becomes critical. Multilingual prompting focuses on techniques that enable LLMs to effectively handle languages beyond English, overcoming limitations imposed by the often English-centric training data.</p> 
+    <ul class="interactive-list">
+      <li onclick="toggleDefinition(event, 'translateFirstDefinition')">
+        Translate First <i class="fas fa-chevron-right toggle-icon"></i>
+     </li>
+     <div id="translateFirstDefinition" class="definition">
+       <h3>Translate First</h3>
+       <p>This method leverages the superior performance of many LLMs in English, especially when dealing with tasks requiring reasoning or nuanced understanding. The core idea is simple: translate the non-English input into English, have the LLM process it, and translate the output back into the original language. While conceptually straightforward, it does rely on the quality of machine translation.</p>
+ 
+       <div class="technique-details">
+         <p><strong>The Translate-First Workflow:</strong></p>
+         <div class="flowchart">
+           <div class="flowchart-box">Non-English Input</div>
+           <div class="flowchart-arrow"></div>
+           <div class="flowchart-box">Machine Translation<br>(To English)</div>
+           <div class="flowchart-arrow"></div>
+           <div class="flowchart-box">LLM Processing<br>(in English)</div>
+           <div class="flowchart-arrow"></div>
+           <div class="flowchart-box">Machine Translation<br>(To Original Language)</div>
+           <div class="flowchart-arrow"></div>
+           <div class="flowchart-box">Final Output (Non-English)</div> 
+         </div>
+ 
+         <p><strong>Translation Tools:</strong></p>
+         <ul>
+           <li>External MT systems: Specialized tools trained specifically for high-quality translations, like Google Translate.</li> 
+           <li>Prompting Multilingual LLMs: Utilizing the translation capabilities of large multilingual models themselves for the translation steps in the process. </li>  
+         </ul>
+         <p><strong>Strengths:</strong></p>
+         <ul>
+           <li>Simplicity:  Easy to implement, often requiring minimal changes to existing LLM applications.</li>
+           <li>English Proficiency Utilization: Capitalizes on the robust English understanding of many widely used LLMs.</li>
+         </ul>
+         <p><strong>Weaknesses:</strong></p>
+         <ul>
+           <li>Translation Accuracy Dependency:  Errors during translation can propagate and lead to inaccuracies in the final output.</li> 
+           <li>Limited Nuance: This approach might struggle with language-specific nuances, idiom comprehension, cultural expressions, and sentiment subtleties, which can be lost during translation.</li>
+         </ul>
+         <p><strong>Example:</strong> </p>
+         <p>Suppose we need to answer a question in French, "Quel est le sens de la vie?" (What is the meaning of life?).  First, we translate the question to English: “What is the meaning of life?”  Then we give this English question to an LLM to generate a response. We then translate this English response back into French, giving the final answer to the user.</p>
+       </div>
+     </div>
+ 
+     <li onclick="toggleDefinition(event, 'multilingualCotDefinition')">
+       Multilingual Chain-of-Thought (CoT) <i class="fas fa-chevron-right toggle-icon"></i>
+     </li>
+     <div id="multilingualCotDefinition" class="definition">
+       <h3>Multilingual CoT</h3>
+       <p>Multilingual Chain-of-Thought prompting aims to enhance the reasoning capabilities of LLMs in languages beyond English, leveraging CoT’s success in elucidating problem-solving steps.</p>
+ 
+       <div class="technique-details">
+         <p><strong>Approaches to Multilingual CoT:</strong></p>
+         <ul>
+           <li><strong>Direct Multilingual CoT:</strong> Assumes that LLMs have learned cross-lingual reasoning capabilities, prompting them to directly generate reasoning steps in the target language, without resorting to translation.</li>
+           <li><strong>Translation-Based CoT:</strong> Leverages English CoT examples and translates them into the target language, demonstrating the desired CoT process to the LLM.</li>
+           <li><strong>Cross-Lingual CoT:</strong>  A hybrid approach combining CoT steps in English (for leveraging better reasoning skills) and the target language (for output generation). It may involve selective translation within the CoT process.</li>
+           <li><strong>XLT Prompting:</strong> A sophisticated method combining role assignment, cross-lingual thinking, and standard CoT elements within a multi-instruction prompt. It encourages the LLM to think cross-lingually, translating and aligning information between languages to generate better-reasoned answers.</li>
+           <li><strong>Cross-Lingual Self-Consistency:</strong> Improves reasoning by creating CoT pathways in various languages to solve the same question and then applying ensemble techniques to aggregate responses for better consistency and accuracy.</li> 
+         </ul>
+ 
+         <p><strong>Example (Cross-Lingual CoT - English and Spanish):</strong></p>
+         <pre>Q: Juan tiene 5 manzanas. Maria le da 2 más. ¿Cuántas manzanas tiene Juan ahora? (John has 5 apples. Maria gives him 2 more. How many apples does John have now?)
+ A: Let's think step by step. 
+ John starts with 5 apples (Juan empieza con 5 manzanas).
+ He receives 2 more apples from Maria (Recibe 2 manzanas más de María).
+ Therefore, he now has 5 + 2 = 7 apples (Por lo tanto, ahora tiene 5 + 2 = 7 manzanas). </pre>
+       </div>
+     </div>
+ 
+     <li onclick="toggleDefinition(event, 'multilingualIclDefinition')">
+       Multilingual In-Context Learning (ICL) <i class="fas fa-chevron-right toggle-icon"></i>
+     </li>
+     <div id="multilingualIclDefinition" class="definition">
+       <h3>Multilingual ICL</h3>
+       <p>Adapts ICL, known for its efficacy in adapting LLMs to tasks using examples, to multilingual scenarios. The key challenge lies in effectively using examples to transfer knowledge across languages within the ICL process. </p>
+       
+       <div class="technique-details">
+         <p><strong>Multilingual ICL Techniques:</strong></p> 
+         <ul>
+           <li><strong>X-InSTA Prompting:</strong> Examines three approaches for selecting ICL examples - semantically aligned, task-aligned (based on labels), and a combined strategy. By tailoring the selection of examples, this method attempts to enhance the model's understanding in cross-lingual contexts.</li>
+           <li><strong>In-CLT (Cross-lingual Transfer) Prompting:</strong> Enhances ICL examples by incorporating both source (e.g., English) and target language information. By providing a bridge between languages, In-CLT facilitates cross-lingual knowledge transfer. It differs from typical approaches where only source-language examples are provided.  
+             <br><em>Example:</em> 
+             <pre>English Instruction: Classify the following sentences as either positive, negative, or neutral in sentiment.
+ 
+ English Example 1: I love this product! 
+ English Label 1: Positive
+ English Example 2: The movie was terrible.
+ English Label 2: Negative
+ 
+ French Instruction: Classez les phrases suivantes comme étant soit positives, soit négatives, soit neutres en termes de sentiment.
+ 
+ French Example 1: Ce produit est horrible! (This product is terrible!)
+ French Label 1: Negative 
+ French Example 2: J’ai passé une excellente journée. (I had a great day.)
+ French Label 2: Positive </pre>
+           </li> 
+           <li><strong>PARC (Prompts Augmented by Retrieval Cross-lingually):</strong> Utilizes retrieval techniques to find pertinent examples in a resource-rich language (like English) and integrates them into prompts for tasks involving a low-resource target language, bolstering cross-lingual transfer.
+             <br><em>Example:</em>  
+             <p>If you are attempting Few-Shot Named Entity Recognition in a language like Swahili, where training data is limited, PARC can be employed. First, retrieve examples from English, translate these to Swahili, then prompt a Swahili model with these translated examples to enhance NER performance.</p> 
+           </li>  
+         </ul>
+ 
+         <p><strong>In-Context Example Selection for Multilingual ICL:</strong></p>
+         <p>Effective example selection significantly impacts Multilingual ICL success. Choosing exemplars that exhibit the following characteristics often helps enhance LLM performance:</p>  
+         <ul>
+           <li><strong>Semantic Similarity:</strong>   Selecting examples semantically close to the source text improves performance. 
+             <br><em>Example:</em> For translating a phrase containing "bank," selecting exemplars containing synonyms for “financial institution” is beneficial.</li>  
+           <li><strong>Representation of Peculiar Cases:</strong>    Including some distant examples has proven to be beneficial in specific situations, promoting a wider perspective on the task and potential edge cases. </li>  
+           <li><strong>Polysemy and Rare Senses Handling:</strong>  For sentences containing words with multiple meanings, examples that illustrate these different word senses help improve translation accuracy.</li>
+         </ul>
+       </div> 
+     </div> 
+ 
+     <li onclick="toggleDefinition(event, 'promptLanguageDefinition')">
+       Prompt Template Language Selection <i class="fas fa-chevron-right toggle-icon"></i>
+     </li>
+     <div id="promptLanguageDefinition" class="definition">
+       <h3>Prompt Template Language Selection</h3>
+       <p>Deciding whether to use the source language (like English) or the target language when structuring the prompts themselves can have a notable impact on how well LLMs handle multilingual tasks.</p>
+       
+       <div class="technique-details">
+         <p><strong>Approaches:</strong></p>
+         <ul>
+           <li><strong>English Prompt Templates:</strong> Despite working with non-English inputs or generating outputs in different languages, crafting the prompts in English often performs better for multilingual benchmarks. This effectiveness is likely due to a significant amount of the LLM's training focusing on English, enabling better information retrieval and cross-lingual understanding. 
+             <br><em>Example:</em> "Translate the following Spanish sentence into German: 'Me gusta leer libros.' "</li>
+           <li><strong>Task Language Prompt Templates:</strong> Building the prompts in the same language as the task's data makes the instructions directly comprehensible to users who speak the target language.
+             <br><em>Example:</em> “Übersetze den folgenden spanischen Satz ins Deutsche: 'Me gusta leer libros.' ”</li>
+         </ul>
+         <p><strong>Factors Influencing Selection:</strong></p>
+         <ul>
+           <li><strong>LLM's Training:</strong> Models with training heavily emphasizing English often benefit from English prompts, as there's a higher chance of retrieving related knowledge.</li>
+           <li><strong>Specific Task:</strong> Some tasks necessitate careful wording that only the target language captures effectively, making the task-language prompt more beneficial. This often arises when tackling highly culturally specific information.</li> 
+           <li><strong>Translation Quality:</strong> When creating target language prompts, relying on high-quality translation (preferably human translation for maximum accuracy) is essential to ensure correct instructions for the LLM.  Machine-translated instructions may contain errors.</li>  
+         </ul>
+         <p><strong>Recommendations:</strong>  Empirically evaluating both English and target language prompt templates for the particular model and task at hand helps in identifying which performs better, offering practical insights.</p>
+       </div>
+     </div>
+     <li onclick="toggleDefinition(event, 'machineTranslationPromptingDefinition')">
+         Prompting Techniques for Machine Translation <i class="fas fa-chevron-right toggle-icon"></i>
+       </li>
+       <div id="machineTranslationPromptingDefinition" class="definition">
+         <h3>Prompting for Machine Translation</h3>
+         <p>A specific domain where prompts guide LLMs to translate between languages accurately and efficiently. Beyond direct translation, prompt engineering enables specialized approaches, emulating nuances of human translation workflows and integrating additional information for enhanced contextual awareness and nuanced translations.</p>  
+   
+         <div class="technique-details">
+           <p><strong>Approaches:</strong></p>
+           <ul class="interactive-list">
+             <li onclick="toggleDefinition(event, 'multiAspectPromptingDefinition')">
+               Multi-Aspect Prompting and Selection (MAPS) <i class="fas fa-chevron-right toggle-icon"></i>
+             </li>
+             <div id="multiAspectPromptingDefinition" class="definition">
+               <h3>Multi-Aspect Prompting and Selection (MAPS)</h3>
+               <p>MAPS structures prompting by first analyzing the source text for core keywords, topics, and potentially relevant example translations, creating richer context before the actual translation task.</p> 
+ 
+               <div class="technique-details">
+                 <p><strong>Key Steps in MAPS:</strong></p>
+                 <ol>
+                   <li>Knowledge Extraction: The LLM identifies keywords, core topics, and possible translation examples from the input text.</li> 
+                   <li>Contextualized Prompt Creation: A new prompt incorporating this additional knowledge is created, giving more details to the LLM.</li>  
+                   <li>Diverse Translation Generation:  The LLM generates a variety of possible translations based on the richer, contextualized prompts.</li> 
+                   <li>Optimal Translation Selection: Techniques for comparing and scoring multiple translations to choose the best result, mirroring the review and editing process a human translator would perform. </li> 
+                 </ol>  
+               </div>  
+             </div> 
+   
+             <li onclick="toggleDefinition(event, 'chainOfDictionaryDefinition')">
+               Chain-of-Dictionary (CoD) <i class="fas fa-chevron-right toggle-icon"></i>
+             </li>
+             <div id="chainOfDictionaryDefinition" class="definition">
+               <h3>Chain-of-Dictionary (CoD)</h3>
+               <p>Integrates dictionary information into the prompts, enabling more accurate translation, particularly for words with multiple meanings.</p>
+ 
+               <div class="technique-details">
+                 <p><strong>How CoD Works:</strong></p> 
+                 <ol>
+                   <li>Source Phrase Word Extraction:  The text to be translated is broken down into individual words. </li>  
+                   <li>Dictionary Lookups: The system automatically finds dictionary definitions for each word, including equivalent words or meanings in both the source and target language.   
+                     <br><em>Example:</em> For the English word "bank", the dictionary lookup would find equivalents in the source (e.g., "financial institution", "riverside") and the target language. </li> 
+                   <li>Prompt Enrichment with Dictionary Phrases: This extracted dictionary information is included in the prompts to give direct hints and resolve ambiguities for the LLM. </li> 
+                   <li>Contextualized Translation:  The LLM uses the context provided by the dictionary information to choose the most appropriate translations.   </li>  
+                 </ol>  
+                 <p><strong>Example Prompt (English to French):</strong></p> 
+                 <pre>"English: Bank, French: Banque (Financial institution); Rive (riverside). Please translate the sentence: 'I went to the bank to deposit money.'" </pre>  
+               </div> 
+             </div>
+             
+             <li onclick="toggleDefinition(event, 'dictionaryBasedPromptingDefinition')">
+               Dictionary-Based Prompting for MT (DiPMT) <i class="fas fa-chevron-right toggle-icon"></i>
+             </li>
+             <div id="dictionaryBasedPromptingDefinition" class="definition">
+               <h3>Dictionary-Based Prompting (DiPMT)</h3>
+               <p>Similar to CoD in its usage of dictionaries, but with a few key differences:  </p>  
+ 
+               <div class="technique-details">
+                 <ul>
+                   <li>DiPMT focuses solely on definitions for the source and target languages (equivalent words might not be included). </li> 
+                   <li>It incorporates these definitions into the prompt in a slightly different format compared to CoD. </li>  
+                 </ul>
+                 <p><strong>Example Prompt (English to French - Similar to CoD example):</strong></p> 
+                 <pre>"English Definition of Bank: A financial institution. 
+ French Definition of Banque:  A financial institution.  
+ 
+ Please translate the sentence:  'I went to the bank to deposit money.'"</pre>  
+               </div> 
+             </div>
+             <li onclick="toggleDefinition(event, 'decomposedMTDefinition')">
+               Decomposed Prompting for Machine Translation (DecoMT) <i class="fas fa-chevron-right toggle-icon"></i>
+             </li>
+             <div id="decomposedMTDefinition" class="definition">
+               <h3>Decomposed Prompting for Machine Translation (DecoMT)</h3>
+               <p>This technique focuses on making long or complex sentence translations more manageable for the LLM. It resembles how human translators might segment a lengthy passage, working on smaller parts, ensuring accuracy. </p> 
+     
+               <div class="technique-details">
+                 <p><strong>Key Processes:</strong></p>  
+                 <ol>
+                   <li>Source Text Segmentation: The longer input text is divided into several smaller, more manageable segments or phrases.</li> 
+                   <li>Independent Segment Translation: These smaller segments are independently translated, utilizing few-shot prompting for better context. </li> 
+                   <li>Translation Aggregation with Contextual Information: The translated segments are recombined. The approach ensures continuity and natural flow between these translated parts by paying attention to relationships and dependencies between those initial segments.</li>  
+                 </ol> 
+                 <p><strong>Example:</strong> </p> 
+                 <p>Consider the following long sentence to translate from English to Spanish:</p>
+                 <pre>"Yesterday, I went for a walk in the park, where I saw beautiful flowers and listened to the birds singing, and then I had lunch with my friend at a charming café." </pre>
+ 
+                 <p><strong>Applying DecoMT:</strong> </p> 
+                 <ol>
+                   <li>Segmentation: Break the sentence into segments:
+                   <br> a. "Yesterday, I went for a walk in the park"
+                   <br> b. "where I saw beautiful flowers"
+                   <br> c. "and listened to the birds singing"
+                   <br> d. "and then I had lunch with my friend" 
+                   <br> e. "at a charming café."</li> 
+                   <li>Translation (Using a Multilingual LLM): Provide these smaller phrases individually with the prompt "Translate to Spanish" or by providing some few-shot examples. For example, give one translated sentence like "I ate dinner - Cené", to ensure correct tense and style consistency.</li>
+                   <li>Combination with Context: Carefully combine the separate translated Spanish segments to ensure grammatical and logical flow.</li> 
+                 </ol>
+               </div> 
+             </div>
+           </ul>  
+ 
+           <p><strong>Human-in-the-Loop Techniques for Translation:</strong></p>
+           <p>Human-in-the-loop methods explicitly bring humans into the translation workflow, acknowledging limitations of LLMs. They can be thought of as hybrid translation processes.</p>
+           <ul>
+             <li><strong>Interactive-Chain-Prompting (ICP):</strong> 
+               <ul> 
+                 <li>Identifies ambiguities or potential challenges within the text that needs translation by prompting an LLM with questions like "What could be misinterpreted here?". </li>
+                 <li>A human expert clarifies or answers these LLM-generated questions.</li> 
+                 <li>The final translation takes into account these human-provided insights.  </li> 
+               </ul> 
+             </li>  
+             <li><strong>Iterative Prompting: </strong> 
+               <ul>
+                 <li> Starts with LLMs producing initial draft translations.</li>  
+                 <li> Retrieval Systems or Human feedback iteratively refines this translation.</li> 
+                 <li> Feedback may range from suggested wording edits to addressing contextual or cultural misinterpretations.  </li>  
+               </ul> 
+             </li>
+           </ul> 
+         </div> 
+       </div>
+    </ul> 
+  </div>
+
+ <!-- Multimodal Prompting Tab --> 
+ <div id="MultimodalPrompting" class="tabcontent">
+    <h2>Multimodal Prompting</h2>
+    <p>Multimodal prompting pushes the boundaries of prompting by encompassing inputs and outputs that go beyond textual data, including images, audio, video, 3D models, and more.  This paradigm shift facilitates richer interactions between users and LLMs, opening new possibilities for AI-powered creativity, problem-solving, and information access.  </p>
+    <ul class="interactive-list">
+      <li onclick="toggleDefinition(event, 'imagePromptingDefinition')">
+        Image Prompting <i class="fas fa-chevron-right toggle-icon"></i>
+      </li>
+      <div id="imagePromptingDefinition" class="definition">
+        <h3>Image Prompting</h3>
+        <p>In image prompting, images act as either the prompt itself, guiding output creation, or as supplemental information enriching text-based prompts. Image captioning, visual question answering, image editing, and novel image generation are all examples of image prompting.</p>
+
+        <div class="technique-details">
+          <p><strong>Applications:</strong></p>
+          <ul>
+            <li><strong>Image Generation:</strong>  Text descriptions transformed into images, with control over style, composition, and content. </li>
+            <li><strong>Image Captioning:</strong>   Accurately describing the contents of an image, potentially providing specific details or a narrative, creating text from visuals.   </li>
+            <li><strong>Image Classification:</strong>   Using images as input for labeling or sorting them into pre-defined categories (e.g., object recognition). Textual prompts might assist this classification process.</li>
+            <li><strong>Visual Question Answering (VQA):</strong> Answering natural language questions posed about an image, showcasing understanding of visual content and the question’s intent. </li>
+            <li><strong>Image Editing:</strong>  Text instructions guide changes to existing images. Examples:  "Make this picture brighter," "Remove the background," "Add a rainbow to the sky".</li>
+          </ul>
+
+          <p><strong>Image Prompting Techniques:</strong></p>
+          <ul class="interactive-list"> 
+            <li onclick="toggleDefinition(event, 'promptModifiersDefinition')">
+              Prompt Modifiers  <i class="fas fa-chevron-right toggle-icon"></i>
+            </li>
+            <div id="promptModifiersDefinition" class="definition">
+              <h3>Prompt Modifiers</h3> 
+              <p>Specific phrases or keywords that modify certain aspects of an image when included in text-based image generation prompts. They offer fine-grained control over style, lighting, subject focus, and artistic techniques. 
+
+              </p>  
+              <div class="technique-details"> 
+                <p><strong>Categories of Modifiers:</strong></p>  
+                <ul>
+                  <li>Medium: "Oil painting", "Pencil sketch", "3D render"</li> 
+                  <li>Artist Style:  "In the style of Van Gogh," "Inspired by Picasso" </li> 
+                  <li>Lighting: "Soft lighting," "Backlit," "Dramatic shadows"</li> 
+                  <li>Color Palette:  "Warm tones," "Muted colors", "Vibrant and colorful" </li> 
+                  <li>Composition:  "Wide angle", "Close-up", "Portrait", "Landscape"</li> 
+                  <li>Image Resolution/ Quality: "High-definition," "8K resolution," "Photorealistic"</li> 
+                </ul>  
+                <p><strong>Example Prompt:</strong></p>  
+                <p>"Generate an image of a cat sleeping on a window sill.  The image should be a high-definition photograph with soft lighting, in the style of Ansel Adams."</p>
+              </div>
+            </div>
+
+            <li onclick="toggleDefinition(event, 'negativePromptingDefinition')">
+              Negative Prompting <i class="fas fa-chevron-right toggle-icon"></i>
+            </li>
+            <div id="negativePromptingDefinition" class="definition">
+              <h3>Negative Prompting</h3> 
+              <p>By providing a list of what NOT to include, negative prompts refine the output by preventing undesirable elements. Particularly useful in AI art and photorealistic image creation where finer control is needed.</p> 
+              
+              <div class="technique-details">
+                <p><strong>How It Works:</strong>  Image generation models process these "negative" instructions alongside the primary prompt. By giving more constraints, this method allows users to guide the LLM to avoid undesirable output features. It’s analogous to a sculptor chipping away what’s NOT needed to arrive at the final form. </p>  
+                <p><strong>Examples:</strong></p>
+                <ul>
+                  <li>Avoid blurry faces in a portrait.  </li>
+                  <li>Prevent overly saturated colors.  </li>
+                  <li>Exclude certain objects like cars in a nature scene.   </li>  
+                  <li>Restrict the output to certain art styles by excluding those undesired. </li>  
+                </ul>  
+              </div>  
+            </div> 
+            <li onclick="toggleDefinition(event, 'pairedImagePromptingDefinition')">
+              Paired-Image Prompting  <i class="fas fa-chevron-right toggle-icon"></i>
+            </li>
+            <div id="pairedImagePromptingDefinition" class="definition">
+              <h3>Paired-Image Prompting</h3>  
+              <p>This form of In-Context Learning in image manipulation leverages pairs of images ("before" and "after" examples of a transformation) to teach the LLM the desired visual modification, without requiring explicit text descriptions. It essentially shows, not tells.</p>  
+              
+              <div class="technique-details"> 
+                <p><strong>How It Works:</strong>  The paired examples demonstrate a concept or transformation (color change, style transfer, background removal).  The LLM generalizes from these, applying the learned pattern to a new, unedited image when prompted. 
+
+                </p> 
+                <p><strong>Example Scenario: Image Upscaling</strong> </p> 
+                <ol>
+                  <li>Training Examples: Show the LLM multiple image pairs, where the first in the pair is a low-resolution image, and the second is its upscaled high-resolution version. </li>  
+                  <li>Task: Now, given a new low-resolution image, the LLM, after seeing these "training pairs," will attempt to generate its high-resolution counterpart. </li> 
+                </ol> 
+                <p><strong>Paired image prompting works well for:</strong> </p>  
+                <ul>
+                  <li>Image style transfer (making a photo look like a painting).</li> 
+                  <li>Object removal or background replacement.  </li>
+                  <li>Adding artistic effects to images.</li>
+                </ul> 
+              </div>
+            </div>
+
+            <li onclick="toggleDefinition(event, 'imageAsTextDefinition')">
+              Image-as-Text  <i class="fas fa-chevron-right toggle-icon"></i>
+            </li>
+            <div id="imageAsTextDefinition" class="definition">
+              <h3>Image-as-Text </h3>  
+              <p>This technique effectively translates visual information to its text-based equivalent. Using another model (specialized for image captioning), the key elements and scene depicted in the image are summarized into a text description, then integrated into a text-based prompt.</p>
+
+              <div class="technique-details">
+                <p><strong>Example:</strong></p> 
+                <p>Imagine providing a text-to-image model with an initial text prompt: “Draw a scene.”</p>
+                <br> 
+                <p>Additionally, you supply an image with these details: “Include elements from this picture." (Imagine an image showing a forest with a flowing river and mountains).
+
+                </p>  
+                <p>Using Image-as-Text:</p>
+                <ol>
+                  <li>Image-to-Text Model: Convert the image into a description (e.g., “A dense forest with tall trees, a winding river, and mountains in the background"). </li> 
+                  <li>Prompt Integration:  Append the generated text to your original prompt, giving the text-to-image model the enriched instruction “Draw a scene with a dense forest, tall trees, a winding river, and mountains in the background.” </li>  
+                </ol>
+              </div>
+            </div>
+
+            <li onclick="toggleDefinition(event, 'multimodalCoTDefinition')">
+              Multimodal Chain-of-Thought (CoT) <i class="fas fa-chevron-right toggle-icon"></i>
+            </li>
+            <div id="multimodalCoTDefinition" class="definition">
+              <h3>Multimodal CoT</h3>
+              <p>Multimodal Chain-of-Thought prompts incorporate reasoning steps but expand this to include not just text-based thoughts but possibly visuals, diagrams, or even sub-questions about visual elements, leading to a multi-modal reasoning path.
+
+              </p> 
+              <div class="technique-details"> 
+                <p><strong>Example Scenarios:</strong></p>  
+                <ul>
+                  <li>In a visual reasoning task (finding an object in a complex image), CoT prompts could guide the LLM to “verbally” analyze portions of the image step by step or draw bounding boxes around areas it is focusing on during its search.  </li>
+                  <li>Solving a word problem with an accompanying diagram.  The CoT steps might combine text descriptions and highlighting on the diagram.  </li> 
+                </ul> 
+              </div>
+            </div> 
+          </ul> 
+        </div>
+      </div>
+
+      <li onclick="toggleDefinition(event, 'audioPromptingDefinition')">
+        Audio Prompting <i class="fas fa-chevron-right toggle-icon"></i>
+      </li>
+      <div id="audioPromptingDefinition" class="definition">
+        <h3>Audio Prompting</h3>
+        <p>Utilizing sound and speech either as direct prompts to guide the model's output or to complement text-based instructions in various creative and practical applications. </p>  
+
+        <div class="technique-details">
+          <p><strong>Applications:</strong></p>
+          <ul>
+            <li><strong>Music Generation:</strong> Creating music with prompts that range from stylistic descriptions to audio snippets or hummed melodies.</li>
+            <li><strong>Speech Synthesis:</strong> Generating natural-sounding speech from text, influenced by prompts that specify tone, emotion, and speaker characteristics. </li>
+            <li><strong>Sound Classification:</strong> Recognizing sounds or categorizing audio (identifying instruments in a song, differentiating animal sounds).  Textual prompts can define classes. </li>
+            <li><strong>Audio Editing:</strong> Transforming audio by removing background noise, applying effects (e.g., adding reverb or echo), or even mixing sounds together.</li>
+            <li><strong>Automatic Speech Recognition (ASR):</strong> Enhance the performance of traditional ASR models using context supplied as textual prompts.</li>  
+          </ul>
+
+          <p><strong>Challenges in Audio Prompting:</strong></p>
+          <ul>
+            <li><strong>Representation of Audio Data:</strong> Transforming raw audio (like waveforms) into suitable formats that models understand remains challenging.</li>
+            <li><strong>Specialized Models and Datasets:</strong> Training LLMs for audio often requires custom model architectures and extensive audio datasets (less abundant compared to text).</li> 
+            <li><strong>Evaluation Difficulty:</strong> Unlike quantifiable tasks like translation, assessing musicality, sound quality, or nuanced aspects of synthesized speech remains challenging.</li>
+          </ul>
+
+          <p><strong>Examples:</strong></p> 
+          <ul> 
+            <li>"Generate a blues song with a tempo of 120 bpm in A minor key." </li>
+            <li>"[Audio of bird song]  What species of bird is singing? "</li>
+            <li> "Remove the background noise from this audio recording.  [Audio file with background noise]." </li>
+          </ul> 
+        </div>  
+      </div>  
+
+      <li onclick="toggleDefinition(event, 'videoPromptingDefinition')">
+        Video Prompting <i class="fas fa-chevron-right toggle-icon"></i>
+      </li>
+      <div id="videoPromptingDefinition" class="definition">
+        <h3>Video Prompting</h3>
+        <p>A rapidly advancing field pushing the boundaries of multimodal prompting into the domain of video. Textual descriptions guide LLMs to edit, summarize, or create video clips, showcasing potential in dynamic visual content creation.  </p>
+    
+        <div class="technique-details">
+          <p><strong>Promising Applications of Video Prompting:</strong></p>  
+          <ul>
+            <li><strong>Text-to-Video Generation:</strong> Generating video footage from written scene descriptions or narrative prompts.
+              <br><em>Example:</em> “Create a video of a dog catching a frisbee in a park.”</li>
+            <li><strong>Video Summarization:</strong> Concise text summaries condensing a video's core content, for easier access and information search.
+              <br><em>Example:</em> "Generate a 3-sentence summary of a 5-minute news clip". </li>  
+            <li><strong>Video Question Answering:</strong> Answering targeted questions about video events.
+              <br><em>Example:</em> “What is the color of the car that drove past the building?” asked with reference to a surveillance camera recording.</li>  
+            <li><strong>Video Editing:</strong> Using natural language to make targeted modifications to a video.   
+              <br><em>Example:</em> "Slow down the part where the bird takes flight."  or "Add a cinematic soundtrack to this scene".  </li>  
+          </ul>  
+
+          <p><strong>Current Challenges:</strong></p>
+          <ul>
+            <li><strong>High Computational Requirements:</strong>  Processing and creating video data demands substantial computing power, a key limiting factor.   </li>  
+            <li><strong>Modeling Time:</strong> Accurately understanding the flow of events over time within video poses technical difficulties in model design.</li> 
+            <li><strong>Multimodality Challenges:</strong> Smooth integration of text prompts with both visual and auditory components to generate coherent output is a non-trivial task. </li>  
+          </ul>
+        </div>  
+      </div>
+
+      <li onclick="toggleDefinition(event, '3dPromptingDefinition')">
+        3D Prompting <i class="fas fa-chevron-right toggle-icon"></i>
+      </li>
+      <div id="3dPromptingDefinition" class="definition">
+        <h3>3D Prompting</h3>
+        <p>Utilizes prompts to bring LLM capabilities into 3-dimensional environments, facilitating creation, retrieval, and interaction with complex spatial data. LLMs are moving from text-and-image towards spatial awareness.   
+        </p> 
+
+        <div class="technique-details">
+          <p><strong>Common Applications:</strong></p>
+          <ul>
+            <li><strong>3D Object Synthesis:</strong>  Creating complex 3D models based on text instructions, making 3D design more accessible to users.   
+              <br><em>Example:</em> “Generate a 3D model of a racing car with sleek, aerodynamic design and red paint.”</li>
+            <li><strong>Surface Texturing:</strong> Using text to describe or modify how a 3D object's surface appears and feels.  LLMs learn to apply specific textures or visual patterns onto existing 3D objects.
+              <br><em>Example:</em>  “Apply a realistic wood texture with a mahogany finish to this table.  [Input 3D table model]”  </li> 
+            <li><strong>3D Scene Generation:</strong> Generating entire scenes containing various objects and arrangements.  These could range from architectural spaces to realistic environments. 
+              <br><em>Example:</em> “Design a 3D scene for a tropical rainforest, with tall trees, thick vines, a flowing stream, and lush vegetation. Include parrots in the trees." </li>  
+            <li><strong>3D Animation:</strong> Describing how a 3D object or a scene changes over time, essentially bringing textual narratives into 3D motion.  
+              <br><em>Example:</em> "Animate the following 3D model to walk forward for 5 steps. [3D humanoid model]"</li>
+            <li><strong>3D Model Retrieval:</strong> Finding relevant 3D models from databases, using text queries to precisely identify desired shape and feature characteristics. 
+              <br><em>Example:</em> “Find a 3D model of a vintage armchair with velvet upholstery.  </li>
+          </ul> 
+ 
+          <p><strong>Technical Challenges in 3D Prompting:</strong></p>
+          <ul>
+            <li><strong>3D Representation:</strong> Encoding 3D object geometry and features in a manner easily processed by LLMs requires innovative data structures and approaches.   </li> 
+            <li><strong>Computational Demands:</strong> Processing 3D information and rendering realistic images or animations remains resource-intensive.   </li> 
+            <li><strong>Data Availability:</strong> Large and varied 3D datasets for training specific 3D tasks (like object synthesis) are still under development and relatively scarce.   </li>  
+          </ul> 
+        </div>
+      </div> 
+    </ul> 
+  </div>
+
+
+<!-- Evaluation Tab -->
+<div id="Evaluation" class="tabcontent">
+    <h2>Evaluation</h2>
+    <p>The field of LLMs is rapidly advancing, requiring reliable and scalable techniques to evaluate their performance and identify areas for improvement. Traditional human evaluation, while valuable, often proves costly and time-consuming, especially when dealing with the volume and complexity of LLM outputs. This section explores the emerging practice of using LLMs themselves as evaluators, providing an automated, consistent, and efficient solution for assessing the quality and alignment of generated text.</p>
+  
+    <ul class="interactive-list">
+      <li onclick="toggleDefinition(event, 'promptEvalDefinition')">
+        LLM-Driven Evaluation <i class="fas fa-chevron-right toggle-icon"></i>
+      </li>
+      <div id="promptEvalDefinition" class="definition">
+        <h3>LLM-Driven Evaluation</h3>
+        <p>Harnessing the language understanding and analytical abilities of LLMs, this technique involves employing one LLM to evaluate the output generated by another (or even the same) LLM. Prompt engineering plays a crucial role, defining the evaluation criteria, task, and response format. </p>
+  
+        <p><strong>The Evaluation Pipeline:</strong></p>
+        <div class="flowchart">
+          <div class="flowchart-box">LLM Output <br> (Text to be Evaluated) </div>
+          <div class="flowchart-arrow"></div>
+          <div class="flowchart-box">Evaluation Prompt <br> (Includes Task, Criteria, Instructions)</div>
+          <div class="flowchart-arrow"></div>
+          <div class="flowchart-box">Evaluator LLM <br>(Performs Analysis)  </div>
+          <div class="flowchart-arrow"></div>
+          <div class="flowchart-box">Evaluation Output <br>(Score, Feedback, Judgment)  </div> 
+        </div>
+  
+        <div class="technique-details">
+          <p><strong>Key Aspects of LLM-Driven Evaluation:</strong></p>
+  
+          <ul class="interactive-list">
+            <li onclick="toggleDefinition(event, 'promptTechniquesEvalDefinition')">
+              Prompting Techniques  <i class="fas fa-chevron-right toggle-icon"></i>
+            </li>
+            <div id="promptTechniquesEvalDefinition" class="definition">
+              <h3>Prompting Techniques for Effective Evaluation</h3>
+              <p>LLM evaluation is significantly enhanced by leveraging familiar prompting techniques to structure the assessment process and guide the evaluator LLM. The evaluation prompt must clearly specify the task and criteria, using various methods for better accuracy and more insightful feedback.</p>
+  
+              <div class="technique-details">
+                <p><strong>Prompting Techniques for Evaluation:</strong></p> 
+                <ul>
+                  <li><strong>In-Context Learning (ICL):</strong> The evaluation prompt includes examples of various output quality levels with associated human judgments. The evaluator learns by generalizing from these labeled instances to make assessments on new text. </li>
+                  <li><strong>Role-Playing:</strong>   The evaluation prompt might direct the LLM to adopt a specific role during its assessment. This helps achieve specialized, consistent evaluation criteria and even simulates diverse human opinions by having multiple roles like "Teacher", "Strict Critic," and "Expert".</li>
+                  <li><strong>Chain-of-Thought (CoT) Prompting:</strong> In complex evaluation tasks, the evaluator can articulate its reasoning in steps, increasing the transparency and understanding of its judgment process.</li>
+                  <li><strong>Model-Generated Evaluation Criteria:</strong> The criteria itself can be automatically derived. Instead of manually defining evaluation criteria, another LLM could generate those guidelines. However, further research is needed on how best to generate such guidelines reliably.</li> 
+                </ul>
+  
+                <p><strong>Example Evaluation Prompt: </strong></p>
+                <pre>You are an English teacher. Your task is to evaluate a high-school student's essay based on these aspects:
+  - Grammar and Spelling 
+  - Clarity of Argument
+  - Originality and Style
+  - Structure and Coherence  
+  
+  Provide a detailed score for each aspect, ranging from 1 (Very Poor) to 5 (Excellent), and provide written feedback.
+  
+  ## Student Essay:
+  {STUDENT_ESSAY} </pre> 
+              </div>
+            </div>
+        
+            <li onclick="toggleDefinition(event, 'outputFormatEvalDefinition')">
+              Output Format for Evaluation <i class="fas fa-chevron-right toggle-icon"></i>
+            </li>
+            <div id="outputFormatEvalDefinition" class="definition">
+              <h3>Output Format for Evaluation</h3>
+              <p>To facilitate straightforward analysis and comparison of evaluations, standardized output formats are important, particularly for quantitative comparisons and automation of the process. Tailoring the format for both the specific task and ease of processing helps in streamlined evaluation and potential insights generation.
+              </p> 
+  
+              <div class="technique-details">
+                <p><strong>Common Output Formats:</strong></p>
+                <ul>
+                  <li><strong>Binary Scores:</strong>  Best for straightforward questions or categorization, where a yes/no judgment is needed. For example, is the factual claim made in this statement supported? (Yes/No)</li> 
+                  <li><strong>Likert Scales:</strong> Popular for grading quality on multiple dimensions, with scales ranging from 1-5 to 1-10. Allows comparisons, tracking improvement, or aggregating judgments over various aspects.
+                  <br><em>Example:</em> "Rate the grammar of this text on a scale of 1 (Very Poor) to 5 (Excellent)" </li> 
+                  <li><strong>Grading Rubrics:</strong> Assigning letter grades (A, B, C...) that correspond to pre-defined quality levels for each criterion, especially when the assessment requires overall judgment. </li> 
+                  <li><strong>Free-form Text Feedback:</strong> While insightful, they often need further interpretation. These are less amenable to automation but can be extremely helpful for a deep understanding of why an evaluator scored something in a specific way. </li>
+                  <li><strong>Structured Feedback (JSON or XML):</strong> This format ensures easier integration with other tools for analysis and reporting, making it very practical for complex, multi-faceted tasks. 
+                  <br><em>Example:</em>  Using JSON to return:
+                  <pre>{ 
+    "Grammar": 4,  
+    "Clarity":  3,
+    "Relevance":  5,
+    "Overall_Score": 4,
+    "Feedback": "While well-written with few grammar errors, some ideas are not very clear. The relevance is exceptional!" 
+  }
+                  </pre> </li>
+                </ul> 
+                
+                <p><strong>Additional Formatting Factors: </strong> </p> 
+                <ul> 
+                  <li><strong>Consistency with Criteria:</strong> If using structured scores like Likert scales, use those that directly align with pre-defined criteria, improving clarity.</li> 
+                  <li><strong>Clarity for Analysis:</strong> Structured feedback makes it easy to visualize and analyze results, identify patterns, and create insightful reports or dashboards.</li>  
+                  <li><strong>Error Handling:</strong> Implement clear procedures to address scenarios where the LLM evaluator fails to return structured responses, potentially defaulting to a specific output.</li>
+                </ul>  
+              </div> 
+            </li>
+  
+            <li onclick="toggleDefinition(event, 'evalFrameworksDefinition')">
+              Evaluation Frameworks  <i class="fas fa-chevron-right toggle-icon"></i>
+            </li>
+            <div id="evalFrameworksDefinition" class="definition">
+              <h3>LLM Evaluation Frameworks </h3>
+              <p>Formalized frameworks encompassing multiple techniques are used for robust, comprehensive, and replicable LLM evaluation.</p>
+              
+              <div class="technique-details"> 
+                <p><strong>Prominent LLM Evaluation Frameworks:</strong></p>
+                <ul>
+                  <li><strong>LLM-EVAL:</strong> 
+                    <ul> 
+                      <li> Utilizes structured prompts with well-defined evaluation parameters, each associated with a grading scale or range. </li> 
+                      <li> Simple and direct but might lack the depth provided by more complex frameworks.</li>  
+                    </ul> 
+                    <p><strong>Example Prompt:</strong> </p>
+                    <pre>Grammar: (1-5): 
+  Relevance (1-5): 
+  Factual Accuracy: (Yes/No): 
+  
+  Text to Evaluate:
+  {TEXT} 
+                    </pre> 
+                  </li>
+                  <li><strong>G-EVAL:</strong>  
+                    <ul>
+                      <li>  Incorporates Chain-of-Thought, adding the "reasoning steps" to the evaluator prompt. The chain of thought can be manually crafted or generated using methods like AutoCoT. This approach often results in more reliable and less biased assessments.</li> 
+                      <li> Offers greater transparency as evaluation logic is articulated step-by-step.</li>
+                    </ul>  
+                    <p><strong>Example:</strong> </p>  
+                    <p>After a typical instruction (such as “Is this summarization factually consistent?”), a detailed G-EVAL prompt could include steps like:
+                    <br> 1. "Check if each claim in the summary appears in the source text."
+                    <br> 2. "Mark discrepancies with a 'FALSE' tag".
+                    <br> 3. "Count the number of FALSE tags to derive a factual consistency score."
+                    </p>
+                  </li>
+                  <li><strong>ChatEval:</strong>  
+                    <ul>
+                      <li> Uses a multi-agent debate model.  Each LLM, assigned a role (e.g., "proponent", "opponent", "judge"), presents their arguments for and against the output.  </li>  
+                      <li> Creates a nuanced evaluation, similar to a group of experts discussing the quality. </li>
+                      <li>  Output might involve individual LLM evaluations followed by the "judge" making the final decision.</li>
+                    </ul> 
+                    <p><strong>Example Role Instructions:</strong></p>
+                    <pre>- Proponent LLM: Your task is to find arguments in favor of why the given text is excellent.
+  - Opponent LLM: Your role is to criticize the text, focusing on weaknesses or issues.
+  - Judge LLM: Based on arguments by Proponent and Opponent, give an unbiased overall assessment and a final score.</pre>   
+                  </li> 
+                </ul>
+  
+                <p><strong>Emerging LLM Evaluation Techniques and Considerations:</strong></p>
+                <ul>
+                  <li><strong>Explicit vs. Implicit Scoring:</strong> Most commonly, evaluators generate quality scores or feedback directly (explicit). Techniques like calculating the evaluator's prediction confidence, analyzing the length of reasoning steps, or running external consistency checks (e.g., entailment tests for factuality) are implicit scoring approaches. 
+  
+                    </li>
+                  <li><strong>Batch Prompting for Efficiency:</strong>   When possible, evaluating multiple text samples within a single prompt can improve efficiency and save compute resources. This is particularly useful when evaluating against fixed criteria.</li>  
+                  <li><strong>Pairwise Comparisons:</strong> Direct comparisons (asking the LLM “which is better?”) can lead to biases or oversimplification. Direct scoring often outperforms pairwise in reliability. Prompt engineers need to understand these biases when utilizing comparisons. The order in which two items are compared also significantly influences which item gets rated as “better”. </li>  
+                </ul> 
+              </div>
+            </div> 
+          </ul>
+        </div>
+      </div>
+    </ul>
+  </div>
+
+
+
+<!-- Alignment Tab --> 
+<div id="Alignment" class="tabcontent">
+    <h2>Alignment</h2>
+    <p>Beyond focusing on pure performance, prompt engineering must prioritize aligning LLM output with human expectations, ethical considerations, and societal values. This means addressing inherent biases within training data, understanding how prompts can skew responses, and ensuring LLMs behave reliably and fairly across various tasks.</p>
+    <ul class="interactive-list">
+      <li onclick="toggleDefinition(event, 'promptSensitivityDefinition')">
+        Prompt Sensitivity <i class="fas fa-chevron-right toggle-icon"></i>
+      </li>
+      <div id="promptSensitivityDefinition" class="definition">
+        <h3>Prompt Sensitivity</h3>
+        <p>LLMs often exhibit high sensitivity to minor alterations in prompts, which can lead to unpredictable or inconsistent output.  Prompt engineers need to understand this variability and implement methods to make prompts more robust and less prone to undesirable shifts in LLM behavior.</p> 
+        <div class="technique-details">
+          <p><strong>Sensitivity Challenges Illustrated:</strong> </p> 
+          <!-- <img src="https://via.placeholder.com/700x250" alt="LLM Sensitivity to Prompts">  Replace with a visualization  -->
+          
+          <p><strong>Common Sensitivity Categories:</strong></p> 
+          <ul>
+            <li><strong>Prompt Wording:</strong>  Subtle changes in wording can impact the LLM's understanding.
+              <br> <em>Examples:</em>
+              <ul>
+                <li>Replacing words with synonyms:  "Summarize this document" vs.  "Provide a brief overview of this document."</li>  
+                <li>Modifying punctuation:   "What's your favorite color?" vs. "What is your favorite color". </li> 
+                <li>Adding or removing extra spaces or line breaks.</li>
+              </ul>  
+            </li> 
+            <li><strong>Task Format:</strong> The way instructions are phrased impacts the response.   
+              <br> <em>Examples:</em> 
+              <ul>
+                <li>Question vs. Command:  “Translate this” vs.  "Can you translate this?”  </li> 
+                <li>Reordering of Multiple Instructions. </li>  
+              </ul>  
+            </li> 
+            <li><strong>Prompt Drift:</strong> The same prompt yielding different results over time, as models undergo updates or are fine-tuned for specific purposes, a problem that necessitates monitoring and adjustments.   
+              <br><em>Example:</em>  An LLM originally good at translating technical documents might become worse at it after an update focused on creative writing. </li>  
+          </ul> 
+  
+          <p><strong>Addressing Prompt Sensitivity:</strong> </p>  
+          <ul>
+            <li><strong>Thorough Testing:</strong> Before deployment, try out prompt variations on representative datasets, observing how they influence outputs. </li>  
+            <li><strong>Standardized Templates:</strong> Design templates with clearly defined parameters to ensure consistency. This helps reduce inconsistencies and human errors in phrasing during prompt construction.</li>
+            <li><strong>Versioning and Performance Tracking:</strong> Keep a record of all prompt changes, log output data, and measure how performance on benchmark tasks varies as prompts are modified. </li>
+            <li><strong>Model Monitoring:</strong>  Actively monitor model updates and retest performance of critical prompts when significant model changes occur. </li>  
+          </ul>
+        </div> 
+      </div>
+  
+      <li onclick="toggleDefinition(event, 'overconfidenceCalibrationDefinition')">
+        Overconfidence and Calibration <i class="fas fa-chevron-right toggle-icon"></i>
+      </li>
+      <div id="overconfidenceCalibrationDefinition" class="definition">
+        <h3>Overconfidence and Calibration</h3>
+        <p>One of the primary concerns in LLM deployment is their frequent overconfidence, where they express high certainty even for wrong answers or outputs generated from insufficient information. Calibrating confidence to realistically reflect the actual reliability of an LLM’s output is essential for making them trustworthy tools.</p> 
+        
+        <div class="technique-details">
+          <p><strong>The Problem with Overconfidence:</strong> </p> 
+          <ul> 
+            <li><strong>Misleading Users:</strong> Users are prone to believe answers presented with high certainty. If an LLM sounds extremely confident about wrong information, it misleads users into potentially making bad decisions.   </li>
+            <li><strong>Challenges for Automation:</strong> When integrating LLMs with systems where decisions depend on their output reliability (like selecting relevant articles from RAG), uncalibrated outputs can cause failures in the system. </li>  
+          </ul>
+          
+          <p><strong>Prompt Engineering Strategies for Confidence Calibration:</strong></p>
+          <ul>
+            <li><strong>Explicit Confidence Elicitation:</strong> Include prompts directly requesting confidence estimation from the LLM, both for overall responses and specific sub-tasks (in scenarios like multi-step reasoning). 
+              <br><em>Example Prompts: </em>
+              <ul>
+                <li>“How confident are you (on a scale of 1 to 10) in your translation?”  </li> 
+                <li>"Are you absolutely sure about this statement?”  (Response options: "Yes", "Somewhat", "No").</li>  
+                <li> “For each of the following reasoning steps, rate your confidence from 1 (least confident) to 5 (most confident)." </li>  
+              </ul>  
+              <p><em>Caveat: </em>   Research indicates that LLM’s are prone to being overconfident, even when self-evaluating. Confidence prompting, though conceptually simple, may not always yield accurate measures of uncertainty.</p>
+            </li> 
+            <li><strong>Leveraging Output Probabilities: </strong> LLMs often have internal scores for how likely different tokens are in their generation.
+              <br> <em>Techniques:</em> 
+              <ul>
+                <li>Use raw probabilities as a measure of confidence. A high probability for a particular generated word implies greater model confidence.</li> 
+                <li>Apply statistical methods (e.g., Temperature Scaling) to adjust probabilities, mapping the internal model scores to calibrated confidence values for outputs.</li>
+              </ul> 
+            </li>
+            <li><strong>Ensembling:</strong>
+              <ul> 
+                <li>Aggregate results: Running multiple versions of prompts or models provides more reliable output.</li>
+                <li>Combine confidence scores from several instances of a task:  Taking averages or using a majority vote across outputs improves accuracy.</li> 
+                <li>Diversify Reasoning: Self-Consistency uses varying prompts and controlled randomness (using Temperature) during generation to obtain different "reasoning chains" (especially useful in Chain-of-Thought prompts), which are analyzed for consensus in answers. If majority agreement in answers is high, it reflects increased confidence.  </li>  
+              </ul> 
+            </li>
+          </ul>  
+        </div> 
+      </div>
+  
+      <li onclick="toggleDefinition(event, 'biasesDefinition')">
+        Biases, Stereotypes, and Cultural Alignment <i class="fas fa-chevron-right toggle-icon"></i>
+      </li>
+      <div id="biasesDefinition" class="definition">
+        <h3>Biases, Stereotypes, and Cultural Alignment</h3>
+        <p> LLMs are prone to reflecting existing social biases present in their vast training datasets. This manifests as potentially harmful stereotypes or insensitive language, going against ethical and inclusive objectives in AI systems. Continuous mitigation for bias, discrimination, and cultural relevance are paramount when developing and using LLMs.</p>  
+  
+        <div class="technique-details">
+          <p><strong>Approaches:</strong></p> 
+          <ul class="interactive-list">
+            <li onclick="toggleDefinition(event, 'datasetCurationDefinition')">
+              Careful Dataset Curation <i class="fas fa-chevron-right toggle-icon"></i>
+            </li>
+            <div id="datasetCurationDefinition" class="definition">
+              <h3>Addressing Biases at the Root: Data Curation</h3>  
+              <p> Training data's quality directly impacts the fairness of LLMs. Since most data reflects societal biases, actively addressing this at the source, even before prompts are considered, is a significant first step in mitigating biased or unfair output.   
+              </p>
+      
+              <div class="technique-details"> 
+                <p><strong>Curation Techniques for Unbiased Data:</strong></p>
+                <ul>
+                  <li><strong>Bias Identification and Data Balancing:</strong> Analyzing data distribution for underrepresentation (certain genders, demographics) or overrepresentation of stereotypes. This could involve techniques like:  
+                    <ul>
+                      <li>Data filtering to remove examples containing extreme bias.</li>
+                      <li>Weighted Sampling - Emphasizing data representing less common viewpoints or underrepresented groups during training.</li> 
+                    </ul> 
+                  </li> 
+                  <li><strong>Data Augmentation with Diversity:</strong> Generating synthetic training samples (using carefully controlled prompts and multiple LLMs) specifically designed to include diverse views, opinions, cultural backgrounds, and counter-narratives. The newly generated, "fairer" examples enhance the overall data.   </li>
+                  <li><strong>Careful Data Source Selection:</strong> When combining data from various origins (social media, academic papers, news), evaluating the biases of each source before integration. This careful vetting of data can help ensure a less prejudiced output.</li> 
+                </ul> 
+              </div>  
+            </div>
+            
+            <li onclick="toggleDefinition(event, 'biasAwarePromptingDefinition')">
+              Bias-Aware Prompt Design <i class="fas fa-chevron-right toggle-icon"></i>
+            </li>
+            <div id="biasAwarePromptingDefinition" class="definition">
+              <h3>Bias-Aware Prompting Techniques</h3> 
+              <p> Crafting prompts that directly guide LLMs away from prejudiced, discriminatory, or stereotyped outputs. This might be accomplished via straightforward instruction, careful selection of exemplars, or counteracting false assumptions within a user's original input.</p> 
+              
+              <div class="technique-details">
+                <p><strong>Common Techniques:</strong></p> 
+                <ul>
+                  <li><strong>Direct Instructions:</strong>  Use simple prompts to directly guide LLMs against bias, reinforcing a neutral and fair response style.   
+                    <br><em>Examples:</em>  
+                    <ul>
+                      <li>"Provide an answer that is free from bias.”</li> 
+                      <li>“Write this description in a fair and impartial manner."</li>  
+                      <li>"Explain these historical events in an objective manner, avoiding cultural bias."</li>  
+                    </ul> 
+                  </li>  
+                  <li><strong>Few-Shot Demonstrations with Fair Examples:</strong> Using Few-Shot learning, provide diverse and counter-stereotypical examples explicitly illustrating balanced views. These demonstrate fair and inclusive language, implicitly guiding the LLM towards unbiased output.  
+                    <br><em>Example:</em>   
+                    <p>For a translation prompt that typically associates "doctor" with a male persona in the target language, exemplars that highlight the "doctor" in a variety of gender expressions can counteract such stereotypical biases during the translation process.</p>  
+                  </li> 
+                  <li><strong>Countering False Presuppositions:</strong> Prompt engineering to detect and neutralize biased assumptions present in user prompts (often seen when users explicitly state prejudiced views), preventing amplification of those views. 
+                    <br><em>Example:</em>  
+                    <p>A user prompts the model: “This author’s writing style clearly shows he is biased toward..."  To address this, instead of generating an output confirming or expanding on the user's presupposed bias, prompt engineering to gently guide the model to either ask clarification (“What evidence makes you say that?”) or counter with neutral statements (“While style can be subjective, let’s look at some aspects…”) would prevent the LLM from furthering harmful biases.</p>   
+                  </li> 
+                </ul>
+              </div>
+            </div>
+        
+            <li onclick="toggleDefinition(event, 'biasDetectionDefinition')">
+              Bias Detection <i class="fas fa-chevron-right toggle-icon"></i>
+            </li>
+            <div id="biasDetectionDefinition" class="definition">
+              <h3>Bias Detection and Mitigation for LLMs </h3>  
+              <p>Post-generation safeguarding. This method uses specialized classifiers trained to identify biased or stereotypical language patterns within a text. When applied to LLM output, these tools provide a second layer of defense.</p> 
+  
+              <div class="technique-details"> 
+                <p><strong>Workflow:</strong></p>  
+                <div class="flowchart">
+                  <div class="flowchart-box">LLM Output</div>
+                  <div class="flowchart-arrow"></div>
+                  <div class="flowchart-box">Bias Detection Model (Classifier)</div> 
+                  <div class="flowchart-arrow"></div>
+                  <div class="flowchart-box">Flags Biased Language</div>
+                  <div class="flowchart-arrow"></div>
+                  <div class="flowchart-box"> Output Filtering / Prompt Revision / Flagging for Review  </div>  
+                </div>  
+  
+                <p><strong>Tools and Strategies for Detection:</strong></p>
+                <ul> 
+                  <li>Pre-trained Bias Detection Models:   Utilizing publicly available or commercially provided sentiment and bias detection LLMs that are trained on large datasets, these tools flag various forms of bias.</li>
+                  <li>Custom Bias Classifiers: Building specialized models that identify patterns particular to your domain or use case. For example, training a classifier that identifies specific job descriptions with gender biases, to counter subtle discrimination within hiring workflows.  </li> 
+                </ul> 
+                
+                <p><strong>Post-Detection Mitigation Options:</strong></p>
+                <ul>  
+                  <li>Filtering Outputs: Suppress flagged content, prevent biased text from reaching end users, or guide them to alternate neutral options.   </li> 
+                  <li>Prompt Revision and Regeneration: Utilize identified bias to improve the original prompt by adjusting wording or adding examples to counter those types of bias. Then prompt the model again for a fairer response.</li>
+                  <li>Flagging for Review: Escalate outputs identified as potentially biased for human evaluation, especially when the content necessitates nuanced, context-aware judgments that automated methods struggle with.  </li> 
+                </ul>  
+              </div>
+            </div>
+    
+            <li onclick="toggleDefinition(event, 'culturalAlignmentDefinition')">
+              Cultural Alignment  <i class="fas fa-chevron-right toggle-icon"></i>
+            </li>
+            <div id="culturalAlignmentDefinition" class="definition">
+              <h3>Adapting LLMs to Different Cultural Contexts </h3> 
+              <p>Going beyond general bias, effective prompt engineering ensures output tailored for specific cultural nuances and values, improving local relevance, respect, and accurate information delivery.</p>  
+  
+              <div class="technique-details"> 
+                <p><strong>Techniques for Cultural Alignment: </strong> </p> 
+                <ul>
+                  <li><strong>Few-Shot Learning with Cultural Exemplars: </strong> Include examples of task completion, incorporating sensitivity to local expressions and customs. If doing summarization, exemplars tailored for a region’s communicative norms (directness, politeness) will influence the summarization style.  </li>  
+                  <li><strong>Translation with Cultural Sensitivity:</strong>   
+                    <ul>
+                      <li> Initial Response:  Instead of directly translating a prompt, generating the text in a high-resource language (English).   </li>  
+                      <li>Culturally Adapted Translation:  Then, prompts should direct the translator to utilize culturally specific terminology, phrases, and appropriate tones when translating from this source language, tailoring for local audiences.   </li> 
+                      <li>Iterative Feedback for Nuances: For particularly delicate tasks or audiences, expert review of these culturally sensitive translations, followed by prompts instructing the LLM on finer cultural points is often beneficial.  </li> 
+                    </ul> 
+                  </li> 
+                  <li><strong>Region-Specific Datasets: </strong> Utilizing data from particular cultural or linguistic groups to finetune the base LLM further aligns output, but such datasets require significant work.  </li>  
+                </ul> 
+                
+                <p><strong>Example Scenario:</strong></p> 
+                <p> Imagine creating an educational game in Japanese with explanations tailored for children's comprehension. Prompts could: (1) First guide the model to produce an informative yet engaging narrative about science concepts in English.  (2) For translation, provide instructions focusing on simplifying grammar, including cultural analogies familiar to Japanese children, and using a tone aligning with cultural politeness.    
+                </p> 
+              </div> 
+            </div> 
+          </ul>
+        </div> 
+      </div>  
+      
+  
+      <li onclick="toggleDefinition(event, 'ambiguityDefinition')">
+        Ambiguity  <i class="fas fa-chevron-right toggle-icon"></i>
+      </li>
+      <div id="ambiguityDefinition" class="definition">
+        <h3>Ambiguity in Natural Language</h3>
+        <p>One of the challenges LLMs encounter is resolving ambiguity in human language. Since words can have multiple interpretations depending on context, prompt engineering must use strategies to avoid misunderstanding and ensure reliable and accurate LLM behavior.</p>
+        
+        <div class="technique-details">
+          <p><strong>Prompt Engineering Techniques:</strong></p> 
+          <ul class="interactive-list"> 
+            <li onclick="toggleDefinition(event, 'contextDisambiguationDefinition')">
+              Explicit Context in Prompts  <i class="fas fa-chevron-right toggle-icon"></i>
+            </li>
+            <div id="contextDisambiguationDefinition" class="definition">
+              <h3>Context is King: Resolving Ambiguity with Explicit Information </h3> 
+              <p> Prompt engineering's primary approach for disambiguation is ensuring prompts offer ample contextual hints to minimize alternate interpretations by LLMs. Relevant details, background, specific terms, or task-framing reduce reliance on word-level interpretation.    
+              </p>  
+  
+              <div class="technique-details">  
+                <p><strong>Strategies for Adding Disambiguation Context:</strong> </p>
+                <ul>
+                  <li><strong>Clearly Defined Task Instructions: </strong> Providing comprehensive information about the task's objectives and expectations. If ambiguity lies in terms, clearly state which interpretation applies.</li>  
+                  <li><strong>Domain Specification:</strong> Indicate the subject domain, limiting the range of interpretations (e.g., "financial context", “historical context”).
+                    <br><em>Example: </em> "In the context of medicine, what is the meaning of the word 'culture'?"  </li>  
+                  <li><strong>Key Term Clarifications:</strong> Adding explicit explanations or providing related terms to reduce ambiguity in keywords.
+                    <br><em>Example:</em>  "The prompt concerns 'bass', specifically referring to the musical instrument, not the fish. Summarize the text related to this musical bass."</li>  
+                </ul>  
+              </div>
+            </div>
+            
+            <li onclick="toggleDefinition(event, 'exampleDisambiguationDefinition')">
+              Example-Based Disambiguation  <i class="fas fa-chevron-right toggle-icon"></i> 
+            </li> 
+            <div id="exampleDisambiguationDefinition" class="definition">
+              <h3>Demonstrating Intent Through Examples: Example-Based Disambiguation</h3>
+              <p>Ambiguous words within a task description can be clarified by leveraging Few-Shot Prompting's strength in showcasing, rather than solely instructing,  In essence, include exemplars to make the intended meaning obvious for LLMs.</p>
+              <div class="technique-details">  
+                <p><strong>Example for Disambiguating “Play”</strong></p>
+                <p>Prompt:  “Please translate this phrase: ‘I want to play.’”.
+                  </p>
+                  <p>Adding Examples:</p>  
+                <pre>Example 1: “I want to play a game” - "Ich möchte ein Spiel spielen" (German)
+  Example 2: “The children will play outside” -  “Les enfants joueront dehors” (French)</pre>
+                <p>Instead of relying solely on the model understanding “play” from the short initial phrase, by including the two translated examples,  the ambiguity between  “play” as in “entertainment/ games” vs.  “play” as an action is implicitly removed by demonstrating how both instances translate differently in German and French, giving the LLM clear cues. </p>
+              </div>
+            </div> 
+          
+  
+            <li onclick="toggleDefinition(event, 'promptClarificationDefinition')">
+              Prompting for Clarification <i class="fas fa-chevron-right toggle-icon"></i>
+            </li>
+            <div id="promptClarificationDefinition" class="definition">
+              <h3>Prompting for Clarification </h3>
+              <p>While context addition attempts to remove ambiguity during the prompting stage itself, this method empowers LLMs to detect their lack of understanding, then directly ask the user clarifying questions to resolve ambiguities during runtime, resembling the flow of human conversation.
+  
+              </p> 
+              
+              <div class="technique-details"> 
+                <p><strong>Clarification Process Flow:</strong></p> 
+                <div class="flowchart">
+                  <div class="flowchart-box">User Prompt (Potentially Ambiguous)</div> 
+                  <div class="flowchart-arrow"></div> 
+                  <div class="flowchart-box">LLM Detects Potential Ambiguity </div> 
+                  <div class="flowchart-arrow"></div>
+                  <div class="flowchart-box">LLM Asks for Clarification
+                    <br> (Generates clarifying questions for user) </div> 
+                  <div class="flowchart-arrow"></div>  
+                  <div class="flowchart-box">User Clarifies  </div> 
+                  <div class="flowchart-arrow"></div> 
+                  <div class="flowchart-box"> LLM Executes Task/ Generates Response  </div>
+                </div> 
+   
+                <p><strong>How Prompting is Involved:</strong></p>
+                <ul>
+                  <li><strong>Detect and Decide:</strong> LLMs receive initial prompts designed to both: 
+                    <ul> 
+                      <li>Detect possible ambiguities (for example, using prompt patterns common with unclear terms or detecting unusual probability distributions for its response) and </li>
+                      <li>Decide when additional clarification is needed rather than directly generating an answer that might be based on an incorrect understanding of intent.</li> 
+                    </ul>
+                  </li> 
+                  <li><strong>Targeted Questions for Clarification:</strong> Design prompts that guide the model in phrasing specific, helpful questions to resolve those detected ambiguities.</li>  
+                </ul>
+          
+                <p><strong>Example Interaction (Code Generation Scenario) </strong> </p> 
+                <ol>
+                  <li>Prompt: "Write me a code that sorts some items. " </li> 
+                  <li>LLM’s Response:  "What kind of sorting algorithm do you need?  Bubble sort, quick sort, merge sort, etc. And what type of data needs sorting?" </li> 
+                </ol>  
+              </div>
+            </div>
+          </ul> 
+        </div>
+      </div> 
+    </ul>  
+  </div>
+
+
+</div>  
+
+<script>
+// Tab functionality
+function openTab(evt, tabName) {
+var i, tabcontent, tablinks;
+tabcontent = document.getElementsByClassName("tabcontent");
+for (i = 0; i < tabcontent.length; i++) {
+  tabcontent[i].style.display = "none";
+}
+tablinks = document.getElementsByClassName("tablinks");
+for (i = 0; i < tablinks.length; i++) {
+  tablinks[i].className = tablinks[i].className.replace(" active", "");
+}
+document.getElementById(tabName).style.display = "block";
+evt.currentTarget.className += " active";
+}
+
+// Definition toggle functionality
+function toggleDefinition(evt, definitionId) {
+var definition = document.getElementById(definitionId);
+var icon = evt.currentTarget.querySelector('.toggle-icon');
+if (definition.style.display === "block") {
+  definition.style.display = "none";
+  icon.classList.remove('rotate');
+} else {
+  definition.style.display = "block";
+  icon.classList.add('rotate');
+}
+}
+
+// Back to Top button functionality
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+  document.getElementById("backToTop").style.display = "block";
+} else {
+  document.getElementById("backToTop").style.display = "none";
+}
+}
+
+function topFunction() {
+document.body.scrollTop = 0; // For Safari
+document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+}
+
+// Flip animation triggered on book hover
+const book = document.querySelector('.book');
+    const mainContent = document.getElementById('mainContent');
+  
+    book.addEventListener('click', () => {
+      book.classList.add('flipped');
+      // After a delay, reveal the content
+      setTimeout(() => {
+        book.style.display = 'none';
+        mainContent.style.display = 'block';
+        body.style.overflow = 'auto';
+      }, 1);
+    });
+
+  // Open the default tab on page load
+  document.getElementById("defaultOpen").click();
+
+</script>
+<footer>
+    <div class="container">
+      <p>&lt;/Shahnab&gt;</p> 
+    </div>
+  </footer>
+
+  <style>
+    footer {
+      background-color: rgba(0, 0, 0, 0.1); /* Slightly dark background */
+      padding: 10px 0; /* Add some top/bottom padding */
+      text-align: center;  
+      margin-top: 30px;
+    } 
+  </style>
+</body>
+</html>
