@@ -568,6 +568,13 @@ const allSongs = [
         duration: "3:03",
         src: "music/Abyss of Echoes.mp3",
     },
+    {
+        id: 80,
+        title: "Lost in the rhythm… of yesterday",
+        artist: "Refreshed AI Model",
+        duration: "3:11",
+        src: "music/Lost in the rhythm… of yesterday....mp3",
+    },
 ];
 
 const audio = new Audio();
