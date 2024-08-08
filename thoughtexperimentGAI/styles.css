@@ -570,6 +570,86 @@ footer {
     }
 }
 
+@media (min-width: 2561px) {
+    .campaign-container {
+        max-width: 2400px;
+        margin: 0 auto;
+    }
+
+    .campaign-left, .campaign-right {
+        width: 48%;
+    }
+
+    .image-wrapper {
+        max-height: 800px;
+    }
+}
+
+@media (min-width: 1921px) and (max-width: 2560px) {
+    .campaign-container {
+        max-width: 1800px;
+        margin: 0 auto;
+    }
+
+    .campaign-left, .campaign-right {
+        width: 48%;
+    }
+
+    .image-wrapper {
+        max-height: 700px;
+    }
+}
+
+@media (min-width: 1441px) and (max-width: 1920px) {
+    .campaign-container {
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+
+    .campaign-left, .campaign-right {
+        width: 48%;
+    }
+
+    .image-wrapper {
+        max-height: 600px;
+    }
+}
+
+@media (min-width: 1201px) and (max-width: 1440px) {
+    .campaign-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .campaign-left, .campaign-right {
+        width: 48%;
+    }
+
+    .image-wrapper {
+        max-height: 550px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .campaign-container {
+        flex-direction: column;
+        width: 90%;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .campaign-left, .campaign-right {
+        width: 100%;
+        height: auto;
+        padding: 30px;
+    }
+
+    .image-wrapper {
+        width: 100%;
+        max-height: 500px;
+    }
+}
+
 @media (max-width: 1200px) {
     .campaign-container {
         flex-direction: column;
