@@ -474,3 +474,132 @@ footer {
         width: 100%;
     }
 }
+
+@media (max-width: 1200px) {
+    .campaign-container {
+        flex-direction: column;
+        width: 90%;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .campaign-left, .campaign-right {
+        width: 100%;
+        height: auto;
+        padding: 30px;
+    }
+
+    .image-wrapper {
+        width: 100%;
+        max-height: 500px;
+    }
+}
+
+@media (max-width: 992px) {
+    .landing-page {
+        padding: 40px;
+        width: 90%;
+        max-width: 600px;
+    }
+
+    .landing-page h1 {
+        font-size: 3em;
+    }
+
+    .landing-page .subtitle {
+        font-size: 1.3em;
+    }
+
+    .neon-button {
+        font-size: 1.2em;
+    }
+
+    .campaign-container {
+        width: 90%;
+    }
+
+    .campaign-left, .campaign-right {
+        padding: 25px;
+    }
+
+    .image-wrapper {
+        max-height: 400px;
+    }
+}
+
+@media (max-width: 767px) {
+    .landing-page {
+        padding: 30px;
+        width: 90%;
+        max-width: 400px;
+    }
+
+    .landing-page h1 {
+        font-size: 2.5em;
+    }
+
+    .landing-page .subtitle {
+        font-size: 1.2em;
+    }
+
+    .neon-button {
+        font-size: 1.1em;
+    }
+
+    .campaign-container {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .campaign-left, .campaign-right {
+        width: 100%;
+        height: auto;
+        padding: 20px;
+        border-radius: 0;
+        box-shadow: none;
+        background-color: transparent;
+    }
+
+    .image-wrapper {
+        max-height: 300px;
+    }
+
+    .navigation-buttons {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .button-container {
+        width: 90%;
+        max-width: 400px;
+    }
+}
+
+@media (max-width: 480px) {
+    .landing-page {
+        padding: 20px;
+        max-width: 90%;
+    }
+
+    .landing-page h1 {
+        font-size: 2em;
+    }
+
+    .landing-page .subtitle {
+        font-size: 1em;
+    }
+
+    .neon-button {
+        font-size: 0.9em;
+    }
+
+    .campaign-left, .campaign-right {
+        padding: 15px;
+    }
+
+    .image-wrapper {
+        max-height: 250px;
+    }
+}
