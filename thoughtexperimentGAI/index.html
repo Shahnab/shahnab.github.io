@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thought Experiment</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.9.3/tsparticles.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div id="landingPage" class="content">
+        <div class="landing-page">
+            <h1 class="glitch" data-text="Thought Experiment">Thought Experiment</h1>
+            <p class="subtitle">Can G-A.I. (re)Create Award Worthy Ads?</p>
+            <button id="startBtn" class="neon-button">Check it out</button>
+        </div>
+    </div>
+    <div id="campaignPage" class="hidden">
+        <header>
+            <h1>(re)Creation with GAI</h1>
+            <nav>
+                <button id="homeBtn">Back</button>
+                <button id="aboutBtn">Concept</button>
+            </nav>
+        </header>
+        <main>
+            <div class="campaign-container">
+                <div class="campaign-left">
+                    <h2>Original Campaign</h2>
+                    <div class="image-wrapper">
+                        <img id="originalImage" src="" alt="Original Campaign Image">
+                    </div>
+                    <div id="originalDetails" class="details-box"></div>
+                </div>
+                <div class="campaign-right">
+                    <h2>AI-Generated Variation</h2>
+                    <div class="image-wrapper">
+                        <img id="variationImage" src="" alt="Variation Image">
+                    </div>
+                    <div id="variationDetails" class="details-box"></div>
+                    <div class="navigation-buttons">
+                        <button id="prevImageBtn">Previous</button>
+                        <button id="nextImageBtn">Next</button>
+                    </div>
+                </div>
+            </div>
+            <div class="button-container">
+                <button id="prevCampaignBtn" class="prev-campaign-button">Previous (re)Creation</button>
+                <button id="nextCampaignBtn" class="next-campaign-button">Next (re)Creation</button>
+            </div>
+        </main>
+    </div>
+    <script src="scripts.js"></script>
+</body>
+</html>
