@@ -475,6 +475,36 @@ footer {
     }
 }
 
+@media (min-width: 1441px) {
+    .campaign-container {
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+
+    .campaign-left, .campaign-right {
+        width: 48%;
+    }
+
+    .image-wrapper {
+        max-height: 600px;
+    }
+}
+
+@media (min-width: 1201px) and (max-width: 1440px) {
+    .campaign-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .campaign-left, .campaign-right {
+        width: 48%;
+    }
+
+    .image-wrapper {
+        max-height: 550px;
+    }
+}
+
 @media (max-width: 1200px) {
     .campaign-container {
         flex-direction: column;
