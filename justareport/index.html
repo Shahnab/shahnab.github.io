@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Analysis Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        
+        :root {
+            --primary-color: rgba(52, 152, 219, 1);
+            --secondary-color: #223d57;
+            --background-color: #ecf0f1;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --header-color: #ffffff;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease;
+        }
+
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: var(--secondary-color);
+            color: var(--header-color);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--primary-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header h1 {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.3) 0%, rgba(44, 62, 80, 0) 70%);
+            animation: pulse 15s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            padding: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .metric-card {
+            background-color: var(--primary-color);
+            color: var(--header-color);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .metric-card:hover {
+            transform: scale(1.05);
+            background-color: #2980b9;
+        }
+
+        .metric-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .metric-card:hover::after {
+            opacity: 1;
+        }
+
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 15px 0;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .observation {
+            background-color: #f7f9fa;
+            border-left: 5px solid var(--primary-color);
+            padding: 20px;
+            margin-top: 25px;
+            border-radius: 0 10px 10px 0;
+            transition: transform 0.3s ease;
+        }
+
+        .observation:hover {
+            transform: translateX(10px);
+        }
+
+        .prediction-algo {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .algo-step {
+            background-color: var(--primary-color);
+            color: var(--header-color);
+            padding: 20px;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            margin: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .algo-step:hover {
+            background-color: #2980b9;
+            transform: scale(1.1);
+        }
+
+        .algo-step::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .algo-step:hover::after {
+            opacity: 1;
+        }
+
+        .algo-description {
+            display: none;
+            background-color: #f7f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 25px;
+            text-align: left;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        #darkModeToggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--secondary-color);
+            color: var(--header-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #darkModeToggle:hover {
+            background-color: var(--primary-color);
+        }
+
+        .dark-mode {
+            --background-color: #2c3e50;
+            --card-background:  #34495e;
+            --text-color: #ecf0f1;
+            --header-color: #ffffff;
+        }
+
+        .dark-mode .observation {
+            background-color: #2c3e50;
+        }
+
+        .dark-mode .algo-description {
+            background-color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <button id="darkModeToggle">Toggle Dark Mode</button>
+    <div class="header">
+        <h1>Video Analysis</h1>
+        <h3>Vista Shield</h3>
+    </div>
+    
+       
+    <div class="dashboard">
+                
+        <div class="grid">
+                                       
+            
+            <div class="card" id="metricsCard">
+                <h2>Overall Data Summary</h2>
+                <div class="grid">
+                    <div class="metric-card">
+                        <h3>Total Shared Video URLs</h3>
+                        <div class="metric-value" id="avgImpressions">967044</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Total Impressions Delivered</h3>
+                        <div class="metric-value" id="viralRatio">38538506</div>
+                    </div>
+                    
+                </div>
+                <div class="observation">
+                    <h3>New Data Parameters Added:</h3>
+                        <li>Total Channel Subscribers</li>
+                        <li>Total Channel Views</li>
+                        <li>Video Views</li>
+                        <li>Time since upload- Months</li>
+                    </ul>
+                    
+                </div>
+            </div>
+
+            <div class="card" id="impressionCard">
+                <h2>Impressions Categorization</h2>
+                <div class="chart-container">
+                    <canvas id="impressionDistributionChart"></canvas>
+                </div>
+                <div class="observation">
+                    <h3>Impressions Categorization Criteria:</h3>
+                    <ul>
+                        <li>Very High: If impression greater than equal to 10000</li>
+                        <li>High if impression in the range of 1000 to 9999</li>
+                        <li>Medium if impression is in the range of 100-999</li>
+                        <li>Low if impression is in the range of less than 99</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card" id="conclusionCard">
+            <h2>Preliminiary Analysis</h2>
+            <div class="observation">
+                <h3>Observation:</h3>
+                <p>Based on the preliminary analysis, there is no clear boundaries in data parameters to determine and predict the impression category</p>
+                <p>Lot of outliers in Channel Subscribers, Channel Views, Video Views and Time since upload in Months to create prediction and boundaries in data parameters</p>
+            </div>
+        </div>
+        <div class="card" id="correlationCard">
+            <h2>Correlation with Impressions</h2>
+            <div class="chart-container">
+                <canvas id="correlationChart"></canvas>
+            </div>
+            <div class="observation">
+                <h3>Parameter Correlation Analysis:</h3>
+                <ul>
+                    <li><strong>Channel Subscribers (0.13):</strong> Weak positive correlation, suggesting a slight tendency for channels with more subscribers to get more impressions.</li>
+                    <li><strong>Channel Views (0.03):</strong> Very weak correlation, indicating that overall channel popularity has minimal impact on individual video impressions.</li>
+                    <li><strong>Video Views (0.05):</strong> Surprisingly low correlation, suggesting that impressions don't necessarily translate directly to views.</li>
+                    <li><strong>Time since Upload (-0.05):</strong> Weak negative correlation, hinting that newer videos might perform slightly better, but the effect is minimal.</li>
+                </ul>
+                <p>These weak correlations suggest that predicting impressions is complex and likely depends on factors not captured in this dataset, such as content quality, trending topics, or YouTube's recommendation algorithm.</p>
+            </div>
+        </div>
+        <div class="card" id="conclusionCard">
+            <h2>Data Transformation for Prediction Algorithm</h2>
+            <div class="observation">
+                <h3>Transformation Methodology</h3>
+                <p>To develop the prediction algorithms, outliers were removed to identify potential trends</p>
+                <p>With a focus on detecting and predicting the “Very High” and “High” categories, we achieved a 60% accuracy rate in our prediction algorithm</p>
+            </div>
+        </div>
+        <div class="card" id="predictionCard">
+            <h2>Prediction Algorithm Details</h2>
+            <h6>Click on each button to reveal</h6>
+            <div class="prediction-algo">
+                <div class="algo-step" onclick="showDescription('step1')">Very High Impressions</div>
+                <div class="algo-step" onclick="showDescription('step2')">High Impressions</div>
+                <div class="algo-step" onclick="showDescription('step3')">Medium Impressions</div>
+                <div class="algo-step" onclick="showDescription('step4')">Low Impressions</div>
+            </div>
+            <div id="step1" class="algo-description">
+                <h3>Observation for Very High Impressions</h3>
+                <p>If Channel Subscribers ≥ 5M and Total Channel Views ≥ 5B, categorize as "Very High"</p>
+            </div>
+            <div id="step2" class="algo-description">
+                <h3>Observation for High Impressions</h3>
+                <p>If Channel Subscribers ≥ 1M and Total Channel Views ≥ 1B or Individual Video View Count ≥ 20M, and Time since upload ≤ 6 months, categorize as "High"</p>
+            </div>
+            <div id="step3" class="algo-description">
+                <h3>Observation for Medium Impressions</h3>
+                <p>If Channel Subscribers ≥ 500K and Time Since Upload ≤ 12 months or Individual Video View Count ≥ 5M and Time Since Upload ≤ 12 months, categorize as "Medium"</p>
+            </div>
+            <div id="step4" class="algo-description">
+                <h3>Observation to Low Impressions</h3>
+                <p>If none of the above conditions are met, categorize as "Low"</p>
+            </div>
+            <div class="observation">
+                <h3>Algorithm Insights:</h3>
+                <p>This prediction algorithm attempts to categorize videos based on channel metrics and individual video performance. It prioritizes recent uploads from larger channels, suggesting that both channel size and recency play a role in impression generation. However, given the weak correlations observed, this algorithm should be considered a rough guide rather than a definitive predictor.</p>
+            </div>
+            <div class="metric-card">
+                <h3>Accuracy Level</h3>
+                <div class="metric-value">60%</div>
+            </div>
+
+
+        </div>
+        
+    </div>
+
+    <script>
+        // Impression Distribution Chart
+        const impressionCtx = document.getElementById('impressionDistributionChart').getContext('2d');
+        new Chart(impressionCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Very High', 'High', 'Medium', 'Low'],
+                datasets: [{
+                    label: 'URL Count',
+                    data: [163, 5722, 54171, 906988],
+                    backgroundColor: [
+                        'rgba(52, 152, 219, 1)',
+                        'rgba(52, 152, 219, 1)',
+                        'rgba(52, 152, 219, 1)',
+                        'rgba(52, 152, 219, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(52, 152, 219, 1)',
+                        'rgba(52, 152, 219, 1)',
+                        'rgba(52, 152, 219, 1)',
+                        'rgba(52, 152, 219, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        type: 'logarithmic',
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Correlation Chart
+        const correlationCtx = document.getElementById('correlationChart').getContext('2d');
+        new Chart(correlationCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Subscribers', 'Channel views', 'Video View', 'Time since Upload (months)'],
+                datasets: [{
+                    label: 'Correlation with Impressions',
+                    data: [0.13, 0.03, 0.05, -0.05],
+                    backgroundColor: 'rgba(52, 152, 219, 0.9)',
+                    borderColor: 'rgba(52, 152, 219, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Correlation Coefficient'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Animations
+        anime({
+            targets: '.card',
+            opacity: [0, 1],
+            translateY: [50, 0],
+            delay: anime.stagger(200),
+            easing: 'easeOutQuad',
+            duration: 1000
+        });
+
+        // Key Metrics Calculations and Animations
+        const totalVideos = 967044;
+        const totalImpressions = 38538506;
+        const avgImpressions = 967044;
+        const viralRatio = 38538506;
+        // const topImpressionShare = 0.40; // Assuming top 1% of videos account for 40% of impressions
+
+        anime({
+            targets: '#avgImpressions',
+            innerHTML: [0, avgImpressions.toFixed(2)],
+            round: 100,
+            easing: 'easeInOutExpo'
+        });
+
+        anime({
+            targets: '#viralRatio',
+            innerHTML: [0, viralRatio.toFixed(2)],
+            round: 100,
+            easing: 'easeInOutExpo'
+        });
+
+        // anime({
+        //     targets: '#topImpressionShare',
+        //     innerHTML: [0, topImpressionShare.toFixed(2)],
+        //     suffix: '%',
+        //     round: 100,
+        //     easing: 'easeInOutExpo'
+        // });
+
+        // Prediction Algorithm Description Toggle
+        function showDescription(stepId) {
+            const description = document.getElementById(stepId);
+            const isVisible = description.style.display === 'block';
+            description.style.display = isVisible ? 'none' : 'block';
+        }
+
+        anime({
+            targets: '.card',
+            opacity: [0, 1],
+            translateY: [50, 0],
+            delay: anime.stagger(200),
+            easing: 'easeOutQuad',
+            duration: 1000
+        });
+
+        anime({
+            targets: '.metric-value',
+            opacity: [0, 1],
+            translateY: [20, 0],
+            delay: anime.stagger(200),
+            easing: 'easeOutQuad',
+            duration: 1000
+        });
+
+        function showDescription(stepId) {
+            const description = document.getElementById(stepId);
+            const isVisible = description.style.display === 'block';
+            
+            if (isVisible) {
+                anime({
+                    targets: description,
+                    opacity: 0,
+                    translateY: 20,
+                    duration: 300,
+                    easing: 'easeInOutQuad',
+                    complete: function() {
+                        description.style.display = 'none';
+                    }
+                });
+            } else {
+                description.style.display = 'block';
+                anime({
+                    targets: description,
+                    opacity: 1,
+                    translateY: 0,
+                    duration: 300,
+                    easing: 'easeOutQuad'
+                });
+            }
+        }
+
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+        });
+
+        // Parallax effect for header
+        document.addEventListener('mousemove', (e) => {
+            const header = document.querySelector('.header');
+            const rect = header.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            header.style.setProperty('--mouse-x', `${x}px`);
+            header.style.setProperty('--mouse-y', `${y}px`);
+        });
+
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                } else {
+                    entry.target.classList.remove('animate');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.card, .metric-card, .observation').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
