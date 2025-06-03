@@ -1,0 +1,2072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Agent-First Web: A New Paradigm</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(14, 165, 165, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(14, 165, 165, 0.05) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        /* Animated Background Elements */
+        .bg-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .floating-shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float-around 20s infinite linear;
+        }
+
+        .floating-shape.circle {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #0ea5a5;
+        }
+
+        .floating-shape.square {
+            width: 6px;
+            height: 6px;
+            background: rgba(14, 165, 165, 0.3);
+            transform: rotate(45deg);
+        }
+
+        .floating-shape.triangle {
+            width: 0;
+            height: 0;
+            border-left: 3px solid transparent;
+            border-right: 3px solid transparent;
+            border-bottom: 6px solid rgba(14, 165, 165, 0.4);
+        }
+
+        .floating-shape:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; animation-duration: 25s; }
+        .floating-shape:nth-child(2) { top: 60%; left: 90%; animation-delay: -5s; animation-duration: 30s; }
+        .floating-shape:nth-child(3) { top: 80%; left: 20%; animation-delay: -10s; animation-duration: 35s; }
+        .floating-shape:nth-child(4) { top: 30%; left: 80%; animation-delay: -15s; animation-duration: 28s; }
+        .floating-shape:nth-child(5) { top: 70%; left: 60%; animation-delay: -20s; animation-duration: 32s; }
+        .floating-shape:nth-child(6) { top: 40%; left: 30%; animation-delay: -8s; animation-duration: 26s; }
+        .floating-shape:nth-child(7) { top: 85%; left: 70%; animation-delay: -12s; animation-duration: 38s; }
+        .floating-shape:nth-child(8) { top: 15%; left: 50%; animation-delay: -18s; animation-duration: 29s; }
+
+        @keyframes float-around {
+            0% {
+                transform: translateY(0px) translateX(0px) rotate(0deg);
+            }
+            33% {
+                transform: translateY(-30px) translateX(30px) rotate(120deg);
+            }
+            66% {
+                transform: translateY(20px) translateX(-20px) rotate(240deg);
+            }
+            100% {
+                transform: translateY(0px) translateX(0px) rotate(360deg);
+            }
+        }
+
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(14, 165, 165, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(14, 165, 165, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: grid-move 60s linear infinite;
+        }
+
+        @keyframes grid-move {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            position: relative;
+        }
+
+        .series-title {
+            font-size: 1.2rem;
+            color: #ffd700;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            animation: slideInUp 1s ease-out 0.1s both;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #fff 0%, #0ea5a5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: slideInUp 1s ease-out 0.2s both;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: #ccc;
+            margin-bottom: 3rem;
+            animation: slideInUp 1s ease-out 0.4s both;
+        }
+
+        .author-credit {
+            margin: 2rem 0 4rem 0;
+            padding: 1rem 2rem;
+            background: hsl(0, 0%, 100%);
+            border-radius: 50px;
+            border: 1px solid rgba(14, 165, 165, 0.3);
+            display: inline-block;
+            animation: slideInUp 1s ease-out 0.6s both;
+        }
+
+        .author-credit p {
+            color: #0ea5a5;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            z-index: 3;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .nav.show {
+            transform: translateY(0);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #0ea5a5;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #0ea5a5;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #0ea5a5, #fff);
+            transform-origin: left;
+            transform: scaleX(0);
+            z-index: 1001;
+            transition: transform 0.1s ease;
+        }
+
+        /* Section Styles */
+        .section {
+            padding: 5rem 0;
+            position: relative;
+        }
+
+        .section:nth-child(even) {
+            background: #111;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .section-title.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(14, 165, 165, 0.2);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .card.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: #0ea5a5;
+            box-shadow: 0 20px 40px rgba(14, 165, 165, 0.1);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #0ea5a5, #fff);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #0ea5a5;
+        }
+
+        .card-description {
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        /* Creative Comparison Styles */
+        .comparison-container {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 3rem 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .comparison-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(14, 165, 165, 0.05), transparent, rgba(14, 165, 165, 0.05));
+            z-index: -1;
+        }
+
+        .creative-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .comparison-item {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(14, 165, 165, 0.05));
+            border: 1px solid rgba(14, 165, 165, 0.2);
+            border-radius: 15px;
+            padding: 2rem;
+            position: relative;
+            transition: all 0.4s ease;
+            overflow: hidden;
+        }
+
+        .comparison-item::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #0ea5a5, transparent, #0ea5a5);
+            border-radius: 15px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .comparison-item:hover::before {
+            opacity: 1;
+        }
+
+        .comparison-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(14, 165, 165, 0.2);
+        }
+
+        .comparison-category {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #0ea5a5;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .comparison-traditional, .comparison-agent {
+            margin-bottom: 1.5rem;
+        }
+
+        .comparison-label {
+            font-size: 0.9rem;
+            color: #999;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .comparison-content {
+            font-size: 1rem;
+            color: #ddd;
+            line-height: 1.5;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            border-left: 3px solid #0ea5a5;
+        }
+
+        .vs-indicator {
+            position: relative;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .vs-indicator::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #0ea5a5, transparent);
+        }
+
+        .vs-badge {
+            background: linear-gradient(135deg, #0ea5a5, #fff);
+            color: #000;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-block;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Creative Table Alternative */
+        .stakeholder-grid {
+            display: grid;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stakeholder-card {
+            background: linear-gradient(135deg, rgba(14, 165, 165, 0.1), rgba(255, 255, 255, 0.05));
+            border: 1px solid rgba(14, 165, 165, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            transition: all 0.4s ease;
+            overflow: hidden;
+        }
+
+        .stakeholder-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(14, 165, 165, 0.1), transparent);
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+        }
+
+        .stakeholder-card:hover {
+            transform: translateY(-5px);
+            border-color: #0ea5a5;
+            box-shadow: 0 15px 30px rgba(14, 165, 165, 0.2);
+        }
+
+        .stakeholder-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stakeholder-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #0ea5a5, #fff);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stakeholder-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0ea5a5;
+        }
+
+        .stakeholder-details {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .detail-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 3px solid #0ea5a5;
+        }
+
+        .detail-label {
+            font-size: 0.9rem;
+            color: #0ea5a5;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-content {
+            color: #ddd;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        /* Publisher Strategy Timeline */
+        .strategy-timeline {
+            position: relative;
+            margin: 2rem 0;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #0ea5a5, rgba(14, 165, 165, 0.3));
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            background: linear-gradient(135deg, rgba(14, 165, 165, 0.1), rgba(255, 255, 255, 0.05));
+            border: 1px solid rgba(14, 165, 165, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            width: 45%;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .timeline-content:hover {
+            transform: scale(1.02);
+            border-color: #0ea5a5;
+        }
+
+        .timeline-content::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 15px;
+            height: 15px;
+            background: #0ea5a5;
+            border: 3px solid #000;
+            border-radius: 50%;
+            transform: translateY(-50%);
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content::before {
+            right: -23px;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content::before {
+            left: -23px;
+        }
+
+        .timeline-category {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #0ea5a5;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-description {
+            color: #ddd;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .timeline-today, .timeline-future {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .timeline-today .timeline-category {
+            color: #ffd700;
+        }
+
+        /* Interactive Elements */
+        .interactive-diagram {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 3rem;
+            margin: 4rem 0;
+            flex-wrap: wrap;
+        }
+
+        .diagram-node {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, rgba(14, 165, 165, 0.2), rgba(255, 255, 255, 0.1));
+            border: 2px solid #0ea5a5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .diagram-node:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(14, 165, 165, 0.5);
+        }
+
+        .diagram-arrow {
+            font-size: 2rem;
+            color: #0ea5a5;
+            animation: pulse 2s infinite;
+        }
+
+        /* Agent Architecture Styles */
+        .architecture-container {
+            margin: 4rem 0;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            border: 1px solid rgba(14, 165, 165, 0.1);
+        }
+
+        .agent-architecture {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .architecture-layer {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            width: 100%;
+        }
+
+        .business-layer {
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        .agent-component {
+            background: linear-gradient(135deg, rgba(14, 165, 165, 0.1), rgba(255, 255, 255, 0.05));
+            border: 2px solid rgba(14, 165, 165, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            min-width: 200px;
+            position: relative;
+            transition: all 0.4s ease;
+            overflow: hidden;
+        }
+
+        .agent-component:hover {
+            transform: translateY(-5px);
+            border-color: #0ea5a5;
+            box-shadow: 0 15px 30px rgba(14, 165, 165, 0.2);
+        }
+
+        .component-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .component-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0ea5a5;
+            margin-bottom: 0.5rem;
+        }
+
+        .component-desc {
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        .pulse-effect {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            background: #0ea5a5;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse-expand 2s infinite;
+        }
+
+        .api-pulse {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 10px;
+            height: 10px;
+            background: #0ea5a5;
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes pulse-expand {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(4);
+                opacity: 0;
+            }
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+        .data-flow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 60px;
+        }
+
+        .flow-down {
+            flex-direction: column;
+        }
+
+        .flow-split {
+            justify-content: space-around;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .flow-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .flow-line {
+            width: 2px;
+            height: 30px;
+            background: linear-gradient(to bottom, #0ea5a5, transparent);
+            animation: flow 2s infinite;
+        }
+
+        .flow-arrow {
+            color: #0ea5a5;
+            font-size: 1.5rem;
+            animation: bounce-arrow 2s infinite;
+        }
+
+        @keyframes flow {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+
+        @keyframes bounce-arrow {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(5px); }
+            60% { transform: translateY(3px); }
+        }
+
+        /* Transformation Indicators */
+        .transformation-indicators {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .indicator-item {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            border: 1px solid rgba(14, 165, 165, 0.1);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .indicator-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(14, 165, 165, 0.05), transparent);
+            transform: rotate(-45deg);
+            transition: transform 0.6s ease;
+        }
+
+        .indicator-item:hover::before {
+            transform: rotate(-45deg) translateX(100%);
+        }
+
+        .indicator-item:hover {
+            border-color: #0ea5a5;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(14, 165, 165, 0.2);
+        }
+
+        .indicator-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            filter: grayscale(1);
+            transition: filter 0.3s ease;
+        }
+
+        .indicator-item:hover .indicator-icon {
+            filter: grayscale(0);
+        }
+
+        .indicator-label {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #0ea5a5;
+            margin-bottom: 0.5rem;
+        }
+
+        .indicator-desc {
+            color: #ccc;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        /* Share Button */
+        .share-section {
+            text-align: center;
+            padding: 5rem 0;
+            background: linear-gradient(135deg, #111, #000);
+        }
+
+        .share-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            background: linear-gradient(135deg, #0ea5a5, #fff);
+            color: #000;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-decoration: none;
+        }
+
+        .share-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(14, 165, 165, 0.3);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-title {
+                font-size: 3rem;
+            }
+            
+            .series-title {
+                font-size: 1rem;
+                letter-spacing: 2px;
+            }
+            
+            .author-credit {
+                margin: 1.5rem 0 3rem 0;
+                padding: 0.8rem 1.5rem;
+            }
+            
+            .author-credit p {
+                font-size: 1rem;
+            }
+            
+            .interactive-diagram {
+                flex-direction: column;
+                gap: 2rem;
+            }
+            
+            .diagram-node {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+            
+            .comparison-table th,
+            .comparison-table td {
+                padding: 1rem;
+            }
+            
+            .creative-comparison {
+                grid-template-columns: 1fr;
+            }
+            
+            .stakeholder-grid {
+                gap: 1.5rem;
+            }
+            
+            .stakeholder-card {
+                padding: 1.5rem;
+            }
+            
+            .timeline-item {
+                flex-direction: column !important;
+                align-items: center;
+            }
+            
+            .timeline-content {
+                width: 90% !important;
+                margin-bottom: 2rem;
+            }
+            
+            .timeline-content::before {
+                top: -8px !important;
+                left: 50% !important;
+                right: auto !important;
+                transform: translateX(-50%) !important;
+            }
+            
+            .timeline-line {
+                display: none;
+            }
+            
+            .agent-architecture {
+                padding: 1rem;
+            }
+            
+            .architecture-layer {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+            
+            .business-layer {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .agent-component {
+                min-width: 250px;
+                margin-bottom: 1rem;
+            }
+            
+            .flow-split {
+                flex-direction: column;
+                gap: 1rem;
+                height: auto;
+            }
+            
+            .flow-branch {
+                transform: rotate(90deg);
+            }
+            
+            .architecture-container {
+                padding: 1.5rem;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .transformation-indicators {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .floating-shape {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .agent-component {
+                min-width: 200px;
+                padding: 1.5rem;
+            }
+            
+            .component-icon {
+                font-size: 2rem;
+            }
+            
+            .component-title {
+                font-size: 1rem;
+            }
+            
+            .component-desc {
+                font-size: 0.8rem;
+            }
+            
+            .transformation-indicators {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-table {
+                font-size: 0.8rem;
+            }
+            
+            .comparison-table th,
+            .comparison-table td {
+                padding: 0.5rem;
+            }
+            
+            .comparison-item {
+                padding: 1.5rem;
+            }
+            
+            .stakeholder-card {
+                padding: 1rem;
+            }
+            
+            .stakeholder-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.5rem;
+            }
+            
+            .stakeholder-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+            
+            .timeline-content {
+                padding: 1rem;
+            }
+        }
+
+        /* Footer */
+        .footer {
+            background: #000;
+            padding: 3rem 0;
+            text-align: center;
+            border-top: 1px solid rgba(14, 165, 165, 0.2);
+        }
+
+        .footer-content {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #0ea5a5;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Navigation -->
+    <nav class="nav" id="navbar">
+        <div class="container">
+            <div class="nav-container">
+                <div class="logo">🤖 Agent-First Web</div>
+                <ul class="nav-links">
+                    <li><a href="#overview">Overview</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#media">Media</a></li>
+                    <li><a href="#business">Business</a></li>
+                    <li><a href="#future">Future</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="bg-animation">
+            <div class="grid-overlay"></div>
+            <div class="floating-shape circle"></div>
+            <div class="floating-shape square"></div>
+            <div class="floating-shape triangle"></div>
+            <div class="floating-shape circle"></div>
+            <div class="floating-shape square"></div>
+            <div class="floating-shape triangle"></div>
+            <div class="floating-shape circle"></div>
+            <div class="floating-shape square"></div>
+        </div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="series-title">What If Series</div>
+                <h1 class="hero-title">The Agent-First Web</h1>
+                <p class="hero-subtitle">My perspective on the new way of <strong style="color: #0ea5a5;">Digital Interaction</strong></p>
+                <div class="author-credit">
+                    <p> <strong>Shahnab</strong></p>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div style="color: #0ea5a5; font-size: 2rem;">↓</div>
+        </div>
+    </header>
+
+    <!-- Overview Section -->
+    <section class="section" id="overview">
+        <div class="container">
+            <h2 class="section-title">The Transformation</h2>
+            <p style="text-align: center; font-size: 1.2rem; color: #ccc; margin-bottom: 3rem;">The web is evolving from human-readable pages to agent-accessible data services</p>
+            
+            <div style="max-width: 800px; margin: 0 auto; text-align: left; margin-bottom: 4rem;">
+                <p style="font-size: 1.1rem; line-height: 1.8; color: #ddd; margin-bottom: 2rem;">
+                    The coming agent-first web will reshape how information and services are accessed. Rather than humans clicking links and reading pages, AI assistants ("agents") will query data sources and take actions on users' behalf. This means websites may no longer be primarily human-readable pages; instead, they'll expose structured data, APIs, or "agent-optimized" interfaces.
+                </p>
+                
+                <p style="font-size: 1.1rem; line-height: 1.8; color: #ddd; margin-bottom: 2rem;">
+                    Google's AI lead Demis Hassabis envisions a web as "a series of databases" for agents to query, not pages to render. In practice, analysts expect a hybrid phase where sites maintain dual interfaces – one for humans and a simplified, semantically rich "agent view" that uses enhanced metadata and clear ARIA labels.
+                </p>
+                
+                <p style="font-size: 1.1rem; line-height: 1.8; color: #ddd; margin-bottom: 3rem;">
+                    Sites like Amazon or travel platforms might offer explicit tools (e.g. "search availability") with clear input/output specs, rather than hiding all logic in a GUI. In short, web content will shift from static pages to "actionable" data services: agents learn available capabilities, pick tools, and complete user goals autonomously.
+                </p>
+            </div>
+
+            <!-- Agent Architecture Diagram -->
+            <div class="architecture-container">
+                <h3 style="font-size: 2rem; margin-bottom: 2rem; color: #0ea5a5; text-align: center;">Agent Architecture: From Reasoning to Action</h3>
+                <p style="text-align: center; font-size: 1.1rem; color: #ccc; margin-bottom: 3rem;">
+                    An illustrative architecture showing an agent's reasoning engine and planner orchestrating API calls to business logic systems
+                </p>
+                
+                <div class="agent-architecture">
+                    <div class="architecture-layer">
+                        <div class="agent-component reasoning-engine">
+                            <div class="component-icon">🧠</div>
+                            <div class="component-title">Reasoning Engine</div>
+                            <div class="component-desc">Analyzes user intent and context</div>
+                            <div class="pulse-effect"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="data-flow flow-down">
+                        <div class="flow-line"></div>
+                        <div class="flow-arrow">↓</div>
+                    </div>
+                    
+                    <div class="architecture-layer">
+                        <div class="agent-component planner">
+                            <div class="component-icon">📋</div>
+                            <div class="component-title">Task Planner</div>
+                            <div class="component-desc">Orchestrates API calls and workflows</div>
+                            <div class="pulse-effect"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="data-flow flow-split">
+                        <div class="flow-branch">
+                            <div class="flow-line"></div>
+                            <div class="flow-arrow">↙</div>
+                        </div>
+                        <div class="flow-branch">
+                            <div class="flow-line"></div>
+                            <div class="flow-arrow">↓</div>
+                        </div>
+                        <div class="flow-branch">
+                            <div class="flow-line"></div>
+                            <div class="flow-arrow">↘</div>
+                        </div>
+                    </div>
+                    
+                    <div class="architecture-layer business-layer">
+                        <div class="agent-component api-gateway">
+                            <div class="component-icon">🔌</div>
+                            <div class="component-title">Inventory API</div>
+                            <div class="component-desc">Product database access</div>
+                            <div class="api-pulse"></div>
+                        </div>
+                        
+                        <div class="agent-component api-gateway">
+                            <div class="component-icon">📅</div>
+                            <div class="component-title">Booking API</div>
+                            <div class="component-desc">Reservation systems</div>
+                            <div class="api-pulse"></div>
+                        </div>
+                        
+                        <div class="agent-component api-gateway">
+                            <div class="component-icon">💳</div>
+                            <div class="component-title">Payment API</div>
+                            <div class="component-desc">Transaction processing</div>
+                            <div class="api-pulse"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 3rem; padding: 2rem; background: rgba(14, 165, 165, 0.1); border-radius: 15px; border: 1px solid rgba(14, 165, 165, 0.2);">
+                    <p style="font-size: 1.1rem; color: #0ea5a5; font-weight: 600; margin-bottom: 1rem;">Key Insight</p>
+                    <p style="font-size: 1rem; color: #ddd; line-height: 1.6;">
+                        Agents no longer "see" the flashy UI – they work via structured endpoints. This requires exposing clean, authenticated APIs and data feeds for tasks like reservations and orders.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="interactive-diagram" style="margin-top: 4rem;">
+                <div class="diagram-node">
+                    <div>👤<br>Human<br>Users</div>
+                </div>
+                <div class="diagram-arrow">→</div>
+                <div class="diagram-node">
+                    <div>🤖<br>AI<br>Agents</div>
+                </div>
+                <div class="diagram-arrow">→</div>
+                <div class="diagram-node">
+                    <div>🔗<br>API<br>Services</div>
+                </div>
+            </div>
+
+            <div class="comparison-container">
+                <h3 style="font-size: 2rem; margin-bottom: 2rem; color: #0ea5a5; text-align: center;">Traditional vs Agent-First Web</h3>
+                
+                <div class="creative-comparison">
+                    <div class="comparison-item">
+                        <div class="comparison-category">🖥️ Interface</div>
+                        <div class="comparison-traditional">
+                            <div class="comparison-label">📜 Traditional</div>
+                            <div class="comparison-content">Human-optimized UI with HTML pages, designed for visual browsing and click navigation</div>
+                        </div>
+                        <div class="vs-indicator">
+                            <span class="vs-badge">VS</span>
+                        </div>
+                        <div class="comparison-agent">
+                            <div class="comparison-label">🤖 Agent-First</div>
+                            <div class="comparison-content">Machine-friendly APIs and structured data (GraphQL, JSON-LD) for programmatic access</div>
+                        </div>
+                    </div>
+
+                    <div class="comparison-item">
+                        <div class="comparison-category">📦 Content Delivery</div>
+                        <div class="comparison-traditional">
+                            <div class="comparison-label">📜 Traditional</div>
+                            <div class="comparison-content">Websites with hyperlinks, images, and narrative content for human consumption</div>
+                        </div>
+                        <div class="vs-indicator">
+                            <span class="vs-badge">VS</span>
+                        </div>
+                        <div class="comparison-agent">
+                            <div class="comparison-label">🤖 Agent-First</div>
+                            <div class="comparison-content">Clean data endpoints, semantic markup, and agent-optimized "APIs" for direct access</div>
+                        </div>
+                    </div>
+
+                    <div class="comparison-item">
+                        <div class="comparison-category">🎯 Interaction</div>
+                        <div class="comparison-traditional">
+                            <div class="comparison-label">📜 Traditional</div>
+                            <div class="comparison-content">Human scroll-and-click behavior with keyword-based search queries</div>
+                        </div>
+                        <div class="vs-indicator">
+                            <span class="vs-badge">VS</span>
+                        </div>
+                        <div class="comparison-agent">
+                            <div class="comparison-label">🤖 Agent-First</div>
+                            <div class="comparison-content">Agents parse intent, call APIs or tools, and provide summarized answers autonomously</div>
+                        </div>
+                    </div>
+
+                    <div class="comparison-item">
+                        <div class="comparison-category">🧭 Navigation</div>
+                        <div class="comparison-traditional">
+                            <div class="comparison-label">📜 Traditional</div>
+                            <div class="comparison-content">Bots crawl pages with robots.txt guidance for indexing and discovery</div>
+                        </div>
+                        <div class="vs-indicator">
+                            <span class="vs-badge">VS</span>
+                        </div>
+                        <div class="comparison-agent">
+                            <div class="comparison-label">🤖 Agent-First</div>
+                            <div class="comparison-content">Agents query registries or discovery protocols (AEO) and call APIs directly</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service Industries Section -->
+    <section class="section" id="services">
+        <div class="container">
+            <h2 class="section-title">Service Industries: Embracing or Evading Agents</h2>
+            
+            <div style="max-width: 900px; margin: 0 auto; text-align: left; margin-bottom: 4rem;">
+                <p style="font-size: 1.1rem; line-height: 1.8; color: #ddd; margin-bottom: 2rem;">
+                    Consumer services – food delivery, e-commerce, booking – face both promise and peril. If agents aggregate offerings, individual providers could be abstracted away. Why would a restaurant or courier want to be just an API in an agent's mix?
+                </p>
+                
+                <p style="font-size: 1.1rem; line-height: 1.8; color: #ddd; margin-bottom: 2rem;">
+                    Sundar Pichai addresses this: it's akin to dine-in vs. delivery. A restaurant can ignore takeout, or go "all in" on delivery and virtual ordering. Similarly, some businesses may refuse to enable agent-access (focusing on their own customer apps), while others lean in as a new sales channel.
+                </p>
+                
+                <p style="font-size: 1.1rem; line-height: 1.8; color: #ddd; margin-bottom: 2rem;">
+                    Dara Khosrowshahi (Uber) suggests companies will "do it because it's cool" and test if it adds value – and if so, "charge a big fee." In effect, agents become another distribution channel: one that might boost volume but threatens margins if unregulated.
+                </p>
+            </div>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-icon">🍽️</div>
+                    <h3 class="card-title">Food Delivery & Restaurants</h3>
+                    <p class="card-description">Agents query menus across providers and handle automatic booking/delivery. <strong>Opportunities:</strong> Reach more customers via AI, increased order volume. <strong>Risks:</strong> Margin squeeze from aggregator fees, loss of brand presentation.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🛒</div>
+                    <h3 class="card-title">E-commerce & Retail</h3>
+                    <p class="card-description">Agents compare products across sites and enable auto-checkout at lowest prices. <strong>Opportunities:</strong> Product discovery by new users, cross-selling via recommendations. <strong>Risks:</strong> Intense price competition, possible "middleman" fees.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">✈️</div>
+                    <h3 class="card-title">Travel & Booking</h3>
+                    <p class="card-description">Agents optimize itineraries and book through APIs with best deals. <strong>Opportunities:</strong> Access to instant dynamic pricing, package bundling. <strong>Risks:</strong> Disintermediation, dependency on travel platform deals.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🚗</div>
+                    <h3 class="card-title">Transportation</h3>
+                    <p class="card-description">Agents plan multi-leg trips and book rides across apps (ride + train). <strong>Opportunities:</strong> Seamless mobility, loyalty bundling. <strong>Risks:</strong> Regulatory concerns, commission battles if multiple services integrated.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🛍️</div>
+                    <h3 class="card-title">Rapid Delivery</h3>
+                    <p class="card-description">Agents allocate tasks to nearest provider, optimize routes, order from multiple stores. <strong>Opportunities:</strong> Efficiency gains, 24/7 ordering, dynamic bundling. <strong>Risks:</strong> Competition on margin, data privacy, integration complexity.</p>
+                </div>
+            </div>
+
+            <div style="background: rgba(14, 165, 165, 0.1); border-radius: 15px; padding: 2rem; margin: 3rem 0; border: 1px solid rgba(14, 165, 165, 0.2);">
+                <h3 style="color: #0ea5a5; margin-bottom: 1.5rem; font-size: 1.5rem;">New Business Models Will Emerge:</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <div>
+                        <strong style="color: #0ea5a5;">💰 Commissions or Fees:</strong>
+                        <p style="color: #ddd; margin-top: 0.5rem; font-size: 0.95rem;">Platforms may charge transaction fees when an agent triggers a sale, similar to Expedia or app stores.</p>
+                    </div>
+                    <div>
+                        <strong style="color: #0ea5a5;">🏆 Certified Integrations:</strong>
+                        <p style="color: #ddd; margin-top: 0.5rem; font-size: 0.95rem;">Official "agent APIs" or ChatGPT plugins for ordering. Early movers may capture prominent placement.</p>
+                    </div>
+                    <div>
+                        <strong style="color: #0ea5a5;">📊 Data-sharing Incentives:</strong>
+                        <p style="color: #ddd; margin-top: 0.5rem; font-size: 0.95rem;">Grant agents access in exchange for improved recommendations or revenue-sharing.</p>
+                    </div>
+                    <div>
+                        <strong style="color: #0ea5a5;">🎯 Co-branding & Loyalty:</strong>
+                        <p style="color: #ddd; margin-top: 0.5rem; font-size: 0.95rem;">Offer discounts or loyalty points for orders placed through agents to drive adoption.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; background: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 2rem; margin: 3rem 0;">
+                <p style="font-size: 1.2rem; color: #0ea5a5; font-weight: 600; margin-bottom: 1rem;">⚠️ Critical Insight</p>
+                <p style="font-size: 1.1rem; color: #ddd; line-height: 1.6;">
+                    While agents can erode direct customer engagement, <strong>non-participation risks obsolescence</strong>. If an agent can't find you, it will pick a competitor. The balance between maintaining brand experience and tapping AI-driven demand will be a key strategic challenge.
+                </p>
+            </div>
+
+            <div style="background: rgba(14, 165, 165, 0.05); border-radius: 15px; padding: 2rem; margin: 3rem 0; border-left: 4px solid #0ea5a5;">
+                <h3 style="color: #0ea5a5; margin-bottom: 1rem;">🌏 Asia's Advantage</h3>
+                <p style="color: #ddd; line-height: 1.6;">
+                    In Asia, super-apps (WeChat, Gojek, Grab) already integrate many services via mini-programs – a natural base for agent integration. Asian economies' fast AI adoption means businesses here are actively experimenting with "agent assistants" internally. However, fragmentation (language, regulation) could slow a uniform transition.
+                </p>
+            </div>
+
+            <div class="transformation-indicators">
+                <div class="indicator-item">
+                    <div class="indicator-icon">🔄</div>
+                    <div class="indicator-label">Paradigm Shift</div>
+                    <div class="indicator-desc">From human-readable pages to agent-accessible APIs</div>
+                </div>
+                <div class="indicator-item">
+                    <div class="indicator-icon">📊</div>
+                    <div class="indicator-label">Market Impact</div>
+                    <div class="indicator-desc">Publishers experiencing significant organic traffic changes</div>
+                </div>
+                <div class="indicator-item">
+                    <div class="indicator-icon">🌍</div>
+                    <div class="indicator-label">Global Adoption</div>
+                    <div class="indicator-desc">Developed nations leading in AI agent implementation</div>
+                </div>
+                <div class="indicator-item">
+                    <div class="indicator-icon">🚀</div>
+                    <div class="indicator-label">Technology Evolution</div>
+                    <div class="indicator-desc">Websites receiving unprecedented AI-driven traffic patterns</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Media Publishers Section -->
+    <section class="section" id="media">
+        <div class="container">
+            <h2 class="section-title">Media Publishers: Protecting Content and Revenue</h2>
+            
+            <div style="max-width: 900px; margin: 0 auto; text-align: left; margin-bottom: 4rem;">
+                <p style="font-size: 1.1rem; line-height: 1.8; color: #ddd; margin-bottom: 2rem;">
+                    Media and publishing face acute disruption. If AI agents answer user queries by summarizing articles, click-driven traffic will fall. Google's "AI Overviews" already show summaries atop search results; one study found publishers can lose 15–60% of organic clicks on AI-prioritized queries.
+                </p>
+                
+                <p style="font-size: 1.1rem; line-height: 1.8; color: #ddd; margin-bottom: 2rem;">
+                    Worse, when agents like ChatGPT or Bing summarize news, they may not faithfully cite or link to sources. A Columbia Journalism study found ChatGPT often "invent[ed] or misrepresent[ed]" citations, hurting publishers' trust in agents. In practice, many AI answers provide no link ("direct" traffic), as seen when Copilot-directed visits register as "Direct" in analytics.
+                </p>
+                
+                <p style="font-size: 1.1rem; line-height: 1.8; color: #ddd; margin-bottom: 3rem;">
+                    Publishers see this as a form of <strong style="color: #0ea5a5;">"contextual content theft."</strong> Current ad/subscription models rely on eyeballs landing on the publisher's page. Agents threaten this funnel.
+                </p>
+            </div>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-icon">💰</div>
+                    <h3 class="card-title">Licensing Deals</h3>
+                    <p class="card-description">Major outlets are signing AI licensing agreements. OpenAI has paid publishers (e.g. Axel Springer, FT, NewsCorp) millions annually for access to recent content, creating new revenue streams and ensuring proper integration.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🔌</div>
+                    <h3 class="card-title">AI-Friendly APIs</h3>
+                    <p class="card-description">Publishers offer paid APIs for article summaries with micropayment models (per-article or per-query fees), allowing agents to "check out" content rather than copy for free. A proposed concept is "AI micropayments."</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🛡️</div>
+                    <h3 class="card-title">Restrictive Licensing/Gating</h3>
+                    <p class="card-description">To prevent "free riding," sites may robot-block non-licensed crawlers or serve partial content. However, overzealous blocking risks being bypassed by visual agents or harming SEO.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📱</div>
+                    <h3 class="card-title">Value-add in Platforms</h3>
+                    <p class="card-description">Publishers embed their own AI widgets or branded agents that deliver content value while controlling interface and ad placement. CNN or FT could build official ChatGPT plugins charging for full-text access.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">⚖️</div>
+                    <h3 class="card-title">Quality & Attribution Enforcement</h3>
+                    <p class="card-description">Pressuring AI companies through copyright claims and regulation to enforce source citation. The lack of guaranteed attribution in AI answers is a legal and reputational risk.</p>
+                </div>
+            </div>
+
+            <div class="comparison-container">
+                <h3 style="font-size: 2rem; margin-bottom: 2rem; color: #0ea5a5; text-align: center;">Publisher Strategy Evolution Timeline</h3>
+                
+                <div class="strategy-timeline">
+                    <div class="timeline-line"></div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-content timeline-today">
+                            <div class="timeline-category">📈 Discovery & Traffic - TODAY</div>
+                            <div class="timeline-description">
+                                <strong>Current State:</strong> Publishers rely on search rankings and social links for traffic discovery.
+                                <br><br>
+                                <strong>Agent Era Challenge:</strong> AI answers replace many search clicks, reducing direct traffic.
+                                <br><br>
+                                <strong>Response Strategy:</strong> License AI distribution for payment; develop new AI search SEO (AEO) practices.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-category">💰 Monetization Evolution</div>
+                            <div class="timeline-description">
+                                <strong>Current State:</strong> Revenue from ad views, paywalls, and subscriptions based on page visits.
+                                <br><br>
+                                <strong>Agent Era Challenge:</strong> Ad impressions drop as bots reuse content freely without visits.
+                                <br><br>
+                                <strong>Response Strategy:</strong> Negotiate licensing fees from AI firms; create premium content API access models.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-category">⚖️ Content Use & Protection</div>
+                            <div class="timeline-description">
+                                <strong>Current State:</strong> Intellectual property protected by traditional copyright frameworks.
+                                <br><br>
+                                <strong>Agent Era Challenge:</strong> AI summarization may infringe copyright or dilute brand value.
+                                <br><br>
+                                <strong>Response Strategy:</strong> Demand proper citations; implement watermark/metadata tagging; pursue legal actions.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content timeline-future">
+                            <div class="timeline-category">👥 User Behavior - FUTURE</div>
+                            <div class="timeline-description">
+                                <strong>Current State:</strong> Users click through to articles and engage with advertising content.
+                                <br><br>
+                                <strong>Agent Era Challenge:</strong> Users get answers within AI interfaces, bypassing publisher sites.
+                                <br><br>
+                                <strong>Response Strategy:</strong> Create engagement incentives; develop interactive content; build branded AI assistants.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 3rem 0;">
+                <div style="background: rgba(255, 0, 0, 0.1); border-radius: 15px; padding: 2rem; border: 1px solid rgba(255, 0, 0, 0.2);">
+                    <h3 style="color: #ff6b6b; margin-bottom: 1rem;">📉 The Challenge</h3>
+                    <p style="color: #ddd; line-height: 1.6;">
+                        Even small license fees are "peanuts" to AI giants but keep lawsuits at bay. Some agencies argue "AI Overviews" may dilute publisher authority, effectively acting like paywall circumvention under a new name.
+                    </p>
+                </div>
+                <div style="background: rgba(0, 255, 0, 0.1); border-radius: 15px; padding: 2rem; border: 1px solid rgba(0, 255, 0, 0.2);">
+                    <h3 style="color: #51cf66; margin-bottom: 1rem;">🔮 The Future</h3>
+                    <p style="color: #ddd; line-height: 1.6;">
+                        The future likely blends licensing with new AI-centric ad or subscription models. The industry is calling for "fair use" norms or legislation to ensure content creators aren't left unpaid by AI disintermediation.
+                    </p>
+                </div>
+            </div>
+
+            <div style="text-align: center; background: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 2rem; margin: 3rem 0;">
+                <p style="font-size: 1.2rem; color: #0ea5a5; font-weight: 600; margin-bottom: 1rem;">⚠️ Bottom Line</p>
+                <p style="font-size: 1.1rem; color: #ddd; line-height: 1.6;">
+                    Without changes, publishers risk losing a large share of their referral traffic and ad revenues. All parties are still experimenting with licensing, attribution requirements, and new AI-centric business models.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Business Models Section -->
+    <section class="section" id="business">
+        <div class="container">
+            <h2 class="section-title">Agentic Business Models: Enterprises, Platforms, and Users</h2>
+            
+            <div style="max-width: 900px; margin: 0 auto; text-align: left; margin-bottom: 4rem;">
+                <p style="font-size: 1.1rem; line-height: 1.8; color: #ddd; margin-bottom: 2rem;">
+                    Enterprises and Platforms see agents as opportunities to create new products and efficiencies. Internally, companies deploy AI agents as digital assistants: marketing assistants that craft copy, sales bots that sift CRM data, or support agents that handle IT tickets.
+                </p>
+                
+                <p style="font-size: 1.1rem; line-height: 1.8; color: #ddd; margin-bottom: 2rem;">
+                    The Microsoft APAC survey highlights that over half of Asian companies already use agents to fully automate processes. "Frontier firms" with human-agent hybrid teams report higher agility and growth.
+                </p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 3rem 0;">
+                <div class="card">
+                    <div class="card-icon">🏢</div>
+                    <h3 class="card-title">Enterprise SaaS & AI Agents as a Service</h3>
+                    <p class="card-description">Vendors (OpenAI, Google, Amazon, local Asian players like Baidu/Tencent) offer agent-building tools. Companies build custom assistants for HR, finance, R&D and subscribe to AI platforms. Some sell "vertical agents" for specific industries.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🏪</div>
+                    <h3 class="card-title">Platform Marketplaces</h3>
+                    <p class="card-description">Analogous to app stores, platforms host marketplaces for agent skills. OpenAI's GPT Store and upcoming "developer revenue program" show this model: creators build specialized GPTs and share revenue from usage.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">👤</div>
+                    <h3 class="card-title">User Subscription Models</h3>
+                    <p class="card-description">Premium agent subscriptions for end-users. Just as many pay for ChatGPT Plus or Microsoft Copilot, future agents with unique domain knowledge could command fees (financial advisor agents, travel planning agents).</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🤝</div>
+                    <h3 class="card-title">Commissions/Affiliates</h3>
+                    <p class="card-description">Agents connecting consumers to services earn referral fees. Brands might pay platforms to be featured or power branded agents. An airline might pay to integrate booking systems for upselling flights.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📊</div>
+                    <h3 class="card-title">Data and Insights</h3>
+                    <p class="card-description">Agents generate wealth of user intent data. Platforms may monetize anonymized insights or target ads more precisely through agent interactions. However, privacy and trust will be major concerns.</p>
+                </div>
+            </div>
+            
+            <div class="comparison-container">
+                <h3 style="font-size: 2rem; margin-bottom: 2rem; color: #0ea5a5; text-align: center;">Stakeholder Economic Models</h3>
+                
+                <div class="stakeholder-grid">
+                    <div class="stakeholder-card">
+                        <div class="stakeholder-header">
+                            <div class="stakeholder-icon">🏢</div>
+                            <div class="stakeholder-title">Brands & Vendors</div>
+                        </div>
+                        <div class="stakeholder-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Role & Benefit</div>
+                                <div class="detail-content">Provide agent-accessible data and services to reach customers through AI intermediaries</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Economic Model</div>
+                                <div class="detail-content">Pay commission to platforms; earn sales revenue; subscription fees for platform tools</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Incentives to Participate</div>
+                                <div class="detail-content">Reach customers via agents; unlock new revenue streams; increase brand visibility in AI ecosystems</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stakeholder-card">
+                        <div class="stakeholder-header">
+                            <div class="stakeholder-icon">🤖</div>
+                            <div class="stakeholder-title">Platforms (OpenAI, Google, etc.)</div>
+                        </div>
+                        <div class="stakeholder-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Role & Benefit</div>
+                                <div class="detail-content">Host and run agents; provide AI models & tooling infrastructure for ecosystem</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Economic Model</div>
+                                <div class="detail-content">Subscription fees; transaction fees; marketplace cut; enterprise contracts and licensing</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Incentives to Participate</div>
+                                <div class="detail-content">Capture market by owning AI interface; valuable data collection; powerful network effects</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stakeholder-card">
+                        <div class="stakeholder-header">
+                            <div class="stakeholder-icon">👨‍💻</div>
+                            <div class="stakeholder-title">Developers & Agents Makers</div>
+                        </div>
+                        <div class="stakeholder-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Role & Benefit</div>
+                                <div class="detail-content">Build and customize agents for specific niches and industry verticals</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Economic Model</div>
+                                <div class="detail-content">Sell agent apps or skills; earn from usage/revenue share; consulting services</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Incentives to Participate</div>
+                                <div class="detail-content">New revenue opportunities; address specific needs (legal, medical, etc.); technical innovation</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stakeholder-card">
+                        <div class="stakeholder-header">
+                            <div class="stakeholder-icon">🏭</div>
+                            <div class="stakeholder-title">Enterprises</div>
+                        </div>
+                        <div class="stakeholder-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Role & Benefit</div>
+                                <div class="detail-content">Deploy agents internally (sales bots, analytics, customer service automation)</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Economic Model</div>
+                                <div class="detail-content">SaaS subscriptions; cost savings through automation; service contracts</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Incentives to Participate</div>
+                                <div class="detail-content">Significant efficiency gains; competitive advantage; data-driven decision making</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stakeholder-card">
+                        <div class="stakeholder-header">
+                            <div class="stakeholder-icon">👤</div>
+                            <div class="stakeholder-title">Consumers</div>
+                        </div>
+                        <div class="stakeholder-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Role & Benefit</div>
+                                <div class="detail-content">Use personal and brand agents for daily tasks and decision-making</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Economic Model</div>
+                                <div class="detail-content">Subscription for premium assistants; pay-per-task pricing; ad/sponsorship exposure</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Incentives to Participate</div>
+                                <div class="detail-content">Ultimate convenience; personalization; empowerment through 24/7 AI assistance</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: rgba(14, 165, 165, 0.1); border-radius: 15px; padding: 2rem; margin: 3rem 0; border: 1px solid rgba(14, 165, 165, 0.2);">
+                <h3 style="color: #0ea5a5; margin-bottom: 1.5rem; font-size: 1.5rem;">Consumer Experience Transformation</h3>
+                <p style="color: #ddd; line-height: 1.6; margin-bottom: 1rem;">
+                    Consumers will experience the web largely through agents or AI-enhanced interfaces. Instead of manually comparing products, a consumer might "ask my assistant" to handle planning or shopping.
+                </p>
+                <p style="color: #ddd; line-height: 1.6;">
+                    In Asia, where messaging and super-apps are prevalent, users may trust AI assistants provided by familiar platforms (WeChat or Line integrating agents). A common model: basic agent usage is free, but "pro" features (complex tasks, real-time help) require premium tiers.
+                </p>
+            </div>
+
+            <div style="text-align: center; background: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 2rem; margin: 3rem 0;">
+                <p style="font-size: 1.2rem; color: #0ea5a5; font-weight: 600; margin-bottom: 1rem;">🌏 Asia's Strategic Advantage</p>
+                <p style="font-size: 1.1rem; color: #ddd; line-height: 1.6;">
+                    Asia's strong AI adoption suggests these models will emerge quickly. A majority of APAC leaders see agents as collaborators (not just tools). Asian tech giants are already adding AI into messaging and e-commerce platforms, with consumers accustomed to "chat-based shopping."
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Future Section -->
+    <section class="section" id="future">
+        <div class="container">
+            <h2 class="section-title">Industry Signals: OpenAI, Google I/O and the Road Ahead</h2>
+            
+            <div style="max-width: 900px; margin: 0 auto; text-align: left; margin-bottom: 4rem;">
+                <p style="font-size: 1.1rem; line-height: 1.8; color: #ddd; margin-bottom: 2rem;">
+                    Recent AI releases illustrate the agent-first trend. The transition has already begun with concrete product announcements that confirm agents will consume and act on web content rather than just retrieve it.
+                </p>
+                
+                <p style="font-size: 1.1rem; line-height: 1.8; color: #ddd; margin-bottom: 3rem;">
+                    These developments underline key trends: multimodal, tool-enabled models (GPT-4o and Google's Gemini 2.5) are being tied to action tools (browsing, API calls, even controlling apps). The emerging norm is that LLMs won't just answer queries, but will be granted capabilities to <strong style="color: #0ea5a5;">do things</strong>.
+                </p>
+            </div>
+            
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-icon">🚀</div>
+                    <h3 class="card-title">OpenAI's Platform Evolution</h3>
+                    <p class="card-description"><strong>March 2025:</strong> Agents SDK and Responses API introduced as building blocks for custom agents. Includes built-in tools (web search, file search, "computer use") and observability, explicitly targeting autonomous task completion.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🤖</div>
+                    <h3 class="card-title">Operator: Computer-Use Agents</h3>
+                    <p class="card-description"><strong>January 2025:</strong> OpenAI released Operator, an agent that can open a browser and interact like a user (filling forms, clicking buttons, even ordering groceries). Demonstrates what "computer-use" agents can accomplish.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🔍</div>
+                    <h3 class="card-title">Google I/O 2025 Announcements</h3>
+                    <p class="card-description"><strong>"Agent Mode"</strong> in Search allows conversational workflows. <strong>"Deep Search"</strong> for iterative queries. New agentic plugins for tasks like ticket booking (<strong>Project Mariner</strong>). Agent Mode in Gemini app lets users state goals and have AI enact multi-step tasks.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🌏</div>
+                    <h3 class="card-title">Global AI Race</h3>
+                    <p class="card-description">Asian giants (Alibaba's "Tongyi Qianwen", Baidu's "Ernie Bot X") aim for consumer app integration as early agents. Unlike Western markets, many Asian consumers are accustomed to "chat-based shopping," smoothing the path for agent commerce.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">⚡</div>
+                    <h3 class="card-title">Multimodal Tool Integration</h3>
+                    <p class="card-description">GPT-4o variants now offer web-search backends with high factual accuracy. Google's Gemini-2.5 will power enterprise agents via Vertex AI. This "AI as an assistant with agency" represents a fundamental shift in capabilities.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📈</div>
+                    <h3 class="card-title">Early Market Signals</h3>
+                    <p class="card-description">Agent "shopping assistants" and "ticket-booking agents" are already baked into search. These early implementations serve as proof-of-concept for more sophisticated agent ecosystems to come.</p>
+                </div>
+            </div>
+
+            <div style="background: rgba(14, 165, 165, 0.1); border-radius: 15px; padding: 2rem; margin: 3rem 0; border: 1px solid rgba(14, 165, 165, 0.2);">
+                <h3 style="color: #0ea5a5; margin-bottom: 1.5rem; font-size: 1.5rem;">🎯 Key Industry Quotes</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 1.5rem; border-radius: 10px;">
+                        <p style="color: #ddd; font-style: italic; margin-bottom: 1rem;">"Agents are a new powerful format destined to gain traction especially in enterprises."</p>
+                        <p style="color: #0ea5a5; font-weight: 600;">— Google CEO Sundar Pichai</p>
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 1.5rem; border-radius: 10px;">
+                        <p style="color: #ddd; font-style: italic; margin-bottom: 1rem;">"Companies will do it because it's cool and test if it adds value – and if so, charge a big fee."</p>
+                        <p style="color: #0ea5a5; font-weight: 600;">— Dara Khosrowshahi (Uber CEO)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin: 3rem 0;">
+                <div style="background: rgba(0, 255, 0, 0.1); border-radius: 15px; padding: 2rem; border: 1px solid rgba(0, 255, 0, 0.2);">
+                    <h3 style="color: #51cf66; margin-bottom: 1rem;">📊 What This Means for Product Managers</h3>
+                    <p style="color: #ddd; line-height: 1.6;">
+                        Agents are quickly moving from hype to product reality. Whether it's generative chat with browsing (ChatGPT with Operator), or personalized search (Google AI Mode), user interactions are shifting. Early adopters that define agent interfaces, APIs, and business models will shape consumer expectations.
+                    </p>
+                </div>
+                <div style="background: rgba(255, 165, 0, 0.1); border-radius: 15px; padding: 2rem; border: 1px solid rgba(255, 165, 0, 0.2);">
+                    <h3 style="color: #ffa726; margin-bottom: 1rem;">🌐 The Global Perspective</h3>
+                    <p style="color: #ddd; line-height: 1.6;">
+                        US tech leaders (OpenAI, Google, Microsoft) and Asian giants (Tencent, Alibaba, Samsung) are racing to integrate agents. Policies and standards will emerge (e.g. the need for "Agent-Engine Optimization" akin to SEO).
+                    </p>
+                </div>
+            </div>
+
+            <div style="text-align: center; background: linear-gradient(135deg, rgba(14, 165, 165, 0.2), rgba(255, 255, 255, 0.1)); border-radius: 20px; padding: 3rem; margin: 4rem 0; border: 2px solid rgba(14, 165, 165, 0.3);">
+                <h3 style="color: #0ea5a5; margin-bottom: 2rem; font-size: 2rem;">🔮 The Future is Agent-First</h3>
+                <p style="font-size: 1.2rem; color: #ddd; line-height: 1.8; margin-bottom: 2rem;">
+                    The web is poised to evolve into a mesh of agent-centric data endpoints. Service businesses must decide how to coexist with AI intermediaries; media must protect value in an era of AI digests; enterprises must leverage agents internally and externally.
+                </p>
+                <p style="font-size: 1.1rem; color: #0ea5a5; font-weight: 600;">
+                    The companies that invest now in structured APIs, AI-agent partnerships, and innovative business models will lead the agent-first future.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Share Section -->
+    <section class="share-section">
+        <div class="container">
+            <h2 style="font-size: 2.5rem; margin-bottom: 2rem;">Ready to Explore the Agent-First Future?</h2>
+            <p style="font-size: 1.2rem; color: #ccc; margin-bottom: 3rem;">Join the conversation about how AI agents are reshaping the digital landscape</p>
+            <button class="share-button" onclick="shareReport()">
+                📤 Share This Report
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>© Shahnab: The Agent-First Web Report 2025. Built together with AI.</p>
+            </div>
+            <div class="footer-links">
+                <a href="#overview">Overview</a>
+                <a href="#services">Services</a>
+                <a href="#media">Media</a>
+                <a href="#business">Business</a>
+                <a href="#future">Future</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling and navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show navbar on scroll
+            window.addEventListener('scroll', function() {
+                const navbar = document.getElementById('navbar');
+                const progressBar = document.getElementById('progressBar');
+                
+                if (window.scrollY > 100) {
+                    navbar.classList.add('show');
+                } else {
+                    navbar.classList.remove('show');
+                }
+
+                // Update progress bar
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                progressBar.style.transform = `scaleX(${scrolled / 100})`;
+            });
+
+            // Intersection Observer for animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            // Observe elements
+            document.querySelectorAll('.section-title, .card, .indicator-item').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Smooth scroll for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Add stagger animation to cards
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+
+        // Share functionality
+        function shareReport() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'The Agent-First Web: A New Paradigm',
+                    text: 'Discover how AI agents are reshaping the digital landscape',
+                    url: window.location.href
+                });
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                const url = window.location.href;
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('Link copied to clipboard!');
+                });
+            }
+        }
+
+        // Add interactive hover effects
+        document.querySelectorAll('.diagram-node').forEach(node => {
+            node.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.1) rotate(5deg)';
+            });
+            
+            node.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1) rotate(0deg)';
+            });
+        });
+
+        // Add interactive effects to agent architecture components
+        document.querySelectorAll('.agent-component').forEach(component => {
+            component.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+                this.style.boxShadow = '0 20px 40px rgba(14, 165, 165, 0.3)';
+            });
+            
+            component.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+                this.style.boxShadow = 'none';
+            });
+        });
+
+        // Animate data flow lines with staggered timing
+        document.querySelectorAll('.flow-line').forEach((line, index) => {
+            line.style.animationDelay = `${index * 0.5}s`;
+        });
+
+        // Add click interaction to architecture components
+        document.querySelectorAll('.agent-component').forEach(component => {
+            component.addEventListener('click', function() {
+                // Create ripple effect
+                const ripple = document.createElement('div');
+                ripple.style.position = 'absolute';
+                ripple.style.borderRadius = '50%';
+                ripple.style.background = 'rgba(14, 165, 165, 0.5)';
+                ripple.style.transform = 'scale(0)';
+                ripple.style.animation = 'ripple 0.6s linear';
+                ripple.style.left = '50%';
+                ripple.style.top = '50%';
+                ripple.style.width = '20px';
+                ripple.style.height = '20px';
+                ripple.style.marginLeft = '-10px';
+                ripple.style.marginTop = '-10px';
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // Add CSS for ripple effect
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Parallax effect for hero section
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const header = document.querySelector('.header');
+            if (header) {
+                header.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+
+        // Add glitch effect to hero title on hover
+        const heroTitle = document.querySelector('.hero-title');
+        if (heroTitle) {
+            heroTitle.addEventListener('mouseenter', function() {
+                this.style.animation = 'none';
+                setTimeout(() => {
+                    this.style.animation = 'slideInUp 1s ease-out';
+                }, 10);
+            });
+        }
+    </script>
+</body>
+</html>
