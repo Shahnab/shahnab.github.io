@@ -1,0 +1,2751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Future and Fate of Media Agencies</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Animated Background Elements */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .floating-shape {
+            position: absolute;
+            background: rgba(20, 184, 166, 0.1);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        .floating-shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 10%;
+            animation-delay: -5s;
+        }
+
+        .floating-shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 80%;
+            left: 70%;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+            100% { transform: translateY(0px) rotate(360deg); }
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(20,184,166,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            animation: slideGrid 30s linear infinite;
+        }
+
+        @keyframes slideGrid {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(10px); }
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 300;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .highlight {
+            color: #14b8a6;
+            font-weight: 600;
+        }
+
+        /* Executive Summary */
+        .executive-summary {
+            background: white;
+            padding: 80px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .summary-content {
+            background: #f8fafc;
+            padding: 40px;
+            border-radius: 20px;
+            border-left: 5px solid #14b8a6;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        /* Key Stats Section */
+        .key-stats {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(20,184,166,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .stat-card:hover::before {
+            left: 100%;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #14b8a6;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: #666;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-trend {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .trend-up {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .trend-down {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+
+        .trend-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        /* Content Sections */
+        .content-section {
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .content-section:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 30px;
+            color: #1a1a1a;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: #14b8a6;
+            transition: width 0.3s ease;
+        }
+
+        .section-title:hover::after {
+            width: 100%;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: flex-start;
+            margin-top: 50px;
+        }
+
+        .content-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .content-text p {
+            margin-bottom: 20px;
+        }
+
+        .content-visual {
+            position: relative;
+        }
+
+        /* Interactive Cards */
+        .challenge-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .challenge-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 5px solid #14b8a6;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .challenge-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .challenge-card h3 {
+            color: #1a1a1a;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .challenge-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Progress Bars */
+        .progress-container {
+            margin: 50px 0;
+        }
+
+        .progress-item {
+            margin-bottom: 25px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #14b8a6, #0d9488);
+            border-radius: 10px;
+            transition: width 2s ease;
+            position: relative;
+        }
+
+        .progress-fill.negative {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Quote Section */
+        .quote-section {
+            background: #1a1a1a;
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .quote {
+            font-size: 1.5rem;
+            font-style: italic;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .quote::before {
+            content: '"';
+            font-size: 4rem;
+            color: #14b8a6;
+            position: absolute;
+            left: -40px;
+            top: -20px;
+        }
+
+        .quote-author {
+            margin-top: 20px;
+            color: #14b8a6;
+            font-weight: 600;
+        }
+
+        /* Platform Dominance Section */
+        .platform-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .platform-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .platform-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .platform-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .platform-name {
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+
+        .platform-share {
+            color: #14b8a6;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        /* Talent Crisis Visual */
+        .talent-metrics {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .metric-item:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .metric-value {
+            color: #ef4444;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        /* Case Study Cards */
+        .case-study {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin: 30px 0;
+            border-left: 5px solid #14b8a6;
+        }
+
+        .case-study-title {
+            color: #14b8a6;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .case-study-content {
+            color: #555;
+            line-height: 1.7;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            margin: 50px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #14b8a6;
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin: 40px 0;
+            padding: 0 50px;
+        }
+
+        .timeline-item:nth-child(odd) {
+            text-align: right;
+        }
+
+        .timeline-item:nth-child(even) {
+            text-align: left;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 20px;
+            height: 20px;
+            background: #14b8a6;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: inline-block;
+            max-width: 400px;
+        }
+
+        .timeline-year {
+            color: #14b8a6;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        /* Call to Action */
+        .cta-section {
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #14b8a6;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button:hover {
+            background: #0d9488;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(20, 184, 166, 0.3);
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.6s ease;
+        }
+
+        .slide-in-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.6s ease;
+        }
+
+        .slide-in-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Start Page Animation */
+        .start-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a0a;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            transition: opacity 1s ease;
+            overflow: hidden;
+        }
+
+        .start-page.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .start-animation-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Floating geometric background */
+        .geometric-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 3000;
+        }
+
+        .geo-shape {
+            position: absolute;
+            border: 1px solid rgba(20, 184, 166, 0.1);
+            border-radius: 50%;
+            animation: float-geo 20s infinite linear;
+        }
+
+        .geo-shape:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .geo-shape:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            top: 20%;
+            right: 15%;
+            animation-delay: -5s;
+        }
+
+        .geo-shape:nth-child(3) {
+            width: 140px;
+            height: 140px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: -10s;
+        }
+
+        .geo-shape:nth-child(4) {
+            width: 80px;
+            height: 80px;
+            bottom: 30%;
+            right: 10%;
+            animation-delay: -15s;
+        }
+
+        @keyframes float-geo {
+            0% { transform: translateY(0px) rotate(0deg); opacity: 0.1; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.3; }
+            100% { transform: translateY(0px) rotate(360deg); opacity: 0.1; }
+        }
+
+        /* Modern typography */
+        .hero-content {
+            text-align: center;
+            z-index: 3001;
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: 4.5rem;
+            font-weight: 100;
+            color: white;
+            margin: 0;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease 0.5s forwards;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 300;
+            margin: 0 0 60px 0;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease 1s forwards;
+        }
+
+        .highlight-word {
+            color: #14b8a6;
+            position: relative;
+            display: inline-block;
+        }
+
+        .highlight-word::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #14b8a6, #0d9488);
+            animation: underlineExpand 1s ease 2s forwards;
+            transform: scaleX(0);
+            transform-origin: left;
+        }
+
+        @keyframes underlineExpand {
+            to { transform: scaleX(1); }
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Modern button design */
+        .modern-button {
+            background: transparent;
+            border: 2px solid #14b8a6;
+            color: #14b8a6;
+            padding: 18px 45px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease 1.5s forwards;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .modern-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: #14b8a6;
+            transition: left 0.4s ease;
+            z-index: -1;
+        }
+
+        .modern-button:hover {
+            color: white;
+            border-color: #14b8a6;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(20, 184, 166, 0.2);
+        }
+
+        .modern-button:hover::before {
+            left: 0;
+        }
+
+        .modern-button:disabled {
+            border-color: #6b7280;
+            color: #6b7280;
+            cursor: not-allowed;
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        .modern-button:disabled::before {
+            background: transparent;
+        }
+
+        /* Minimal data visualization */
+        #start-network {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3000;
+        }
+
+        .minimal-line {
+            stroke: rgba(20, 184, 166, 0.3);
+            stroke-width: 1;
+            opacity: 0;
+            animation: lineAppear 0.8s ease forwards;
+        }
+
+        @keyframes lineAppear {
+            to { opacity: 1; }
+        }
+
+        .data-point {
+            fill: #14b8a6;
+            opacity: 0;
+            r: 3;
+            filter: drop-shadow(0 0 8px rgba(20, 184, 166, 0.6));
+        }
+
+        /* Status indicator */
+        .status-indicator {
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 184, 166, 0.1);
+            border: 1px solid rgba(20, 184, 166, 0.3);
+            border-radius: 25px;
+            padding: 15px 30px;
+            color: #14b8a6;
+            font-size: 1rem;
+            font-weight: 500;
+            opacity: 0;
+            transition: all 0.5s ease;
+            backdrop-filter: blur(10px);
+            z-index: 3001;
+        }
+
+        .status-indicator.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .status-indicator::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background: #14b8a6;
+            border-radius: 50%;
+            animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); }
+            50% { opacity: 0.5; transform: translateY(-50%) scale(1.2); }
+        }
+
+        /* Mouse follower effect */
+        .mouse-follower {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 1px solid rgba(20, 184, 166, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 3002;
+            transition: all 0.1s ease;
+            opacity: 0;
+        }
+
+        /* Particle system */
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #14b8a6;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            animation: particleFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes particleFloat {
+            0%, 100% { opacity: 0; transform: translateY(0) scale(0); }
+            50% { opacity: 1; transform: translateY(-100px) scale(1); }
+        }
+        .sources-tab {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+        }
+
+        .sources-button {
+            background: #14b8a6;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 5px 20px rgba(20, 184, 166, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .sources-button:hover {
+            background: #0d9488;
+            transform: translateY(-2px);
+        }
+
+        .sources-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1500;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sources-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .sources-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .sources-header {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: white;
+            z-index: 1600;
+        }
+
+        .sources-title {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 10px;
+            color: #14b8a6;
+        }
+
+        .sources-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        .close-sources {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 1600;
+            transition: all 0.3s ease;
+        }
+
+        .close-sources:hover {
+            color: #14b8a6;
+            transform: scale(1.2);
+        }
+
+        #sources-network {
+            width: 100%;
+            height: 100%;
+        }
+
+        .network-node {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .node-circle {
+            fill: #14b8a6;
+            stroke: #0d9488;
+            stroke-width: 2;
+            filter: drop-shadow(0 0 10px rgba(20, 184, 166, 0.5));
+        }
+
+        .node-circle.central {
+            fill: #f59e0b;
+            stroke: #d97706;
+            filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.7));
+        }
+
+        .node-circle.pulsing {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        .connection-line {
+            stroke: #14b8a6;
+            stroke-width: 1;
+            opacity: 0.6;
+            stroke-dasharray: 5,5;
+            animation: dash 3s linear infinite;
+        }
+
+        @keyframes dash {
+            to { stroke-dashoffset: -20; }
+        }
+
+        .flowing-particle {
+            fill: #14b8a6;
+            opacity: 0.8;
+            r: 3;
+        }
+
+        .node-label {
+            fill: white;
+            font-size: 12px;
+            font-weight: 600;
+            text-anchor: middle;
+            pointer-events: none;
+            text-shadow: 0 0 5px rgba(0,0,0,0.8);
+        }
+
+        .node-tooltip {
+            position: fixed;
+            background: rgba(20, 184, 166, 0.95);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            pointer-events: none;
+            z-index: 1700;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            max-width: 350px;
+            min-width: 250px;
+            word-wrap: break-word;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .node-tooltip.visible {
+            opacity: 1;
+        }
+
+        .node-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: rgba(20, 184, 166, 0.95);
+        }
+
+        .legend {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            z-index: 1600;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        /* Share Button */
+        .share-button {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #14b8a6;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(20, 184, 166, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .share-button:hover {
+            background: #0d9488;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* Navigation */
+        .nav-dots {
+            position: fixed;
+            right: 30px;
+            top: 30%;
+            z-index: 1000;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(20, 184, 166, 0.3);
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background: #14b8a6;
+            transform: scale(1.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .share-button, .nav-dots {
+                right: 20px;
+            }
+
+            .sources-tab {
+                top: 80px;
+                right: 20px;
+            }
+
+            .sources-button {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+
+            .sources-title {
+                font-size: 2rem;
+            }
+
+            .legend {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                right: auto;
+                margin: 10px;
+                background: rgba(0, 0, 0, 0.9);
+            }
+
+            .close-sources {
+                top: 20px;
+                right: 20px;
+                font-size: 1.5rem;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-item {
+                padding-left: 50px;
+                text-align: left !important;
+            }
+
+            .timeline-dot {
+                left: 20px;
+            }
+
+            .node-label {
+                font-size: 10px;
+            }
+
+            /* Start page mobile styles */
+            .hero-title {
+                font-size: 3rem;
+                line-height: 1.2;
+                letter-spacing: -1px;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+                margin: 0 20px 40px 20px;
+                line-height: 1.4;
+            }
+
+            .modern-button {
+                padding: 15px 35px;
+                font-size: 1rem;
+                margin: 0 20px;
+            }
+
+            .status-indicator {
+                font-size: 0.9rem;
+                margin: 0 20px;
+                padding: 12px 25px;
+            }
+
+            .geo-shape {
+                display: none;
+            }
+
+            .mouse-follower {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Start Page Animation -->
+    <div class="start-page" id="startPage">
+        <div class="geometric-bg">
+            <div class="geo-shape"></div>
+            <div class="geo-shape"></div>
+            <div class="geo-shape"></div>
+            <div class="geo-shape"></div>
+        </div>
+        
+        <div class="mouse-follower" id="mouseFollower"></div>
+        
+        <div class="start-animation-container">
+            <svg id="start-network"></svg>
+            
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    The Future of<br>
+                    <span class="highlight-word">Media Agencies</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Analyze if legacy media agency giants will survive in the age of AI and digital transformation.
+                </p>
+                <button class="modern-button" id="analyzeButton" onclick="startAnalysis()">
+                    Begin Analysis
+                </button>
+            </div>
+            
+            <div class="status-indicator" id="statusIndicator">
+                Analyzing market trends and industry data...
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-animation">
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+    </div>
+
+    <div class="nav-dots">
+        <div class="nav-dot active" onclick="scrollToSection(0)"></div>
+        <div class="nav-dot" onclick="scrollToSection(1)"></div>
+        <div class="nav-dot" onclick="scrollToSection(2)"></div>
+        <div class="nav-dot" onclick="scrollToSection(3)"></div>
+        <div class="nav-dot" onclick="scrollToSection(4)"></div>
+        <div class="nav-dot" onclick="scrollToSection(5)"></div>
+    </div>
+
+    <div class="sources-tab">
+        <button class="sources-button" onclick="openSources()">
+            📚 View Sources Network
+        </button>
+    </div>
+
+    <button class="share-button" onclick="shareReport()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+        </svg>
+    </button>
+
+    <!-- Sources Network Overlay -->
+    <div class="sources-overlay" id="sourcesOverlay">
+        <div class="sources-content">
+            <div class="sources-header">
+                <h2 class="sources-title">Research Sources Network</h2>
+                <p class="sources-subtitle">Interactive visualization of all report sources and their connections</p>
+            </div>
+            
+            <button class="close-sources" onclick="closeSources()">&times;</button>
+            
+            <svg id="sources-network"></svg>
+            
+            <div class="legend">
+                <h4 style="margin-bottom: 15px; color: #14b8a6;">Legend</h4>
+                <div style="margin-bottom: 15px;">
+                    <div style="font-weight: bold; margin-bottom: 8px; color: #ffffff;">Source Types:</div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f59e0b;"></div>
+                        <span>Central Report</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #3b82f6;"></div>
+                        <span>Industry Reports</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #8b5cf6;"></div>
+                        <span>Survey Data</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #14b8a6;"></div>
+                        <span>News Articles</span>
+                    </div>
+                </div>
+                <div>
+                    <div style="font-weight: bold; margin-bottom: 8px; color: #ffffff;">Impact Levels:</div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ef4444; border: 2px solid #ef4444;"></div>
+                        <span>Critical Impact</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f59e0b; border: 2px solid #f59e0b;"></div>
+                        <span>High Impact</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #14b8a6; border: 2px solid #14b8a6;"></div>
+                        <span>Medium Impact</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="node-tooltip" id="nodeTooltip"></div>
+    </div>
+
+    <header id="section-0">
+        <div class="header-animation"></div>
+        <div class="container">
+            <h1 class="fade-in">The Future and Fate of <span class="highlight">Media Agencies</span></h1>
+            <p class="subtitle fade-in">Will Legacy Giants Survive the age of AI and digital Transformation? An in-depth analysis of the traditional ad agency model under siege </p>
+        </div>
+    </header>
+
+    <section class="executive-summary" id="section-1">
+        <div class="container">
+            <h2 class="section-title fade-in">Executive Summary</h2>
+            <div class="summary-content fade-in">
+                <p>The traditional ad agency model – based on media commissions and siloed services – is under siege. Holding companies show mixed performance: WPP and IPG have reported declines, while Publicis and Omnicom grew modestly. A GroupM forecast predicts global ad spend will surpass <strong>$1 trillion in 2024</strong>, with 72–78% going to digital platforms like Google, Meta and ByteDance, signalling that agencies must compete with tech giants for value.</p>
+                
+                <p>Internally, legacy networks suffer high turnover and burnout: surveys report ~56% of creatives intend to quit within a year and nearly half of holding-company staff feel job insecurity. In response, some employees have launched nimble independent agencies with startup-like equity models. Meanwhile, consultancies and big tech are encroaching on agency turf by offering in-house media buying and AI-driven creative tools.</p>
+                
+                <p><strong>Our analysis finds that legacy agencies will only survive the next 5–7 years if they radically transform</strong>: digitize services, adopt outcome-based fees, invest in talent and tech. Otherwise, many will cede ground to specialized boutiques, in-house teams, or tech platforms.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="key-stats" id="section-2">
+        <div class="container">
+            <h2 class="section-title fade-in">Key Industry Insights</h2>
+            <div class="stats-grid">
+                <div class="stat-card fade-in" style="transition-delay: 0.1s">
+                    <div class="stat-trend trend-up">💰</div>
+                    <div class="stat-number" data-target="1.04" data-suffix="T">0</div>
+                    <div class="stat-label">Trillion $ Global Ad Spend 2024</div>
+                </div>
+                <div class="stat-card fade-in" style="transition-delay: 0.2s">
+                    <div class="stat-trend trend-up">📱</div>
+                    <div class="stat-number" data-target="73" data-suffix="%">0</div>
+                    <div class="stat-label">Going to Digital Platforms by 2025</div>
+                </div>
+                <div class="stat-card fade-in" style="transition-delay: 0.3s">
+                    <div class="stat-trend trend-warning">⚠️</div>
+                    <div class="stat-number" data-target="56" data-suffix="%">0</div>
+                    <div class="stat-label">of Creatives Employees Planning to Quit</div>
+                </div>
+                <div class="stat-card fade-in" style="transition-delay: 0.4s">
+                    <div class="stat-trend trend-warning">⏰</div>
+                    <div class="stat-number" data-target="5" data-suffix=" Years">0</div>
+                    <div class="stat-label">Time Left For Agencies to Transform</div>
+                </div>
+                <div class="stat-card fade-in" style="transition-delay: 0.5s">
+                    <div class="stat-trend trend-down">📉</div>
+                    <div class="stat-number" data-target="75" data-suffix="%">0</div>
+                    <div class="stat-label">Clients want Outcome-Based Contracts</div>
+                </div>
+                <div class="stat-card fade-in" style="transition-delay: 0.6s">
+                    <div class="stat-trend trend-down">👥</div>
+                    <div class="stat-number" data-target="49" data-suffix="%">0</div>
+                    <div class="stat-label">Agency employees feel Job Insecurity</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section" id="section-3">
+        <div class="container">
+            <div class="content-grid">
+                <div class="slide-in-left">
+                    <h2 class="section-title">The Traditional Model Under Siege</h2>
+                    <div class="content-text">
+                        <p>For over a century, agencies earned standard commissions on media buys, but that model is rapidly eroding. Brands now demand transparency and performance-based fees that tie agency compensation directly to business outcomes.</p>
+                        
+                        <p>A World Federation of Advertisers survey found <strong>75% of multinationals want to change agency remuneration</strong> away from commissions toward outcome-based contracts. Non-transparent practices like undeclared media rebates have come under scrutiny – a 2016 ANA report warned agencies must provide "full disclosure" of all rebates or lose client trust.</p>
+                        
+                        <p>Meanwhile, major agencies are scrambling to cut costs. WPP's CEO recently announced layoffs in its media arm (GroupM) as part of a global restructure, and Omnicom cut ~3,000 jobs in 2024 to align with its planned IPG merger. These moves reflect a shift to leaner operations but also underscore the pressure on agencies' old hierarchies and billable-hour models.</p>
+                    </div>
+                </div>
+                <div class="slide-in-right">
+                    <div class="progress-container">
+                        <h3 style="margin-bottom: 30px; color: #1a1a1a;">Agency Performance Q1 2025</h3>
+                        <div class="progress-item">
+                            <div class="progress-label">
+                                <span>WPP Revenue Change</span>
+                                <span style="color: #ef4444;">-2.7%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill negative" data-width="27"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-label">
+                                <span>Omnicom Growth</span>
+                                <span style="color: #22c55e;">+3.4%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" data-width="34"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-label">
+                                <span>Publicis Growth</span>
+                                <span style="color: #22c55e;">+4.9%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" data-width="49"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-label">
+                                <span>Havas Growth</span>
+                                <span style="color: #22c55e;">+2.0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" data-width="20"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-title fade-in">Financial and Market Trends</h2>
+            <div class="content-grid">
+                <div class="slide-in-left">
+                    <div class="content-text">
+                        <p>The ad industry overall is still growing – GroupM projects <strong>$1.04 trillion in global ad spend for 2024</strong> (up ~9.5%), reaching $1.1T by 2025. But nearly 73% of that will go to digital platforms by 2025.</p>
+                        
+                        <p>Google, Meta, ByteDance (TikTok) and Amazon/Alibaba now command over half of all ad dollars. This consolidation of demand makes it harder for agencies to differentiate; clients can buy "ads + AI targeting" directly from platforms.</p>
+                        
+                        <p>Within the holding groups, fortunes vary significantly. Yet even amid growth pockets, profits are squeezed. Omnicom set a target to cut its staff compensation bill 10% ahead of the IPG deal. Publicly, holding company leaders are reorganizing portfolios – WPP and IPG are merging agency brands, GroupM is consolidating Mindshare/Essence/Wavemaker into one P&L – essentially retrenching the legacy structure.</p>
+                    </div>
+                </div>
+                <div class="slide-in-right">
+                    <h3 style="margin-bottom: 30px; color: #1a1a1a;">Platform Dominance</h3>
+                    <div class="platform-cards">
+                        <div class="platform-card fade-in">
+                            <div class="platform-icon">🔍</div>
+                            <div class="platform-name">Google</div>
+                            <div class="platform-share">~30%</div>
+                        </div>
+                        <div class="platform-card fade-in">
+                            <div class="platform-icon">📘</div>
+                            <div class="platform-name">Meta</div>
+                            <div class="platform-share">~20%</div>
+                        </div>
+                        <div class="platform-card fade-in">
+                            <div class="platform-icon">🎵</div>
+                            <div class="platform-name">ByteDance</div>
+                            <div class="platform-share">~15%</div>
+                        </div>
+                        <div class="platform-card fade-in">
+                            <div class="platform-icon">📦</div>
+                            <div class="platform-name">Amazon</div>
+                            <div class="platform-share">~8%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="quote-section">
+        <div class="container">
+            <div class="quote fade-in">
+                Job security is freaking people out. 75% of creatives employees describe themselves as 'meh-to-miserable' at work.
+            </div>
+            <div class="quote-author fade-in">Industry Survey Results</div>
+        </div>
+    </section>
+
+    <section class="content-section" id="section-4">
+        <div class="container">
+            <h2 class="section-title fade-in">Talent Crisis and Culture Clash</h2>
+            <div class="content-grid">
+                <div class="slide-in-left">
+                    <div class="content-text">
+                        <p>A critical weakness of big agencies is their workforce. Multiple studies report alarmingly low morale and high churn. In a survey of ~1,000 creatives, <strong>56% said they planned to leave their current job within a year</strong>, and 75% described themselves as "meh-to-miserable" at work.</p>
+                        
+                        <p>Similarly, Adweek data shows U.S. agency headcount fell ~4% since April 2023 even as the overall job market grew, reflecting layoffs and departures. Holding-company employees are especially anxious: an Adweek poll found 49% feel insecure about their jobs and "nearly half" are actively looking to quit agency life.</p>
+                        
+                        <p>The work environment is often cited as toxic: long hours, low pay increases and whitewashed "burnout days" contribute to overwork. Many experienced staff hedge their bets by freelancing or moonlighting – one survey found <strong>65% of agency creatives were working a side gig</strong>, usually undisclosed – and some secretly build startups or gig incomes.</p>
+                    </div>
+                </div>
+                <div class="slide-in-right">
+                    <div class="talent-metrics">
+                        <h3 style="margin-bottom: 20px; color: #1a1a1a;">Talent Crisis Metrics</h3>
+                        <div class="metric-item">
+                            <div class="metric-label">Planning to quit within a year</div>
+                            <div class="metric-value">56%</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Feel "meh-to-miserable" at work</div>
+                            <div class="metric-value">75%</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Feel job insecurity</div>
+                            <div class="metric-value">49%</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Working side gigs</div>
+                            <div class="metric-value">65%</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-label">Agency headcount decline</div>
+                            <div class="metric-value">-4%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-title fade-in">Competition from Independents and In-House Teams</h2>
+            <div class="content-text fade-in">
+                <p>All this turnover is feeding the rise of nimble independents. Adweek reports "industry veterans are leaving big agencies to build indie shops with fresh, bold approaches." These new boutiques eschew holdco bureaucracy: they are faster, flatter, and often tech-savvy.</p>
+                
+                <p>Campaign Asia profiles Indian independents, noting they have "ditched old-school business practices" and "are embracing tech, AI, and holistic strategies to future-proof their companies." In their view, the "traditional agency model… is rapidly fading" and independents' agility makes them thrive in today's landscape.</p>
+            </div>
+            
+            <div class="case-study fade-in">
+                <div class="case-study-title">Case Study: Talented (India)</div>
+                <div class="case-study-content">
+                    <p>A striking case is Talented (India), founded in 2022 by former Dentsu Webchutney leaders. They explicitly aim to "keep people at the core…take a startup approach, and focus on being a pure-creative agency."</p>
+                    
+                    <p>Talented's founders tout employee equity: their business model includes giving ~20% of the company to staff via ESOPs. In their words, "the world…doesn't need another advertising agency. What it does need is a serious re-imagination of the agency experience…Working in advertising can and must feel better."</p>
+                    
+                    <p>Talented also rejects excessive hierarchy ("no follow-ups," flat structure) to enable creativity. These indie agencies are winning accounts by promising faster turnaround and founder-level attention – and major brands are noticing.</p>
+                </div>
+            </div>
+            
+            <div class="content-text fade-in">
+                <p>Meanwhile, many big brands are partially in-housing their marketing. Global companies (from Unilever to HP) have built internal creative/media teams, using agencies only for specialized projects. This trend further shrinks legacy networks' roles. The net effect: mid-market brands in particular find indie shops and in-housed teams more appealing and cost-effective.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section" id="section-5">
+        <div class="container">
+            <h2 class="section-title fade-in">Technology and Consultancy Threats</h2>
+            <div class="content-grid">
+                <div class="slide-in-left">
+                    <div class="content-text">
+                        <p>Legacy agencies also lag in tech. Clients' media dollars are increasingly spent through automated programmatic platforms. Major consultancies (Accenture Interactive, Deloitte Digital, IBM iX, PwC Digital) have built or acquired large ad units to capture this business.</p>
+                        
+                        <p><strong>Accenture Interactive's revenue rose 35% to $6.5B</strong>, aided by acquiring 14 agencies in five years. Deloitte bought creative shop Heat (LG and Papa Murphy's cases). IBM and PwC have built hundreds of studios. The consulting pitch: agencies are selling the same "technology" (adtech, data analytics) that consultancies now offer, so advertisers might as well work with outfits that deliver end-to-end business strategy.</p>
+                        
+                        <p>On the media-buying side, platforms are making DIY easier. Meta/Google now tout AI-driven creative tools and audience targeting. Mark Zuckerberg stated that AI will generate "better creative options" for advertisers while the platform handles optimal targeting.</p>
+                    </div>
+                </div>
+                <div class="slide-in-right">
+                    <div class="challenge-cards">
+                        <div class="challenge-card fade-in">
+                            <h3>🤖 AI Disruption</h3>
+                            <p>WPP's CEO Mark Read acknowledges: "to do the work we do today, there will be fewer people doing it" as AI automates creative and media planning tasks.</p>
+                        </div>
+                        <div class="challenge-card fade-in">
+                            <h3>💼 Consultancy Growth</h3>
+                            <p>Accenture Interactive: 35% revenue growth to $6.5B through strategic acquisitions and end-to-end business solutions.</p>
+                        </div>
+                        <div class="challenge-card fade-in">
+                            <h3>🎯 Platform Self-Service</h3>
+                            <p>Meta is positioning itself as an AI-powered advertising agent, reducing the need for traditional agency intermediaries.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-title fade-in">Corporate Responsibility: PR vs. Progress</h2>
+            <div class="content-text fade-in">
+                <p>Legacy agencies often tout commitments to diversity, sustainability and social causes. However, critics argue these are largely PR exercises without structural change. For example, WPP – which had billed itself as a "diversity leader" – quietly removed all references to "diversity, equity and inclusion" from its 2024 annual report. (It now talks vaguely of "people and culture.")</p>
+                
+                <p>This suggests undercurrent political and image pressures, rather than deep reform. Similarly, many agencies run token ESG campaigns and charity events, but their internal hierarchies and compensation practices remain unchanged. In short, big agencies have lots of glossy headlines (Cannes prizes, CSR initiatives) but still grapple with core cultural problems of pay, promotion and purpose.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-title fade-in">Transformation Timeline</h2>
+            <div class="timeline">
+                <div class="timeline-item fade-in">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">2024-2025</div>
+                        <p>Crisis Point: Mass layoffs, talent exodus, and platform dominance reach critical levels</p>
+                    </div>
+                </div>
+                <div class="timeline-item fade-in">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">2025-2027</div>
+                        <p>Radical Transformation: Agencies must adopt outcome-based fees, invest in AI, and rebuild culture</p>
+                    </div>
+                </div>
+                <div class="timeline-item fade-in">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">2027-2030</div>
+                        <p>New Landscape: Successful agencies become tech-enabled consultancies or specialized creative incubators</p>
+                    </div>
+                </div>
+                <div class="timeline-item fade-in">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">2030+</div>
+                        <p>Survival of the Fittest: Legacy giants either transform completely or cede ground to agile challengers</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section" id="section-6">
+        <div class="container">
+            <h2 class="fade-in" style="margin-bottom: 20px;">The Verdict: Transform or Perish</h2>
+            <p class="fade-in" style="font-size: 1.2rem; margin-bottom: 30px; max-width: 800px; margin-left: auto; margin-right: auto;">
+                The evidence points to a stark reality: without radical reinvention, many legacy agencies may not survive in their current form over the next 5–7 years. The old recipe – commission-based fees, siloed teams, emphasis on awards over client results – is breaking down.
+            </p>
+            <p class="fade-in" style="font-size: 1.1rem; margin-bottom: 40px; max-width: 700px; margin-left: auto; margin-right: auto;">
+                Some legacy agencies will survive, but only by becoming unrecognizable from today's versions. We expect consolidation and closures as ongoing, but also opportunity: startups like Talented, specialist shops and tech-led firms will capture growing share.
+            </p>
+            <a href="#" class="cta-button fade-in" onclick="downloadReport()">📄 Download Full Report</a>
+            <a href="#" class="cta-button fade-in" onclick="shareReport()">🔗 Share Analysis</a>
+        </div>
+    </section>
+
+    <script>
+        // Track sections for navigation
+        const sections = document.querySelectorAll('[id^="section-"]');
+        const navDots = document.querySelectorAll('.nav-dot');
+
+        // Animation on scroll
+        function animateOnScroll() {
+            const elements = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right');
+            
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('visible');
+                }
+            });
+
+            // Update navigation dots
+            let currentSection = 0;
+            sections.forEach((section, index) => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
+                    currentSection = index;
+                }
+            });
+
+            navDots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSection);
+            });
+        }
+
+        // Number counter animation
+        function animateNumbers() {
+            const numbers = document.querySelectorAll('.stat-number');
+            
+            numbers.forEach(number => {
+                const target = parseFloat(number.getAttribute('data-target'));
+                const suffix = number.getAttribute('data-suffix') || '';
+                const increment = target / 100;
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        number.textContent = target + suffix;
+                        clearInterval(timer);
+                    } else {
+                        const displayValue = target % 1 === 0 ? Math.ceil(current) : current.toFixed(1);
+                        number.textContent = displayValue + suffix;
+                    }
+                }, 20);
+            });
+        }
+
+        // Progress bar animation
+        function animateProgressBars() {
+            const progressBars = document.querySelectorAll('.progress-fill');
+            
+            progressBars.forEach(bar => {
+                const width = bar.getAttribute('data-width');
+                setTimeout(() => {
+                    bar.style.width = width + '%';
+                }, 500);
+            });
+        }
+
+        // Navigation functions
+        function scrollToSection(index) {
+            if (sections[index]) {
+                sections[index].scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Share functionality
+        function shareReport() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'The Future and Fate of Media Agencies',
+                    text: 'Check out this interactive report on the future of media agencies - will legacy giants survive?',
+                    url: window.location.href
+                });
+            } else {
+                const url = window.location.href;
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('Link copied to clipboard! Share this insightful analysis with your network.');
+                });
+            }
+        }
+
+        // Download report (placeholder)
+        function downloadReport() {
+            alert('This comprehensive report would be available as a PDF download in a real implementation. Contact us for the full analysis with detailed charts and additional insights.');
+        }
+
+        // Initialize animations
+        window.addEventListener('scroll', animateOnScroll);
+        
+        // Don't auto-start main report animations - they'll be triggered after start page
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Interactive card effects
+        document.querySelectorAll('.stat-card, .challenge-card, .platform-card, .case-study').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Sources Network Data
+        const sourcesData = {
+            central: {
+                id: 'central',
+                name: 'Media Agencies Report',
+                type: 'central',
+                description: 'The Future and Fate of Media Agencies: Will Legacy Giants Survive?',
+                metrics: '5-7 Years Transformation Timeline | $1T+ Global Market Analysis',
+                url: '#'
+            },
+            sources: [
+                {
+                    id: 'wpp-q1-2025',
+                    name: 'WPP Q1 2025',
+                    type: 'industry',
+                    description: 'WPP reports organic revenue decline in Q1 2025',
+                    metrics: '-2.7% Organic Revenue Decline | GroupM Restructuring',
+                    impact: 'High',
+                    url: 'https://www.campaignasia.com/article/wpp-reports-2-7-revenue-decline-in-q1-2025/502178'
+                },
+                {
+                    id: 'omnicom-revenue',
+                    name: 'Omnicom Q1 2025',
+                    type: 'industry',
+                    description: 'Omnicom reports strong Q1 2025 performance with APAC growth',
+                    metrics: '+3.4% Growth | $3.7B Revenue | +6% APAC Growth',
+                    impact: 'Medium',
+                    url: 'https://www.campaignasia.com/article/omnicom-reports-global-revenue-of-3-7-billion-in-q1-2025-apac-on-a-growth-traje/501992'
+                },
+                {
+                    id: 'global-ad-spend',
+                    name: 'Global Ad Spend',
+                    type: 'industry',
+                    description: 'GroupM forecast: Global advertising to hit historic milestone',
+                    metrics: '$1.04T in 2024 | $1.1T by 2025 | 73% Digital by 2025',
+                    impact: 'Critical',
+                    url: 'https://www.emarketer.com/content/global-ad-revenues-hit--1-trillion-milestone-2024--says-groupm-forecast'
+                },
+                {
+                    id: 'creative-survey',
+                    name: 'Creative Talent Crisis',
+                    type: 'survey',
+                    description: 'Massive survey reveals unprecedented creative workforce exodus',
+                    metrics: '56% Planning to Quit | 75% Feel "Meh-to-Miserable" | 1,000 Creatives Surveyed',
+                    impact: 'Critical',
+                    url: 'https://www.globenewswire.com/news-release/2024/08/06/2925350/0/en/New-Creative-Employee-Survey-Reveals-Over-56-of-Full-Timers-are-Looking-to-Leave-Their-Jobs-Within-the-Next-Year-Despite-Industry-Instability.html'
+                },
+                {
+                    id: 'agency-employment',
+                    name: 'Employment Decline',
+                    type: 'news',
+                    description: 'Agency headcount drops while overall job market grows',
+                    metrics: '-4% Agency Jobs Since April 2023 | 49% Feel Job Insecurity',
+                    impact: 'High',
+                    url: 'https://www.adweek.com/agencies/us-ad-agency-employment-dips-as-overall-job-market-grows/'
+                },
+                {
+                    id: 'talented-agency',
+                    name: 'Talented (Case Study)',
+                    type: 'news',
+                    description: 'Indian independent agency pioneering equity-sharing model',
+                    metrics: 'Founded 2022 | 20% Staff Equity via ESOPs | Ex-Dentsu Leaders',
+                    impact: 'Medium',
+                    url: 'https://www.forbesindia.com/article/storyboard18/the-world-doesnt-need-another-advertising-agency-reghunath-and-aditiya-of-talented/75165/1'
+                },
+                {
+                    id: 'accenture-interactive',
+                    name: 'Accenture Threat',
+                    type: 'industry',
+                    description: 'Consulting giant aggressively acquiring ad agencies',
+                    metrics: '+35% Revenue Growth | $6.5B Revenue | 14 Agencies Acquired in 5 Years',
+                    impact: 'Critical',
+                    url: 'https://www.consulting.us/news/385/accenture-interactive-launches-consulting-invasion-of-ad-agency-space'
+                },
+                {
+                    id: 'meta-ai-agent',
+                    name: 'Meta AI Disruption',
+                    type: 'news',
+                    description: 'Meta positioning itself as AI-powered advertising agent',
+                    metrics: 'AI-Generated Creative Options | Automated Targeting | Direct Platform Access',
+                    impact: 'Critical',
+                    url: 'https://www.marketingweek.com/meta-ai-redefine-advertising/'
+                },
+                {
+                    id: 'agency-remuneration',
+                    name: 'Fee Model Crisis',
+                    type: 'survey',
+                    description: 'World Federation of Advertisers survey on payment models',
+                    metrics: '75% Want Outcome-Based Contracts | Move Away from Commissions',
+                    impact: 'High',
+                    url: 'https://wfanet.org/knowledge/item/2024/11/14/three-quarters-of-brands-want-to-change-their-agency-remuneration-model'
+                },
+                {
+                    id: 'ana-report',
+                    name: 'ANA Transparency',
+                    type: 'industry',
+                    description: '2016 report exposing widespread agency kickback schemes',
+                    metrics: 'Widespread Kickback Schemes | "Full Disclosure" Warning | Trust Crisis',
+                    impact: 'High',
+                    url: 'https://www.businessinsider.com/ana-report-alleges-widespread-ad-agency-kickback-schemes-2016-6'
+                },
+                {
+                    id: 'groupm-redundancies',
+                    name: 'GroupM Cuts',
+                    type: 'news',
+                    description: 'WPP media arm announces redundancies as part of restructure',
+                    metrics: 'UK Staff Redundancies | Spring 2025 Warnings | Global Restructure',
+                    impact: 'Medium',
+                    url: 'https://www.campaignasia.com/article/groupm-tells-staff-about-redundancies-as-restructure-hits-uk/502604'
+                },
+                {
+                    id: 'omnicom-costs',
+                    name: 'Omnicom Cost Cuts',
+                    type: 'industry',
+                    description: 'Aggressive cost-cutting targets ahead of IPG merger',
+                    metrics: '10% Staff Cost Reduction Target | 3,000 Jobs Cut in 2024 | IPG Merger Prep',
+                    impact: 'High',
+                    url: 'https://www.campaignasia.com/article/omnicom-set-targets-to-cut-staff-costs-by-10/502574'
+                },
+                {
+                    id: 'indie-agencies',
+                    name: 'Independent Rise',
+                    type: 'news',
+                    description: 'Top talent leaving big agencies to launch independent shops',
+                    metrics: 'Industry Veterans Exodus | Fresh Bold Approaches | Faster & Flatter',
+                    impact: 'Medium',
+                    url: 'https://www.adweek.com/agencies/10-indie-agencies-to-watch-launched-by-top-adland-talent/'
+                },
+                {
+                    id: 'india-independents',
+                    name: 'India Innovation',
+                    type: 'news',
+                    description: 'Indian agencies ditching old-school practices for tech-first approach',
+                    metrics: 'Tech & AI Embrace | Holistic Strategies | Traditional Model Fading',
+                    impact: 'Medium',
+                    url: 'https://www.campaignasia.com/article/indias-independent-agencies-rewrite-the-rules-to-take-on-industry-goliaths/499350'
+                },
+                {
+                    id: 'holding-vs-independent',
+                    name: 'Performance Gap',
+                    type: 'industry',
+                    description: 'Comparative analysis of holding companies vs independents',
+                    metrics: 'Mixed Holding Performance | Independent Agility Advantage | 2023 Analysis',
+                    impact: 'Medium',
+                    url: 'https://digiday.com/media-buying/holding-companies-vs-independent-agencies-who-beat-who-in-2023/'
+                },
+                {
+                    id: 'wpp-ai-workforce',
+                    name: 'AI Job Impact',
+                    type: 'news',
+                    description: 'WPP CEO Mark Read on AI transformation of advertising workforce',
+                    metrics: '"Fewer People Doing It" | $400M AI Investment | WPP Open Platform',
+                    impact: 'Critical',
+                    url: 'https://www.adweek.com/agencies/wpps-mark-read-says-ai-will-upend-the-advertising-workforce/'
+                },
+                {
+                    id: 'wpp-diversity',
+                    name: 'Diversity Retreat',
+                    type: 'news',
+                    description: 'WPP removes diversity references from annual report',
+                    metrics: 'Removed DEI References | 2024 Annual Report | "People & Culture" Pivot',
+                    impact: 'Low',
+                    url: 'https://www.theguardian.com/business/2025/mar/30/advertising-giant-wpp-cuts-diversity-section-from-annual-report'
+                },
+                {
+                    id: 'publicis-growth',
+                    name: 'Publicis Success',
+                    type: 'industry',
+                    description: 'Publicis leads holding company growth in 2024-2025',
+                    metrics: '+4.9% Q1 2025 Growth | +4% H1 2024 Growth | Market Leader',
+                    impact: 'Medium',
+                    url: '#publicis-data'
+                },
+                {
+                    id: 'platform-dominance',
+                    name: 'Platform Control',
+                    type: 'industry',
+                    description: 'Google, Meta, ByteDance capturing majority of ad dollars',
+                    metrics: '50%+ of All Ad Dollars | Google ~30% | Meta ~20% | ByteDance ~15%',
+                    impact: 'Critical',
+                    url: '#platform-analysis'
+                },
+                {
+                    id: 'freelance-economy',
+                    name: 'Gig Economy Shift',
+                    type: 'survey',
+                    description: 'Agency creatives increasingly working side gigs',
+                    metrics: '65% Working Side Gigs | Usually Undisclosed | Building Startup Income',
+                    impact: 'High',
+                    url: '#freelance-survey'
+                }
+            ]
+        };
+
+        // Sources Network Functions
+        function openSources() {
+            const overlay = document.getElementById('sourcesOverlay');
+            overlay.classList.add('active');
+            setTimeout(() => createSourcesNetwork(), 300);
+        }
+
+        function closeSources() {
+            const overlay = document.getElementById('sourcesOverlay');
+            overlay.classList.remove('active');
+        }
+
+        function createSourcesNetwork() {
+            const svg = document.getElementById('sources-network');
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            svg.innerHTML = '';
+            svg.setAttribute('width', width);
+            svg.setAttribute('height', height);
+
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = Math.min(width, height) / 3;
+
+            // Calculate positions for sources in a circle around the center
+            const sources = sourcesData.sources;
+            const angleStep = (2 * Math.PI) / sources.length;
+            
+            // Store node positions for cross-referencing
+            const nodePositions = [];
+            
+            // Add source nodes first to get their positions
+            sources.forEach((source, index) => {
+                const angle = index * angleStep;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                nodePositions.push({ x, y, source, index });
+            });
+            
+            // Add central node
+            const centralNode = createNetworkNode(
+                centerX, centerY, 
+                sourcesData.central, 
+                'central', 
+                30
+            );
+            svg.appendChild(centralNode);
+
+            // Add connections and source nodes with continuous particles
+            nodePositions.forEach((position, index) => {
+                const { x, y, source } = position;
+
+                // Create connection line to center
+                const line = createConnectionLine(centerX, centerY, x, y);
+                svg.appendChild(line);
+
+                // Add continuously flowing particles with staggered timing
+                createFlowingParticle(svg, centerX, centerY, x, y, index * 200, true);
+                
+                // Reverse direction particles (from source to center) - continuous
+                createFlowingParticle(svg, x, y, centerX, centerY, index * 200 + 100, true);
+
+                // Create source node
+                const node = createNetworkNode(x, y, source, source.type, 20);
+                svg.appendChild(node);
+            });
+
+            // Add cross-references between related sources with continuous particles
+            addSmartConnections(svg, nodePositions, centerX, centerY);
+            
+            // Add thematic connections (group related sources) with continuous particles
+            addThematicConnections(svg, nodePositions);
+        }
+
+        function addSmartConnections(svg, nodePositions, centerX, centerY) {
+            // Define relationships between sources
+            const relationships = [
+                // Financial performance cluster
+                ['wpp-q1-2025', 'omnicom-revenue', 'publicis-growth'],
+                // Talent crisis cluster  
+                ['creative-survey', 'agency-employment', 'freelance-economy'],
+                // Technology disruption cluster
+                ['meta-ai-agent', 'wpp-ai-workforce', 'accenture-interactive'],
+                // Independent agency cluster
+                ['talented-agency', 'indie-agencies', 'india-independents'],
+                // Cost cutting cluster
+                ['groupm-redundancies', 'omnicom-costs', 'wpp-diversity'],
+                // Market structure cluster
+                ['global-ad-spend', 'platform-dominance', 'agency-remuneration']
+            ];
+
+            relationships.forEach((cluster, clusterIndex) => {
+                cluster.forEach((sourceId, i) => {
+                    if (i < cluster.length - 1) {
+                        const source1 = nodePositions.find(pos => pos.source.id === sourceId);
+                        const source2 = nodePositions.find(pos => pos.source.id === cluster[i + 1]);
+                        
+                        if (source1 && source2) {
+                            // Create curved connection through center
+                            const line = createCurvedConnection(source1.x, source1.y, source2.x, source2.y, centerX, centerY);
+                            line.style.stroke = getClusterColor(clusterIndex);
+                            line.style.strokeWidth = '2';
+                            line.style.strokeOpacity = '0.4';
+                            line.style.strokeDasharray = '3,6';
+                            svg.appendChild(line);
+                            
+                            // Add continuous particles flowing through the curve
+                            createCurvedFlowingParticle(svg, source1.x, source1.y, source2.x, source2.y, centerX, centerY, clusterIndex * 300, true);
+                        }
+                    }
+                });
+            });
+        }
+
+        function createCurvedConnection(x1, y1, x2, y2, centerX, centerY) {
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            
+            // Create a smooth curve that goes through the center point
+            const midX = (x1 + x2) / 2;
+            const midY = (y1 + y2) / 2;
+            
+            // Calculate control points for smooth curve
+            const controlX = centerX + (midX - centerX) * 0.3;
+            const controlY = centerY + (midY - centerY) * 0.3;
+            
+            const pathData = `M ${x1},${y1} Q ${controlX},${controlY} ${x2},${y2}`;
+            path.setAttribute('d', pathData);
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke', '#14b8a6');
+            path.setAttribute('stroke-width', '1');
+            
+            return path;
+        }
+
+        function createCurvedFlowingParticle(svg, x1, y1, x2, y2, centerX, centerY, delay, isRepeating = true) {
+            setTimeout(() => {
+                const particle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                particle.setAttribute('r', 3);
+                particle.setAttribute('fill', '#14b8a6');
+                particle.setAttribute('opacity', '0.8');
+                
+                const midX = (x1 + x2) / 2;
+                const midY = (y1 + y2) / 2;
+                const controlX = centerX + (midX - centerX) * 0.3;
+                const controlY = centerY + (midY - centerY) * 0.3;
+                
+                const animateMotion = document.createElementNS('http://www.w3.org/2000/svg', 'animateMotion');
+                animateMotion.setAttribute('dur', '5s');
+                animateMotion.setAttribute('repeatCount', isRepeating ? 'indefinite' : '1');
+                animateMotion.setAttribute('path', `M ${x1},${y1} Q ${controlX},${controlY} ${x2},${y2} Q ${controlX},${controlY} ${x1},${y1}`);
+                
+                const animateOpacity = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+                animateOpacity.setAttribute('attributeName', 'opacity');
+                animateOpacity.setAttribute('values', '0;1;1;1;0;0;1;1;1;0');
+                animateOpacity.setAttribute('dur', '5s');
+                animateOpacity.setAttribute('repeatCount', isRepeating ? 'indefinite' : '1');
+                
+                particle.appendChild(animateMotion);
+                particle.appendChild(animateOpacity);
+                svg.appendChild(particle);
+                
+                // Only remove particle if it's not repeating
+                if (!isRepeating) {
+                    setTimeout(() => {
+                        if (particle.parentNode) {
+                            particle.parentNode.removeChild(particle);
+                        }
+                    }, 5000);
+                }
+            }, delay);
+        }
+
+        function getClusterColor(index) {
+            const colors = ['#ef4444', '#f59e0b', '#14b8a6', '#3b82f6', '#8b5cf6', '#ec4899'];
+            return colors[index % colors.length];
+        }
+
+        function addThematicConnections(svg, nodePositions) {
+            // Add some direct connections between high-impact sources
+            const highImpactSources = nodePositions.filter(pos => pos.source.impact === 'Critical' || pos.source.impact === 'High');
+            
+            for (let i = 0; i < highImpactSources.length - 1; i++) {
+                const source1 = highImpactSources[i];
+                const source2 = highImpactSources[i + 1];
+                
+                const line = createConnectionLine(source1.x, source1.y, source2.x, source2.y);
+                line.style.strokeOpacity = '0.2';
+                line.style.strokeDasharray = '2,4';
+                line.style.stroke = source1.source.impact === 'Critical' ? '#ef4444' : '#f59e0b';
+                svg.appendChild(line);
+                
+                // Add continuous subtle particle flow on direct connections
+                createFlowingParticle(svg, source1.x, source1.y, source2.x, source2.y, i * 400, true);
+                
+                // Add reverse direction particles
+                createFlowingParticle(svg, source2.x, source2.y, source1.x, source1.y, i * 400 + 200, true);
+            }
+        }
+
+        function updateNetworkStats(sources) {
+            const stats = {
+                total: sources.length,
+                industry: sources.filter(s => s.type === 'industry').length,
+                survey: sources.filter(s => s.type === 'survey').length,
+                news: sources.filter(s => s.type === 'news').length,
+                critical: sources.filter(s => s.impact === 'Critical').length,
+                high: sources.filter(s => s.impact === 'High').length
+            };
+
+            // Animate the numbers
+            animateStatNumber('totalSources', stats.total);
+            animateStatNumber('industryReports', stats.industry);
+            animateStatNumber('surveyData', stats.survey);
+            animateStatNumber('newsArticles', stats.news);
+            animateStatNumber('criticalImpact', stats.critical);
+            animateStatNumber('highImpact', stats.high);
+        }
+
+        function animateStatNumber(elementId, target) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            let current = 0;
+            const increment = Math.max(1, Math.floor(target / 20));
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = current;
+                }
+            }, 50);
+        }
+
+        function createNetworkNode(x, y, data, type, size) {
+            const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            group.setAttribute('class', 'network-node');
+            group.setAttribute('transform', `translate(${x}, ${y})`);
+
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('r', size);
+            circle.setAttribute('class', `node-circle ${type === 'central' ? 'central pulsing' : 'pulsing'}`);
+            
+            // Different colors for different types
+            if (type === 'industry') {
+                circle.style.fill = '#3b82f6';
+                circle.style.stroke = '#2563eb';
+            } else if (type === 'survey') {
+                circle.style.fill = '#8b5cf6';
+                circle.style.stroke = '#7c3aed';
+            } else if (type === 'news') {
+                circle.style.fill = '#14b8a6';
+                circle.style.stroke = '#0d9488';
+            }
+
+            // Add impact level indicators
+            if (data.impact) {
+                circle.style.strokeWidth = data.impact === 'Critical' ? '4' : 
+                                         data.impact === 'High' ? '3' : '2';
+                
+                if (data.impact === 'Critical') {
+                    circle.style.stroke = '#ef4444';
+                    circle.style.filter = 'drop-shadow(0 0 15px rgba(239, 68, 68, 0.7))';
+                } else if (data.impact === 'High') {
+                    circle.style.stroke = '#f59e0b';
+                    circle.style.filter = 'drop-shadow(0 0 10px rgba(245, 158, 11, 0.6))';
+                }
+                
+                // Add pulsing ring for critical impact
+                if (data.impact === 'Critical') {
+                    const ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    ring.setAttribute('r', size + 8);
+                    ring.setAttribute('fill', 'none');
+                    ring.setAttribute('stroke', '#ef4444');
+                    ring.setAttribute('stroke-width', '2');
+                    ring.setAttribute('opacity', '0.5');
+                    ring.style.animation = 'pulse 1.5s ease-in-out infinite';
+                    group.appendChild(ring);
+                }
+            }
+
+            const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            label.setAttribute('class', 'node-label');
+            label.setAttribute('y', size + 20);
+            label.textContent = data.name.length > 12 ? data.name.substring(0, 12) + '...' : data.name;
+
+            // Add metrics preview for non-central nodes
+            if (type !== 'central' && data.metrics) {
+                const metricsText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                metricsText.setAttribute('class', 'node-label');
+                metricsText.setAttribute('y', size + 35);
+                metricsText.setAttribute('font-size', '10');
+                metricsText.setAttribute('fill', '#a0a0a0');
+                const shortMetrics = data.metrics.split('|')[0].trim();
+                metricsText.textContent = shortMetrics.length > 15 ? shortMetrics.substring(0, 15) + '...' : shortMetrics;
+                group.appendChild(metricsText);
+            }
+
+            group.appendChild(circle);
+            group.appendChild(label);
+
+            // Enhanced hover and click effects
+            group.addEventListener('mouseenter', (e) => {
+                showTooltip(e, data);
+                // Highlight connected nodes
+                group.style.transform = `translate(${x}, ${y}) scale(1.1)`;
+            });
+            
+            group.addEventListener('mouseleave', () => {
+                hideTooltip();
+                group.style.transform = `translate(${x}, ${y}) scale(1)`;
+            });
+            
+            group.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (data.url && data.url !== '#' && !data.url.includes('#')) {
+                    // Show click feedback
+                    group.style.transform = `translate(${x}, ${y}) scale(1.2)`;
+                    setTimeout(() => {
+                        group.style.transform = `translate(${x}, ${y}) scale(1)`;
+                    }, 200);
+                    
+                    // Open URL
+                    window.open(data.url, '_blank');
+                } else {
+                    // Show message for placeholder links
+                    const tooltip = document.getElementById('nodeTooltip');
+                    tooltip.innerHTML = `<div style="text-align: center;">📋 This source is referenced in the main report</div>`;
+                    showTooltip(e, { name: data.name, description: 'Internal reference' });
+                    setTimeout(hideTooltip, 2000);
+                }
+            });
+
+            return group;
+        }
+
+        function createConnectionLine(x1, y1, x2, y2) {
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.setAttribute('class', 'connection-line');
+            return line;
+        }
+
+        function createFlowingParticle(svg, x1, y1, x2, y2, delay = 0, isRepeating = true) {
+            setTimeout(() => {
+                const particle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                particle.setAttribute('class', 'flowing-particle');
+                particle.setAttribute('r', 4);
+                particle.setAttribute('cx', x1);
+                particle.setAttribute('cy', y1);
+                
+                // Create smooth animation along the exact line path
+                const animateX = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+                animateX.setAttribute('attributeName', 'cx');
+                animateX.setAttribute('values', `${x1};${x2};${x1}`);
+                animateX.setAttribute('dur', '4s');
+                animateX.setAttribute('repeatCount', isRepeating ? 'indefinite' : '1');
+                
+                const animateY = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+                animateY.setAttribute('attributeName', 'cy');
+                animateY.setAttribute('values', `${y1};${y2};${y1}`);
+                animateY.setAttribute('dur', '4s');
+                animateY.setAttribute('repeatCount', isRepeating ? 'indefinite' : '1');
+                
+                const animateOpacity = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+                animateOpacity.setAttribute('attributeName', 'opacity');
+                animateOpacity.setAttribute('values', '0;1;1;1;0');
+                animateOpacity.setAttribute('dur', '4s');
+                animateOpacity.setAttribute('repeatCount', isRepeating ? 'indefinite' : '1');
+                
+                particle.appendChild(animateX);
+                particle.appendChild(animateY);
+                particle.appendChild(animateOpacity);
+                
+                svg.appendChild(particle);
+                
+                // Only remove particle if it's not repeating
+                if (!isRepeating) {
+                    setTimeout(() => {
+                        if (particle.parentNode) {
+                            particle.parentNode.removeChild(particle);
+                        }
+                    }, 4000);
+                }
+            }, delay);
+        }
+
+        function addRandomConnections(svg, sources, radius, centerX, centerY, angleStep) {
+            const numConnections = Math.min(8, sources.length);
+            const connected = new Set();
+
+            for (let i = 0; i < numConnections; i++) {
+                let index1, index2;
+                do {
+                    index1 = Math.floor(Math.random() * sources.length);
+                    index2 = Math.floor(Math.random() * sources.length);
+                } while (index1 === index2 || connected.has(`${index1}-${index2}`) || connected.has(`${index2}-${index1}`));
+
+                connected.add(`${index1}-${index2}`);
+
+                const angle1 = index1 * angleStep;
+                const angle2 = index2 * angleStep;
+                const x1 = centerX + radius * Math.cos(angle1);
+                const y1 = centerY + radius * Math.sin(angle1);
+                const x2 = centerX + radius * Math.cos(angle2);
+                const y2 = centerY + radius * Math.sin(angle2);
+
+                const line = createConnectionLine(x1, y1, x2, y2);
+                line.style.strokeOpacity = '0.3';
+                line.style.strokeDasharray = '2,3';
+                svg.appendChild(line);
+            }
+        }
+
+        function showTooltip(event, data) {
+            const tooltip = document.getElementById('nodeTooltip');
+            const impactColor = data.impact === 'Critical' ? '#ef4444' : 
+                               data.impact === 'High' ? '#f59e0b' : 
+                               data.impact === 'Medium' ? '#14b8a6' : '#6b7280';
+            
+            tooltip.innerHTML = `
+                <div style="border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 8px; margin-bottom: 8px;">
+                    <strong style="font-size: 16px;">${data.name}</strong>
+                    ${data.impact ? `<span style="float: right; background: ${impactColor}; color: white; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: bold;">${data.impact} Impact</span>` : ''}
+                </div>
+                <div style="margin-bottom: 8px;">
+                    ${data.description}
+                </div>
+                ${data.metrics ? `<div style="background: rgba(255,255,255,0.1); padding: 6px; border-radius: 5px; font-family: monospace; font-size: 12px; margin-bottom: 8px;">
+                    📊 ${data.metrics}
+                </div>` : ''}
+                ${data.url !== '#' && !data.url.includes('#') ? '<div style="font-style: italic; font-size: 12px; color: #a0a0a0;">🔗 Click to visit source</div>' : ''}
+            `;
+            
+            // Better positioning logic
+            const mouseX = event.clientX;
+            const mouseY = event.clientY;
+            const tooltipWidth = 350;
+            const tooltipHeight = 150;
+            
+            let left = mouseX - tooltipWidth / 2;
+            let top = mouseY - tooltipHeight - 20;
+            
+            // Adjust if tooltip goes off screen
+            if (left < 10) left = 10;
+            if (left + tooltipWidth > window.innerWidth - 10) left = window.innerWidth - tooltipWidth - 10;
+            if (top < 10) top = mouseY + 20;
+            
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
+            tooltip.style.transform = 'none';
+            tooltip.classList.add('visible');
+        }
+
+        function hideTooltip() {
+            const tooltip = document.getElementById('nodeTooltip');
+            tooltip.classList.remove('visible');
+        }
+
+        // Regenerate network on window resize
+        window.addEventListener('resize', () => {
+            const overlay = document.getElementById('sourcesOverlay');
+            if (overlay.classList.contains('active')) {
+                setTimeout(createSourcesNetwork, 100);
+            }
+        });
+
+        // Parallax effect for floating shapes
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const rate = scrolled * -0.5;
+            
+            document.querySelectorAll('.floating-shape').forEach((shape, index) => {
+                const speed = (index + 1) * 0.3;
+                shape.style.transform = `translateY(${rate * speed}px) rotate(${scrolled * 0.1}deg)`;
+            });
+        });
+
+        // Close sources overlay with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeSources();
+            }
+        });
+
+        // Start Page Animation Functions
+        function createStartNetwork() {
+            const svg = document.getElementById('start-network');
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            svg.setAttribute('width', width);
+            svg.setAttribute('height', height);
+
+            const centerX = width / 2;
+            const centerY = height / 2;
+            
+            // Create minimal connecting lines (fewer, more elegant)
+            const directions = [
+                { angle: 0, length: width * 0.3 },
+                { angle: Math.PI * 0.5, length: height * 0.25 },
+                { angle: Math.PI, length: width * 0.3 },
+                { angle: Math.PI * 1.5, length: height * 0.25 },
+                { angle: Math.PI * 0.25, length: Math.min(width, height) * 0.2 },
+                { angle: Math.PI * 1.25, length: Math.min(width, height) * 0.2 }
+            ];
+
+            directions.forEach((dir, index) => {
+                const endX = centerX + dir.length * Math.cos(dir.angle);
+                const endY = centerY + dir.length * Math.sin(dir.angle);
+
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', centerX);
+                line.setAttribute('y1', centerY);
+                line.setAttribute('x2', endX);
+                line.setAttribute('y2', endY);
+                line.setAttribute('class', 'minimal-line');
+                line.style.animationDelay = `${index * 0.2}s`;
+                
+                svg.appendChild(line);
+            });
+        }
+
+        function startAnalysis() {
+            const button = document.getElementById('analyzeButton');
+            const statusIndicator = document.getElementById('statusIndicator');
+            
+            // Disable button and show status
+            button.disabled = true;
+            button.textContent = 'Processing...';
+            statusIndicator.classList.add('visible');
+            
+            // Create elegant particle animation
+            createMinimalDataFlow();
+            
+            // After 4 seconds, transition to main report
+            setTimeout(() => {
+                statusIndicator.textContent = 'Analysis complete. Preparing insights...';
+                setTimeout(() => {
+                    transitionToReport();
+                }, 1500);
+            }, 4000);
+        }
+
+        function createMinimalDataFlow() {
+            const svg = document.getElementById('start-network');
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            
+            // Create fewer, more impactful data points
+            const dataPoints = [
+                { x: centerX - 200, y: centerY - 150 },
+                { x: centerX + 200, y: centerY - 150 },
+                { x: centerX - 250, y: centerY + 100 },
+                { x: centerX + 250, y: centerY + 100 },
+                { x: centerX, y: centerY - 200 },
+                { x: centerX, y: centerY + 200 }
+            ];
+
+            dataPoints.forEach((point, index) => {
+                setTimeout(() => {
+                    createElegantParticle(svg, point.x, point.y, centerX, centerY);
+                }, index * 300);
+            });
+        }
+
+        function createElegantParticle(svg, startX, startY, centerX, centerY) {
+            const particle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            particle.setAttribute('class', 'data-point');
+            particle.setAttribute('cx', startX);
+            particle.setAttribute('cy', startY);
+            particle.setAttribute('r', 4);
+            
+            const animateX = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+            animateX.setAttribute('attributeName', 'cx');
+            animateX.setAttribute('values', `${startX};${centerX};${centerX}`);
+            animateX.setAttribute('dur', '2.5s');
+            animateX.setAttribute('fill', 'freeze');
+            
+            const animateY = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+            animateY.setAttribute('attributeName', 'cy');
+            animateY.setAttribute('values', `${startY};${centerY};${centerY}`);
+            animateY.setAttribute('dur', '2.5s');
+            animateY.setAttribute('fill', 'freeze');
+            
+            const animateOpacity = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+            animateOpacity.setAttribute('attributeName', 'opacity');
+            animateOpacity.setAttribute('values', '0;1;1;0.8;0');
+            animateOpacity.setAttribute('dur', '3s');
+            animateOpacity.setAttribute('fill', 'freeze');
+            
+            // Add a subtle scale animation
+            const animateScale = document.createElementNS('http://www.w3.org/2000/svg', 'animateTransform');
+            animateScale.setAttribute('attributeName', 'transform');
+            animateScale.setAttribute('type', 'scale');
+            animateScale.setAttribute('values', '0;1;1.2;1');
+            animateScale.setAttribute('dur', '2.5s');
+            animateScale.setAttribute('fill', 'freeze');
+            
+            particle.appendChild(animateX);
+            particle.appendChild(animateY);
+            particle.appendChild(animateOpacity);
+            particle.appendChild(animateScale);
+            
+            svg.appendChild(particle);
+            
+            // Remove particle after animation
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, 3500);
+        }
+
+        function transitionToReport() {
+            const startPage = document.getElementById('startPage');
+            const statusIndicator = document.getElementById('statusIndicator');
+            
+            statusIndicator.textContent = 'Welcome to your comprehensive analysis';
+            
+            setTimeout(() => {
+                startPage.classList.add('hidden');
+                
+                // Initialize the main report animations after transition
+                setTimeout(() => {
+                    animateOnScroll();
+                    setTimeout(animateNumbers, 500);
+                    setTimeout(animateProgressBars, 1000);
+                }, 500);
+            }, 1000);
+        }
+
+        // Mouse follower effect
+        function initMouseFollower() {
+            const follower = document.getElementById('mouseFollower');
+            let mouseX = 0, mouseY = 0;
+            let followerX = 0, followerY = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                follower.style.opacity = '1';
+            });
+
+            document.addEventListener('mouseleave', () => {
+                follower.style.opacity = '0';
+            });
+
+            function animateFollower() {
+                followerX += (mouseX - followerX) * 0.1;
+                followerY += (mouseY - followerY) * 0.1;
+                
+                follower.style.left = followerX - 10 + 'px';
+                follower.style.top = followerY - 10 + 'px';
+                
+                requestAnimationFrame(animateFollower);
+            }
+            animateFollower();
+        }
+
+        // Create floating particles
+        function createFloatingParticles() {
+            const container = document.querySelector('.start-animation-container');
+            const particleCount = 8;
+
+            for (let i = 0; i < particleCount; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.top = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 4 + 's';
+                    container.appendChild(particle);
+
+                    // Remove particle after animation
+                    setTimeout(() => {
+                        if (particle.parentNode) {
+                            particle.parentNode.removeChild(particle);
+                        }
+                    }, 4000);
+                }, i * 500);
+            }
+        }
+
+        // Initialize start page when document loads
+        window.addEventListener('load', () => {
+            createStartNetwork();
+            initMouseFollower();
+            
+            // Start particle effects after initial animations
+            setTimeout(createFloatingParticles, 3000);
+        });
+
+        // Regenerate start network on window resize
+        window.addEventListener('resize', () => {
+            const startPage = document.getElementById('startPage');
+            if (!startPage.classList.contains('hidden')) {
+                setTimeout(createStartNetwork, 100);
+            }
+        });
+    </script>
+</body>
+</html>
