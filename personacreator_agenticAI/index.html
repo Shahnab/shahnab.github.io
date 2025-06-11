@@ -1,0 +1,1931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audience Persona Creator - Agentic AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .neural-network {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .node {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #14b8a6;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #14b8a6;
+            animation: pulse 2s infinite;
+        }
+
+        .connection {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #14b8a6, transparent);
+            animation: flow 3s infinite linear;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.5); opacity: 1; }
+        }
+
+        @keyframes flow {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .glass-container {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .landing-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .central-node {
+            position: relative;
+            margin-bottom: 3rem;
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ffffff, #14b8a6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 2rem;
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(20, 184, 166, 0.3)); }
+            50% { filter: drop-shadow(0 0 40px rgba(20, 184, 166, 0.6)); }
+        }
+
+        .divergent-lines {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+        }
+
+        .line {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            height: 2px;
+            background: linear-gradient(90deg, #14b8a6, transparent);
+            transform-origin: 0 50%;
+            animation: extend 2s ease-out infinite;
+        }
+
+        @keyframes extend {
+            0% { width: 0; opacity: 1; }
+            100% { width: 300px; opacity: 0; }
+        }
+
+        .explore-btn {
+            padding: 18px 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #14b8a6, #0891b2);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .explore-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(20, 184, 166, 0.4);
+        }
+
+        .explore-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .explore-btn:hover::before {
+            left: 100%;
+        }
+
+        .config-page {
+            display: none;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .config-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3rem;
+        }
+
+        .config-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #ffffff, #14b8a6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #14b8a6;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #14b8a6;
+            box-shadow: 0 0 20px rgba(20, 184, 166, 0.3);
+        }
+
+        .form-select option {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        .persona-basis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .basis-group {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .basis-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #14b8a6;
+            margin-bottom: 1rem;
+        }
+
+        .create-btn {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #14b8a6, #0891b2);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            cursor: pointer;
+            margin-top: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .create-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(20, 184, 166, 0.4);
+        }
+
+        .results-page {
+            display: none;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .results-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .results-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #ffffff, #14b8a6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .personas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .persona-card {
+            padding: 2.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            animation: slideUp 0.6s ease-out;
+            position: relative;
+            overflow: hidden;
+            min-height: 800px;
+        }
+
+        .persona-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #14b8a6, #0891b2);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .persona-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .persona-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #14b8a6, #0891b2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+
+        .persona-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #14b8a6;
+        }
+
+        .persona-subtitle {
+            color: #888;
+            font-size: 1rem;
+            margin-top: 0.25rem;
+        }
+
+        .persona-demographics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+        }
+
+        .demo-item {
+            font-size: 0.9rem;
+        }
+
+        .demo-label {
+            color: #14b8a6;
+            font-weight: 600;
+        }
+
+        .demo-value {
+            color: #ccc;
+        }
+
+        .personality-traits {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .trait-tag {
+            padding: 0.4rem 0.8rem;
+            background: linear-gradient(135deg, #14b8a6, #0891b2);
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .target-size {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(20, 184, 166, 0.1);
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+
+        .target-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #14b8a6;
+        }
+
+        .chart-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .chart {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 1rem;
+            position: relative;
+            border-radius: 50%;
+            background: conic-gradient(
+                #14b8a6 0deg 126deg,
+                #0891b2 126deg 180deg,
+                #06b6d4 180deg 234deg,
+                #0284c7 234deg 288deg,
+                #0369a1 288deg 324deg,
+                #075985 324deg 360deg
+            );
+        }
+
+        .chart::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            background: #0a0a0a;
+            border-radius: 50%;
+        }
+
+        .chart-legend {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        .detailed-section {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 15px;
+            border-left: 4px solid #14b8a6;
+        }
+
+        .section-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .info-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #ccc;
+        }
+
+        .info-list li:last-child {
+            border-bottom: none;
+        }
+
+        .highlight-stat {
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.2), rgba(8, 145, 178, 0.2));
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin: 0.5rem 0;
+            border-left: 3px solid #14b8a6;
+        }
+
+        .marketing-tips {
+            background: rgba(20, 184, 166, 0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin: 1.5rem 0;
+        }
+
+        .tip-item {
+            margin: 0.8rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .tip-item::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #14b8a6;
+            font-weight: bold;
+        }
+
+        .persona-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #14b8a6;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-content {
+            color: #ccc;
+            line-height: 1.5;
+        }
+
+        .loading-animation {
+            display: none;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(20, 184, 166, 0.3);
+            border-top: 3px solid #14b8a6;
+            border-radius: 50%;
+            margin: 0 auto 2rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.5rem;
+            color: #14b8a6;
+            margin-bottom: 1rem;
+        }
+
+        .loading-subtext {
+            color: #888;
+        }
+
+        .back-btn {
+            padding: 12px 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-5px);
+        }
+
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5rem;
+            }
+            .personas-grid {
+                grid-template-columns: 1fr;
+            }
+            .persona-basis {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="background-animation">
+        <div class="neural-network" id="neuralNetwork"></div>
+    </div>
+
+    <!-- Landing Page -->
+    <div class="landing-page" id="landingPage">
+        <div class="central-node">
+            <h1 class="main-title">Audience Persona Creator</h1>
+            <div class="divergent-lines" id="divergentLines"></div>
+        </div>
+        <button class="explore-btn" onclick="showConfigPage()">
+            Explore the Audience Persona Agentic AI
+        </button>
+    </div>
+
+    <!-- Configuration Page -->
+    <div class="config-page" id="configPage">
+        <div class="config-container glass-container">
+            <button class="back-btn" onclick="showLandingPage()">← Back to Home</button>
+            <h2 class="config-title">Audience Persona Configuration</h2>
+            
+            <div class="form-group">
+                <label class="form-label">Category</label>
+                <input type="text" class="form-input" value="Beer" readonly>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Brand</label>
+                <input type="text" class="form-input" value="Heineken" readonly>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Location</label>
+                <input type="text" class="form-input" value="Nationwide, Vietnam" readonly>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Number of Personas</label>
+                <select class="form-select">
+                    <option>3</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Persona Creation Basis</label>
+                <div class="persona-basis">
+                    <div class="basis-group">
+                        <div class="basis-title">Demographic</div>
+                        <select class="form-select">
+                            <option>Age: Millennials (25-40)</option>
+                        </select>
+                    </div>
+                    <div class="basis-group">
+                        <div class="basis-title">Geographic</div>
+                        <select class="form-select">
+                            <option>Urbanicity: Urban Areas</option>
+                        </select>
+                    </div>
+                    <div class="basis-group">
+                        <div class="basis-title">Psychographic</div>
+                        <select class="form-select">
+                            <option>Lifestyle: Social & Entertainment</option>
+                        </select>
+                    </div>
+                    <div class="basis-group">
+                        <div class="basis-title">Behavioral</div>
+                        <select class="form-select">
+                            <option>Purchase: Premium Seeker</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button class="create-btn" onclick="createPersonas()">
+                Create Personas
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Animation -->
+    <div class="loading-animation" id="loadingAnimation">
+        <div class="spinner"></div>
+        <div class="loading-text">Creating AI-Powered Personas...</div>
+        <div class="loading-subtext">Analyzing demographic patterns and consumer behavior</div>
+    </div>
+
+    <!-- Results Page -->
+    <div class="results-page" id="resultsPage">
+        <div class="results-container">
+            <button class="back-btn" onclick="showConfigPage()">← Back to Configuration</button>
+            <h2 class="results-title">Generated Audience Personas</h2>
+            
+            <div class="personas-grid">
+                <!-- Persona 1 -->
+                <div class="persona-card">
+                    <div class="persona-header">
+                        <div class="persona-avatar">M</div>
+                        <div>
+                            <div class="persona-name">Minh Nguyen</div>
+                            <div class="persona-subtitle">The Social Professional</div>
+                        </div>
+                    </div>
+
+                    <div class="target-size">
+                        <div class="target-number">18,442</div>
+                        <div style="color: #888; font-size: 0.9rem;">Target Audience Size</div>
+                    </div>
+
+                    <div class="persona-demographics">
+                        <div class="demo-item">
+                            <div class="demo-label">Age:</div>
+                            <div class="demo-value">32</div>
+                        </div>
+                        <div class="demo-item">
+                            <div class="demo-label">Gender:</div>
+                            <div class="demo-value">Male</div>
+                        </div>
+                        <div class="demo-item">
+                            <div class="demo-label">Location:</div>
+                            <div class="demo-value">Ho Chi Minh City</div>
+                        </div>
+                        <div class="demo-item">
+                            <div class="demo-label">Education:</div>
+                            <div class="demo-value">Bachelor's in Marketing</div>
+                        </div>
+                        <div class="demo-item">
+                            <div class="demo-label">Marital Status:</div>
+                            <div class="demo-value">Single</div>
+                        </div>
+                        <div class="demo-item">
+                            <div class="demo-label">Income:</div>
+                            <div class="demo-value">$32,000/year</div>
+                        </div>
+                        <div class="demo-item">
+                            <div class="demo-label">Household:</div>
+                            <div class="demo-value">Lives with Roommate</div>
+                        </div>
+                        <div class="demo-item">
+                            <div class="demo-label">Ethnicity:</div>
+                            <div class="demo-value">Vietnamese</div>
+                        </div>
+                    </div>
+
+                    <div class="section-title">Personality Traits</div>
+                    <div class="personality-traits">
+                        <span class="trait-tag">Extroverted</span>
+                        <span class="trait-tag">Ambitious</span>
+                        <span class="trait-tag">Social</span>
+                        <span class="trait-tag">Brand-conscious</span>
+                        <span class="trait-tag">Tech-savvy</span>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">About</div>
+                        <div class="section-content">
+                            Minh is a dynamic marketing professional who leverages social connections for career advancement. He values premium experiences and brands that enhance his professional image. Beer consumption is primarily social, associated with networking events and after-work gatherings.
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="section-title">Device Usage</div>
+                        <div class="chart"></div>
+                        <div class="chart-legend">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #14b8a6;"></div>
+                                <span>iPhone (35%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #0891b2;"></div>
+                                <span>Android (25%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #06b6d4;"></div>
+                                <span>MacBook (15%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #0284c7;"></div>
+                                <span>PC (10%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #0369a1;"></div>
+                                <span>iPad (10%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #075985;"></div>
+                                <span>Others (5%)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-grid">
+                        <div>
+                            <div class="section-title">Goals</div>
+                            <ul class="info-list">
+                                <li>Advance to Marketing Director role</li>
+                                <li>Build strong professional network</li>
+                                <li>Maintain active social lifestyle</li>
+                                <li>Establish personal brand presence</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="section-title">Interests</div>
+                            <ul class="info-list">
+                                <li>Digital marketing trends</li>
+                                <li>Networking events</li>
+                                <li>Craft beer culture</li>
+                                <li>Social media optimization</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="section-grid">
+                        <div>
+                            <div class="section-title">Technology Usage</div>
+                            <ul class="info-list">
+                                <li>Heavy Instagram and LinkedIn user</li>
+                                <li>Uses beer rating apps</li>
+                                <li>Mobile payment preference</li>
+                                <li>Digital marketing tools expert</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="section-title">Decision Making Style</div>
+                            <ul class="info-list">
+                                <li>Researches brands for 2-3 days before purchase</li>
+                                <li>Heavily influenced by peer reviews (85%)</li>
+                                <li>Makes spontaneous social decisions</li>
+                                <li>FOMO drives quick decisions</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="highlight-stat">
+                        <strong>Beer Consumption:</strong> 4-5 times per week, primarily social settings, spends $150-200/month on premium beer experiences
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Psychographic Profile</div>
+                        <div class="section-grid">
+                            <div>
+                                <div class="demo-label">Core Values:</div>
+                                <ul class="info-list">
+                                    <li>Professional advancement and recognition</li>
+                                    <li>Social status and peer approval</li>
+                                    <li>Work-life integration over balance</li>
+                                    <li>Quality experiences over material goods</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <div class="demo-label">Lifestyle Preferences:</div>
+                                <ul class="info-list">
+                                    <li>Evening social gatherings (5-7 PM)</li>
+                                    <li>Weekend networking brunches</li>
+                                    <li>Premium fitness club membership</li>
+                                    <li>Trendy district 1 & 3 venues</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Behavioral Insights</div>
+                        <div class="section-content">
+                            <div class="highlight-stat">
+                                <strong>Social Behavior:</strong> Initiates group plans 70% of the time, checks social media 8-10 times daily, responds to messages within 30 minutes
+                            </div>
+                            <div class="highlight-stat">
+                                <strong>Decision Making:</strong> Researches brands for 2-3 days before purchase, heavily influenced by peer reviews (85%), makes spontaneous social decisions
+                            </div>
+                            <div class="highlight-stat">
+                                <strong>Brand Loyalty:</strong> Moderate loyalty (6 months average), switches based on social trends, values exclusivity and limited editions
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-grid">
+                        <div>
+                            <div class="section-title">Hobbies & Activities</div>
+                            <ul class="info-list">
+                                <li>Photography for Instagram content</li>
+                                <li>Badminton twice weekly</li>
+                                <li>Cooking fusion dishes</li>
+                                <li>Attending marketing conferences</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="section-title">Daily Routine</div>
+                            <ul class="info-list">
+                                <li>6:30 AM - Gym workout</li>
+                                <li>9:00 AM - 6:00 PM - Work focus</li>
+                                <li>6:30 PM - Social time/networking</li>
+                                <li>10:00 PM - Personal development</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Media Consumption Patterns</div>
+                        <div class="section-grid">
+                            <div>
+                                <div class="demo-label">Digital Habits:</div>
+                                <ul class="info-list">
+                                    <li>Instagram: 45 min/day (peak 7-9 PM)</li>
+                                    <li>LinkedIn: 30 min/day (morning commute)</li>
+                                    <li>YouTube: 1 hour/day (marketing tutorials)</li>
+                                    <li>TikTok: 20 min/day (trending content)</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <div class="demo-label">Traditional Media:</div>
+                                <ul class="info-list">
+                                    <li>VnExpress news app (morning routine)</li>
+                                    <li>Marketing podcasts during commute</li>
+                                    <li>Netflix series (weekend binges)</li>
+                                    <li>Spotify playlists (work & gym)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Shopping & Financial Behaviors</div>
+                        <div class="section-content">
+                            <div class="highlight-stat">
+                                <strong>Shopping Timing:</strong> Online purchases during lunch break (12-1 PM), weekend mall visits with friends, impulse buys during happy hour
+                            </div>
+                            <div class="highlight-stat">
+                                <strong>Payment Preferences:</strong> Mobile payments (70%), credit cards for status purchases, cash for street food and local vendors
+                            </div>
+                            <div class="highlight-stat">
+                                <strong>Category Spending:</strong> Fashion 30%, Food & Beverage 25%, Tech gadgets 20%, Travel 15%, Entertainment 10%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-grid">
+                        <div>
+                            <div class="section-title">Brand Relationship Patterns</div>
+                            <ul class="info-list">
+                                <li>Follows 15+ brand Instagram accounts</li>
+                                <li>Participates in loyalty programs actively</li>
+                                <li>Shares brand content when it aligns with image</li>
+                                <li>Expects quick customer service response</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="section-title">Seasonal Behaviors</div>
+                            <ul class="info-list">
+                                <li>Tet: Premium gift purchases for networking</li>
+                                <li>Summer: Increased social drinking frequency</li>
+                                <li>Rainy season: More indoor venues preference</li>
+                                <li>Year-end: Professional development investments</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Communication & Information Gathering</div>
+                        <div class="section-grid">
+                            <div>
+                                <div class="demo-label">Research Process:</div>
+                                <ul class="info-list">
+                                    <li>Google Reviews (primary source)</li>
+                                    <li>Friend recommendations (highest trust)</li>
+                                    <li>Instagram stories and posts</li>
+                                    <li>LinkedIn professional opinions</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <div class="demo-label">Risk Tolerance:</div>
+                                <ul class="info-list">
+                                    <li>Moderate risk taker for career moves</li>
+                                    <li>Conservative with major purchases</li>
+                                    <li>Willing to try new brands if trending</li>
+                                    <li>FOMO drives quick decisions</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-grid">
+                        <div>
+                            <div class="section-title">Category-Specific Buying Habits</div>
+                            <ul class="info-list">
+                                <li>Fashion: Trendy brands, status-conscious</li>
+                                <li>Food: Premium dining, Instagram-worthy</li>
+                                <li>Tech: Latest gadgets for productivity</li>
+                                <li>Beverages: Premium brands for social status</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="section-title">Financial Management</div>
+                            <ul class="info-list">
+                                <li>Credit cards for rewards and status</li>
+                                <li>Invests in personal brand building</li>
+                                <li>Saves for networking and experiences</li>
+                                <li>Budgets for professional development</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="section-grid">
+                        <div>
+                            <div class="section-title">Challenges & Pain Points</div>
+                            <ul class="info-list">
+                                <li>Balancing social life with career demands</li>
+                                <li>Managing FOMO and social pressure</li>
+                                <li>Staying relevant in fast-changing industry</li>
+                                <li>Building authentic vs. transactional relationships</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="section-title">Core Values</div>
+                            <ul class="info-list">
+                                <li>Professional advancement and recognition</li>
+                                <li>Social status and peer approval</li>
+                                <li>Work-life integration over balance</li>
+                                <li>Quality experiences over material goods</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Location Insights: Stay • Work • Play</div>
+                        <div class="section-grid">
+                            <div>
+                                <div class="demo-label">🏠 STAY - Living Preferences:</div>
+                                <ul class="info-list">
+                                    <li>District 7 modern apartment (2BR, shared)</li>
+                                    <li>High-rise with gym and rooftop amenities</li>
+                                    <li>Walking distance to coffee shops</li>
+                                    <li>Well-connected to metro/bus routes</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <div class="demo-label">💼 WORK - Professional Environment:</div>
+                                <ul class="info-list">
+                                    <li>District 1 modern office tower</li>
+                                    <li>Co-working spaces for client meetings</li>
+                                    <li>30-minute motorbike commute</li>
+                                    <li>Flexible work-from-home 2 days/week</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <div class="demo-label">🎯 PLAY - Social & Entertainment Hotspots:</div>
+                            <ul class="info-list">
+                                <li>Nguyen Hue Walking Street for weekend events</li>
+                                <li>District 1 rooftop bars (Chill Skybar, EON Heli Bar)</li>
+                                <li>Landmark 81 SkyBar for special occasions</li>
+                                <li>Thu Duc coffee shops for casual meetups</li>
+                                <li>Saigon Sports Club for badminton sessions</li>
+                                <li>Bitexco Financial Tower area for networking</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Cultural & Social Influences</div>
+                        <div class="section-content">
+                            <div class="highlight-stat">
+                                <strong>Peer Influence:</strong> Heavily influenced by successful peers 70%, follows industry leaders on social media, attends professional networking events monthly
+                            </div>
+                            <div class="highlight-stat">
+                                <strong>Cultural Context:</strong> Balances traditional Vietnamese values with modern lifestyle, respects hierarchy while seeking advancement, values face-saving and reputation
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Persona 2 -->
+                <div class="persona-card">
+                    <div class="persona-header">
+                        <div class="persona-avatar">L</div>
+                        <div>
+                            <div class="persona-name">Linh Tran</div>
+                            <div class="persona-subtitle">The Creative Explorer</div>
+                        </div>
+                    </div>
+
+                    <div class="target-size">
+                        <div class="target-number">22,156</div>
+                        <div style="color: #888; font-size: 0.9rem;">Target Audience Size</div>
+                    </div>
+
+                    <div class="persona-demographics">
+                        <div class="demo-item">
+                            <div class="demo-label">Age:</div>
+                            <div class="demo-value">28</div>
+                        </div>
+                        <div class="demo-item">
+                            <div class="demo-label">Gender:</div>
+                            <div class="demo-value">Female</div>
+                        </div>
+                        <div class="demo-item">
+                            <div class="demo-label">Location:</div>
+                            <div class="demo-value">Hanoi</div>
+                        </div>
+                        <div class="demo-item">
+                            <div class="demo-label">Education:</div>
+                            <div class="demo-value">Bachelor's in Visual Arts</div>
+                        </div>
+                        <div class="demo-item">
+                            <div class="demo-label">Marital Status:</div>
+                            <div class="demo-value">In Relationship</div>
+                        </div>
+                        <div class="demo-item">
+                            <div class="demo-label">Income:</div>
+                            <div class="demo-value">$28,000/year</div>
+                        </div>
+                        <div class="demo-item">
+                            <div class="demo-label">Household:</div>
+                            <div class="demo-value">Lives with Partner</div>
+                        </div>
+                        <div class="demo-item">
+                            <div class="demo-label">Ethnicity:</div>
+                            <div class="demo-value">Vietnamese</div>
+                        </div>
+                    </div>
+
+                    <div class="section-title">Personality Traits</div>
+                    <div class="personality-traits">
+                        <span class="trait-tag">Creative</span>
+                        <span class="trait-tag">Authentic</span>
+                        <span class="trait-tag">Adventurous</span>
+                        <span class="trait-tag">Eco-conscious</span>
+                        <span class="trait-tag">Experience-focused</span>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">About</div>
+                        <div class="section-content">
+                            Linh is a creative professional who values authentic experiences over material possessions. She appreciates both international brands and local craftsmanship. Her beer choices reflect her artistic sensibilities and desire for unique, Instagram-worthy experiences.
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="section-title">Content Consumption</div>
+                        <div class="chart"></div>
+                        <div class="chart-legend">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #14b8a6;"></div>
+                                <span>Instagram (40%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #0891b2;"></div>
+                                <span>Pinterest (20%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #06b6d4;"></div>
+                                <span>YouTube (15%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #0284c7;"></div>
+                                <span>TikTok (10%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #0369a1;"></div>
+                                <span>Blogs (10%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #075985;"></div>
+                                <span>Others (5%)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-grid">
+                        <div>
+                            <div class="section-title">Goals</div>
+                            <ul class="info-list">
+                                <li>Build creative portfolio</li>
+                                <li>Travel to inspiring destinations</li>
+                                <li>Support sustainable brands</li>
+                                <li>Develop artistic skills</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="section-title">Interests</div>
+                            <ul class="info-list">
+                                <li>Contemporary art & design</li>
+                                <li>Sustainable living practices</li>
+                                <li>Food & beverage photography</li>
+                                <li>Cultural events & festivals</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="section-grid">
+                        <div>
+                            <div class="section-title">Media Consumption</div>
+                            <ul class="info-list">
+                                <li>Design blogs and magazines</li>
+                                <li>Food & lifestyle Instagram accounts</li>
+                                <li>Documentary films</li>
+                                <li>Sustainable brand content</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="section-title">Decision Making</div>
+                            <ul class="info-list">
+                                <li>Research-driven purchases</li>
+                                <li>Values authentic brand stories</li>
+                                <li>Influenced by visual aesthetics</li>
+                                <li>Prioritizes experience over price</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="highlight-stat">
+                        <strong>Beer Consumption:</strong> 2-3 times per week, focuses on unique experiences and craft varieties, spends $80-120/month
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Psychographic Profile</div>
+                        <div class="section-grid">
+                            <div>
+                                <div class="demo-label">Core Values:</div>
+                                <ul class="info-list">
+                                    <li>Authenticity and genuine experiences</li>
+                                    <li>Environmental sustainability</li>
+                                    <li>Creative expression and artistic growth</li>
+                                    <li>Cultural diversity and exploration</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <div class="demo-label">Lifestyle Preferences:</div>
+                                <ul class="info-list">
+                                    <li>Weekend art gallery visits</li>
+                                    <li>Local market exploration</li>
+                                    <li>Indie music venue attendance</li>
+                                    <li>Sustainable brand preference</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Behavioral Insights</div>
+                        <div class="section-content">
+                            <div class="highlight-stat">
+                                <strong>Creative Process:</strong> Works in 3-hour focused blocks, seeks inspiration from nature 3x per week, documents ideas through photography
+                            </div>
+                            <div class="highlight-stat">
+                                <strong>Purchase Behavior:</strong> Researches brand ethics before buying, prefers small local businesses (60%), willing to pay 20% premium for sustainable options
+                            </div>
+                            <div class="highlight-stat">
+                                <strong>Social Patterns:</strong> Prefers intimate gatherings (4-6 people), organizes cultural outings, influences friend group's lifestyle choices
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-grid">
+                        <div>
+                            <div class="section-title">Personal Motivations</div>
+                            <ul class="info-list">
+                                <li>Building a sustainable creative practice</li>
+                                <li>Discovering hidden local gems</li>
+                                <li>Supporting emerging artists</li>
+                                <li>Minimizing environmental impact</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="section-title">Weekend Activities</div>
+                            <ul class="info-list">
+                                <li>Saturday morning market visits</li>
+                                <li>Afternoon art studio time</li>
+                                <li>Sunday brunch with close friends</li>
+                                <li>Evening documentary watching</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Media Consumption & Content Preferences</div>
+                        <div class="section-grid">
+                            <div>
+                                <div class="demo-label">Visual Platforms:</div>
+                                <ul class="info-list">
+                                    <li>Instagram: 1 hour/day (art, design, food)</li>
+                                    <li>Pinterest: 45 min/day (inspiration boards)</li>
+                                    <li>Behance: 30 min/day (creative portfolios)</li>
+                                    <li>YouTube: 2 hours/day (tutorials, documentaries)</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <div class="demo-label">Information Sources:</div>
+                                <ul class="info-list">
+                                    <li>Design blogs and creative magazines</li>
+                                    <li>Sustainability-focused newsletters</li>
+                                    <li>Local cultural event notifications</li>
+                                    <li>Independent podcast subscriptions</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Shopping Psychology & Patterns</div>
+                        <div class="section-content">
+                            <div class="highlight-stat">
+                                <strong>Purchase Journey:</strong> 5-7 days research period, reads sustainability reports, checks brand ethics, seeks authentic reviews from real users
+                            </div>
+                            <div class="highlight-stat">
+                                <strong>Shopping Locations:</strong> Local markets 40%, independent stores 30%, online sustainable brands 20%, mainstream retail 10%
+                            </div>
+                            <div class="highlight-stat">
+                                <strong>Decision Triggers:</strong> Environmental impact (primary), aesthetic appeal, brand story authenticity, peer recommendations from fellow creatives
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-grid">
+                        <div>
+                            <div class="section-title">Category-Specific Buying Habits</div>
+                            <ul class="info-list">
+                                <li>Fashion: Vintage + local designers priority</li>
+                                <li>Food: Organic, local sourcing preferred</li>
+                                <li>Tech: Functionality over latest trends</li>
+                                <li>Beverages: Craft + ethical brands focus</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="section-title">Financial Mindset</div>
+                            <ul class="info-list">
+                                <li>Quality over quantity philosophy</li>
+                                <li>Invests in experiences vs. possessions</li>
+                                <li>Budgets 15% for sustainable premiums</li>
+                                <li>Saves for travel and art supplies</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Technology & Innovation Adoption</div>
+                        <div class="section-grid">
+                            <div>
+                                <div class="demo-label">Creative Tools:</div>
+                                <ul class="info-list">
+                                    <li>Adobe Creative Suite (daily user)</li>
+                                    <li>Figma for collaborative projects</li>
+                                    <li>Film photography equipment collector</li>
+                                    <li>Sustainable tech accessories preference</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <div class="demo-label">Digital Behavior:</div>
+                                <ul class="info-list">
+                                    <li>Curates aesthetic social feeds carefully</li>
+                                    <li>Creates content 3x/week (quality focus)</li>
+                                    <li>Avoids mainstream trending content</li>
+                                    <li>Values privacy and authentic connections</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Location Insights: Stay • Work • Play</div>
+                        <div class="section-grid">
+                            <div>
+                                <div class="demo-label">🏠 STAY - Living Preferences:</div>
+                                <ul class="info-list">
+                                    <li>Ba Dinh district vintage apartment</li>
+                                    <li>French colonial building with character</li>
+                                    <li>Small balcony garden space</li>
+                                    <li>Walking distance to local markets</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <div class="demo-label">💼 WORK - Creative Environment:</div>
+                                <ul class="info-list">
+                                    <li>Dong Da creative co-working space</li>
+                                    <li>Home studio setup for personal projects</li>
+                                    <li>Hoan Kiem cafes for client meetings</li>
+                                    <li>15-minute bicycle commute preference</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <div class="demo-label">🎯 PLAY - Cultural & Creative Hotspots:</div>
+                            <ul class="info-list">
+                                <li>Hanoi Old Quarter weekend art walks</li>
+                                <li>Quan Su street independent galleries</li>
+                                <li>West Lake area craft beer venues</li>
+                                <li>Vietnam Museum of Fine Arts for inspiration</li>
+                                <li>Dong Xuan Night Market for authentic experiences</li>
+                                <li>Bia Hoi Junction for casual social drinks</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Cultural & Social Influences</div>
+                        <div class="section-content">
+                            <div class="highlight-stat">
+                                <strong>Inspiration Sources:</strong> Local art scene 40%, international design trends 25%, nature and travel 20%, cultural traditions 15%
+                            </div>
+                            <div class="highlight-stat">
+                                <strong>Social Circle Impact:</strong> Influences 8-10 close friends' lifestyle choices, seeks advice from mentor figures, avoids large group dynamics
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-grid">
+                        <div>
+                            <div class="section-title">Daily Life & Routine</div>
+                            <ul class="info-list">
+                                <li>Morning inspiration browsing (7-8 AM)</li>
+                                <li>Creative work blocks (9 AM - 12 PM)</li>
+                                <li>Afternoon collaboration time</li>
+                                <li>Evening cultural activities</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="section-title">Financial Management</div>
+                            <ul class="info-list">
+                                <li>Quality over quantity philosophy</li>
+                                <li>Invests in experiences vs. possessions</li>
+                                <li>Budgets 15% for sustainable premiums</li>
+                                <li>Saves for travel and art supplies</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="section-grid">
+                        <div>
+                            <div class="section-title">Challenges & Pain Points</div>
+                            <ul class="info-list">
+                                <li>Balancing creative freedom with financial stability</li>
+                                <li>Finding authentic sustainable brands</li>
+                                <li>Staying inspired in commercial projects</li>
+                                <li>Managing perfectionist tendencies</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="section-title">Core Values</div>
+                            <ul class="info-list">
+                                <li>Authenticity and genuine experiences</li>
+                                <li>Environmental sustainability</li>
+                                <li>Creative expression and artistic growth</li>
+                                <li>Cultural diversity and exploration</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Persona 3 -->
+                <div class="persona-card">
+                    <div class="persona-header">
+                        <div class="persona-avatar">D</div>
+                        <div>
+                            <div class="persona-name">Duc Pham</div>
+                            <div class="persona-subtitle">The Executive Connector</div>
+                        </div>
+                    </div>
+
+                    <div class="target-size">
+                        <div class="target-number">12,890</div>
+                        <div style="color: #888; font-size: 0.9rem;">Target Audience Size</div>
+                    </div>
+
+                    <div class="persona-demographics">
+                        <div class="demo-item">
+                            <div class="demo-label">Age:</div>
+                            <div class="demo-value">35</div>
+                        </div>
+                        <div class="demo-item">
+                            <div class="demo-label">Gender:</div>
+                            <div class="demo-value">Male</div>
+                        </div>
+                        <div class="demo-item">
+                            <div class="demo-label">Location:</div>
+                            <div class="demo-value">HCMC, District 1</div>
+                        </div>
+                        <div class="demo-item">
+                            <div class="demo-label">Education:</div>
+                            <div class="demo-value">MBA Business</div>
+                        </div>
+                        <div class="demo-item">
+                            <div class="demo-label">Marital Status:</div>
+                            <div class="demo-value">Married</div>
+                        </div>
+                        <div class="demo-item">
+                            <div class="demo-label">Income:</div>
+                            <div class="demo-value">$65,000/year</div>
+                        </div>
+                        <div class="demo-item">
+                            <div class="demo-label">Household:</div>
+                            <div class="demo-value">Wife + 1 Child</div>
+                        </div>
+                        <div class="demo-item">
+                            <div class="demo-label">Ethnicity:</div>
+                            <div class="demo-value">Vietnamese</div>
+                        </div>
+                    </div>
+
+                    <div class="section-title">Personality Traits</div>
+                    <div class="personality-traits">
+                        <span class="trait-tag">Leadership-focused</span>
+                        <span class="trait-tag">Strategic</span>
+                        <span class="trait-tag">Quality-conscious</span>
+                        <span class="trait-tag">Time-efficient</span>
+                        <span class="trait-tag">Status-aware</span>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">About</div>
+                        <div class="section-content">
+                            Duc is a senior business executive who values efficiency, quality, and reputation. His beer consumption is strategic - used for business entertaining and relationship building. He seeks premium brands that reflect his professional status and success.
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="section-title">Business Tools Usage</div>
+                        <div class="chart"></div>
+                        <div class="chart-legend">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #14b8a6;"></div>
+                                <span>LinkedIn (30%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #0891b2;"></div>
+                                <span>Email (25%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #06b6d4;"></div>
+                                <span>WhatsApp (20%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #0284c7;"></div>
+                                <span>Business Apps (15%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #0369a1;"></div>
+                                <span>News Apps (7%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #075985;"></div>
+                                <span>Others (3%)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-grid">
+                        <div>
+                            <div class="section-title">Goals</div>
+                            <ul class="info-list">
+                                <li>Expand business network regionally</li>
+                                <li>Achieve C-level executive position</li>
+                                <li>Build family financial security</li>
+                                <li>Maintain work-life balance</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="section-title">Interests</div>
+                            <ul class="info-list">
+                                <li>Business strategy & innovation</li>
+                                <li>Golf and executive sports</li>
+                                <li>Fine dining experiences</li>
+                                <li>Family travel & education</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="section-grid">
+                        <div>
+                            <div class="section-title">Technology Usage</div>
+                            <ul class="info-list">
+                                <li>Bloomberg Terminal (2 hours daily)</li>
+                                <li>Premium productivity app suite</li>
+                                <li>Encrypted communication platforms</li>
+                                <li>Cloud-based collaboration tools</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="section-title">Decision Making Style</div>
+                            <ul class="info-list">
+                                <li>Relies on trusted advisors</li>
+                                <li>Makes quick decisions (<24 hours)</li>
+                                <li>Prefers established brands</li>
+                                <li>Reputation protection priority</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="highlight-stat">
+                        <strong>Beer Consumption:</strong> 2-3 times per week, primarily for business entertainment, spends $300-400/month on premium venues
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Psychographic Profile</div>
+                        <div class="section-grid">
+                            <div>
+                                <div class="demo-label">Core Values:</div>
+                                <ul class="info-list">
+                                    <li>Family security and prosperity</li>
+                                    <li>Professional excellence and leadership</li>
+                                    <li>Long-term strategic thinking</li>
+                                    <li>Reputation and social standing</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <div class="demo-label">Lifestyle Preferences:</div>
+                                <ul class="info-list">
+                                    <li>Premium service experiences</li>
+                                    <li>Executive-level networking</li>
+                                    <li>Family-oriented weekend activities</li>
+                                    <li>Efficient, time-saving solutions</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Behavioral Insights</div>
+                        <div class="section-content">
+                            <div class="highlight-stat">
+                                <strong>Decision Making:</strong> Relies on trusted advisors, makes quick decisions (<24 hours), prefers established brands with proven track records
+                            </div>
+                            <div class="highlight-stat">
+                                <strong>Time Management:</strong> Plans activities 2 weeks in advance, delegates routine tasks, prioritizes high-impact relationships
+                            </div>
+                            <div class="highlight-stat">
+                                <strong>Social Dynamics:</strong> Hosts business dinners monthly, maintains relationships through golf (2x/month), focuses on mutual benefit connections
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-grid">
+                        <div>
+                            <div class="section-title">Stress & Relaxation</div>
+                            <ul class="info-list">
+                                <li>Golf as primary stress relief</li>
+                                <li>Family vacations (quarterly)</li>
+                                <li>Reading business biographies</li>
+                                <li>Premium spa treatments</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="section-title">Leadership Style</div>
+                            <ul class="info-list">
+                                <li>Results-oriented management</li>
+                                <li>Mentors high-potential employees</li>
+                                <li>Delegates with clear expectations</li>
+                                <li>Values loyalty and competence</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Executive Media Consumption</div>
+                        <div class="section-grid">
+                            <div>
+                                <div class="demo-label">Business Intelligence:</div>
+                                <ul class="info-list">
+                                    <li>Bloomberg Terminal: 2 hours/day</li>
+                                    <li>LinkedIn: 45 min/day (industry insights)</li>
+                                    <li>Harvard Business Review (monthly)</li>
+                                    <li>Industry trade publications (weekly)</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <div class="demo-label">Personal Content:</div>
+                                <ul class="info-list">
+                                    <li>Financial news podcasts (commute)</li>
+                                    <li>Netflix premium documentaries</li>
+                                    <li>Golf instruction videos (Sunday)</li>
+                                    <li>Family-friendly content curation</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Premium Shopping & Investment Behaviors</div>
+                        <div class="section-content">
+                            <div class="highlight-stat">
+                                <strong>Purchase Authority:</strong> Final decision maker for 95% of family purchases, delegates research to assistant for routine items, quick approvals for trusted brands
+                            </div>
+                            <div class="highlight-stat">
+                                <strong>Luxury Spending:</strong> 40% business entertainment, 25% family experiences, 20% personal status items, 15% investment pieces
+                            </div>
+                            <div class="highlight-stat">
+                                <strong>Time-Value Equation:</strong> Pays 30-50% premium for convenience, same-day delivery preference, personal shopper relationships for efficiency
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-grid">
+                        <div>
+                            <div class="section-title">Category Investment Priorities</div>
+                            <ul class="info-list">
+                                <li>Business tools: Latest technology, premium</li>
+                                <li>Beverages: Established international brands</li>
+                                <li>Transportation: Luxury, reliable, status</li>
+                                <li>Family: Education, experiences, security</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="section-title">Relationship Building Expenditure</div>
+                            <ul class="info-list">
+                                <li>Monthly client dinners: $2,000-3,000</li>
+                                <li>Golf club membership: Premium tier</li>
+                                <li>Corporate gifts: Thoughtful, quality</li>
+                                <li>Team bonuses: Performance-based rewards</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Executive Decision-Making Framework</div>
+                        <div class="section-grid">
+                            <div>
+                                <div class="demo-label">Information Sources:</div>
+                                <ul class="info-list">
+                                    <li>Trusted business advisors consultation</li>
+                                    <li>Industry peer recommendations</li>
+                                    <li>Executive assistant research briefs</li>
+                                    <li>Family input for personal decisions</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <div class="demo-label">Risk Assessment:</div>
+                                <ul class="info-list">
+                                    <li>Conservative personal financial approach</li>
+                                    <li>Calculated business risk tolerance</li>
+                                    <li>Reputation protection priority</li>
+                                    <li>Long-term impact consideration</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Technology & Efficiency Systems</div>
+                        <div class="section-content">
+                            <div class="highlight-stat">
+                                <strong>Digital Optimization:</strong> Uses premium productivity apps, automated scheduling systems, encrypted communication platforms, cloud-based collaboration tools
+                            </div>
+                            <div class="highlight-stat">
+                                <strong>Personal Efficiency:</strong> 5 AM morning routine, batches similar tasks, delegates operational decisions, focuses on strategic thinking time blocks
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-grid">
+                        <div>
+                            <div class="section-title">Daily Life & Routine</div>
+                            <ul class="info-list">
+                                <li>5:00 AM - Strategic thinking time</li>
+                                <li>7:00 AM - 7:00 PM - Executive duties</li>
+                                <li>7:30 PM - Family dinner priority</li>
+                                <li>9:00 PM - Industry reading time</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="section-title">Financial Management</div>
+                            <ul class="info-list">
+                                <li>Conservative personal investment approach</li>
+                                <li>Premium service convenience priority</li>
+                                <li>Long-term wealth building focus</li>
+                                <li>Family security and education funding</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="section-grid">
+                        <div>
+                            <div class="section-title">Challenges & Pain Points</div>
+                            <ul class="info-list">
+                                <li>Time constraints for family</li>
+                                <li>Maintaining client relationships</li>
+                                <li>Staying ahead of competition</li>
+                                <li>Balancing travel demands</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="section-title">Core Values</div>
+                            <ul class="info-list">
+                                <li>Family security and prosperity</li>
+                                <li>Professional excellence and leadership</li>
+                                <li>Long-term strategic thinking</li>
+                                <li>Reputation and social standing</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Location Insights: Stay • Work • Play</div>
+                        <div class="section-grid">
+                            <div>
+                                <div class="demo-label">🏠 STAY - Living Preferences:</div>
+                                <ul class="info-list">
+                                    <li>District 1 luxury high-rise (3BR penthouse)</li>
+                                    <li>Premium amenities: pool, concierge, gym</li>
+                                    <li>International school proximity for child</li>
+                                    <li>Private parking and security</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <div class="demo-label">💼 WORK - Executive Environment:</div>
+                                <ul class="info-list">
+                                    <li>Bitexco Financial Tower office</li>
+                                    <li>Private office with city view</li>
+                                    <li>Chauffeur-driven luxury sedan</li>
+                                    <li>Regular travel to Singapore/Bangkok</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <div class="demo-label">🎯 PLAY - Premium Business & Family Venues:</div>
+                            <ul class="info-list">
+                                <li>Saigon Golf Club for weekend rounds</li>
+                                <li>Park Hyatt Saigon for business dinners</li>
+                                <li>InterContinental Asiana Saigon executive lounge</li>
+                                <li>Diamond Plaza premium shopping with family</li>
+                                <li>The Reverie Saigon rooftop for celebrations</li>
+                                <li>Vietnam Golf & Country Club for networking</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="detailed-section">
+                        <div class="section-title">Cultural & Social Influences</div>
+                        <div class="section-content">
+                            <div class="highlight-stat">
+                                <strong>Professional Network:</strong> Maintains relationships with 200+ business contacts, attends 3-4 industry events monthly, values hierarchical respect and mutual benefit
+                            </div>
+                            <div class="highlight-stat">
+                                <strong>Cultural Balance:</strong> Upholds traditional Vietnamese business values while embracing international practices, respects seniority, focuses on long-term relationship building
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize background animation
+        function createNeuralNetwork() {
+            const network = document.getElementById('neuralNetwork');
+            const nodeCount = 50;
+            const connectionCount = 30;
+
+            // Create nodes
+            for (let i = 0; i < nodeCount; i++) {
+                const node = document.createElement('div');
+                node.className = 'node';
+                node.style.left = Math.random() * 100 + '%';
+                node.style.top = Math.random() * 100 + '%';
+                node.style.animationDelay = Math.random() * 2 + 's';
+                network.appendChild(node);
+            }
+
+            // Create connections
+            for (let i = 0; i < connectionCount; i++) {
+                const connection = document.createElement('div');
+                connection.className = 'connection';
+                connection.style.left = Math.random() * 100 + '%';
+                connection.style.top = Math.random() * 100 + '%';
+                connection.style.width = (Math.random() * 200 + 100) + 'px';
+                connection.style.transform = `rotate(${Math.random() * 360}deg)`;
+                connection.style.animationDelay = Math.random() * 3 + 's';
+                network.appendChild(connection);
+            }
+        }
+
+        // Create divergent lines
+        function createDivergentLines() {
+            const container = document.getElementById('divergentLines');
+            const lineCount = 16;
+
+            for (let i = 0; i < lineCount; i++) {
+                const line = document.createElement('div');
+                line.className = 'line';
+                line.style.transform = `rotate(${(360 / lineCount) * i}deg)`;
+                line.style.animationDelay = (i * 0.1) + 's';
+                container.appendChild(line);
+            }
+        }
+
+        // Page navigation functions
+        function showConfigPage() {
+            document.getElementById('landingPage').style.display = 'none';
+            document.getElementById('configPage').style.display = 'block';
+            document.getElementById('resultsPage').style.display = 'none';
+            document.getElementById('loadingAnimation').style.display = 'none';
+        }
+
+        function showLandingPage() {
+            document.getElementById('landingPage').style.display = 'flex';
+            document.getElementById('configPage').style.display = 'none';
+            document.getElementById('resultsPage').style.display = 'none';
+            document.getElementById('loadingAnimation').style.display = 'none';
+        }
+
+        function showResultsPage() {
+            document.getElementById('landingPage').style.display = 'none';
+            document.getElementById('configPage').style.display = 'none';
+            document.getElementById('resultsPage').style.display = 'block';
+            document.getElementById('loadingAnimation').style.display = 'none';
+        }
+
+        function createPersonas() {
+            document.getElementById('configPage').style.display = 'none';
+            document.getElementById('loadingAnimation').style.display = 'block';
+            
+            // Simulate AI processing time
+            setTimeout(() => {
+                showResultsPage();
+            }, 3000);
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            createNeuralNetwork();
+            createDivergentLines();
+        });
+
+        // Add some dynamic effects
+        setInterval(() => {
+            const nodes = document.querySelectorAll('.node');
+            nodes.forEach(node => {
+                if (Math.random() < 0.1) {
+                    node.style.boxShadow = '0 0 20px #14b8a6';
+                    setTimeout(() => {
+                        node.style.boxShadow = '0 0 10px #14b8a6';
+                    }, 500);
+                }
+            });
+        }, 2000);
+    </script>
+</body>
+</html>
