@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimizing Large Language Models - Interactive Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: white;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Animated Background Elements */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-node {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #20b2aa;
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .neural-line {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, #20b2aa 50%, transparent 100%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.2; transform: scaleX(1); }
+            50% { opacity: 0.8; transform: scaleX(1.5); }
+        }
+
+        /* Landing Section */
+        .landing {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .central-node {
+            position: relative;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ffffff, #20b2aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        .sub-title {
+            font-size: 1.2rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+            margin-bottom: 40px;
+            color: rgba(255, 255, 255, 0.8);
+            font-style: italic;
+            animation: subtitleFade 4s ease-in-out infinite;
+        }
+
+        @keyframes subtitleFade {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+
+        .divergent-lines {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+        }
+
+        .line {
+            position: absolute;
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(90deg, #20b2aa, transparent);
+            transform-origin: 0 50%;
+            animation: lineExtend 2s ease-out infinite;
+        }
+
+        .line:nth-child(1) { transform: rotate(0deg); animation-delay: 0s; }
+        .line:nth-child(2) { transform: rotate(45deg); animation-delay: 0.2s; }
+        .line:nth-child(3) { transform: rotate(90deg); animation-delay: 0.4s; }
+        .line:nth-child(4) { transform: rotate(135deg); animation-delay: 0.6s; }
+        .line:nth-child(5) { transform: rotate(180deg); animation-delay: 0.8s; }
+        .line:nth-child(6) { transform: rotate(225deg); animation-delay: 1s; }
+        .line:nth-child(7) { transform: rotate(270deg); animation-delay: 1.2s; }
+        .line:nth-child(8) { transform: rotate(315deg); animation-delay: 1.4s; }
+
+        @keyframes lineExtend {
+            0% { transform: scaleX(0) rotate(var(--rotation, 0deg)); opacity: 0; }
+            50% { transform: scaleX(1) rotate(var(--rotation, 0deg)); opacity: 1; }
+            100% { transform: scaleX(0) rotate(var(--rotation, 0deg)); opacity: 0; }
+        }
+
+        .explore-btn {
+            padding: 15px 40px;
+            background: transparent;
+            border: 2px solid #20b2aa;
+            color: #20b2aa;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .explore-btn:hover {
+            background: #20b2aa;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(32, 178, 170, 0.3);
+        }
+
+        /* Main Content */
+        .content {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section {
+            margin-bottom: 120px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #20b2aa;
+        }
+
+        /* Optimization Flow Diagram */
+        .flow-diagram {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 20px;
+            max-width: 800px;
+            margin: 40px auto;
+            position: relative;
+        }
+
+        .quadrant {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(32, 178, 170, 0.3);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .quadrant:hover {
+            background: rgba(32, 178, 170, 0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(32, 178, 170, 0.2);
+        }
+
+        .quadrant h3 {
+            color: #20b2aa;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .quadrant p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #ccc;
+            margin-bottom: 15px;
+        }
+
+        .step-indicator {
+            background: #20b2aa;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin: 15px 0 10px 0;
+            display: inline-block;
+        }
+
+        .flow-steps {
+            margin-top: 10px;
+        }
+
+        .mini-step {
+            font-size: 0.8rem;
+            color: #20b2aa;
+            margin: 3px 0;
+            opacity: 0.8;
+        }
+
+        /* Flow Arrows */
+        .flow-arrow {
+            position: absolute;
+            background: #20b2aa;
+            z-index: 10;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .flow-arrow:hover {
+            opacity: 1;
+        }
+
+        .arrow-1 {
+            /* Prompt to RAG */
+            top: 25%;
+            left: 48%;
+            width: 30px;
+            height: 2px;
+            transform: rotate(-45deg);
+        }
+
+        .arrow-1::after {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: -3px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid #20b2aa;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+            transform: rotate(45deg);
+        }
+
+        .arrow-2 {
+            /* Prompt to Fine-tuning */
+            top: 48%;
+            left: 48%;
+            width: 30px;
+            height: 2px;
+        }
+
+        .arrow-2::after {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: -3px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid #20b2aa;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+        }
+
+        .arrow-3 {
+            /* RAG to Combined */
+            top: 25%;
+            right: 48%;
+            width: 30px;
+            height: 2px;
+            transform: rotate(45deg);
+        }
+
+        .arrow-3::after {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: -3px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid #20b2aa;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+            transform: rotate(-45deg);
+        }
+
+        .arrow-4 {
+            /* Fine-tuning to Combined */
+            bottom: 25%;
+            right: 48%;
+            width: 30px;
+            height: 2px;
+            transform: rotate(-45deg);
+        }
+
+        .arrow-4::after {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: -3px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid #20b2aa;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+            transform: rotate(45deg);
+        }
+
+        .arrow-5 {
+            /* Combined back to optimization */
+            top: 75%;
+            left: 25%;
+            width: 50px;
+            height: 2px;
+            transform: rotate(180deg);
+            opacity: 0.5;
+        }
+
+        .arrow-5::after {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: -3px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid #20b2aa;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+        }
+
+        /* Journey Timeline */
+        .journey-timeline {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .journey-step {
+            display: flex;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(32, 178, 170, 0.2);
+        }
+
+        .journey-step:hover {
+            background: rgba(32, 178, 170, 0.05);
+            border-color: rgba(32, 178, 170, 0.4);
+        }
+
+        .journey-number {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #20b2aa, #4ade80);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-right: 20px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .journey-number::after {
+            content: '';
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 40px;
+            background: linear-gradient(180deg, #20b2aa, transparent);
+        }
+
+        .journey-step:last-child .journey-number::after {
+            display: none;
+        }
+
+        .journey-content {
+            flex: 1;
+        }
+
+        .journey-content h4 {
+            color: #20b2aa;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .journey-content p {
+            color: #ccc;
+            margin-bottom: 15px;
+        }
+
+        .journey-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .journey-details.expanded {
+            max-height: 400px;
+            padding: 20px;
+        }
+
+        .journey-details ul {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .journey-details li {
+            color: #ccc;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .journey-details li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #20b2aa;
+            font-weight: bold;
+        }
+
+        .journey-details strong {
+            color: #20b2aa;
+        }
+
+        .use-case-example {
+            background: rgba(32, 178, 170, 0.1);
+            border-left: 3px solid #20b2aa;
+            padding: 15px;
+            border-radius: 5px;
+            font-style: italic;
+            color: #ccc;
+        }
+
+        .use-case-example strong {
+            color: #20b2aa;
+            font-style: normal;
+        }
+
+        /* Decision Tool */
+        .decision-tree {
+            margin-bottom: 30px;
+        }
+
+        .decision-question {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(32, 178, 170, 0.05);
+            border-radius: 10px;
+            border-left: 4px solid #20b2aa;
+        }
+
+        .question-text {
+            color: #ccc;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .question-text strong {
+            color: #20b2aa;
+        }
+
+        .decision-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .decision-btn {
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid #20b2aa;
+            color: #20b2aa;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .decision-btn:hover {
+            background: #20b2aa;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .decision-result {
+            min-height: 100px;
+            background: rgba(32, 178, 170, 0.1);
+            border: 1px solid #20b2aa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .decision-result.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Use Cases Grid */
+        .use-cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .use-case-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(32, 178, 170, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .use-case-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(32, 178, 170, 0.5);
+            box-shadow: 0 10px 30px rgba(32, 178, 170, 0.1);
+        }
+
+        .use-case-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .use-case-card h4 {
+            color: #20b2aa;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .use-case-path {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: rgba(32, 178, 170, 0.05);
+            border-radius: 8px;
+        }
+
+        .path-step {
+            background: #20b2aa;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .path-arrow {
+            color: #20b2aa;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .use-case-card p {
+            color: #ccc;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Axes Labels */
+        .axis-labels {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #20b2aa;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .axis-labels.vertical {
+            top: 50%;
+            left: -120px;
+            transform: translateY(-50%) rotate(-90deg);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(32, 178, 170, 0.3);
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(32, 178, 170, 0.1), transparent);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #20b2aa;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+
+        /* Process Steps */
+        .process-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 60px 0;
+            flex-wrap: wrap;
+        }
+
+        .step {
+            text-align: center;
+            max-width: 200px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #20b2aa;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 15px;
+            animation: stepPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes stepPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .step-title {
+            color: #20b2aa;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .step-description {
+            color: #ccc;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        /* Connecting Lines */
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 30px;
+            right: -50px;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, #20b2aa, transparent);
+            animation: flowLine 3s ease-in-out infinite;
+        }
+
+        .step:last-child::after {
+            display: none;
+        }
+
+        @keyframes flowLine {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Technique Details */
+        .technique-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .technique-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(32, 178, 170, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .technique-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(32, 178, 170, 0.2);
+        }
+
+        .technique-icon {
+            width: 60px;
+            height: 60px;
+            background: #20b2aa;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .technique-title {
+            color: #20b2aa;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+        }
+
+        .technique-description {
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .pros-cons {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .pros, .cons {
+            flex: 1;
+        }
+
+        .pros h4 {
+            color: #4ade80;
+            margin-bottom: 10px;
+        }
+
+        .cons h4 {
+            color: #f87171;
+            margin-bottom: 10px;
+        }
+
+        .pros ul, .cons ul {
+            list-style: none;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        .pros li::before {
+            content: "✓ ";
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .cons li::before {
+            content: "✗ ";
+            color: #f87171;
+            font-weight: bold;
+        }
+
+        /* Success Story */
+        .success-story {
+            background: rgba(32, 178, 170, 0.1);
+            border: 1px solid #20b2aa;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .success-story::before {
+            content: "💡";
+            position: absolute;
+            top: -15px;
+            left: 30px;
+            background: #0a0a0a;
+            padding: 0 10px;
+            font-size: 1.5rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #20b2aa, #4ade80);
+            border-radius: 10px;
+            transition: width 2s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: progressShine 2s ease-in-out infinite;
+        }
+
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Navigation */
+        .nav-dots {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(32, 178, 170, 0.3);
+            margin: 15px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background: #20b2aa;
+            transform: scale(1.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5rem;
+            }
+            
+            .sub-title {
+                font-size: 1rem;
+                margin-bottom: 30px;
+            }
+            
+            .flow-diagram {
+                grid-template-columns: 1fr;
+                grid-template-rows: repeat(4, 1fr);
+            }
+            
+            .process-steps {
+                flex-direction: column;
+                gap: 30px;
+            }
+            
+            .step::after {
+                display: none;
+            }
+            
+            .technique-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation" id="bgAnimation"></div>
+
+    <!-- Landing Section -->
+    <section class="landing" id="landing">
+        <div class="central-node">
+            <h1 class="main-title">Optimizing Large Language Models</h1>
+            <p class="sub-title">From Generalized LLM Models to Hyper Personalized LLM Use-cases</p>
+            <div class="divergent-lines">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+        </div>
+        <button class="explore-btn" onclick="scrollToContent()">Explore Framework</button>
+    </section>
+
+    <!-- Navigation Dots -->
+    <div class="nav-dots">
+        <div class="nav-dot active" onclick="scrollToSection('landing')"></div>
+        <div class="nav-dot" onclick="scrollToSection('overview')"></div>
+        <div class="nav-dot" onclick="scrollToSection('framework')"></div>
+        <div class="nav-dot" onclick="scrollToSection('techniques')"></div>
+        <div class="nav-dot" onclick="scrollToSection('success')"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Overview Section -->
+        <section class="section" id="overview">
+            <h2 class="section-title">Why LLM Optimization Matters</h2>
+            <p style="text-align: center; font-size: 1.1rem; color: #ccc; margin-bottom: 40px; line-height: 1.8;">
+                Optimizing LLMs is challenging despite available frameworks and tools. The key is understanding what category of problem you're solving and choosing the right approach.
+            </p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Primary Optimization Techniques</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">45%</div>
+                    <div class="stat-label">Starting Accuracy (Typical Baseline)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">Achievable Accuracy (With Optimization)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">2M</div>
+                    <div class="stat-label">Max Context Window (Top LLM Models)</div>
+                </div>
+            </div>
+
+            <div class="process-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Identify</div>
+                    <div class="step-description">Separate signal from noise and identify the core problem</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Measure</div>
+                    <div class="step-description">Establish evaluation metrics and baseline performance</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Choose</div>
+                    <div class="step-description">Select the right optimization approach for your problem</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Iterate</div>
+                    <div class="step-description">Test, evaluate, and systematically improve performance</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Framework Section -->
+        <section class="section" id="framework">
+            <h2 class="section-title">The Optimization Framework</h2>
+            <p style="text-align: center; font-size: 1.1rem; color: #ccc; margin-bottom: 40px; line-height: 1.8;">
+                LLM optimization operates on two axes: Context Optimization (what the model needs to know) and LLM Optimization (how the model needs to act).
+            </p>
+
+            <div class="flow-diagram">
+                <div class="axis-labels">Context Optimization</div>
+                <div class="axis-labels vertical">LLM Optimization</div>
+                
+                <div class="quadrant" onclick="showDetails('rag')">
+                    <h3>🔍 RAG</h3>
+                    <p>Retrieval-Augmented Generation provides domain-specific content when the model needs more relevant context to answer questions.</p>
+                </div>
+                
+                <div class="quadrant" onclick="showDetails('combined')">
+                    <h3>🎯 All of the Above</h3>
+                    <p>Combined approach using prompt engineering, RAG, and fine-tuning for maximum performance on complex tasks.</p>
+                </div>
+                
+                <div class="quadrant" onclick="showDetails('prompt')">
+                    <h3>✏️ Prompt Engineering</h3>
+                    <p>Starting point for optimization. Can address both context and behavior but doesn't scale well for complex requirements.</p>
+                </div>
+                
+                <div class="quadrant" onclick="showDetails('finetuning')">
+                    <h3>⚡ Fine-tuning</h3>
+                    <p>Modifies model behavior through training on domain-specific data. Best for consistent instruction following and style.</p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <p style="color: #20b2aa; font-style: italic;">
+                    "Try something, evaluate, then try something else" - The core optimization principle
+                </p>
+            </div>
+
+            <!-- Decision Making Tool -->
+            <div style="margin-top: 60px;">
+                <h3 style="color: #20b2aa; text-align: center; margin-bottom: 40px;">🔧 Quick Decision Tool</h3>
+                <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(32, 178, 170, 0.2); border-radius: 15px; padding: 30px;">
+                    <p style="text-align: center; color: #ccc; margin-bottom: 30px;">Answer these questions to find your optimization path:</p>
+                    
+                    <div class="decision-tree">
+                        <div class="decision-question">
+                            <div class="question-text">
+                                <strong>Q1:</strong> Do you have a working prompt that gives you some reasonable results?
+                            </div>
+                            <div class="decision-buttons">
+                                <button class="decision-btn" onclick="showDecisionPath('no-prompt')">No, starting from scratch</button>
+                                <button class="decision-btn" onclick="showDecisionPath('has-prompt')">Yes, but need improvement</button>
+                            </div>
+                        </div>
+                        
+                        <div class="decision-question">
+                            <div class="question-text">
+                                <strong>Q2:</strong> What's your main issue?
+                            </div>
+                            <div class="decision-buttons">
+                                <button class="decision-btn" onclick="showDecisionPath('knowledge-gap')">Model lacks specific knowledge</button>
+                                <button class="decision-btn" onclick="showDecisionPath('behavior-issue')">Model behavior is inconsistent</button>
+                                <button class="decision-btn" onclick="showDecisionPath('both-issues')">Both knowledge and behavior</button>
+                            </div>
+                        </div>
+                        
+                        <div class="decision-question">
+                            <div class="question-text">
+                                <strong>Q3:</strong> What's your timeline and resources?
+                            </div>
+                            <div class="decision-buttons">
+                                <button class="decision-btn" onclick="showDecisionPath('quick-solution')">Need results quickly</button>
+                                <button class="decision-btn" onclick="showDecisionPath('production-ready')">Building production system</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="decision-result" class="decision-result"></div>
+                </div>
+            </div>
+
+            <!-- Common Use Cases -->
+            <div style="margin-top: 60px;">
+                <h3 style="color: #20b2aa; text-align: center; margin-bottom: 40px;">📋 Common Use Case Patterns</h3>
+                <div class="use-cases-grid">
+                    <div class="use-case-card">
+                        <div class="use-case-icon">📧</div>
+                        <h4>Customer Support Bot</h4>
+                        <div class="use-case-path">
+                            <span class="path-step">1. Prompt Engineering</span>
+                            <span class="path-arrow">→</span>
+                            <span class="path-step">2. RAG (Knowledge Base)</span>
+                            <span class="path-arrow">→</span>
+                            <span class="path-step">3. Fine-tune (Tone & Style)</span>
+                        </div>
+                        <p>Start with prompts for basic responses, add RAG for company-specific info, fine-tune for consistent tone.</p>
+                    </div>
+                    
+                    <div class="use-case-card">
+                        <div class="use-case-icon">📊</div>
+                        <h4>Data Analysis Assistant</h4>
+                        <div class="use-case-path">
+                            <span class="path-step">1. Prompt Engineering</span>
+                            <span class="path-arrow">→</span>
+                            <span class="path-step">2. Fine-tune (SQL/Code)</span>
+                        </div>
+                        <p>Prompt for basic analysis, fine-tune for consistent code generation and data interpretation patterns.</p>
+                    </div>
+                    
+                    <div class="use-case-card">
+                        <div class="use-case-icon">📝</div>
+                        <h4>Content Generator</h4>
+                        <div class="use-case-path">
+                            <span class="path-step">1. Prompt Engineering</span>
+                            <span class="path-arrow">→</span>
+                            <span class="path-step">2. RAG (Style Examples)</span>
+                            <span class="path-arrow">→</span>
+                            <span class="path-step">3. Fine-tune (Brand Voice)</span>
+                        </div>
+                        <p>Prompt for structure, RAG for style references, fine-tune for consistent brand voice and format.</p>
+                    </div>
+                    
+                    <div class="use-case-card">
+                        <div class="use-case-icon">🔍</div>
+                        <h4>Research Assistant</h4>
+                        <div class="use-case-path">
+                            <span class="path-step">1. Prompt Engineering</span>
+                            <span class="path-arrow">→</span>
+                            <span class="path-step">2. RAG (Document Search)</span>
+                        </div>
+                        <p>Prompt for research methodology, RAG for accessing large document collections and recent papers.</p>
+                    </div>
+                    
+                    <div class="use-case-card">
+                        <div class="use-case-icon">💻</div>
+                        <h4>Code Review Assistant</h4>
+                        <div class="use-case-path">
+                            <span class="path-step">1. Prompt Engineering</span>
+                            <span class="path-arrow">→</span>
+                            <span class="path-step">2. RAG (Best Practices)</span>
+                            <span class="path-arrow">→</span>
+                            <span class="path-step">3. Fine-tune (Code Style)</span>
+                        </div>
+                        <p>Prompt for basic review criteria, RAG for coding standards and security patterns, fine-tune for consistent review format and team-specific guidelines.</p>
+                    </div>
+                    
+                    <div class="use-case-card">
+                        <div class="use-case-icon">⚖️</div>
+                        <h4>Legal Document Assistant</h4>
+                        <div class="use-case-path">
+                            <span class="path-step">1. Prompt Engineering</span>
+                            <span class="path-arrow">→</span>
+                            <span class="path-step">2. RAG (Legal Database)</span>
+                            <span class="path-arrow">→</span>
+                            <span class="path-step">3. Fine-tune (Legal Language)</span>
+                        </div>
+                        <p>Prompt for document analysis structure, RAG for case law and regulations, fine-tune for precise legal terminology and citation format.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Techniques Section -->
+        <section class="section" id="techniques">
+            <h2 class="section-title">Optimization Techniques Deep Dive</h2>
+
+            <div class="technique-grid">
+                <!-- Prompt Engineering -->
+                <div class="technique-card">
+                    <div class="technique-icon">✏️</div>
+                    <h3 class="technique-title">Prompt Engineering</h3>
+                    <p class="technique-description">
+                        The foundation of LLM optimization. Involves crafting clear instructions, breaking down complex tasks, and providing examples to guide model behavior.
+                    </p>
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <h4>Good For</h4>
+                            <ul>
+                                <li>Testing and learning early</li>
+                                <li>Providing evaluation baseline</li>
+                                <li>Quick iteration cycles</li>
+                            </ul>
+                        </div>
+                        <div class="cons">
+                            <h4>Limitations</h4>
+                            <ul>
+                                <li>Introducing new information</li>
+                                <li>Complex style replication</li>
+                                <li>Minimizing token usage</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RAG -->
+                <div class="technique-card">
+                    <div class="technique-icon">🔍</div>
+                    <h3 class="technique-title">Retrieval-Augmented Generation</h3>
+                    <p class="technique-description">
+                        Provides models with access to external knowledge bases, enabling them to answer questions using domain-specific information not present in training data.
+                    </p>
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <h4>Good For</h4>
+                            <ul>
+                                <li>Adding new information</li>
+                                <li>Reducing hallucinations</li>
+                                <li>Updating knowledge</li>
+                            </ul>
+                        </div>
+                        <div class="cons">
+                            <h4>Limitations</h4>
+                            <ul>
+                                <li>Broad domain understanding</li>
+                                <li>Learning new styles</li>
+                                <li>Reducing token usage</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fine-tuning -->
+                <div class="technique-card">
+                    <div class="technique-icon">⚡</div>
+                    <h3 class="technique-title">Fine-tuning</h3>
+                    <p class="technique-description">
+                        Continues training on domain-specific datasets to modify model behavior, emphasize existing knowledge, and customize output structure or tone.
+                    </p>
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <h4>Good For</h4>
+                            <ul>
+                                <li>Emphasizing existing knowledge</li>
+                                <li>Customizing output structure</li>
+                                <li>Complex instruction following</li>
+                            </ul>
+                        </div>
+                        <div class="cons">
+                            <h4>Limitations</h4>
+                            <ul>
+                                <li>Adding new knowledge</li>
+                                <li>Quick iteration</li>
+                                <li>High setup investment</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Success Story Section -->
+        <section class="section" id="success">
+            <h2 class="section-title">Success Story: RAG Implementation</h2>
+            
+            <div class="success-story">
+                <h3 style="color: #20b2aa; margin-bottom: 20px;">From 45% to 98% Accuracy</h3>
+                <p style="color: #ccc; line-height: 1.6; margin-bottom: 20px;">
+                    A customer implemented a RAG pipeline with two knowledge bases. Through systematic optimization including re-ranking, classification, and query expansion, they achieved remarkable results.
+                </p>
+                
+                <div style="margin: 30px 0;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>Baseline (Simple Retrieval)</span>
+                        <span style="color: #20b2aa;">45%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 45%;" id="progress1"></div>
+                    </div>
+                </div>
+
+                <div style="margin: 30px 0;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>After Re-ranking & Classification</span>
+                        <span style="color: #20b2aa;">85%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 85%;" id="progress2"></div>
+                    </div>
+                </div>
+
+                <div style="margin: 30px 0;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>Final (Prompt Engineering + Tools)</span>
+                        <span style="color: #20b2aa;">98%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 98%;" id="progress3"></div>
+                    </div>
+                </div>
+
+                <p style="color: #ccc; font-style: italic; margin-top: 20px;">
+                    Key insight: No fine-tuning was needed - the problem was entirely about context optimization.
+                </p>
+            </div>
+
+            <div style="text-align: center; margin-top: 60px;">
+                <h3 style="color: #20b2aa; margin-bottom: 20px;">Start Your Optimization Journey</h3>
+                <p style="color: #ccc; margin-bottom: 30px;">
+                    Remember: Begin with prompt engineering, establish evaluation metrics, then choose your path based on whether you need better context or better behavior.
+                </p>
+                <button class="explore-btn" onclick="scrollToSection('framework')">Review Framework</button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Create animated background elements
+        function createBackgroundAnimation() {
+            const bgAnimation = document.getElementById('bgAnimation');
+            
+            // Create floating nodes
+            for (let i = 0; i < 30; i++) {
+                const node = document.createElement('div');
+                node.className = 'floating-node';
+                node.style.left = Math.random() * 100 + '%';
+                node.style.top = Math.random() * 100 + '%';
+                node.style.animationDelay = Math.random() * 6 + 's';
+                bgAnimation.appendChild(node);
+            }
+
+            // Create neural lines
+            for (let i = 0; i < 15; i++) {
+                const line = document.createElement('div');
+                line.className = 'neural-line';
+                line.style.left = Math.random() * 100 + '%';
+                line.style.top = Math.random() * 100 + '%';
+                line.style.width = (Math.random() * 200 + 100) + 'px';
+                line.style.transform = `rotate(${Math.random() * 360}deg)`;
+                line.style.animationDelay = Math.random() * 3 + 's';
+                bgAnimation.appendChild(line);
+            }
+        }
+
+        // Scroll to content
+        function scrollToContent() {
+            document.getElementById('overview').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Scroll to specific section
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+            updateActiveNavDot(sectionId);
+        }
+
+        // Update active navigation dot
+        function updateActiveNavDot(activeSection) {
+            const dots = document.querySelectorAll('.nav-dot');
+            const sections = ['landing', 'overview', 'framework', 'techniques', 'success'];
+            const activeIndex = sections.indexOf(activeSection);
+            
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === activeIndex);
+            });
+        }
+
+        // Show section details
+        function showDetails(type) {
+            let title = '';
+            let content = '';
+            
+            switch(type) {
+                case 'prompt':
+                    title = '✏️ Prompt Engineering - Your Starting Point';
+                    content = `
+                        <strong>When to use:</strong> Always start here! Perfect for testing ideas and establishing baselines.
+                        
+                        <strong>Key Steps:</strong>
+                        • Write clear instructions
+                        • Add few-shot examples  
+                        • Split complex tasks into subtasks
+                        • Give the model time to "think"
+                        • Test changes systematically
+                        
+                        <strong>Best for:</strong> Testing and learning early, quick iteration, establishing evaluation baseline
+                        
+                        <strong>Not good for:</strong> Introducing entirely new information, complex style replication, minimizing token usage
+                        
+                        <strong>Your Action:</strong> Start with a simple prompt, add 2-3 examples, create an evaluation metric, then iterate.
+                    `;
+                    break;
+                case 'rag':
+                    title = '🔍 RAG - Adding Domain Knowledge';
+                    content = `
+                        <strong>When to use:</strong> When your model needs access to specific information not in its training data.
+                        
+                        <strong>Key Steps:</strong>
+                        • Build your knowledge base (documents, embeddings)
+                        • Implement similarity search
+                        • Add re-ranking for better relevance
+                        • Optimize chunk sizes and retrieval strategy
+                        • Consider hybrid approaches (vector + keyword search)
+                        
+                        <strong>Best for:</strong> Adding new/updated information, reducing hallucinations, domain-specific knowledge
+                        
+                        <strong>Not good for:</strong> Teaching broad understanding, learning new output styles, reducing token usage
+                        
+                        <strong>Your Action:</strong> Identify what knowledge gaps exist, collect relevant documents, start with simple retrieval.
+                    `;
+                    break;
+                case 'finetuning':
+                    title = '⚡ Fine-tuning - Behavior Modification';
+                    content = `
+                        <strong>When to use:</strong> When you need consistent behavior, specific output format, or custom instruction following.
+                        
+                        <strong>Key Steps:</strong>
+                        • Collect high-quality training examples (start with 100-500)
+                        • Format as input/output pairs
+                        • Fine-tune on your dataset
+                        • Evaluate on held-out test set
+                        • Iterate with additional data
+                        
+                        <strong>Best for:</strong> Emphasizing existing knowledge, customizing output structure, complex instruction following
+                        
+                        <strong>Not good for:</strong> Adding completely new knowledge, quick iteration, early experimentation
+                        
+                        <strong>Your Action:</strong> First establish that prompt engineering isn't sufficient, then collect examples of desired behavior.
+                    `;
+                    break;
+                case 'combined':
+                    title = '🎯 Combined Approach - Maximum Performance';
+                    content = `
+                        <strong>When to use:</strong> For production systems requiring both knowledge access and consistent behavior.
+                        
+                        <strong>Key Strategy:</strong>
+                        • Fine-tune model for efficient instruction following
+                        • Use RAG to inject relevant context
+                        • Minimize prompt engineering overhead
+                        • Create feedback loops for continuous improvement
+                        
+                        <strong>Benefits:</strong> Maximum context window utilization, cost-effective inference, highest performance potential
+                        
+                        <strong>Considerations:</strong> Higher complexity, more components to maintain, requires careful evaluation
+                        
+                        <strong>Your Action:</strong> Only pursue after validating each component individually. Start simple, then combine.
+                    `;
+                    break;
+            }
+            
+            // Create modal-style popup
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                background: rgba(0,0,0,0.8); z-index: 1000; display: flex; 
+                align-items: center; justify-content: center; padding: 20px;
+            `;
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: #1a1a1a; border: 2px solid #20b2aa; border-radius: 15px; 
+                padding: 30px; max-width: 600px; max-height: 80vh; overflow-y: auto;
+                color: white; position: relative;
+            `;
+            
+            modalContent.innerHTML = `
+                <button onclick="this.parentElement.parentElement.remove()" 
+                        style="position: absolute; top: 15px; right: 15px; background: none; 
+                               border: none; color: #20b2aa; font-size: 1.5rem; cursor: pointer;">×</button>
+                <h3 style="color: #20b2aa; margin-bottom: 20px;">${title}</h3>
+                <div style="line-height: 1.6; white-space: pre-line;">${content}</div>
+            `;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            
+            // Close on click outside
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+
+        // Expand journey step details
+        function expandJourneyStep(stepNumber) {
+            const details = document.getElementById(`journey-${stepNumber}`);
+            const isExpanded = details.classList.contains('expanded');
+            
+            // Close all other steps
+            document.querySelectorAll('.journey-details').forEach(detail => {
+                detail.classList.remove('expanded');
+            });
+            
+            // Toggle current step
+            if (!isExpanded) {
+                details.classList.add('expanded');
+            }
+        }
+
+        // Decision path guidance
+        function showDecisionPath(pathType) {
+            const resultDiv = document.getElementById('decision-result');
+            let content = '';
+            
+            switch(pathType) {
+                case 'no-prompt':
+                    content = `
+                        <h4 style="color: #20b2aa; margin-bottom: 15px;">🚀 Start with Prompt Engineering</h4>
+                        <p style="color: #ccc; margin-bottom: 15px;"><strong>Your Path:</strong> Begin with basic prompt engineering to establish a foundation.</p>
+                        <div style="background: rgba(32, 178, 170, 0.1); padding: 15px; border-radius: 8px;">
+                            <strong>Next Steps:</strong><br>
+                            1. Write clear instructions for your task<br>
+                            2. Create 3-5 input/output examples<br>
+                            3. Test with different inputs<br>
+                            4. Establish how you'll measure success<br>
+                            5. Come back to this tool once you have a baseline!
+                        </div>
+                    `;
+                    break;
+                case 'has-prompt':
+                    content = `
+                        <h4 style="color: #20b2aa; margin-bottom: 15px;">📈 Optimize Your Existing Prompt</h4>
+                        <p style="color: #ccc; margin-bottom: 15px;"><strong>Your Path:</strong> Great! You have a foundation. Now let's identify what specific improvements you need.</p>
+                        <div style="background: rgba(32, 178, 170, 0.1); padding: 15px; border-radius: 8px;">
+                            <strong>Diagnostic Steps:</strong><br>
+                            1. <strong>Measure current performance:</strong> Create evaluation metrics (accuracy, relevance, format consistency)<br>
+                            2. <strong>Analyze failure cases:</strong> What types of inputs cause poor outputs?<br>
+                            3. <strong>Identify the gap type:</strong><br>
+                            &nbsp;&nbsp;&nbsp;• Missing knowledge? → Consider RAG<br>
+                            &nbsp;&nbsp;&nbsp;• Inconsistent format/style? → Consider Fine-tuning<br>
+                            &nbsp;&nbsp;&nbsp;• Both issues? → Combination approach<br>
+                            4. <strong>Add few-shot examples:</strong> Include 3-5 perfect input/output pairs<br>
+                            5. <strong>Systematic testing:</strong> Change one element at a time and measure impact<br><br>
+                            <strong>🎯 Pro Tip:</strong> Most improvements come from better examples and clearer instructions before needing RAG or fine-tuning!
+                        </div>
+                    `;
+                    break;
+                case 'knowledge-gap':
+                    content = `
+                        <h4 style="color: #20b2aa; margin-bottom: 15px;">🔍 RAG is Your Solution</h4>
+                        <p style="color: #ccc; margin-bottom: 15px;"><strong>Your Path:</strong> Implement Retrieval-Augmented Generation to provide missing knowledge.</p>
+                        <div style="background: rgba(32, 178, 170, 0.1); padding: 15px; border-radius: 8px;">
+                            <strong>Implementation Steps:</strong><br>
+                            1. Collect and organize your domain-specific documents<br>
+                            2. Create embeddings and a searchable knowledge base<br>
+                            3. Implement similarity search for relevant context<br>
+                            4. Combine retrieved content with your existing prompts<br>
+                            5. Optimize retrieval strategy based on results
+                        </div>
+                    `;
+                    break;
+                case 'behavior-issue':
+                    content = `
+                        <h4 style="color: #20b2aa; margin-bottom: 15px;">⚡ Fine-tuning for Consistency</h4>
+                        <p style="color: #ccc; margin-bottom: 15px;"><strong>Your Path:</strong> Fine-tune the model to achieve consistent behavior and output format.</p>
+                        <div style="background: rgba(32, 178, 170, 0.1); padding: 15px; border-radius: 8px;">
+                            <strong>Implementation Steps:</strong><br>
+                            1. Collect 100-500 high-quality input/output examples<br>
+                            2. Ensure examples represent the exact behavior you want<br>
+                            3. Fine-tune starting with a small dataset<br>
+                            4. Evaluate on unseen test cases<br>
+                            5. Iterate with additional examples if needed
+                        </div>
+                    `;
+                    break;
+                case 'both-issues':
+                    content = `
+                        <h4 style="color: #20b2aa; margin-bottom: 15px;">🎯 Combined Approach Needed</h4>
+                        <p style="color: #ccc; margin-bottom: 15px;"><strong>Your Path:</strong> You'll need both RAG for knowledge and fine-tuning for behavior.</p>
+                        <div style="background: rgba(32, 178, 170, 0.1); padding: 15px; border-radius: 8px;">
+                            <strong>Recommended Sequence:</strong><br>
+                            1. Start with RAG to solve the knowledge gap<br>
+                            2. Once RAG is working, collect examples of good outputs<br>
+                            3. Fine-tune the model for consistent behavior<br>
+                            4. Combine both: fine-tuned model + RAG context<br>
+                            5. Optimize both components iteratively
+                        </div>
+                    `;
+                    break;
+                case 'quick-solution':
+                    content = `
+                        <h4 style="color: #20b2aa; margin-bottom: 15px;">🏃‍♂️ Quick Wins Strategy</h4>
+                        <p style="color: #ccc; margin-bottom: 15px;"><strong>Your Path:</strong> Focus on prompt engineering and RAG for rapid results.</p>
+                        <div style="background: rgba(32, 178, 170, 0.1); padding: 15px; border-radius: 8px;">
+                            <strong>Fast Track:</strong><br>
+                            1. Perfect your prompts with few-shot examples<br>
+                            2. If you need external knowledge, implement simple RAG<br>
+                            3. Avoid fine-tuning for now (takes more time)<br>
+                            4. Focus on evaluation to measure improvements<br>
+                            5. Consider fine-tuning later for production deployment
+                        </div>
+                    `;
+                    break;
+                case 'production-ready':
+                    content = `
+                        <h4 style="color: #20b2aa; margin-bottom: 15px;">🏭 Production-Grade System</h4>
+                        <p style="color: #ccc; margin-bottom: 15px;"><strong>Your Path:</strong> Build a robust, scalable solution with all optimization techniques.</p>
+                        <div style="background: rgba(32, 178, 170, 0.1); padding: 15px; border-radius: 8px;">
+                            <strong>Full Pipeline:</strong><br>
+                            1. Start with comprehensive prompt engineering<br>
+                            2. Implement RAG with re-ranking and optimization<br>
+                            3. Fine-tune for efficiency and consistency<br>
+                            4. Set up evaluation and monitoring pipelines<br>
+                            5. Create feedback loops for continuous improvement
+                        </div>
+                    `;
+                    break;
+            }
+            
+            resultDiv.innerHTML = content;
+            resultDiv.classList.add('show');
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Intersection Observer for animations
+        function setupScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        
+                        // Trigger progress bar animations
+                        if (entry.target.id === 'success') {
+                            setTimeout(() => animateProgressBars(), 500);
+                        }
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.section').forEach(section => {
+                observer.observe(section);
+            });
+        }
+
+        // Animate progress bars
+        function animateProgressBars() {
+            const progressBars = ['progress1', 'progress2', 'progress3'];
+            const widths = ['45%', '85%', '98%'];
+            
+            progressBars.forEach((id, index) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    setTimeout(() => {
+                        element.style.width = widths[index];
+                    }, index * 500);
+                }
+            });
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            createBackgroundAnimation();
+            setupScrollAnimations();
+            
+            // Initial progress bar setup
+            setTimeout(() => {
+                document.getElementById('progress1').style.width = '45%';
+                document.getElementById('progress2').style.width = '85%';
+                document.getElementById('progress3').style.width = '98%';
+            }, 1000);
+        });
+
+        // Update navigation based on scroll
+        window.addEventListener('scroll', () => {
+            const sections = ['landing', 'overview', 'framework', 'techniques', 'success'];
+            const scrollPos = window.scrollY + 200;
+            
+            for (let i = sections.length - 1; i >= 0; i--) {
+                const section = document.getElementById(sections[i]);
+                if (section && scrollPos >= section.offsetTop) {
+                    updateActiveNavDot(sections[i]);
+                    break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
