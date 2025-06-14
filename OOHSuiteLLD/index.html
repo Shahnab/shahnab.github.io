@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Planning System - LLD Sequence Diagram</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            overflow: hidden;
+            border: 2px solid #20b2aa;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #20b2aa 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .controls {
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f8f8 0%, #e8f4f3 100%);
+            border-bottom: 3px solid #20b2aa;
+        }
+
+        .workflow-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .workflow-btn {
+            padding: 12px 20px;
+            border: 2px solid #667eea;
+            background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
+            color: #667eea;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .workflow-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .workflow-btn:hover::before {
+            left: 100%;
+        }
+
+        .workflow-btn:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            border-color: #667eea;
+        }
+
+        .workflow-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        .workflow-btn.new-feature {
+            border-color: #e74c3c;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #ffe6e6 0%, #fff0f0 100%);
+            font-weight: 700;
+        }
+
+        .workflow-btn.new-feature::before {
+            background: linear-gradient(90deg, transparent, rgba(231, 76, 60, 0.1), transparent);
+        }
+
+        .workflow-btn.new-feature:hover {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: #ffffff;
+            border-color: #e74c3c;
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        .workflow-btn.new-feature.active {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(231, 76, 60, 0.3);
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 3px;
+            border-radius: 2px;
+        }
+
+        .existing { background: #667eea; }
+        .new-feature { background: #e74c3c; }
+        .activation { background: #2ecc71; }
+
+        .diagram-container {
+            padding: 30px;
+            overflow-x: auto;
+        }
+
+        .sequence-diagram {
+            min-width: 1400px;
+            height: 1800px;
+            position: relative;
+            background: white;
+        }
+
+        .lifeline {
+            position: absolute;
+            top: 60px;
+            height: 1740px;
+            width: 2px;
+            background: #34495e;
+            z-index: 1;
+        }
+
+        .lifeline-header {
+            position: absolute;
+            top: 0;
+            left: -75px;
+            width: 150px;
+            height: 50px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+            z-index: 10;
+        }
+
+        .message {
+            position: absolute;
+            height: 3px;
+            background: #667eea;
+            z-index: 20;
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .message.new-feature {
+            background: #e74c3c;
+        }
+
+        .message.dashed {
+            background: repeating-linear-gradient(
+                to right,
+                transparent,
+                transparent 5px,
+                #667eea 5px,
+                #667eea 10px
+            );
+        }
+
+        .message.dashed.new-feature {
+            background: repeating-linear-gradient(
+                to right,
+                transparent,
+                transparent 5px,
+                #e74c3c 5px,
+                #e74c3c 10px
+            );
+        }
+
+        .message.visible {
+            opacity: 1;
+        }
+
+        .message::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid #667eea;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+        }
+
+        .message.new-feature::after {
+            border-left-color: #e74c3c;
+        }
+
+        .message-label {
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 8px 16px;
+            font-size: 12px;
+            white-space: nowrap;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            color: #2c3e50;
+            font-weight: 600;
+            border: 2px solid #e9ecef;
+            max-width: 350px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            z-index: 25;
+            line-height: 1.3;
+        }
+
+        .activation-bar {
+            position: absolute;
+            width: 12px;
+            background: #2ecc71;
+            left: -5px;
+            border-radius: 6px;
+            z-index: 10;
+            opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(46, 204, 113, 0.3);
+        }
+
+        .activation-bar.visible {
+            opacity: 1;
+        }
+
+        .step-info {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(44, 62, 80, 0.95);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-size: 14px;
+            max-width: 600px;
+            text-align: center;
+            z-index: 100;
+            opacity: 0;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .step-info.visible {
+            opacity: 1;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 2px 8px rgba(46, 204, 113, 0.3); }
+            50% { box-shadow: 0 4px 16px rgba(46, 204, 113, 0.6); }
+            100% { box-shadow: 0 2px 8px rgba(46, 204, 113, 0.3); }
+        }
+
+        .activation-bar.active {
+            animation: pulse 1.5s infinite;
+        }
+
+        .explanation-section {
+            padding: 30px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%);
+            border-top: 3px solid #20b2aa;
+            margin-top: 20px;
+        }
+
+        .explanation-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .workflow-explanation {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(32, 178, 170, 0.2);
+            margin-bottom: 20px;
+            border: 2px solid #20b2aa;
+        }
+
+        .workflow-explanation.active {
+            display: block;
+        }
+
+        .workflow-explanation h3 {
+            color: #1a1a1a;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .workflow-explanation h3.new-feature {
+            color: #1a1a1a;
+        }
+
+        .new-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .existing-badge {
+            background: #20b2aa;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .workflow-explanation p {
+            color: #2c3e50;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .feature-list {
+            background: linear-gradient(135deg, #f8f8f8 0%, #e8f4f3 100%);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #20b2aa;
+        }
+
+        .feature-list h4 {
+            color: #1a1a1a;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .feature-list ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .feature-list li {
+            color: #34495e;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .existing-feature {
+            color: #20b2aa;
+            font-weight: 600;
+        }
+
+        .new-feature-text {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        /* Password Modal Styles */
+        .password-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .password-modal.active {
+            display: flex;
+        }
+
+        .password-modal-content {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%);
+            border: 3px solid #20b2aa;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(32, 178, 170, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .password-modal h3 {
+            color: white;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .password-modal .lock-icon {
+            font-size: 24px;
+            color: #20b2aa;
+        }
+
+        .password-modal p {
+            color: #20b2aa;
+            font-size: 14px;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        .password-input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #20b2aa;
+            border-radius: 12px;
+            background: white;
+            color: #1a1a1a;
+            font-size: 16px;
+            font-weight: 500;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: #20b2aa;
+            box-shadow: 0 0 0 3px rgba(32, 178, 170, 0.2);
+            transform: scale(1.02);
+        }
+
+        .password-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .password-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .password-btn.submit {
+            background: linear-gradient(135deg, #20b2aa 0%, #1a1a1a 100%);
+            color: white;
+            border: 2px solid #20b2aa;
+        }
+
+        .password-btn.submit:hover {
+            background: linear-gradient(135deg, #1a1a1a 0%, #20b2aa 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(32, 178, 170, 0.4);
+        }
+
+        .password-btn.cancel {
+            background: transparent;
+            color: white;
+            border: 2px solid #666;
+        }
+
+        .password-btn.cancel:hover {
+            background: #666;
+            transform: translateY(-2px);
+        }
+
+        .password-error {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 10px;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .password-error.show {
+            opacity: 1;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        /* Animated Flow Dots */
+        .flow-dot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(circle, #20b2aa 0%, #1a8a82 100%);
+            border-radius: 50%;
+            top: -6px;
+            left: 0;
+            z-index: 30;
+            box-shadow: 0 0 12px rgba(32, 178, 170, 0.6), 0 0 24px rgba(32, 178, 170, 0.4);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .flow-dot::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(32, 178, 170, 0.3) 0%, transparent 70%);
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+
+        .flow-dot.visible {
+            opacity: 1;
+        }
+
+        /* Left to Right Flow Animation */
+        .flow-dot.flow-left-to-right.animate {
+            animation: flowLeftToRight 4s linear infinite;
+        }
+
+        /* Right to Left Flow Animation */
+        .flow-dot.flow-right-to-left.animate {
+            animation: flowRightToLeft 4s linear infinite;
+        }
+
+        /* Self-Processing Animation */
+        .flow-dot.self-processing.animate {
+            animation: selfProcessing 3s ease-in-out infinite;
+        }
+
+        /* Processing Operation Animation */
+        .flow-dot.processing-operation.animate {
+            animation: processingOperation 4s ease-in-out infinite;
+            left: 50% !important;
+            transform: translateX(-50%);
+        }
+
+        .processing-icon {
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            font-size: 16px;
+            z-index: 35;
+            animation: rotateGear 2s linear infinite;
+            filter: drop-shadow(0 0 8px rgba(32, 178, 170, 0.8));
+        }
+
+        /* Processing dots around the main dot */
+        .flow-dot.processing-operation::after {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: -12px;
+            width: 36px;
+            height: 36px;
+            border: 3px solid transparent;
+            border-top: 3px solid rgba(32, 178, 170, 0.6);
+            border-right: 3px solid rgba(32, 178, 170, 0.4);
+            border-radius: 50%;
+            animation: spinBorder 3s linear infinite;
+        }
+
+        /* Self-message styling */
+        .message.self-message {
+            background: repeating-linear-gradient(
+                to right,
+                transparent,
+                transparent 3px,
+                #20b2aa 3px,
+                #20b2aa 6px
+            );
+            border-radius: 10px;
+        }
+
+        .message.self-message.new-feature {
+            background: repeating-linear-gradient(
+                to right,
+                transparent,
+                transparent 3px,
+                #e74c3c 3px,
+                #e74c3c 6px
+            );
+        }
+
+        @keyframes dotPulse {
+            0%, 100% {
+                transform: scale(0.8);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes rotateGear {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spinBorder {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes processingOperation {
+            0% {
+                transform: translateX(-50%) scale(1);
+                box-shadow: 
+                    0 0 12px rgba(32, 178, 170, 0.6), 
+                    0 0 24px rgba(32, 178, 170, 0.4),
+                    0 0 36px rgba(32, 178, 170, 0.2);
+            }
+            25% {
+                transform: translateX(-50%) scale(1.4);
+                box-shadow: 
+                    0 0 18px rgba(32, 178, 170, 0.8), 
+                    0 0 36px rgba(32, 178, 170, 0.6),
+                    0 0 54px rgba(32, 178, 170, 0.4);
+            }
+            50% {
+                transform: translateX(-50%) scale(1.6);
+                box-shadow: 
+                    0 0 24px rgba(32, 178, 170, 1), 
+                    0 0 48px rgba(32, 178, 170, 0.8),
+                    0 0 72px rgba(32, 178, 170, 0.6);
+            }
+            75% {
+                transform: translateX(-50%) scale(1.4);
+                box-shadow: 
+                    0 0 18px rgba(32, 178, 170, 0.8), 
+                    0 0 36px rgba(32, 178, 170, 0.6),
+                    0 0 54px rgba(32, 178, 170, 0.4);
+            }
+            100% {
+                transform: translateX(-50%) scale(1);
+                box-shadow: 
+                    0 0 12px rgba(32, 178, 170, 0.6), 
+                    0 0 24px rgba(32, 178, 170, 0.4),
+                    0 0 36px rgba(32, 178, 170, 0.2);
+            }
+        }
+
+        @keyframes flowLeftToRight {
+            0% {
+                left: 0%;
+                transform: scale(1);
+                box-shadow: 0 0 12px rgba(32, 178, 170, 0.6), 0 0 24px rgba(32, 178, 170, 0.4);
+            }
+            15% {
+                transform: scale(1.3);
+                box-shadow: 0 0 18px rgba(32, 178, 170, 0.8), 0 0 36px rgba(32, 178, 170, 0.6);
+            }
+            30% {
+                transform: scale(1);
+                box-shadow: 0 0 12px rgba(32, 178, 170, 0.6), 0 0 24px rgba(32, 178, 170, 0.4);
+            }
+            50% {
+                transform: scale(1.2);
+                box-shadow: 0 0 15px rgba(32, 178, 170, 0.7), 0 0 30px rgba(32, 178, 170, 0.5);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 12px rgba(32, 178, 170, 0.6), 0 0 24px rgba(32, 178, 170, 0.4);
+            }
+            85% {
+                transform: scale(1.3);
+                box-shadow: 0 0 18px rgba(32, 178, 170, 0.8), 0 0 36px rgba(32, 178, 170, 0.6);
+            }
+            100% {
+                left: 100%;
+                transform: scale(1);
+                box-shadow: 0 0 12px rgba(32, 178, 170, 0.6), 0 0 24px rgba(32, 178, 170, 0.4);
+            }
+        }
+
+        @keyframes flowRightToLeft {
+            0% {
+                left: 100%;
+                transform: scale(1);
+                box-shadow: 0 0 12px rgba(32, 178, 170, 0.6), 0 0 24px rgba(32, 178, 170, 0.4);
+            }
+            15% {
+                transform: scale(1.3);
+                box-shadow: 0 0 18px rgba(32, 178, 170, 0.8), 0 0 36px rgba(32, 178, 170, 0.6);
+            }
+            30% {
+                transform: scale(1);
+                box-shadow: 0 0 12px rgba(32, 178, 170, 0.6), 0 0 24px rgba(32, 178, 170, 0.4);
+            }
+            50% {
+                transform: scale(1.2);
+                box-shadow: 0 0 15px rgba(32, 178, 170, 0.7), 0 0 30px rgba(32, 178, 170, 0.5);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 12px rgba(32, 178, 170, 0.6), 0 0 24px rgba(32, 178, 170, 0.4);
+            }
+            85% {
+                transform: scale(1.3);
+                box-shadow: 0 0 18px rgba(32, 178, 170, 0.8), 0 0 36px rgba(32, 178, 170, 0.6);
+            }
+            100% {
+                left: 0%;
+                transform: scale(1);
+                box-shadow: 0 0 12px rgba(32, 178, 170, 0.6), 0 0 24px rgba(32, 178, 170, 0.4);
+            }
+        }
+
+        @keyframes selfProcessing {
+            0% {
+                left: 10%;
+                transform: scale(1) rotate(0deg);
+                box-shadow: 0 0 12px rgba(32, 178, 170, 0.6), 0 0 24px rgba(32, 178, 170, 0.4);
+            }
+            25% {
+                left: 30%;
+                transform: scale(1.4) rotate(90deg);
+                box-shadow: 0 0 20px rgba(32, 178, 170, 0.9), 0 0 40px rgba(32, 178, 170, 0.7);
+            }
+            50% {
+                left: 50%;
+                transform: scale(1.6) rotate(180deg);
+                box-shadow: 0 0 24px rgba(32, 178, 170, 1), 0 0 48px rgba(32, 178, 170, 0.8);
+            }
+            75% {
+                left: 30%;
+                transform: scale(1.4) rotate(270deg);
+                box-shadow: 0 0 20px rgba(32, 178, 170, 0.9), 0 0 40px rgba(32, 178, 170, 0.7);
+            }
+            100% {
+                left: 10%;
+                transform: scale(1) rotate(360deg);
+                box-shadow: 0 0 12px rgba(32, 178, 170, 0.6), 0 0 24px rgba(32, 178, 170, 0.4);
+            }
+        }
+
+        /* Enhanced message line for better dot visibility */
+        .message.visible {
+            opacity: 1;
+            position: relative;
+            overflow: visible;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>OOH Suite- Data Flow, Features, LLDs</h1>
+        </div>
+        
+        <div class="controls">
+            <div class="workflow-selector">
+                <button class="workflow-btn active" data-workflow="heatmap">City Selection & Heatmap</button>
+                <button class="workflow-btn" data-workflow="hyperlocal">Hyperlocal Data Visualization</button>
+                <button class="workflow-btn" data-workflow="upload-brand">Upload Brand Data</button>
+                <button class="workflow-btn" data-workflow="safe-zone">Safe Zone</button>
+                <button class="workflow-btn" data-workflow="monitoring-module">Monitoring Module</button>
+                <button class="workflow-btn new-feature" data-workflow="competition">🆕 Competition Mapping</button>
+                <button class="workflow-btn" data-workflow="media-plan">Upload Media Plan</button>
+                <button class="workflow-btn new-feature" data-workflow="hyperlocal-point">🆕 Hyperlocal Point Data</button>
+                <button class="workflow-btn" data-workflow="custom-mapping">Custom Mapping</button>
+                <button class="workflow-btn new-feature" data-workflow="performance-comparison">🆕 Site Performance Comparison</button>
+                <button class="workflow-btn new-feature" data-workflow="creative-labs">🆕 Creative Performance Labs</button>
+                <button class="workflow-btn new-feature" data-workflow="vas-scorer">🆕 VAS Scorer</button>
+                <button class="workflow-btn new-feature" data-workflow="o2o-attribution">🆕 O2O Attribution Model</button>
+                <button class="workflow-btn new-feature" data-workflow="agentic-ai">🆕 Agentic OOH AI Workflow</button>
+                <button class="workflow-btn new-feature" data-workflow="reporting-modules">🆕 Reporting Modules</button>
+                <button class="workflow-btn new-feature" data-workflow="retail-visits">🆕 OOH to Retail Store Visits</button>
+                <button class="workflow-btn new-feature" data-workflow="digital-targeting">🆕 Digital Targeting from OOH</button>
+                <button class="workflow-btn new-feature" data-workflow="programmatic-dooh">🆕 Programmatic D-OOH</button>
+            </div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color existing"></div>
+                    <span>Existing Features</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color new-feature"></div>
+                    <span>New Features</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color activation"></div>
+                    <span>Active Component</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="diagram-container">
+            <div class="sequence-diagram" id="diagram">
+                <!-- Lifelines will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <div class="explanation-section">
+            <h2 class="explanation-title">Workflow Process Explanations</h2>
+            
+            <div class="workflow-explanation active" id="explanation-heatmap">
+                <h3><span class="existing-badge">EXISTING</span> City Selection & Heatmap Generation</h3>
+                <p>This workflow represents the <span class="existing-feature">core existing functionality</span> for generating location-based heatmaps. When a user selects a city from the dropdown, the system initiates a comprehensive data collection and visualization process.</p>
+                
+                <div class="feature-list">
+                    <h4>Process Flow:</h4>
+                    <ul>
+                        <li><span class="existing-feature">User selects city from dropdown interface</span></li>
+                        <li><span class="existing-feature">Backend processes the city selection request</span></li>
+                        <li><span class="existing-feature">System calls Google Places API to retrieve Points of Interest (POI) data</span></li>
+                        <li><span class="existing-feature">Backend processes and categorizes location data (city, district, region)</span></li>
+                        <li><span class="existing-feature">Processed POI data is stored in the dedicated POI database</span></li>
+                        <li><span class="existing-feature">System generates heatmap visualization data</span></li>
+                        <li><span class="existing-feature">Final heatmap is displayed on the UI with toggle controls</span></li>
+                    </ul>
+                </div>
+                
+                <p><strong>Key Components:</strong> Google Places API integration, POI database storage, location categorization engine, and interactive heatmap visualization with user controls.</p>
+            </div>
+
+            <div class="workflow-explanation" id="explanation-hyperlocal">
+                <h3><span class="existing-badge">EXISTING</span> Hyperlocal Data Visualization</h3>
+                <p>This workflow enables <span class="existing-feature">existing hyperlocal demographic analysis</span> by integrating with Moving Walls API to provide detailed insights into Demographics, Personas, and Interests for specific geographical areas.</p>
+                
+                <div class="feature-list">
+                    <h4>Process Flow:</h4>
+                    <ul>
+                        <li><span class="existing-feature">User enables hyperlocal visualization and selects data type (Demographics/Personas/Interests)</span></li>
+                        <li><span class="existing-feature">Backend processes the selection and initiates data retrieval</span></li>
+                        <li><span class="existing-feature">System calls Moving Walls API for hyperlocal data</span></li>
+                        <li><span class="existing-feature">Retrieved data is mapped with existing shapefile database</span></li>
+                        <li><span class="existing-feature">Backend categorizes data into 4 distinct color-coded segments</span></li>
+                        <li><span class="existing-feature">Segmented data is sent to UI for visualization</span></li>
+                        <li><span class="existing-feature">Color-coded hyperlocal visualization is displayed on the map</span></li>
+                    </ul>
+                </div>
+                
+                <p><strong>Key Components:</strong> Moving Walls API integration, shapefile database mapping, 4-segment categorization algorithm, and color-coded map visualization.</p>
+            </div>
+
+            <div class="workflow-explanation" id="explanation-upload-brand">
+                <h3><span class="existing-badge">EXISTING</span> Upload Brand Data</h3>
+                <p>This workflow handles <span class="existing-feature">existing brand data upload and visualization functionality</span>, allowing users to upload brand-specific data using predefined templates and visualize it as interactive map plots.</p>
+                
+                <div class="feature-list">
+                    <h4>Process Flow:</h4>
+                    <ul>
+                        <li><span class="existing-feature">User uploads brand data using the required template format</span></li>
+                        <li><span class="existing-feature">Backend processes and validates the uploaded data</span></li>
+                        <li><span class="existing-feature">System extracts latitude/longitude coordinates and associated metadata</span></li>
+                        <li><span class="existing-feature">Backend categorizes location data based on brand criteria</span></li>
+                        <li><span class="existing-feature">Processed data is formatted for map visualization with tooltip information</span></li>
+                        <li><span class="existing-feature">Interactive plots are displayed on the map with detailed tooltips</span></li>
+                    </ul>
+                </div>
+                
+                <p><strong>Key Components:</strong> Template-based data upload system, coordinate extraction engine, brand data categorization, and interactive map plotting with rich tooltips.</p>
+            </div>
+
+            <div class="workflow-explanation" id="explanation-safe-zone">
+                <h3><span class="existing-badge">EXISTING</span> Safe Zone Analysis</h3>
+                <p>This workflow provides <span class="existing-feature">existing safe zone compliance analysis</span> for location-based assessments. The system evaluates uploaded locations against educational institutions (schools and universities) to determine safe zone compliance based on customizable radius parameters.</p>
+                
+                <div class="feature-list">
+                    <h4>Process Flow:</h4>
+                    <ul>
+                        <li><span class="existing-feature">User uploads location data and sets radius distance for safe zone analysis</span></li>
+                        <li><span class="existing-feature">User clicks analyze button to initiate compliance check</span></li>
+                        <li><span class="existing-feature">Backend processes the safe zone analysis request</span></li>
+                        <li><span class="existing-feature">System extracts location names and latitude/longitude coordinates from uploaded data</span></li>
+                        <li><span class="existing-feature">Backend calls Google Places API to fetch educational institution POI data (schools & universities)</span></li>
+                        <li><span class="existing-feature">Educational institution data is returned from Google Places API</span></li>
+                        <li><span class="existing-feature">System queries POI database for schools and universities in the area</span></li>
+                        <li><span class="existing-feature">POI database returns relevant educational institution data</span></li>
+                        <li><span class="existing-feature">Backend calculates distances and categorizes locations as Safe (Green) or Prohibited (Red)</span></li>
+                        <li><span class="existing-feature">Color-coded safe zone data is sent to visualization layer</span></li>
+                        <li><span class="existing-feature">UI displays safe zone map with color coding and status list for user review</span></li>
+                    </ul>
+                </div>
+                
+                <p><strong>Key Components:</strong> Educational institution POI filtering, distance calculation algorithm, radius-based compliance checking, color-coded visualization (Green = Safe, Red = Prohibited), and comprehensive status reporting for regulatory compliance.</p>
+                
+                <div class="feature-list">
+                    <h4>Safe Zone Categorization:</h4>
+                    <ul>
+                        <li><span class="existing-feature">Safe (Green): Locations outside the specified radius from educational institutions</span></li>
+                        <li><span class="existing-feature">Prohibited (Red): Locations within the specified radius from schools or universities</span></li>
+                        <li><span class="existing-feature">Customizable radius parameters for different compliance requirements</span></li>
+                        <li><span class="existing-feature">Distance calculations using precise geospatial algorithms</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="workflow-explanation" id="explanation-monitoring-module">
+                <h3><span class="existing-badge">EXISTING</span> Monitoring Module (Multi-User Workflow)</h3>
+                <p>This workflow represents the <span class="existing-feature">comprehensive existing monitoring system</span> that manages the complete campaign lifecycle from creation to client reporting. The system supports three distinct user roles with different permissions and responsibilities in the campaign monitoring process.</p>
+                
+                <div class="feature-list">
+                    <h4>User Roles & Permissions:</h4>
+                    <ul>
+                        <li><span class="existing-feature">OOH Planner: Creates campaigns, tags media sites, reviews and approves monitoring data</span></li>
+                        <li><span class="existing-feature">OOH Monitor: Uploads campaign images, uploads competition brand images, responds to rejection notifications</span></li>
+                        <li><span class="existing-feature">Client: Views only approved data, accesses calculated metrics and performance reports</span></li>
+                    </ul>
+                </div>
+
+                <div class="feature-list">
+                    <h4>Complete Process Flow (24 Steps):</h4>
+                    <ul>
+                        <li><span class="existing-feature">OOH Planner creates campaign and tags associated media sites for monitoring</span></li>
+                        <li><span class="existing-feature">Backend processes campaign creation and generates unique campaign ID</span></li>
+                        <li><span class="existing-feature">System tags all media sites to the campaign and stores campaign data</span></li>
+                        <li><span class="existing-feature">Campaign data and media site associations are stored in data storage</span></li>
+                        <li><span class="existing-feature">Backend sends automated notification to Monitor user about new campaign</span></li>
+                        <li><span class="existing-feature">Monitor user receives campaign notification and accesses monitoring interface</span></li>
+                        <li><span class="existing-feature">Monitor uploads monitoring images for all campaign-associated media sites</span></li>
+                        <li><span class="existing-feature">Backend processes image uploads and maps them to campaign ID and media sites</span></li>
+                        <li><span class="existing-feature">Monitor uploads competition brand campaign images for competitive analysis</span></li>
+                        <li><span class="existing-feature">Backend connects competition images to category data and related campaigns</span></li>
+                        <li><span class="existing-feature">All uploaded data (campaign + competition) is stored in data storage</span></li>
+                        <li><span class="existing-feature">Stored data becomes visible in OOH Planner interface for review and approval</span></li>
+                        <li><span class="existing-feature">OOH Planner reviews all monitoring data and makes approval/rejection decisions</span></li>
+                        <li><span class="existing-feature">Backend calls Moving Walls API to pull additional media site information monthly</span></li>
+                        <li><span class="existing-feature">API returns enhanced demographics, performance metrics, and audience segments</span></li>
+                        <li><span class="existing-feature">Backend calculates overall campaign performance metrics for reporting</span></li>
+                        <li><span class="existing-feature">Approved data and performance calculations are updated in data storage</span></li>
+                        <li><span class="existing-feature">System enables data access for other modules (reporting, competition mapping)</span></li>
+                        <li><span class="existing-feature">Client user accesses approved data through dashboard interface</span></li>
+                        <li><span class="existing-feature">Client views comprehensive campaign metrics and performance reports</span></li>
+                    </ul>
+                </div>
+
+                <div class="feature-list">
+                    <h4>Approval & Rejection Workflow:</h4>
+                    <ul>
+                        <li><span class="existing-feature">Approved Data: Becomes available for reporting and competition mapping modules</span></li>
+                        <li><span class="existing-feature">Rejected Data: Monitor receives notification and must re-upload images</span></li>
+                        <li><span class="existing-feature">Re-upload Cycle: Process repeats until OOH Planner approves all monitoring data</span></li>
+                        <li><span class="existing-feature">Final Approval: All approved data is mapped and integrated across system modules</span></li>
+                    </ul>
+                </div>
+
+                <p><strong>Key System Integrations:</strong> Campaign management system, image storage and processing, Moving Walls API for enhanced media data, automated notification system, approval workflow engine, performance calculation algorithms, and cross-module data integration for reporting and competitive analysis.</p>
+                
+                <p><strong>Data Enhancement Features:</strong> Monthly Moving Walls API updates for audience demographics, performance metrics (reach, impression, frequency), audience segment analysis, automated campaign performance calculations, and comprehensive reporting data preparation for client access.</p>
+            </div>
+
+            <div class="workflow-explanation" id="explanation-competition">
+                <h3 class="new-feature"><span class="new-badge">NEW</span> Competition Mapping</h3>
+                <p>This is a <span class="new-feature-text">brand new feature</span> that provides competitive intelligence by visualizing competitor brand locations and activities on the map interface.</p>
+                
+                <div class="feature-list">
+                    <h4>Process Flow:</h4>
+                    <ul>
+                        <li><span class="new-feature-text">User enables the new Competition Mapping module</span></li>
+                        <li><span class="new-feature-text">Backend processes competition analysis request</span></li>
+                        <li><span class="new-feature-text">System queries the new monitoring database for competitor data</span></li>
+                        <li><span class="new-feature-text">Retrieved competition data is processed and analyzed</span></li>
+                        <li><span class="new-feature-text">Backend applies brand-specific color coding for different competitors</span></li>
+                        <li><span class="new-feature-text">Color-coded competition data is sent to visualization layer</span></li>
+                        <li><span class="new-feature-text">Competition plots are displayed on map with brand identification</span></li>
+                    </ul>
+                </div>
+                
+                <p><strong>New Capabilities:</strong> Competitive intelligence monitoring, brand-specific color coding system, competitor location tracking, and real-time competition visualization.</p>
+            </div>
+
+            <div class="workflow-explanation" id="explanation-media-plan">
+                <h3><span class="existing-badge">EXISTING</span> Upload Media Plan <span class="new-badge">ENHANCED</span></h3>
+                <p>This workflow combines <span class="existing-feature">existing media plan functionality</span> with <span class="new-feature-text">significant new enhancements</span> including Moving Walls API integration, demographic data, and format filtering.</p>
+                
+                <div class="feature-list">
+                    <h4>Process Flow:</h4>
+                    <ul>
+                        <li><span class="existing-feature">User enables media plan upload and selects city inventory (existing)</span></li>
+                        <li><span class="existing-feature">Backend processes media plan request (existing)</span></li>
+                        <li><span class="existing-feature">System queries media inventory database (existing)</span></li>
+                        <li><span class="new-feature-text">NEW: System calls Moving Walls API for monthly enhanced data updates</span></li>
+                        <li><span class="new-feature-text">NEW: Enhanced media data with demographics and performance metrics is returned</span></li>
+                        <li><span class="new-feature-text">NEW: Media inventory database is updated with demographics, audience personas, reach, impression, frequency data</span></li>
+                        <li><span class="existing-feature">Enhanced media site data is sent to visualization (enhanced)</span></li>
+                        <li><span class="new-feature-text">NEW: Media sites displayed with rich tooltips including performance metrics</span></li>
+                        <li><span class="new-feature-text">NEW: Media format filter dropdown for selective visualization</span></li>
+                    </ul>
+                </div>
+                
+                <p><strong>Enhanced Features:</strong> Monthly Moving Walls API updates, demographic overlays, audience persona data, performance metrics (reach/impression/frequency), and media format filtering.</p>
+            </div>
+
+            <div class="workflow-explanation" id="explanation-hyperlocal-point">
+                <h3 class="new-feature"><span class="new-badge">NEW</span> Hyperlocal Point Data</h3>
+                <p>This is a <span class="new-feature-text">completely new feature</span> that provides granular, location-specific audience analysis with High/Medium/Low area categorization for audience segments and reach metrics.</p>
+                
+                <div class="feature-list">
+                    <h4>Process Flow:</h4>
+                    <ul>
+                        <li><span class="new-feature-text">User enables new Hyperlocal Point Data feature</span></li>
+                        <li><span class="new-feature-text">User selects analysis type: Audience Segments or Reach</span></li>
+                        <li><span class="new-feature-text">Backend retrieves media site location data from database</span></li>
+                        <li><span class="new-feature-text">System calls Moving Walls API for location-specific point data</span></li>
+                        <li><span class="new-feature-text">API returns detailed location-specific audience and reach data</span></li>
+                        <li><span class="new-feature-text">Backend processes and categorizes areas as High/Medium/Low at city level</span></li>
+                        <li><span class="new-feature-text">Categorized point data is sent to visualization layer</span></li>
+                        <li><span class="new-feature-text">Color-coded areas are displayed on map showing audience intensity</span></li>
+                    </ul>
+                </div>
+                
+                <p><strong>New Capabilities:</strong> Granular point-level analysis, audience segment mapping, reach intensity visualization, and city-level categorization system.</p>
+            </div>
+
+            <div class="workflow-explanation" id="explanation-custom-mapping">
+                <h3><span class="existing-badge">EXISTING</span> Custom Mapping <span class="new-badge">ENHANCED</span></h3>
+                <p>This workflow enhances <span class="existing-feature">existing custom area selection</span> with <span class="new-feature-text">new POI type filtering capabilities</span> for more targeted analysis.</p>
+                
+                <div class="feature-list">
+                    <h4>Process Flow:</h4>
+                    <ul>
+                        <li><span class="existing-feature">User enables custom mapping feature (existing)</span></li>
+                        <li><span class="existing-feature">User selects area on map and adjusts radius (100m-1000m) (existing)</span></li>
+                        <li><span class="existing-feature">Area and radius parameters sent to backend (existing)</span></li>
+                        <li><span class="existing-feature">System queries POI database for selected area (existing)</span></li>
+                        <li><span class="existing-feature">Relevant POI data is returned from database (existing)</span></li>
+                        <li><span class="existing-feature">Backend groups and quantifies POI data (existing)</span></li>
+                        <li><span class="existing-feature">Grouped POI data sent to visualization (existing)</span></li>
+                        <li><span class="existing-feature">POI groups displayed with counts, drill-down capability (existing)</span></li>
+                        <li><span class="new-feature-text">NEW: POI type filter dropdown (coffee shops, pubs, bars, etc.)</span></li>
+                        <li><span class="new-feature-text">NEW: Backend filters POI data by selected types</span></li>
+                        <li><span class="new-feature-text">NEW: Filtered POI visualization based on user selection</span></li>
+                    </ul>
+                </div>
+                
+                <p><strong>Enhanced Features:</strong> POI type filtering system, category-specific visualization, and selective POI display functionality.</p>
+            </div>
+
+            <div class="workflow-explanation" id="explanation-performance-comparison">
+                <h3 class="new-feature"><span class="new-badge">NEW</span> Site Performance Comparison</h3>
+                <p>This is a <span class="new-feature-text">brand new analytical module</span> that provides comprehensive performance comparison between media sites with downloadable reports and tabular data.</p>
+                
+                <div class="feature-list">
+                    <h4>Process Flow:</h4>
+                    <ul>
+                        <li><span class="new-feature-text">User selects city and specific media sites for comparative analysis</span></li>
+                        <li><span class="new-feature-text">Backend processes multi-site analysis request</span></li>
+                        <li><span class="new-feature-text">System calls Moving Walls API for monthly performance updates</span></li>
+                        <li><span class="new-feature-text">API returns comprehensive performance metrics for selected sites</span></li>
+                        <li><span class="new-feature-text">Backend updates media inventory database with latest performance data</span></li>
+                        <li><span class="new-feature-text">System generates comparative charts and analysis</span></li>
+                        <li><span class="new-feature-text">Charts and tabular data sent to visualization layer</span></li>
+                        <li><span class="new-feature-text">Performance comparison displayed with charts, graphs, and downloadable tables</span></li>
+                    </ul>
+                </div>
+                
+                <p><strong>New Capabilities:</strong> Multi-site performance analysis, comparative charting, key performance metrics tracking, audience demographic comparison, and downloadable analytical reports.</p>
+            </div>
+
+            <div class="workflow-explanation" id="explanation-creative-labs">
+                <h3 class="new-feature"><span class="new-badge">NEW</span> Creative Performance Labs</h3>
+                <p>This is a <span class="new-feature-text">revolutionary new AI-powered module</span> that combines creative assessment using Gemini LLM with media site performance data to provide comprehensive creative optimization insights.</p>
+                
+                <div class="feature-list">
+                    <h4>Process Flow:</h4>
+                    <ul>
+                        <li><span class="new-feature-text">User uploads creative ad image and selects target media sites</span></li>
+                        <li><span class="new-feature-text">Backend processes creative content and site selection</span></li>
+                        <li><span class="new-feature-text">Creative image sent to Gemini LLM API for AI-powered analysis</span></li>
+                        <li><span class="new-feature-text">Gemini returns detailed creative assessment scores in JSON format</span></li>
+                        <li><span class="new-feature-text">System calls Moving Walls API for corresponding media site data</span></li>
+                        <li><span class="new-feature-text">API returns audience demographics, performance metrics, and segment data</span></li>
+                        <li><span class="new-feature-text">Backend combines AI creative scores with media site performance data</span></li>
+                        <li><span class="new-feature-text">Comprehensive analysis report with charts and recommendations generated</span></li>
+                        <li><span class="new-feature-text">Creative performance analysis displayed with optimization insights</span></li>
+                    </ul>
+                </div>
+                
+                <p><strong>AI-Powered Features:</strong> Gemini LLM creative assessment, automated scoring system, creative-media site matching, performance prediction, and AI-driven optimization recommendations.</p>
+            </div>
+
+            <div class="workflow-explanation" id="explanation-vas-scorer">
+                <h3 class="new-feature"><span class="new-badge">NEW</span> VAS Scorer (Visibility, Accessibility, Suitability)</h3>
+                <p>This is a <span class="new-feature-text">new AI-powered scoring system</span> that automatically evaluates media sites using Gemini LLM to assess visibility, accessibility, and suitability metrics for improved inventory management.</p>
+                
+                <div class="feature-list">
+                    <h4>Process Flow:</h4>
+                    <ul>
+                        <li><span class="new-feature-text">User uploads new media site information along with site image</span></li>
+                        <li><span class="new-feature-text">Backend processes media site upload and image data</span></li>
+                        <li><span class="new-feature-text">Site image sent to Gemini LLM API with VAS scoring prompts</span></li>
+                        <li><span class="new-feature-text">Gemini analyzes image and returns comprehensive VAS scores in JSON</span></li>
+                        <li><span class="new-feature-text">VAS score data stored in media inventory database with unique site ID</span></li>
+                        <li><span class="new-feature-text">Database confirms successful VAS data storage</span></li>
+                        <li><span class="new-feature-text">VAS scoring completion status sent to UI</span></li>
+                        <li><span class="new-feature-text">User receives confirmation of VAS score integration</span></li>
+                    </ul>
+                </div>
+                
+                <p><strong>AI Scoring Features:</strong> Automated VAS assessment, AI-powered image analysis, standardized scoring metrics, database integration for future use in Creative Performance Labs, and enhanced inventory evaluation.</p>
+            </div>
+
+            <div class="workflow-explanation" id="explanation-o2o-attribution">
+                <h3 class="new-feature"><span class="new-badge">NEW</span> O2O Attribution Model</h3>
+                <p>This is an <span class="new-feature-text">advanced new attribution model</span> for Online-to-Offline (O2O) campaign measurement and analysis.</p>
+                
+                <div class="feature-list">
+                    <h4>Development Status:</h4>
+                    <ul>
+                        <li><span class="new-feature-text">Feature currently under development for Phase 3</span></li>
+                        <li><span class="new-feature-text">Will include advanced attribution modeling capabilities</span></li>
+                        <li><span class="new-feature-text">Comprehensive O2O campaign measurement and analysis</span></li>
+                        <li><span class="new-feature-text">Detailed LLD diagram and workflow to be released in Phase 3</span></li>
+                    </ul>
+                </div>
+                
+                <p><strong>Coming Soon:</strong> Complete workflow documentation, LLD diagrams, and feature explanations will be available in Phase 3 of the development cycle.</p>
+            </div>
+
+            <div class="workflow-explanation" id="explanation-agentic-ai">
+                <h3 class="new-feature"><span class="new-badge">NEW</span> Agentic OOH AI Workflow with Budget Optimizer</h3>
+                <p>This is a <span class="new-feature-text">revolutionary AI-powered workflow</span> featuring autonomous OOH planning with integrated budget optimization and intelligent planning logic.</p>
+                
+                <div class="feature-list">
+                    <h4>Development Status:</h4>
+                    <ul>
+                        <li><span class="new-feature-text">Feature currently under development for Phase 3</span></li>
+                        <li><span class="new-feature-text">Will include autonomous AI-driven OOH campaign planning</span></li>
+                        <li><span class="new-feature-text">Advanced budget optimization algorithms</span></li>
+                        <li><span class="new-feature-text">Intelligent planning logic and decision-making capabilities</span></li>
+                        <li><span class="new-feature-text">Detailed LLD diagram and workflow to be released in Phase 3</span></li>
+                    </ul>
+                </div>
+                
+                <p><strong>Coming Soon:</strong> Complete workflow documentation, LLD diagrams, and feature explanations will be available in Phase 3 of the development cycle.</p>
+            </div>
+
+            <div class="workflow-explanation" id="explanation-reporting-modules">
+                <h3 class="new-feature"><span class="new-badge">NEW</span> Reporting Modules</h3>
+                <p>This is a <span class="new-feature-text">comprehensive reporting system</span> that provides advanced analytics and customizable reporting capabilities for all OOH campaign activities.</p>
+                
+                <div class="feature-list">
+                    <h4>Development Status:</h4>
+                    <ul>
+                        <li><span class="new-feature-text">Feature currently under development for Phase 3</span></li>
+                        <li><span class="new-feature-text">Will include comprehensive reporting and analytics capabilities</span></li>
+                        <li><span class="new-feature-text">Customizable dashboard and report generation</span></li>
+                        <li><span class="new-feature-text">Advanced data visualization and export features</span></li>
+                        <li><span class="new-feature-text">Detailed LLD diagram and workflow to be released in Phase 3</span></li>
+                    </ul>
+                </div>
+                
+                <p><strong>Coming Soon:</strong> Complete workflow documentation, LLD diagrams, and feature explanations will be available in Phase 3 of the development cycle.</p>
+            </div>
+
+            <div class="workflow-explanation" id="explanation-retail-visits">
+                <h3 class="new-feature"><span class="new-badge">NEW</span> OOH to Retail Store Visits Attribution Model</h3>
+                <p>This is an <span class="new-feature-text">advanced attribution system</span> that measures and analyzes the impact of OOH campaigns on physical retail store visits and foot traffic patterns.</p>
+                
+                <div class="feature-list">
+                    <h4>Development Status:</h4>
+                    <ul>
+                        <li><span class="new-feature-text">Feature currently under development for Phase 4</span></li>
+                        <li><span class="new-feature-text">Will include advanced foot traffic attribution modeling</span></li>
+                        <li><span class="new-feature-text">Retail store visit correlation with OOH campaign exposure</span></li>
+                        <li><span class="new-feature-text">Comprehensive attribution analytics and reporting</span></li>
+                        <li><span class="new-feature-text">Detailed LLD diagram and workflow to be released in Phase 4</span></li>
+                    </ul>
+                </div>
+                
+                <p><strong>Coming Soon:</strong> Complete workflow documentation, LLD diagrams, and feature explanations will be available in Phase 4 of the development cycle.</p>
+            </div>
+
+            <div class="workflow-explanation" id="explanation-digital-targeting">
+                <h3 class="new-feature"><span class="new-badge">NEW</span> Digital Targeting from OOH Campaign</h3>
+                <p>This is a <span class="new-feature-text">cross-channel targeting system</span> that enables digital advertising campaigns to target audiences based on OOH campaign exposure and engagement data.</p>
+                
+                <div class="feature-list">
+                    <h4>Development Status:</h4>
+                    <ul>
+                        <li><span class="new-feature-text">Feature currently under development for Phase 4</span></li>
+                        <li><span class="new-feature-text">Will include OOH-to-digital audience segmentation</span></li>
+                        <li><span class="new-feature-text">Cross-platform campaign integration and targeting</span></li>
+                        <li><span class="new-feature-text">Advanced audience matching and retargeting capabilities</span></li>
+                        <li><span class="new-feature-text">Detailed LLD diagram and workflow to be released in Phase 4</span></li>
+                    </ul>
+                </div>
+                
+                <p><strong>Coming Soon:</strong> Complete workflow documentation, LLD diagrams, and feature explanations will be available in Phase 4 of the development cycle.</p>
+            </div>
+
+            <div class="workflow-explanation" id="explanation-programmatic-dooh">
+                <h3 class="new-feature"><span class="new-badge">NEW</span> Programmatic D-OOH (Digital Out-of-Home)</h3>
+                <p>This is an <span class="new-feature-text">automated programmatic buying system</span> for Digital Out-of-Home advertising with real-time bidding and dynamic content optimization capabilities.</p>
+                
+                <div class="feature-list">
+                    <h4>Development Status:</h4>
+                    <ul>
+                        <li><span class="new-feature-text">Feature currently under development for Phase 4</span></li>
+                        <li><span class="new-feature-text">Will include programmatic bidding for D-OOH inventory</span></li>
+                        <li><span class="new-feature-text">Dynamic content optimization and automated campaign management</span></li>
+                        <li><span class="new-feature-text">Advanced targeting and performance optimization algorithms</span></li>
+                        <li><span class="new-feature-text">Detailed LLD diagram and workflow to be released in Phase 4</span></li>
+                    </ul>
+                </div>
+                
+                <p><strong>Coming Soon:</strong> Complete workflow documentation, LLD diagrams, and feature explanations will be available in Phase 4 of the development cycle.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="step-info" id="stepInfo">
+        Select a workflow to see the sequence flow
+    </div>
+
+    <!-- Password Modal -->
+    <div class="password-modal" id="passwordModal">
+        <div class="password-modal-content">
+            <h3>
+                <span class="lock-icon">🔒</span>
+                Protected Feature
+            </h3>
+            <p>This feature requires authentication to access</p>
+            <div class="password-input-group">
+                <input 
+                    type="password" 
+                    class="password-input" 
+                    id="passwordInput" 
+                    placeholder="Enter password..."
+                    autocomplete="off"
+                >
+                <div class="password-error" id="passwordError">
+                    Incorrect password. Please try again.
+                </div>
+            </div>
+            <div class="password-buttons">
+                <button class="password-btn cancel" id="passwordCancel">Cancel</button>
+                <button class="password-btn submit" id="passwordSubmit">Access</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class SequenceDiagram {
+            constructor() {
+                this.lifelines = [
+                    { id: 'user', name: 'User', x: 100 },
+                    { id: 'ui-features', name: 'UI Features', x: 300 },
+                    { id: 'ui-visualization', name: 'UI Visualization', x: 500 },
+                    { id: 'backend', name: 'Backend Processing', x: 700 },
+                    { id: 'data-storage', name: 'Data Storage', x: 900 },
+                    { id: 'third-party', name: 'Third Party APIs', x: 1100 }
+                ];
+                
+                // Password protected features
+                this.protectedFeatures = ['performance-comparison', 'creative-labs', 'vas-scorer', 'o2o-attribution', 'agentic-ai', 'reporting-modules', 'retail-visits', 'digital-targeting', 'programmatic-dooh'];
+                this.correctPassword = 'OOHSUITE@123';
+                this.authenticatedFeatures = new Set();
+                this.pendingWorkflow = null;
+                
+                this.workflows = {
+                    'heatmap': {
+                        name: 'City Selection & Heatmap Generation',
+                        isNew: false,
+                        steps: [
+                            { from: 'user', to: 'ui-features', message: 'Select City from Dropdown', delay: 0 },
+                            { from: 'ui-features', to: 'backend', message: 'Process City Selection', delay: 300 },
+                            { from: 'backend', to: 'third-party', message: 'Call Google Places API', delay: 600 },
+                            { from: 'third-party', to: 'backend', message: 'Return POI Data', delay: 900 },
+                            { from: 'backend', to: 'backend', message: 'Process Location Categorization', delay: 1200 },
+                            { from: 'backend', to: 'data-storage', message: 'Store in POI Database', delay: 1500 },
+                            { from: 'backend', to: 'backend', message: 'Generate Heatmap Data', delay: 1800 },
+                            { from: 'backend', to: 'ui-visualization', message: 'Send Heatmap Data', delay: 2100 },
+                            { from: 'ui-visualization', to: 'user', message: 'Display Heatmap on Map', delay: 2400 }
+                        ]
+                    },
+                    'hyperlocal': {
+                        name: 'Hyperlocal Data Visualization',
+                        isNew: false,
+                        steps: [
+                            { from: 'user', to: 'ui-features', message: 'Enable Hyperlocal & Select Option', delay: 0 },
+                            { from: 'ui-features', to: 'backend', message: 'Process Selection (Demo/Personas/Interests)', delay: 300 },
+                            { from: 'backend', to: 'third-party', message: 'Call Moving Walls API', delay: 600 },
+                            { from: 'third-party', to: 'backend', message: 'Return Hyperlocal Data', delay: 900 },
+                            { from: 'backend', to: 'data-storage', message: 'Map with Shapefile Database', delay: 1200 },
+                            { from: 'backend', to: 'backend', message: 'Categorize into 4 Color-coded Segments', delay: 1500 },
+                            { from: 'backend', to: 'ui-visualization', message: 'Send Segmented Data', delay: 1800 },
+                            { from: 'ui-visualization', to: 'user', message: 'Display Color-coded Visualization', delay: 2100 }
+                        ]
+                    },
+                    'upload-brand': {
+                        name: 'Upload Brand Data',
+                        isNew: false,
+                        steps: [
+                            { from: 'user', to: 'ui-features', message: 'Upload Brand Data Template', delay: 0 },
+                            { from: 'ui-features', to: 'backend', message: 'Process Uploaded Data', delay: 300 },
+                            { from: 'backend', to: 'backend', message: 'Extract Lat/Long & Associated Data', delay: 600 },
+                            { from: 'backend', to: 'backend', message: 'Categorize Location Data', delay: 900 },
+                            { from: 'backend', to: 'ui-visualization', message: 'Send Plot Data with Tooltips', delay: 1200 },
+                            { from: 'ui-visualization', to: 'user', message: 'Display Plots on Map with Tooltips', delay: 1500 }
+                        ]
+                    },
+                    'safe-zone': {
+                        name: 'Safe Zone Analysis',
+                        isNew: false,
+                        steps: [
+                            { from: 'user', to: 'ui-features', message: 'Upload Data & Select Radius Distance', delay: 0 },
+                            { from: 'ui-features', to: 'ui-features', message: 'Click Analyze Button', delay: 300 },
+                            { from: 'ui-features', to: 'backend', message: 'Process Safe Zone Analysis Request', delay: 600 },
+                            { from: 'backend', to: 'backend', message: 'Extract Name & Lat/Long from Uploaded Data', delay: 900 },
+                            { from: 'backend', to: 'third-party', message: 'Fetch Schools & Universities POI (Google Places API)', delay: 1200 },
+                            { from: 'third-party', to: 'backend', message: 'Return Educational Institution POI Data', delay: 1500 },
+                            { from: 'backend', to: 'data-storage', message: 'Query POI Database for Schools & Universities', delay: 1800 },
+                            { from: 'data-storage', to: 'backend', message: 'Return Educational POI Data', delay: 2100 },
+                            { from: 'backend', to: 'backend', message: 'Calculate Distance & Categorize (Safe/Prohibited)', delay: 2400 },
+                            { from: 'backend', to: 'ui-visualization', message: 'Send Color-coded Safe Zone Data (Green/Red)', delay: 2700 },
+                            { from: 'ui-visualization', to: 'user', message: 'Display Safe Zone Map & Status List', delay: 3000 }
+                        ]
+                    },
+                    'monitoring-module': {
+                        name: 'Monitoring Module (Multi-User Workflow)',
+                        isNew: false,
+                        steps: [
+                            { from: 'user', to: 'ui-features', message: 'OOH Planner: Create Campaign & Tag Media Sites', delay: 0 },
+                            { from: 'ui-features', to: 'backend', message: 'Process Campaign Creation Request', delay: 300 },
+                            { from: 'backend', to: 'backend', message: 'Generate Campaign ID & Tag Media Sites', delay: 600 },
+                            { from: 'backend', to: 'data-storage', message: 'Store Campaign Data & Media Site Associations', delay: 900 },
+                            { from: 'data-storage', to: 'backend', message: 'Confirm Campaign Storage', delay: 1200 },
+                            { from: 'backend', to: 'ui-features', message: 'Send Notification to Monitor User', delay: 1500 },
+                            { from: 'ui-features', to: 'user', message: 'Monitor User: Receive Campaign Notification', delay: 1800 },
+                            { from: 'user', to: 'ui-features', message: 'Monitor: Upload Monitoring Images for Campaign Sites', delay: 2100 },
+                            { from: 'ui-features', to: 'backend', message: 'Process Monitoring Image Upload', delay: 2400 },
+                            { from: 'backend', to: 'data-storage', message: 'Save Images with Campaign ID & Media Site Mapping', delay: 2700 },
+                            { from: 'user', to: 'ui-features', message: 'Monitor: Upload Competition Brand Images', delay: 3000 },
+                            { from: 'ui-features', to: 'backend', message: 'Process Competition Image Upload', delay: 3300 },
+                            { from: 'backend', to: 'data-storage', message: 'Connect Competition Images to Category & Campaign Data', delay: 3600 },
+                            { from: 'data-storage', to: 'backend', message: 'Retrieve Stored Campaign & Image Data', delay: 3900 },
+                            { from: 'backend', to: 'ui-features', message: 'Make Data Visible for OOH Planner Review', delay: 4200 },
+                            { from: 'ui-features', to: 'user', message: 'OOH Planner: Review & Approve/Reject Campaign Data', delay: 4500 },
+                            { from: 'user', to: 'backend', message: 'Submit Approval/Rejection Decision', delay: 4800 },
+                            { from: 'backend', to: 'third-party', message: 'Pull Additional Media Site Data (Moving Walls API)', delay: 5100 },
+                            { from: 'third-party', to: 'backend', message: 'Return Demographics, Performance Metrics & Segments', delay: 5400 },
+                            { from: 'backend', to: 'backend', message: 'Calculate Overall Campaign Performance Metrics', delay: 5700 },
+                            { from: 'backend', to: 'data-storage', message: 'Update Approved Data & Performance Calculations', delay: 6000 },
+                            { from: 'data-storage', to: 'backend', message: 'Enable Data Access for Other Modules', delay: 6300 },
+                            { from: 'backend', to: 'ui-visualization', message: 'Provide Data to Client User Dashboard', delay: 6600 },
+                            { from: 'ui-visualization', to: 'user', message: 'Client: View Approved Data & Calculated Metrics', delay: 6900 }
+                        ]
+                    },
+                    'competition': {
+                        name: 'Competition Mapping (NEW)',
+                        isNew: true,
+                        steps: [
+                            { from: 'user', to: 'ui-features', message: 'Enable Competition Mapping', delay: 0 },
+                            { from: 'ui-features', to: 'backend', message: 'Process Competition Selection', delay: 300 },
+                            { from: 'backend', to: 'data-storage', message: 'Query Monitoring Database', delay: 600 },
+                            { from: 'data-storage', to: 'backend', message: 'Return Competition Data', delay: 900 },
+                            { from: 'backend', to: 'backend', message: 'Apply Brand Color Coding', delay: 1200 },
+                            { from: 'backend', to: 'ui-visualization', message: 'Send Color-coded Competition Data', delay: 1500 },
+                            { from: 'ui-visualization', to: 'user', message: 'Display Competition Plots on Map', delay: 1800 }
+                        ]
+                    },
+                    'media-plan': {
+                        name: 'Upload Media Plan with Enhanced Features',
+                        isNew: false,
+                        steps: [
+                            { from: 'user', to: 'ui-features', message: 'Enable Media Plan & Select City Inventory', delay: 0 },
+                            { from: 'ui-features', to: 'backend', message: 'Process Media Plan Request', delay: 300 },
+                            { from: 'backend', to: 'data-storage', message: 'Query Media Inventory Database', delay: 600 },
+                            { from: 'backend', to: 'third-party', message: 'Call Moving Walls API (Monthly Data)', delay: 900, isNew: true },
+                            { from: 'third-party', to: 'backend', message: 'Return Enhanced Media Data', delay: 1200, isNew: true },
+                            { from: 'backend', to: 'data-storage', message: 'Update Media Inventory with Demographics', delay: 1500, isNew: true },
+                            { from: 'backend', to: 'ui-visualization', message: 'Send Enhanced Media Site Data', delay: 1800 },
+                            { from: 'ui-visualization', to: 'user', message: 'Display Enhanced Media Sites with Rich Tooltips', delay: 2100 }
+                        ]
+                    },
+                    'hyperlocal-point': {
+                        name: 'Hyperlocal Point Data (NEW)',
+                        isNew: true,
+                        steps: [
+                            { from: 'user', to: 'ui-features', message: 'Enable Hyperlocal Point Data', delay: 0 },
+                            { from: 'ui-features', to: 'backend', message: 'Process Selection (Audience/Reach)', delay: 300 },
+                            { from: 'backend', to: 'data-storage', message: 'Get Media Site Locations', delay: 600 },
+                            { from: 'backend', to: 'third-party', message: 'Call Moving Walls API for Point Data', delay: 900 },
+                            { from: 'third-party', to: 'backend', message: 'Return Location-specific Data', delay: 1200 },
+                            { from: 'backend', to: 'backend', message: 'Categorize as High/Medium/Low', delay: 1500 },
+                            { from: 'backend', to: 'ui-visualization', message: 'Send Categorized Point Data', delay: 1800 },
+                            { from: 'ui-visualization', to: 'user', message: 'Display Color-coded Areas on Map', delay: 2100 }
+                        ]
+                    },
+                    'custom-mapping': {
+                        name: 'Custom Mapping with POI Selection',
+                        isNew: false,
+                        steps: [
+                            { from: 'user', to: 'ui-features', message: 'Enable Custom Mapping', delay: 0 },
+                            { from: 'user', to: 'ui-visualization', message: 'Select Area & Adjust Radius (100m-1000m)', delay: 300 },
+                            { from: 'ui-visualization', to: 'backend', message: 'Send Area & Radius Parameters', delay: 600 },
+                            { from: 'backend', to: 'data-storage', message: 'Query POI Database for Area', delay: 900 },
+                            { from: 'data-storage', to: 'backend', message: 'Return Relevant POI Data', delay: 1200 },
+                            { from: 'backend', to: 'backend', message: 'Group & Quantify POI Data', delay: 1500 },
+                            { from: 'backend', to: 'ui-visualization', message: 'Send Grouped POI Data', delay: 1800 },
+                            { from: 'ui-visualization', to: 'user', message: 'Display POI Groups with Counts', delay: 2100 },
+                            { from: 'user', to: 'ui-features', message: 'Select POI Types (Coffee, Pubs, etc.)', delay: 2400, isNew: true },
+                            { from: 'ui-features', to: 'backend', message: 'Filter by Selected POI Types', delay: 2700, isNew: true },
+                            { from: 'backend', to: 'ui-visualization', message: 'Send Filtered POI Data', delay: 3000, isNew: true }
+                        ]
+                    },
+                    'performance-comparison': {
+                        name: 'Site Performance Comparison (NEW)',
+                        isNew: true,
+                        steps: [
+                            { from: 'user', to: 'ui-features', message: 'Select City & Media Sites for Analysis', delay: 0 },
+                            { from: 'ui-features', to: 'backend', message: 'Process Analysis Request', delay: 300 },
+                            { from: 'backend', to: 'third-party', message: 'Call Moving Walls API (Monthly Updates)', delay: 600 },
+                            { from: 'third-party', to: 'backend', message: 'Return Performance Metrics', delay: 900 },
+                            { from: 'backend', to: 'data-storage', message: 'Update Media Inventory Database', delay: 1200 },
+                            { from: 'backend', to: 'backend', message: 'Generate Comparative Charts', delay: 1500 },
+                            { from: 'backend', to: 'ui-visualization', message: 'Send Charts & Tabular Data', delay: 1800 },
+                            { from: 'ui-visualization', to: 'user', message: 'Display Performance Comparison (Charts + Tables)', delay: 2100 }
+                        ]
+                    },
+                    'creative-labs': {
+                        name: 'Creative Performance Labs (NEW)',
+                        isNew: true,
+                        steps: [
+                            { from: 'user', to: 'ui-features', message: 'Upload Creative Ad & Select Media Sites', delay: 0 },
+                            { from: 'ui-features', to: 'backend', message: 'Process Creative & Site Selection', delay: 300 },
+                            { from: 'backend', to: 'third-party', message: 'Send Creative to Gemini LLM for Analysis', delay: 600 },
+                            { from: 'third-party', to: 'backend', message: 'Return Creative Scores (JSON)', delay: 900 },
+                            { from: 'backend', to: 'third-party', message: 'Call Moving Walls API for Site Data', delay: 1200 },
+                            { from: 'third-party', to: 'backend', message: 'Return Audience & Performance Data', delay: 1500 },
+                            { from: 'backend', to: 'backend', message: 'Combine Creative Scores + Site Data', delay: 1800 },
+                            { from: 'backend', to: 'ui-visualization', message: 'Send Analysis Report & Charts', delay: 2100 },
+                            { from: 'ui-visualization', to: 'user', message: 'Display Creative Performance Analysis', delay: 2400 }
+                        ]
+                    },
+                    'vas-scorer': {
+                        name: 'VAS Scorer (NEW)',
+                        isNew: true,
+                        steps: [
+                            { from: 'user', to: 'ui-features', message: 'Upload Media Site Info & Image', delay: 0 },
+                            { from: 'ui-features', to: 'backend', message: 'Process Media Site Upload', delay: 300 },
+                            { from: 'backend', to: 'third-party', message: 'Send Site Image to Gemini LLM for VAS Analysis', delay: 600 },
+                            { from: 'third-party', to: 'backend', message: 'Return VAS Scores (JSON)', delay: 900 },
+                            { from: 'backend', to: 'data-storage', message: 'Store VAS Scores in Media Inventory DB', delay: 1200 },
+                            { from: 'data-storage', to: 'backend', message: 'Confirm VAS Data Storage', delay: 1500 },
+                            { from: 'backend', to: 'ui-features', message: 'VAS Scoring Complete', delay: 1800 },
+                            { from: 'ui-features', to: 'user', message: 'Display VAS Score Confirmation', delay: 2100 }
+                        ]
+                    },
+                    'o2o-attribution': {
+                        name: 'O2O Attribution Model (NEW)',
+                        isNew: true,
+                        steps: [
+                            { from: 'user', to: 'ui-features', message: 'Coming Soon in Phase 3', delay: 0 },
+                            { from: 'ui-features', to: 'user', message: 'Feature Under Development', delay: 300 }
+                        ]
+                    },
+                    'agentic-ai': {
+                        name: 'Agentic OOH AI Workflow (NEW)',
+                        isNew: true,
+                        steps: [
+                            { from: 'user', to: 'ui-features', message: 'Coming Soon in Phase 3', delay: 0 },
+                            { from: 'ui-features', to: 'user', message: 'Feature Under Development', delay: 300 }
+                        ]
+                    },
+                    'reporting-modules': {
+                        name: 'Reporting Modules (NEW)',
+                        isNew: true,
+                        steps: [
+                            { from: 'user', to: 'ui-features', message: 'Coming Soon in Phase 3', delay: 0 },
+                            { from: 'ui-features', to: 'user', message: 'Feature Under Development', delay: 300 }
+                        ]
+                    },
+                    'retail-visits': {
+                        name: 'OOH to Retail Store Visits Attribution (NEW)',
+                        isNew: true,
+                        steps: [
+                            { from: 'user', to: 'ui-features', message: 'Coming Soon in Phase 4', delay: 0 },
+                            { from: 'ui-features', to: 'user', message: 'Feature Under Development', delay: 300 }
+                        ]
+                    },
+                    'digital-targeting': {
+                        name: 'Digital Targeting from OOH Campaign (NEW)',
+                        isNew: true,
+                        steps: [
+                            { from: 'user', to: 'ui-features', message: 'Coming Soon in Phase 4', delay: 0 },
+                            { from: 'ui-features', to: 'user', message: 'Feature Under Development', delay: 300 }
+                        ]
+                    },
+                    'programmatic-dooh': {
+                        name: 'Programmatic D-OOH (NEW)',
+                        isNew: true,
+                        steps: [
+                            { from: 'user', to: 'ui-features', message: 'Coming Soon in Phase 4', delay: 0 },
+                            { from: 'ui-features', to: 'user', message: 'Feature Under Development', delay: 300 }
+                        ]
+                    }
+                };
+                
+                this.currentWorkflow = 'heatmap';
+                this.animationSpeed = 500;
+                this.init();
+            }
+
+            init() {
+                this.createLifelines();
+                this.setupEventListeners();
+                this.showWorkflow(this.currentWorkflow);
+                this.showExplanation(this.currentWorkflow);
+            }
+
+            createLifelines() {
+                const diagram = document.getElementById('diagram');
+                
+                this.lifelines.forEach(lifeline => {
+                    // Create lifeline
+                    const line = document.createElement('div');
+                    line.className = 'lifeline';
+                    line.style.left = lifeline.x + 'px';
+                    line.id = `lifeline-${lifeline.id}`;
+                    
+                    // Create header
+                    const header = document.createElement('div');
+                    header.className = 'lifeline-header';
+                    header.textContent = lifeline.name;
+                    header.style.left = (lifeline.x - 75) + 'px';
+                    
+                    diagram.appendChild(line);
+                    diagram.appendChild(header);
+                });
+            }
+
+            setupEventListeners() {
+                document.querySelectorAll('.workflow-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const workflowId = e.target.dataset.workflow;
+                        
+                        // Check if this is a password-protected feature
+                        if (this.protectedFeatures.includes(workflowId) && !this.authenticatedFeatures.has(workflowId)) {
+                            this.showPasswordModal(workflowId);
+                            return;
+                        }
+                        
+                        // Normal workflow access
+                        this.activateWorkflow(e.target, workflowId);
+                    });
+                });
+                
+                // Password modal event listeners
+                this.setupPasswordModal();
+            }
+
+            activateWorkflow(btnElement, workflowId) {
+                document.querySelectorAll('.workflow-btn').forEach(b => b.classList.remove('active'));
+                btnElement.classList.add('active');
+                this.showWorkflow(workflowId);
+                this.showExplanation(workflowId);
+            }
+
+            showPasswordModal(workflowId) {
+                this.pendingWorkflow = workflowId;
+                const modal = document.getElementById('passwordModal');
+                const passwordInput = document.getElementById('passwordInput');
+                const errorDiv = document.getElementById('passwordError');
+                
+                // Reset modal state
+                passwordInput.value = '';
+                errorDiv.classList.remove('show');
+                
+                // Show modal
+                modal.classList.add('active');
+                passwordInput.focus();
+            }
+
+            hidePasswordModal() {
+                const modal = document.getElementById('passwordModal');
+                modal.classList.remove('active');
+                this.pendingWorkflow = null;
+            }
+
+            setupPasswordModal() {
+                const modal = document.getElementById('passwordModal');
+                const passwordInput = document.getElementById('passwordInput');
+                const submitBtn = document.getElementById('passwordSubmit');
+                const cancelBtn = document.getElementById('passwordCancel');
+                const errorDiv = document.getElementById('passwordError');
+
+                // Submit password
+                const submitPassword = () => {
+                    const enteredPassword = passwordInput.value;
+                    
+                    if (enteredPassword === this.correctPassword) {
+                        // Correct password
+                        this.authenticatedFeatures.add(this.pendingWorkflow);
+                        
+                        // Find the workflow button and activate it
+                        const workflowBtn = document.querySelector(`[data-workflow="${this.pendingWorkflow}"]`);
+                        if (workflowBtn) {
+                            this.activateWorkflow(workflowBtn, this.pendingWorkflow);
+                        }
+                        
+                        this.hidePasswordModal();
+                    } else {
+                        // Wrong password
+                        errorDiv.classList.add('show');
+                        passwordInput.value = '';
+                        passwordInput.focus();
+                        
+                        // Shake animation
+                        passwordInput.style.animation = 'shake 0.5s ease-in-out';
+                        setTimeout(() => {
+                            passwordInput.style.animation = '';
+                        }, 500);
+                    }
+                };
+
+                // Event listeners
+                submitBtn.addEventListener('click', submitPassword);
+                cancelBtn.addEventListener('click', () => this.hidePasswordModal());
+                
+                // Enter key submission
+                passwordInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        submitPassword();
+                    }
+                });
+                
+                // Hide error on input
+                passwordInput.addEventListener('input', () => {
+                    errorDiv.classList.remove('show');
+                });
+
+                // Close modal on outside click
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        this.hidePasswordModal();
+                    }
+                });
+            }
+
+            showExplanation(workflowId) {
+                // Hide all explanations
+                document.querySelectorAll('.workflow-explanation').forEach(explanation => {
+                    explanation.classList.remove('active');
+                });
+                
+                // Show the selected explanation
+                const targetExplanation = document.getElementById(`explanation-${workflowId}`);
+                if (targetExplanation) {
+                    targetExplanation.classList.add('active');
+                }
+            }
+
+            clearDiagram() {
+                document.querySelectorAll('.message, .activation-bar, .flow-dot').forEach(el => el.remove());
+                document.querySelectorAll('.self-message').forEach(el => el.classList.remove('self-message'));
+            }
+
+            showWorkflow(workflowId) {
+                this.currentWorkflow = workflowId;
+                this.clearDiagram();
+                
+                const workflow = this.workflows[workflowId];
+                if (!workflow) return;
+
+                // Calculate required diagram height based on number of steps
+                const numSteps = workflow.steps.length;
+                const baseHeight = 140; // Starting position for first message
+                const stepSpacing = 100; // Space between each step
+                const requiredHeight = baseHeight + (numSteps * stepSpacing) + 200; // Extra padding
+                
+                // Update diagram height
+                const diagram = document.getElementById('diagram');
+                diagram.style.height = requiredHeight + 'px';
+                
+                // Update lifeline heights
+                document.querySelectorAll('.lifeline').forEach(lifeline => {
+                    lifeline.style.height = (requiredHeight - 60) + 'px'; // Account for top offset
+                });
+
+                document.getElementById('stepInfo').textContent = `Workflow: ${workflow.name}`;
+                document.getElementById('stepInfo').classList.add('visible');
+
+                setTimeout(() => {
+                    document.getElementById('stepInfo').classList.remove('visible');
+                }, 3000);
+
+                this.animateWorkflow(workflow);
+            }
+
+            animateWorkflow(workflow) {
+                workflow.steps.forEach((step, index) => {
+                    setTimeout(() => {
+                        this.createMessage(step, workflow.isNew || step.isNew, index);
+                        this.showActivation(step.from, index, 800);
+                        if (step.to !== step.from) {
+                            this.showActivation(step.to, index, 600, 200);
+                        }
+                    }, step.delay);
+                });
+            }
+
+            createMessage(step, isNewFeature = false, stepIndex = 0) {
+                const fromLifeline = this.lifelines.find(l => l.id === step.from);
+                const toLifeline = this.lifelines.find(l => l.id === step.to);
+                
+                if (!fromLifeline || !toLifeline) return;
+
+                const message = document.createElement('div');
+                message.className = `message dashed ${isNewFeature ? 'new-feature' : ''}`;
+                
+                const startX = Math.min(fromLifeline.x, toLifeline.x);
+                const endX = Math.max(fromLifeline.x, toLifeline.x);
+                const width = endX - startX;
+                const y = 140 + (stepIndex * 100);
+
+                message.style.left = startX + 'px';
+                message.style.top = y + 'px';
+                message.style.width = width + 'px';
+
+                const label = document.createElement('div');
+                label.className = 'message-label';
+                label.textContent = step.message;
+                message.appendChild(label);
+
+                // Create animated flow dot with correct direction logic
+                const flowDot = document.createElement('div');
+                flowDot.className = 'flow-dot';
+                
+                // Determine if this is a processing operation or message transfer
+                const processingKeywords = [
+                    'generate', 'create', 'process', 'calculate', 'categorize', 'extract', 
+                    'analyze', 'combine', 'apply', 'filter', 'group', 'quantify', 'update',
+                    'refresh', 'enhance', 'optimize', 'score', 'assess', 'evaluate'
+                ];
+                
+                const isProcessingOperation = processingKeywords.some(keyword => 
+                    step.message.toLowerCase().includes(keyword)
+                );
+                
+                // Determine flow direction and animation type
+                const isFromLeftToRight = fromLifeline.x < toLifeline.x;
+                const isSelfMessage = fromLifeline.x === toLifeline.x;
+                
+                if (isProcessingOperation) {
+                    // Processing operation - show processing animation
+                    flowDot.classList.add('processing-operation');
+                    
+                    // Add processing icon (central dot)
+                    const processingIcon = document.createElement('div');
+                    processingIcon.className = 'processing-icon';
+                    flowDot.appendChild(processingIcon);
+                    
+                    // Add energy waves
+                    for (let i = 0; i < 3; i++) {
+                        const energyWave = document.createElement('div');
+                        energyWave.className = 'energy-wave';
+                        energyWave.style.animationDelay = `${i * 0.7}s`;
+                        flowDot.appendChild(energyWave);
+                    }
+                    
+                } else if (isSelfMessage) {
+                    // Self-message (same lifeline) - show processing animation
+                    flowDot.classList.add('self-processing');
+                } else if (isFromLeftToRight) {
+                    // Left to right flow
+                    flowDot.classList.add('flow-left-to-right');
+                } else {
+                    // Right to left flow
+                    flowDot.classList.add('flow-right-to-left');
+                }
+                
+                // Add staggered delay for sequential flow
+                const flowDelay = stepIndex * 0.8;
+                flowDot.style.animationDelay = `${flowDelay}s`;
+                
+                // For self-messages, position differently
+                if (isSelfMessage) {
+                    message.style.width = '60px';
+                    message.style.borderRadius = '10px';
+                    message.classList.add('self-message');
+                }
+                
+                message.appendChild(flowDot);
+
+                document.getElementById('diagram').appendChild(message);
+
+                setTimeout(() => {
+                    message.classList.add('visible');
+                    // Start flow dot animation after message appears
+                    setTimeout(() => {
+                        flowDot.classList.add('visible', 'animate');
+                    }, 200);
+                }, 100);
+            }
+
+            showActivation(lifelineId, stepIndex, duration, offset = 0) {
+                const lifeline = this.lifelines.find(l => l.id === lifelineId);
+                if (!lifeline) return;
+
+                const activation = document.createElement('div');
+                activation.className = 'activation-bar';
+                
+                // Match the new message spacing: 100px between steps
+                const y = 130 + (stepIndex * 100) + offset;
+                const height = 60; // Increased height for better visibility
+
+                activation.style.left = (lifeline.x - 6) + 'px';
+                activation.style.top = y + 'px';
+                activation.style.height = height + 'px';
+
+                document.getElementById('diagram').appendChild(activation);
+
+                setTimeout(() => {
+                    activation.classList.add('visible', 'active');
+                }, 100);
+
+                setTimeout(() => {
+                    activation.classList.remove('active');
+                }, duration);
+            }
+        }
+
+        // Initialize the diagram when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new SequenceDiagram();
+        });
+    </script>
+</body>
+</html>
