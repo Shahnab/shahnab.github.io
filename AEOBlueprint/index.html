@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blueprint for Answer Engine Optimization</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 255, 157, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(0, 255, 157, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(0, 255, 157, 0.03) 0%, transparent 50%);
+        }
+
+        .floating-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #00ff9d;
+            border-radius: 50%;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+            50% { transform: translateY(-100px) rotate(180deg); opacity: 1; }
+        }
+
+        /* Landing Section */
+        .landing {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .main-title {
+            font-size: 4rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            background: linear-gradient(45deg, #ffffff, #00ff9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #888;
+            margin-bottom: 3rem;
+            max-width: 600px;
+        }
+
+        .explore-btn {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            background: linear-gradient(45deg, #00ff9d, #00d4aa);
+            border: none;
+            border-radius: 50px;
+            color: #000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        .explore-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0, 255, 157, 0.3);
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav.visible {
+            opacity: 1;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00ff9d;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            color: #00ff9d;
+        }
+
+        /* Content Sections */
+        .section {
+            min-height: 100vh;
+            padding: 100px 50px;
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            background: linear-gradient(45deg, #ffffff, #00ff9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: rgba(0, 255, 157, 0.1);
+            border: 1px solid rgba(0, 255, 157, 0.3);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 4px solid #00ff9d;
+        }
+
+        .info-box h4 {
+            color: #00ff9d;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .info-box p {
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        /* Framework Steps */
+        .framework-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .step-card {
+            background: rgba(0, 255, 157, 0.05);
+            border: 1px solid rgba(0, 255, 157, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 255, 157, 0.1);
+        }
+
+        .step-number {
+            font-size: 3rem;
+            color: #00ff9d;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .step-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .step-description {
+            color: #aaa;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .step-details {
+            margin-top: 20px;
+        }
+
+        .step-details h4 {
+            color: #00ff9d;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .step-details ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .step-details li {
+            color: #bbb;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .step-details li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #00ff9d;
+            font-weight: bold;
+        }
+
+        /* Expandable Content */
+        .expandable {
+            cursor: pointer;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .expandable:hover {
+            background: rgba(0, 255, 157, 0.1);
+        }
+
+        .expandable-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .expandable-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding-top: 0;
+        }
+
+        .expandable.active .expandable-content {
+            max-height: 500px;
+            padding-top: 15px;
+        }
+
+        .expand-icon {
+            color: #00ff9d;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .expandable.active .expand-icon {
+            transform: rotate(90deg);
+        }
+
+        /* Tools Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin: 50px 0;
+        }
+
+        .tool-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .tool-card:hover {
+            background: rgba(0, 255, 157, 0.1);
+            border-color: #00ff9d;
+        }
+
+        .tool-name {
+            font-size: 1.3rem;
+            color: #00ff9d;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .tool-description {
+            color: #ccc;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .tool-features {
+            margin-top: 15px;
+        }
+
+        .tool-features h5 {
+            color: #00ff9d;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            color: #aaa;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #00ff9d;
+            font-weight: bold;
+        }
+
+        /* Flowchart */
+        .flowchart {
+            margin: 50px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .flow-node {
+            background: linear-gradient(45deg, rgba(0, 255, 157, 0.2), rgba(0, 212, 170, 0.1));
+            border: 2px solid #00ff9d;
+            border-radius: 15px;
+            padding: 20px;
+            min-width: 150px;
+            text-align: center;
+            position: relative;
+            animation: pulse 2s infinite;
+            cursor: pointer;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 157, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(0, 255, 157, 0.6); }
+        }
+
+        .flow-arrow {
+            color: #00ff9d;
+            font-size: 2rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+
+        /* Market Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 30px;
+            background: rgba(0, 255, 157, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 157, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 255, 157, 0.2);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            color: #00ff9d;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+
+        /* Technical Architecture */
+        .architecture-diagram {
+            background: rgba(0, 255, 157, 0.05);
+            border: 1px solid rgba(0, 255, 157, 0.2);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 50px 0;
+        }
+
+        .architecture-title {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #00ff9d;
+            margin-bottom: 30px;
+        }
+
+        .architecture-layers {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .layer {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .layer:hover {
+            background: rgba(0, 255, 157, 0.1);
+            border-color: #00ff9d;
+        }
+
+        .layer-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #00ff9d, #00d4aa);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #000;
+        }
+
+        .layer-content h3 {
+            color: #00ff9d;
+            margin-bottom: 5px;
+        }
+
+        .layer-content p {
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+
+        /* Progress Indicator */
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff9d, #00d4aa);
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        /* Metrics Dashboard */
+        .metrics-dashboard {
+            background: rgba(0, 255, 157, 0.05);
+            border: 1px solid rgba(0, 255, 157, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .metric-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            color: #00ff9d;
+            font-weight: bold;
+        }
+
+        .metric-label {
+            color: #aaa;
+            font-size: 0.8rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5rem;
+            }
+            
+            .nav {
+                padding: 15px 20px;
+            }
+            
+            .section {
+                padding: 80px 20px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+
+            .framework-steps {
+                grid-template-columns: 1fr;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .flowchart {
+                flex-direction: column;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="floating-particles" id="particles"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="logo">AEO Blueprint</div>
+        <div class="nav-links">
+            <a href="#" class="nav-link" onclick="showSection('framework')">Framework</a>
+            <a href="#" class="nav-link" onclick="showSection('tools')">Tools</a>
+            <a href="#" class="nav-link" onclick="showSection('technical')">Technical</a>
+            <a href="#" class="nav-link" onclick="showSection('market')">Market</a>
+        </div>
+    </nav>
+
+    <!-- Landing Section -->
+    <section class="landing" id="landing">
+        <h1 class="main-title">Blueprint for Answer Engine Optimization</h1>
+        <p class="subtitle">
+            Track your AI visibility, see where and how AI mentions your brand, 
+            and uncover insights to enhance your presence in the era of generative search.
+        </p>
+        <button class="explore-btn" onclick="startExploration()">Explore</button>
+    </section>
+
+    <!-- Framework Section -->
+    <section class="section" id="framework">
+        <div class="section-content">
+            <h2 class="section-title">5-Step AEO Framework</h2>
+            
+            <div class="info-box">
+                <h4>🎯 The AI Search Revolution</h4>
+                <p>We're witnessing a fundamental shift in how people search for information. ChatGPT alone grew from ~100 million to ~400 million weekly users by early 2025, with Cloudflare reporting overall traffic to generative AI services up 251% year-over-year. Industry analysts warn that 25-40% of search traffic will shift from traditional engines to AI chatbots by 2026.</p>
+                <p style="margin-top: 10px;"><strong>The Problem:</strong> Traditional SEO tactics (keyword-stuffed pages and backlinks) are becoming obsolete. Instead of getting ranked lists of links, users now receive AI-generated answers that synthesize multiple sources. If your brand isn't being cited in these AI answers, you're becoming invisible to a rapidly growing segment of searchers.</p>
+                <p style="margin-top: 10px;"><strong>The Solution:</strong> Answer Engine Optimization (AEO) ensures your products and content are accurately represented in AI answers across ChatGPT, Perplexity, Google AI Overviews, and similar platforms.</p>
+            </div>
+            
+            <div class="flowchart">
+                <div class="flow-node" onclick="scrollToStep(1)">
+                    <div style="font-weight: bold; font-size: 1.1rem;">Step 1</div>
+                    <div>Analyze AI Landscape</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node" onclick="scrollToStep(2)">
+                    <div style="font-weight: bold; font-size: 1.1rem;">Step 2</div>
+                    <div>Create AI Content</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node" onclick="scrollToStep(3)">
+                    <div style="font-weight: bold; font-size: 1.1rem;">Step 3</div>
+                    <div>Distribute Content</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node" onclick="scrollToStep(4)">
+                    <div style="font-weight: bold; font-size: 1.1rem;">Step 4</div>
+                    <div>Measure Visibility</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node" onclick="scrollToStep(5)">
+                    <div style="font-weight: bold; font-size: 1.1rem;">Step 5</div>
+                    <div>Iterate & Adapt</div>
+                </div>
+            </div>
+
+            <div class="framework-steps">
+                <div class="step-card" id="step-1">
+                    <div class="step-number">01</div>
+                    <h3 class="step-title">Analyze the AI-Answer Landscape</h3>
+                    <p class="step-description">
+                        Identify where, how, and why brands appear in AI answers. This foundational step reveals the current competitive landscape and content gaps.
+                    </p>
+                    
+                    <div class="step-details">
+                        <h4>Key Activities:</h4>
+                        <ul>
+                            <li>Define broad industry topics (B2B SaaS, organic skincare, online learning)</li>
+                            <li>Brainstorm customer-focused queries (top-funnel, comparison, product-detail)</li>
+                            <li>Test queries across ChatGPT, Google AI Overview, Perplexity, Claude</li>
+                            <li>Record AI answers and note all cited sources</li>
+                            <li>Identify which domains/authors are most frequently cited</li>
+                            <li>Map content formats that AI models prefer (listicles, comparisons, FAQs)</li>
+                        </ul>
+                        
+                        <div class="expandable" onclick="toggleExpand(this)">
+                            <div class="expandable-header">
+                                <h4>Analysis Framework & Methodology</h4>
+                                <span class="expand-icon">▶</span>
+                            </div>
+                            <div class="expandable-content">
+                                <p><strong>Content Format Analysis:</strong> Track whether AI prefers "Top 10" lists, bullet-point answers, comparison tables, or expert Q&As for different query types. Document which formats get cited most frequently across different AI models and query categories.</p>
+                                <p><strong>Source Authority Mapping:</strong> Tabulate which domains or authors are most frequently cited by AI for your queries. You may discover that niche industry blogs or data sites outrank big media in AI answers. Record which competitor brands appear and analyze their content strategies.</p>
+                                <p><strong>Competitor Gap Analysis:</strong> Identify topics where no brand appears, representing untapped opportunities. Look for patterns in AI responses where generic information is provided instead of brand-specific recommendations.</p>
+                                <p><strong>Query Pattern Recognition:</strong> After testing dozens of queries, identify patterns in citation behavior across different AI models. Document how ChatGPT, Perplexity, Claude, and Google AI Overviews differ in their source preferences and response structures.</p>
+                                <p><strong>Data Collection Process:</strong> Maintain a spreadsheet logging query, AI model, cited sources, content format, and competitors. This systematic approach reveals where your brand needs presence and which content gaps represent the highest-impact opportunities.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-card" id="step-2">
+                    <div class="step-number">02</div>
+                    <h3 class="step-title">Create AI-Friendly Content</h3>
+                    <p class="step-description">
+                        Produce structured content optimized for AI retrieval - clear, authoritative, and easy for models to digest and cite accurately.
+                    </p>
+                    
+                    <div class="step-details">
+                        <h4>Content Structure Requirements:</h4>
+                        <ul>
+                            <li>Use clear headings, bullet lists, tables, and FAQ segments</li>
+                            <li>Include "Pros & Cons" tables for products</li>
+                            <li>Create step-by-step numbered guides</li>
+                            <li>Implement Schema markup (FAQ/HowTo) for better AI interpretation</li>
+                            <li>Feature expert insights and original research prominently</li>
+                            <li>Use precise, plain language avoiding obscure jargon</li>
+                        </ul>
+                        
+                        <div class="expandable" onclick="toggleExpand(this)">
+                            <div class="expandable-header">
+                                <h4>AI-Friendly Content Structuring & Formatting Guidelines</h4>
+                                <span class="expand-icon">▶</span>
+                            </div>
+                            <div class="expandable-content">
+                                <p><strong>Clear Structure & Formatting Requirements:</strong> Break content into logical sections with headings, bullet lists, tables, and FAQ segments. AI models extract information best from well-organized text. Include "Pros & Cons" tables for products or step-by-step numbered guides for processes.</p>
+                                <p><strong>Schema Markup Implementation:</strong> Use structured data markup (FAQ/HowTo schema) to help AI interpret your pages. This machine-readable format significantly improves AI understanding and citation accuracy. Implement JSON-LD schema for better parsing by AI crawlers.</p>
+                                <p><strong>Question-Focused Content Strategy:</strong> AI answers often address comparative questions ("which is best?"). Create content that directly answers likely queries with specific formats: "Feature Comparison: [Top 5 Products]" or detailed "X vs Y" articles with side-by-side specification tables.</p>
+                                <p><strong>Expert Authority Integration:</strong> Feature your experts or original research prominently in content. Quote company scientists on product benefits, highlight proprietary benchmarks, and showcase unique data that makes your content stand out to AI models rather than repeating generic information available elsewhere.</p>
+                                <p><strong>Precise Language Requirements:</strong> Write clearly and avoid obscure jargon. If describing a product, use its exact name and explain key features in simple terms. AI models match on clear keywords and concepts, so explicitly mention terms a user would query.</p>
+                                <p><strong>Content Asset Inventory:</strong> Based on your Step 1 analysis, compile an "AI-ready" content inventory including FAQs, guides, comparison charts, and whitepapers. Each piece should aim to answer a specific query with self-contained, easily parseable facts that serve as "AI building blocks" for future answers.</p>
+                            </div>
+                        </div>
+
+                        <div class="metrics-dashboard">
+                            <h4 style="color: #00ff9d; margin-bottom: 15px;">AI Content Preferences Analysis</h4>
+                            <div class="metrics-grid">
+                                <div class="metric-item">
+                                    <div class="metric-value">Top 10</div>
+                                    <div class="metric-label">Lists & Rankings</div>
+                                </div>
+                                <div class="metric-item">
+                                    <div class="metric-value">How-To</div>
+                                    <div class="metric-label">Step-by-Step Guides</div>
+                                </div>
+                                <div class="metric-item">
+                                    <div class="metric-value">vs.</div>
+                                    <div class="metric-label">Comparison Tables</div>
+                                </div>
+                                <div class="metric-item">
+                                    <div class="metric-value">FAQ</div>
+                                    <div class="metric-label">Q&A Format</div>
+                                </div>
+                            </div>
+                            <p style="color: #aaa; font-size: 0.9rem; margin-top: 15px; text-align: center;">
+                                AI models show strong preference for structured content formats that provide clear, scannable information with definitive answers.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-card" id="step-3">
+                    <div class="step-number">03</div>
+                    <h3 class="step-title">Distribute through AI-Trusted Channels</h3>
+                    <p class="step-description">
+                        Get your AI-optimized content cited by sources that generative models trust, focusing on both traditional and niche publishing channels.
+                    </p>
+                    
+                    <div class="step-details">
+                        <h4>Distribution Strategy:</h4>
+                        <ul>
+                            <li>Engage niche publishers and forums that AI cites heavily</li>
+                            <li>Secure features in highly-cited publications (TechCrunch, Forbes)</li>
+                            <li>Optimize owned properties with proper structure and schema markup</li>
+                            <li>Leverage community Q&A sites (StackExchange, Reddit)</li>
+                            <li>Maintain active newsroom with expert commentaries</li>
+                            <li>Create bylined articles and sponsored content</li>
+                        </ul>
+                        
+                        <div class="expandable" onclick="toggleExpand(this)">
+                            <div class="expandable-header">
+                                <h4>Distribution Strategy & Channel Optimization</h4>
+                                <span class="expand-icon">▶</span>
+                            </div>
+                            <div class="expandable-content">
+                                <p><strong>Hidden Influencer Identification:</strong> Use your Step 1 insights to identify niche publishers and forums that AI cites heavily, even if they have small human audiences. Focus on industry blogs, trade sites, specialized newsletters, and expert forums that may have outsized AI-citation power.</p>
+                                <p><strong>Outreach Strategy:</strong> Reach out to identified outlets with story pitches, guest-post opportunities, and data exclusives that integrate your content and brand narrative. Develop relationships with editors and contributors at these AI-trusted sources.</p>
+                                <p><strong>Traditional PR Integration:</strong> Secure features, interviews, and contributed articles in highly-cited publications that AI frequently references. Focus on press releases, bylined op-eds, and sponsored content that link to or mention your structured content assets.</p>
+                                <p><strong>Owned Property Optimization:</strong> Ensure your website is AI-friendly with proper structure, crawlable content, and up-to-date information. Use clear headings, schema markup (FAQ, HowTo), and generate meta descriptions that succinctly summarize content for AI crawlers.</p>
+                                <p><strong>Community Platform Strategy:</strong> Consider contributing answers or articles on community Q&A sites (StackExchange, Reddit) and social platforms (LinkedIn Pulse) where AI models may pull information. Provide authoritative, helpful content that naturally references your expertise.</p>
+                                <p><strong>Content Seeding Approach:</strong> Place structured content across multiple trusted sources to "seed" the AI training data with your brand's insights. The goal is creating a comprehensive presence across the information ecosystem AI models access.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-card" id="step-4">
+                    <div class="step-number">04</div>
+                    <h3 class="step-title">Measure AI Visibility</h3>
+                    <p class="step-description">
+                        Continuously track how often and in what context AI answers reference your brand using specialized tools and custom analytics.
+                    </p>
+                    
+                    <div class="step-details">
+                        <h4>Measurement Approach:</h4>
+                        <ul>
+                            <li>Use specialized tools (Profound, Peec.ai, LLMrefs)</li>
+                            <li>Build custom tracking via APIs or web scraping</li>
+                            <li>Monitor Visibility Score, Brand Mentions, Citation Sources</li>
+                            <li>Track frequency, sentiment, accuracy, and competitor mentions</li>
+                            <li>Analyze trends over time with before/after comparisons</li>
+                            <li>Identify gaps where competitors appear but you don't</li>
+                        </ul>
+                        
+                        <div class="expandable" onclick="toggleExpand(this)">
+                            <div class="expandable-header">
+                                <h4>AI Visibility Tracking Tools & Methodologies</h4>
+                                <span class="expand-icon">▶</span>
+                            </div>
+                            <div class="expandable-content">
+                                <p><strong>Specialized AI-Visibility Tracking Tools:</strong> Employ tools like Profound, Peec.ai, LLMrefs, Waikay, Geostar, and Mangools AI Grader to automate monitoring. These platforms run queries across ChatGPT, Google Gemini, Perplexity, etc., and report metrics like Visibility Score, Brand Mentions, and Citation Sources.</p>
+                                <p><strong>Visibility Score Calculation:</strong> A Visibility Score aggregates how often your brand appears across a set of important queries. For example, Visibility Score = (Σ mentions + Σ top-3 placements) / (Total queries), normalized by query importance weighting.</p>
+                                <p><strong>Custom Tracking via APIs:</strong> Build in-house solutions using scripts that feed target queries to AI models via API or scraping chat interfaces, then parse the answers and log mentions of your brand. Create dashboards tracking frequency of brand appearance, sentiment/accuracy, which competitor appears instead, and which domains are cited alongside your brand.</p>
+                                <p><strong>Regular Analysis & Time-Series Tracking:</strong> Compare your visibility metrics over time using weekly or monthly intervals. After publishing new content, monitor if your Visibility Score rises for related queries. Use time-series charts and before/after comparisons to evaluate the impact of each content initiative.</p>
+                                <p><strong>Gap Analysis & Opportunity Identification:</strong> Look for queries or topics where your brand isn't mentioned but competitors are. Analyze those AI answers to understand what content types or sources the AI prefers, then use this insight to create or revise content for those specific gaps.</p>
+                                <p><strong>Data Storage & Metadata:</strong> Store tracking data in a database indexed by brand and topic, capturing query, model name, timestamp, raw answer, and list of citations. This structured approach enables comprehensive analysis and trend identification over time.</p>
+                            </div>
+                        </div>
+
+                        <div class="metrics-dashboard">
+                            <h4 style="color: #00ff9d; margin-bottom: 15px;">Sample Visibility Metrics</h4>
+                            <div class="metrics-grid">
+                                <div class="metric-item">
+                                    <div class="metric-value">72%</div>
+                                    <div class="metric-label">Visibility Score</div>
+                                </div>
+                                <div class="metric-item">
+                                    <div class="metric-value">45</div>
+                                    <div class="metric-label">Brand Mentions</div>
+                                </div>
+                                <div class="metric-item">
+                                    <div class="metric-value">28</div>
+                                    <div class="metric-label">Citation Sources</div>
+                                </div>
+                                <div class="metric-item">
+                                    <div class="metric-value">+15%</div>
+                                    <div class="metric-label">Monthly Growth</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-card" id="step-5">
+                    <div class="step-number">05</div>
+                    <h3 class="step-title">Iterate and Adapt</h3>
+                    <p class="step-description">
+                        Treat AEO as a continuous cycle, using data insights to double down on successful tactics and pivot from underperforming strategies.
+                    </p>
+                    
+                    <div class="step-details">
+                        <h4>Optimization Process:</h4>
+                        <ul>
+                            <li>Double down on high-performing content formats</li>
+                            <li>Stop investing in formats that AI consistently ignores</li>
+                            <li>Monitor new AI models and platforms regularly</li>
+                            <li>Refine prompts and test new query styles</li>
+                            <li>Keep content updated with fresh facts and terminology</li>
+                            <li>Maintain regular content audits and updates</li>
+                        </ul>
+                        
+                        <div class="expandable" onclick="toggleExpand(this)">
+                            <div class="expandable-header">
+                                <h4>Continuous Improvement Framework</h4>
+                                <span class="expand-icon">▶</span>
+                            </div>
+                            <div class="expandable-content">
+                                <p><strong>Performance Analysis Process:</strong> Use your metrics to identify what content formats and distribution channels are driving visibility increases. Analyze which URLs, content types, and outreach strategies correlate with improved AI citations and brand mentions.</p>
+                                <p><strong>Format Optimization Strategy:</strong> If certain content formats (comparison charts, FAQ sections, structured lists) receive frequent AI citations, prioritize producing more content in those formats. Conversely, stop investing in formats that AI consistently ignores, such as long-form articles without clear structure.</p>
+                                <p><strong>Platform Evolution Monitoring:</strong> The AI landscape evolves quickly. Stay alert for new LLMs, specialized industry bots (finance, health, enterprise assistants), and emerging answer tools. Periodically run your analysis queries on new platforms to understand their citation behavior.</p>
+                                <p><strong>Query Refinement Process:</strong> As AI models improve, user query styles change. Continue brainstorming fresh prompts including voice queries, follow-up questions, and conversational patterns that reflect how people interact with AI. Test new query phrasing to uncover additional optimization opportunities.</p>
+                                <p><strong>Content Freshness Maintenance:</strong> Keep your content updated as industries evolve. Refresh resources with new product features, changing terminology, and current data. AI models value up-to-date facts, so maintain a living content strategy with regular audits and updates.</p>
+                                <p><strong>Feedback Loop Implementation:</strong> Each cycle of analyze/create/distribute/measure should inform the next iteration. Systematically document what works, what doesn't, and how AI citation behavior changes over time to adapt your strategy continuously.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools Section -->
+    <section class="section" id="tools">
+        <div class="section-content">
+            <h2 class="section-title">AEO Tools & Platforms</h2>
+            
+            <div class="info-box">
+                <h4>🛠️ AEO Tool Ecosystem Overview</h4>
+                <p>The AEO tools market is rapidly evolving with specialized platforms emerging to address different aspects of AI visibility tracking. These tools range from comprehensive analytics suites to focused monitoring solutions, each serving different organizational needs and budgets.</p>
+                <p style="margin-top: 10px;"><strong>Selection Criteria:</strong> Consider which AI models they cover (ChatGPT, Claude, Gemini, Perplexity), integration capabilities with your existing workflow, whether you need pure analytics or content optimization features, pricing models (free tier, subscription, enterprise), and scalability for your organization size.</p>
+                <p style="margin-top: 10px;"><strong>Market Maturity:</strong> Most AEO tools launched in 2023-2024, making this a rapidly evolving space. Early adopters often get better pricing and more personalized support as these platforms scale.</p>
+            </div>
+            
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <h3 class="tool-name">Profound (tryprofound.com)</h3>
+                    <p class="tool-description">
+                        Comprehensive AI visibility platform that tracks brand mentions across ChatGPT, 
+                        Google AI Overviews, Copilot, Perplexity with advanced analytics and market intelligence.
+                    </p>
+                    <div class="tool-features">
+                        <h5>Key Features:</h5>
+                        <ul class="feature-list">
+                            <li>Visibility Scores with trending queries</li>
+                            <li>Market intelligence and competitor analysis</li>
+                            <li>Content performance suggestions</li>
+                            <li>Multi-model tracking and comparison</li>
+                            <li>Real-time brand mention alerts</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <h3 class="tool-name">LLMrefs</h3>
+                    <p class="tool-description">
+                        Specialized rank-tracking service for AI search engines. Monitor keyword rankings 
+                        and compare visibility across multiple models with detailed analytics.
+                    </p>
+                    <div class="tool-features">
+                        <h5>Key Features:</h5>
+                        <ul class="feature-list">
+                            <li>Multi-model keyword ranking (ChatGPT, Claude, Gemini, Perplexity)</li>
+                            <li>Historical ranking data and trends</li>
+                            <li>Competitor visibility comparison</li>
+                            <li>Query performance analytics</li>
+                            <li>API access for custom integrations</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <h3 class="tool-name">Peec.ai</h3>
+                    <p class="tool-description">
+                        User-friendly brand-monitoring tool covering ChatGPT, Perplexity, Claude, Gemini. 
+                        Designed for marketing teams with simple UI and clear reporting.
+                    </p>
+                    <div class="tool-features">
+                        <h5>Key Features:</h5>
+                        <ul class="feature-list">
+                            <li>Simple dashboard for marketing teams</li>
+                            <li>AI citation trend tracking over time</li>
+                            <li>Brand sentiment analysis in AI responses</li>
+                            <li>Automated reporting and alerts</li>
+                            <li>Team collaboration features</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <h3 class="tool-name">Waikay (Inlinks)</h3>
+                    <p class="tool-description">
+                        Focuses on brand fact verification by building comprehensive knowledge graph. 
+                        Identifies incorrect AI assertions and tracks competitor mentions.
+                    </p>
+                    <div class="tool-features">
+                        <h5>Key Features:</h5>
+                        <ul class="feature-list">
+                            <li>Knowledge graph construction for brand facts</li>
+                            <li>Incorrect AI assertion identification</li>
+                            <li>Fact verification and correction suggestions</li>
+                            <li>Competitor tracking and analysis</li>
+                            <li>Entity relationship mapping</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <h3 class="tool-name">Geostar</h3>
+                    <p class="tool-description">
+                        Offers AI Visibility Tracker and Impressions Manager to monitor brand discussions 
+                        across ChatGPT and other AI platforms with detailed analytics.
+                    </p>
+                    <div class="tool-features">
+                        <h5>Key Features:</h5>
+                        <ul class="feature-list">
+                            <li>AI Visibility Tracker with real-time monitoring</li>
+                            <li>Impressions Manager for brand exposure</li>
+                            <li>Geographic and demographic segmentation</li>
+                            <li>Custom query and topic tracking</li>
+                            <li>Performance optimization recommendations</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <h3 class="tool-name">Ahrefs Brand Radar</h3>
+                    <p class="tool-description">
+                        Built into Ahrefs SEO Suite; tracks brand's share of voice in Google's AI Overviews 
+                        with comprehensive SEO integration and advanced analytics.
+                    </p>
+                    <div class="tool-features">
+                        <h5>Key Features:</h5>
+                        <ul class="feature-list">
+                            <li>Google AI Overviews share of voice tracking</li>
+                            <li>Integration with traditional SEO metrics</li>
+                            <li>Competitor benchmark analysis</li>
+                            <li>Historical trend data and forecasting</li>
+                            <li>SEO and AEO correlation insights</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <h3 class="tool-name">Ahrefs Web Analytics</h3>
+                    <p class="tool-description">
+                        Free analytics tool that segments AI chatbot referrals (ChatGPT, Gemini, Copilot) 
+                        showing which site pages receive AI-driven traffic.
+                    </p>
+                    <div class="tool-features">
+                        <h5>Key Features:</h5>
+                        <ul class="feature-list">
+                            <li>AI chatbot referral traffic segmentation</li>
+                            <li>Page-level AI traffic analysis</li>
+                            <li>User behavior from AI referrals</li>
+                            <li>Conversion tracking from AI sources</li>
+                            <li>Free tier with essential features</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <h3 class="tool-name">Mangools AI Search Grader</h3>
+                    <p class="tool-description">
+                        Free AI audit tool providing comprehensive score (0-100) of brand's AI visibility 
+                        across models like ChatGPT and Gemini with actionable recommendations.
+                    </p>
+                    <div class="tool-features">
+                        <h5>Key Features:</h5>
+                        <ul class="feature-list">
+                            <li>Free AI visibility scoring (0-100)</li>
+                            <li>Multi-model assessment (ChatGPT, Gemini)</li>
+                            <li>Actionable improvement recommendations</li>
+                            <li>Competitor comparison benchmarks</li>
+                            <li>Quick setup and immediate results</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <h3 class="tool-name">Cloudflare Radar (AI Insights)</h3>
+                    <p class="tool-description">
+                        Monitors AI crawler/bot traffic to your site, user-agent trends, and crawler behaviors. 
+                        Helps diagnose crawl issues and optimize for AI access.
+                    </p>
+                    <div class="tool-features">
+                        <h5>Key Features:</h5>
+                        <ul class="feature-list">
+                            <li>AI crawler/bot traffic monitoring</li>
+                            <li>User-agent trend analysis</li>
+                            <li>Crawl behavior diagnostics</li>
+                            <li>Site accessibility optimization for AI</li>
+                            <li>Global traffic pattern insights</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tool-card">
+                    <h3 class="tool-name">Emerging Tools</h3>
+                    <p class="tool-description">
+                        Additional solutions including Writesonic's AI Visibility Tool, Nightwatch AI Tracking, 
+                        BrandRank.AI, AI Monitor, Otterly.ai, and BrandLight.ai.
+                    </p>
+                    <div class="tool-features">
+                        <h5>Notable Mentions:</h5>
+                        <ul class="feature-list">
+                            <li>Writesonic: ChatGPT and Google AI usage tracking</li>
+                            <li>Nightwatch: AI rank tracking and monitoring</li>
+                            <li>BrandRank.AI: Brand visibility scoring</li>
+                            <li>AI Monitor: Comprehensive AI presence tracking</li>
+                            <li>Otterly.ai & BrandLight.ai: Specialized monitoring</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h4>💡 Tool Selection Strategy</h4>
+                <p><strong>Analytics-Focused:</strong> Profound and LLMrefs focus on comprehensive analytics and tracking. <strong>Content-Focused:</strong> Writesonic offers content optimization alongside monitoring. <strong>Integration:</strong> Many existing SEO platforms (Ahrefs, SEMrush, Mangools) are adding AI visibility features to existing workflows.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Section -->
+    <section class="section" id="technical">
+        <div class="section-content">
+            <h2 class="section-title">Technical Architecture & Implementation</h2>
+            
+            <div class="architecture-diagram">
+                <h3 class="architecture-title">AEO SaaS Platform Components</h3>
+                
+                <div class="architecture-layers">
+                    <div class="layer">
+                        <div class="layer-icon">🎯</div>
+                        <div class="layer-content">
+                            <h3>Query Generation Engine</h3>
+                            <p>Store target queries covering broad categories, product comparisons, FAQs. Periodically expand with trending topics and new products. Support dynamic query generation based on industry verticals.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="layer">
+                        <div class="layer-icon">🤖</div>
+                        <div class="layer-content">
+                            <h3>AI Agents & Prompt Management</h3>
+                            <p>Use APIs (OpenAI, Anthropic, Google Vertex) or automated web queries through multiple models. Craft consistent prompts like "Answer as an expert: [query] Provide sources." Ensure comparable answers across models.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="layer">
+                        <div class="layer-icon">📊</div>
+                        <div class="layer-content">
+                            <h3>Data Collection & Storage</h3>
+                            <p>Capture AI output text and parse cited sources (URLs, document names). Save metadata: query, model name, timestamp, raw answer, citation list. Store in indexed database (SQL/NoSQL) for fast retrieval.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="layer">
+                        <div class="layer-icon">⚙️</div>
+                        <div class="layer-content">
+                            <h3>Analysis & Processing Engine</h3>
+                            <p>Normalize citations and synonyms. Use NLP to extract entities (brands, competitors, products). Compute Brand Mention Frequency, Top Cited Sources, Sentiment/Accuracy, and weighted Visibility Scores.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="layer">
+                        <div class="layer-icon">📈</div>
+                        <div class="layer-content">
+                            <h3>Dashboard & Reporting</h3>
+                            <p>Interactive dashboards with time-series charts, query performance tables, citation source leaderboards. Provide exportable reports, real-time alerts, and automated scheduling for regular updates.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="expandable" onclick="toggleExpand(this)">
+                <div class="expandable-header">
+                    <h4>Comprehensive Technical Implementation Guide</h4>
+                    <span class="expand-icon">▶</span>
+                </div>
+                <div class="expandable-content">
+                    <h5>Prompt Engineering Best Practices:</h5>
+                    <p>Effective prompts follow this structure: "You are an expert assistant providing accurate, well-sourced information. Query: [USER_QUESTION]. Please provide a comprehensive answer with specific source citations. Include relevant statistics, examples, and actionable insights where appropriate." This format ensures consistent, citable responses across AI models.</p>
+                    
+                    <h5>Data Collection Architecture:</h5>
+                    <p>Implement a multi-threaded system that can handle 1000+ concurrent API calls. Use rate limiting (OpenAI: 3500 requests/minute, Anthropic: varies by tier) and implement exponential backoff for failed requests. Store raw responses in JSON format with metadata: timestamp, model version, query category, response time, and token usage.</p>
+                    
+                    <h5>Advanced Analytics Engine:</h5>
+                    <p>Beyond basic mention counting, implement semantic analysis to understand context. Example: "Brand X is outdated" vs "Brand X leads the market" - both mention your brand but have opposite sentiment. Use NLP libraries like spaCy or Hugging Face transformers for entity extraction, sentiment analysis, and topic modeling.</p>
+                    
+                    <h5>Scalability Considerations:</h5>
+                    <p>Design for growth: Use microservices architecture (query service, analysis service, dashboard service), implement horizontal scaling with Kubernetes or Docker Swarm, use CDN for dashboard assets, and implement database sharding for large datasets. Consider serverless functions (AWS Lambda, Google Cloud Functions) for cost-effective scaling.</p>
+                    
+                    <h5>Security & Compliance:</h5>
+                    <p>Implement API key rotation, encrypt data at rest and in transit, use VPC for network isolation, implement role-based access control (RBAC), and ensure GDPR/CCPA compliance for any personal data collected. Regular security audits and penetration testing are essential.</p>
+                </div>
+            </div>
+
+            <h3 style="text-align: center; color: #00ff9d; margin: 40px 0 20px 0;">Implementation Framework</h3>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <h3 class="tool-name">Normalization Process</h3>
+                    <p class="tool-description">
+                        Normalize citations (domain names) and synonyms when models paraphrase company names. 
+                        Use NLP libraries (spaCy, NLTK) to extract key entities from AI responses.
+                    </p>
+                    <div class="tool-features">
+                        <h5>Processing Steps:</h5>
+                        <ul class="feature-list">
+                            <li>Domain name standardization (www.example.com → example.com)</li>
+                            <li>Company name variation mapping</li>
+                            <li>Product name synonym detection</li>
+                            <li>Entity relationship extraction</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <h3 class="tool-name">Metrics Calculation</h3>
+                    <p class="tool-description">
+                        Compute comprehensive visibility metrics with weighted scoring. Example: Visibility Score = 
+                        (Σ mentions + Σ top-3 placements) / Total queries, normalized by query importance.
+                    </p>
+                    <div class="tool-features">
+                        <h5>Key Metrics:</h5>
+                        <ul class="feature-list">
+                            <li>Brand Mention Frequency across query sets</li>
+                            <li>Top Cited Sources rankings</li>
+                            <li>Sentiment/Accuracy scoring</li>
+                            <li>Weighted Visibility Score calculation</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <h3 class="tool-name">API Integration</h3>
+                    <p class="tool-description">
+                        Support multiple AI model APIs with consistent prompt formatting. Handle rate limiting, 
+                        error recovery, and response parsing across different AI service providers.
+                    </p>
+                    <div class="tool-features">
+                        <h5>Supported APIs:</h5>
+                        <ul class="feature-list">
+                            <li>OpenAI GPT models (GPT-4, GPT-3.5)</li>
+                            <li>Anthropic Claude (various versions)</li>
+                            <li>Google Vertex AI (Gemini, PaLM)</li>
+                            <li>Perplexity API integration</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <h3 class="tool-name">Dashboard Features</h3>
+                    <p class="tool-description">
+                        Interactive analytics dashboard with real-time data visualization, customizable reports, 
+                        and automated alerting for significant changes in brand visibility.
+                    </p>
+                    <div class="tool-features">
+                        <h5>Dashboard Components:</h5>
+                        <ul class="feature-list">
+                            <li>Time-series visibility charts</li>
+                            <li>Query performance tables</li>
+                            <li>Citation source leaderboards</li>
+                            <li>Competitor comparison views</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metrics-dashboard">
+                <h4 style="color: #00ff9d; margin-bottom: 15px;">Sample System Performance Metrics</h4>
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <div class="metric-value">10K+</div>
+                        <div class="metric-label">Queries/Day</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value">5</div>
+                        <div class="metric-label">AI Models</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value">99.9%</div>
+                        <div class="metric-label">Uptime</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value">&lt;2s</div>
+                        <div class="metric-label">Response Time</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h4>🔧 Development Considerations</h4>
+                <p><strong>Scalability:</strong> Design for volume with cloud infrastructure and efficient caching. <strong>Compliance:</strong> Respect API usage policies and rate limits. <strong>Accuracy:</strong> Implement robust error handling and data validation. <strong>Security:</strong> Ensure secure API key management and data encryption.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Market Section -->
+    <section class="section" id="market">
+        <div class="section-content">
+            <h2 class="section-title">Southeast Asia Market Analysis</h2>
+            
+            <div class="info-box">
+                <h4>📈 Southeast Asia Digital Transformation Context</h4>
+                <p>Southeast Asia represents one of the world's fastest-growing digital economies, with unique characteristics that make it ideal for AEO implementation. The region's 650+ million population is experiencing rapid digital adoption, with mobile internet usage leading global trends and e-commerce growth outpacing traditional retail.</p>
+                <p style="margin-top: 10px;"><strong>Digital Infrastructure:</strong> Countries like Singapore, Thailand, and Malaysia have world-class digital infrastructure, while emerging markets like Vietnam and Indonesia show explosive growth in internet adoption and digital services usage.</p>
+                <p style="margin-top: 10px;"><strong>AI Adoption Patterns:</strong> Unlike Western markets where AI adoption is often enterprise-led, SEA markets show strong consumer-first adoption through mobile apps, social commerce, and integrated super-apps like Grab, Gojek, and LINE.</p>
+                <p style="margin-top: 10px;"><strong>Market Timing:</strong> The confluence of high economic growth (8.5% regional GDP growth), increasing digital literacy, and limited AEO competition creates a unique window of opportunity for early market entry.</p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">$131B</div>
+                    <div class="stat-label">Potential GenAI value in SEA e-commerce by 2030</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-number">27%</div>
+                    <div class="stat-label">APAC share of global SEO software market</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-number">16.5%</div>
+                    <div class="stat-label">APAC CAGR for SEO software (fastest growing)</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-number">$5B</div>
+                    <div class="stat-label">Projected AI SEO software market by 2033</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-number">400M</div>
+                    <div class="stat-label">ChatGPT weekly users by early 2025</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-number">25-40%</div>
+                    <div class="stat-label">Search traffic shift to AI chatbots by 2026</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-number">251%</div>
+                    <div class="stat-label">YoY traffic growth to AI services (Cloudflare)</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-number">24%</div>
+                    <div class="stat-label">Target e-commerce penetration in SEA by 2030</div>
+                </div>
+            </div>
+
+            <div class="expandable" onclick="toggleExpand(this)">
+                <div class="expandable-header">
+                    <h4>Global AI SEO Market Analysis</h4>
+                    <span class="expand-icon">▶</span>
+                </div>
+                <div class="expandable-content">
+                    <p><strong>Current Market Size:</strong> The worldwide AI SEO software market reached ~$2 billion in 2024, projected to grow to ~$5 billion by 2033.</p>
+                    <p><strong>Broader SEO Industry:</strong> The larger SEO software industry is growing from ~$85 billion (2025) to ~$266 billion by 2034, representing a 13.5% CAGR.</p>
+                    <p><strong>Regional Leadership:</strong> Asia-Pacific holds ~27% of the SEO software market and is the fastest-growing region with ~16.5% CAGR.</p>
+                    <p><strong>AI Adoption:</strong> APAC is second only to North America in AI adoption, with businesses heavily investing in generative AI partnerships.</p>
+                </div>
+            </div>
+
+            <div style="background: rgba(0, 255, 157, 0.05); border: 1px solid rgba(0, 255, 157, 0.2); border-radius: 15px; padding: 40px; margin: 50px 0;">
+                <h3 style="color: #00ff9d; margin-bottom: 20px; font-size: 1.5rem;">Southeast Asia Opportunity Analysis</h3>
+                
+                <div class="expandable" onclick="toggleExpand(this)">
+                    <div class="expandable-header">
+                        <h4>E-commerce & Digital Transformation Deep Dive</h4>
+                        <span class="expand-icon">▶</span>
+                    </div>
+                    <div class="expandable-content">
+                        <p><strong>$131B GenAI Opportunity Breakdown:</strong> This projection includes AI-powered personalization ($45B), intelligent search and recommendations ($38B), automated customer service ($25B), and supply chain optimization ($23B). Companies implementing comprehensive AI strategies early could capture disproportionate market share.</p>
+                        <p><strong>E-commerce Growth Drivers:</strong> Mobile-first shopping experiences (85% of transactions), social commerce integration (live streaming sales growing 400% annually), and super-app ecosystems (Shopee, Lazada, Tokopedia) creating new AI interaction patterns.</p>
+                        <p><strong>Regional Variations:</strong> Singapore and Malaysia lead in B2B AI adoption, Thailand dominates in social commerce AI, Indonesia shows massive potential in mobile AI applications, and Vietnam is emerging as a manufacturing AI hub.</p>
+                        <p><strong>Digital Payment Integration:</strong> 85% digital payment adoption enables seamless AI-driven commerce experiences. Users comfortable with AI recommendations for financial decisions, creating trust for AI-powered product discovery and purchase decisions.</p>
+                        <p><strong>Cross-Border Opportunities:</strong> ASEAN Economic Community facilitates cross-border AI service deployment. A single AEO platform can serve multiple markets with localized content and language adaptations.</p>
+                    </div>
+                </div>
+
+                <div class="expandable" onclick="toggleExpand(this)">
+                    <div class="expandable-header">
+                        <h4>Regional AI Landscape & Localization Strategy</h4>
+                        <span class="expand-icon">▶</span>
+                    </div>
+                    <div class="expandable-content">
+                        <p><strong>Local AI Platform Ecosystem:</strong> Beyond global players, regional platforms dominate specific markets: LINE's Clova handles 70% of AI queries in Thailand, Baidu's Ernie leads in Chinese-speaking business contexts, and emerging platforms like Singapore's "AI Gov" for government services require specialized optimization.</p>
+                        <p><strong>Multilingual Complexity:</strong> Success requires nuanced understanding beyond basic translation. Example: "Budget-friendly" translates differently in Thai (ราคาไม่แพง - affordable quality) vs Bahasa Indonesia (murah - cheap) vs Tagalog (abot-kaya - within reach), each carrying different business implications.</p>
+                        <p><strong>Cultural AI Adaptation:</strong> AI responses must reflect local business etiquette. In Japan, detailed process explanations are valued; in Thailand, relationship-building context matters; in Indonesia, religious considerations influence product recommendations. AEO content must encode these cultural nuances.</p>
+                        <p><strong>Government AI Initiatives:</strong> Singapore's Smart Nation initiative, Malaysia's MyDigital program, and Thailand's Digital Economy Promotion Agency create B2G (business-to-government) AEO opportunities. Government AI systems increasingly influence public procurement and policy recommendations.</p>
+                        <p><strong>Mobile AI Integration:</strong> Super-apps like Grab (Singapore/Malaysia), Gojek (Indonesia), and LINE (Thailand) integrate AI assistants into daily life. Optimizing for these platforms requires understanding their specific AI recommendation algorithms and content formats.</p>
+                    </div>
+                </div>
+
+                <div class="expandable" onclick="toggleExpand(this)">
+                    <div class="expandable-header">
+                        <h4>Market Entry Strategy & Implementation Roadmap</h4>
+                        <span class="expand-icon">▶</span>
+                    </div>
+                    <div class="expandable-content">
+                        <p><strong>Partnership Strategy Examples:</strong> Successful market entry often involves strategic alliances. Example: Partnering with Mindvalley (Malaysia) for educational content distribution, or Zilingo (Singapore) for e-commerce AI optimization provides instant market credibility and local expertise.</p>
+                        <p><strong>Early Mover Advantage Timeline:</strong> Current AEO adoption in SEA is <5% among businesses, compared to 15-20% in North America. Companies entering now have 18-24 months to establish market leadership before mainstream adoption accelerates. Historical precedent: Early SEO adopters in SEA (2010-2012) maintained 10x competitive advantages for 5+ years.</p>
+                        <p><strong>Localization Requirements:</strong> Beyond language, successful platforms must understand local business cycles (Chinese New Year impact, Ramadan considerations, monsoon season effects), regulatory compliance (GDPR-equivalent laws in Singapore, Thailand's PDPA), and payment preferences (GrabPay, Dana, GCash integration).</p>
+                        <p><strong>Revenue Model Adaptation:</strong> Freemium models work well in price-sensitive markets like Vietnam and Indonesia, while premium solutions find success in Singapore and Malaysia. Philippines and Thailand prefer usage-based pricing aligned with business growth.</p>
+                        <p><strong>Distribution Channel Strategy:</strong> Partner with regional system integrators (Accenture SEA, Deloitte Digital), leverage local cloud marketplaces (AWS Marketplace Asia, Google Cloud Partner Directory), and integrate with popular business tools (Zoho Asia, local CRM platforms).</p>
+                        <p><strong>Competitive Landscape:</strong> Current major players focus primarily on English-language markets. Opportunity exists for platforms that natively support regional languages and understand local AI usage patterns from inception rather than as an afterthought.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="text-align: center; color: #00ff9d; margin: 40px 0 20px 0;">Regional Implementation Considerations</h3>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <h3 class="tool-name">Multilingual AI Support</h3>
+                    <p class="tool-description">
+                        Comprehensive language support for English plus regional languages: Malay, Tagalog, 
+                        Bahasa Indonesia, Thai, Vietnamese for complete market coverage.
+                    </p>
+                    <div class="tool-features">
+                        <h5>Language Capabilities:</h5>
+                        <ul class="feature-list">
+                            <li>Native language query processing</li>
+                            <li>Cultural context understanding</li>
+                            <li>Local terminology recognition</li>
+                            <li>Regional dialect variations</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <h3 class="tool-name">Local AI Platform Integration</h3>
+                    <p class="tool-description">
+                        Integration with regional AI services and chatbots beyond global platforms for 
+                        comprehensive market reach and local user behavior analysis.
+                    </p>
+                    <div class="tool-features">
+                        <h5>Regional Platforms:</h5>
+                        <ul class="feature-list">
+                            <li>LINE's Clova (Japan/Taiwan)</li>
+                            <li>Baidu's Ernie (China)</li>
+                            <li>Local government AI initiatives</li>
+                            <li>Regional e-commerce AI assistants</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <h3 class="tool-name">Mobile-First Optimization</h3>
+                    <p class="tool-description">
+                        Specialized optimization for high mobile usage patterns and social media engagement 
+                        common in Southeast Asian markets.
+                    </p>
+                    <div class="tool-features">
+                        <h5>Mobile Features:</h5>
+                        <ul class="feature-list">
+                            <li>Voice query optimization</li>
+                            <li>Social media AI integration</li>
+                            <li>Mobile app AI assistant tracking</li>
+                            <li>Quick response optimization</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="tool-card">
+                    <h3 class="tool-name">Strategic Partnerships</h3>
+                    <p class="tool-description">
+                        Collaboration opportunities with regional digital agencies, cloud providers, 
+                        and technology companies for accelerated market penetration.
+                    </p>
+                    <div class="tool-features">
+                        <h5>Partnership Types:</h5>
+                        <ul class="feature-list">
+                            <li>Regional digital marketing agencies</li>
+                            <li>Cloud service providers</li>
+                            <li>Local technology integrators</li>
+                            <li>E-commerce platform partnerships</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metrics-dashboard">
+                <h4 style="color: #00ff9d; margin-bottom: 15px;">Market Opportunity Metrics</h4>
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <div class="metric-value">650M</div>
+                        <div class="metric-label">SEA Population</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value">75%</div>
+                        <div class="metric-label">Mobile Internet Users</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value">8.5%</div>
+                        <div class="metric-label">Regional GDP Growth</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value">85%</div>
+                        <div class="metric-label">Digital Payment Adoption</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h4>🚀 Investment Opportunity Summary</h4>
+                <p><strong>Market Timing:</strong> AEO awareness in SEA businesses is currently <5% compared to 15-20% in North America, creating an 18-24 month window for market leadership establishment. Historical SEO adoption patterns suggest early movers maintain 5-10x competitive advantages for years.</p>
+                <p style="margin-top: 10px;"><strong>Revenue Potential:</strong> Conservative estimates suggest a well-positioned AEO platform could capture 0.1% of the $131B AI opportunity ($131M annual revenue potential) within 5 years, with gross margins of 70-80% typical for SaaS platforms.</p>
+                <p style="margin-top: 10px;"><strong>Technical Feasibility:</strong> Required AI infrastructure already exists through major cloud providers. Primary competitive advantage comes from market understanding, localization expertise, and execution speed rather than technological barriers.</p>
+                <p style="margin-top: 10px;"><strong>Risk Mitigation:</strong> Diversified approach across multiple SEA markets, freemium pricing models for market penetration, and strategic partnerships reduce market entry risks while maximizing upside potential.</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Show section and hide others
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Hide landing
+            document.getElementById('landing').style.display = 'none';
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Show navigation
+            document.getElementById('nav').classList.add('visible');
+            
+            // Trigger animations
+            setTimeout(animateOnScroll, 100);
+        }
+
+        // Start exploration
+        function startExploration() {
+            document.getElementById('landing').style.display = 'none';
+            document.getElementById('framework').classList.add('active');
+            document.getElementById('nav').classList.add('visible');
+            setTimeout(animateOnScroll, 100);
+        }
+
+        // Scroll to specific step
+        function scrollToStep(stepNumber) {
+            showSection('framework');
+            setTimeout(() => {
+                const stepElement = document.getElementById(`step-${stepNumber}`);
+                if (stepElement) {
+                    stepElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    stepElement.style.transform = 'scale(1.02)';
+                    setTimeout(() => {
+                        stepElement.style.transform = 'scale(1)';
+                    }, 300);
+                }
+            }, 200);
+        }
+
+        // Toggle expandable content
+        function toggleExpand(element) {
+            element.classList.toggle('active');
+        }
+
+        // Animate elements on scroll
+        function animateOnScroll() {
+            const elements = document.querySelectorAll('.step-card, .tool-card, .stat-card, .layer');
+            
+            elements.forEach((element, index) => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    setTimeout(() => {
+                        element.style.opacity = '1';
+                        element.style.transform = 'translateY(0)';
+                    }, index * 100);
+                }
+            });
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            createParticles();
+            
+            // Set initial styles for animated elements
+            document.querySelectorAll('.step-card, .tool-card, .stat-card, .layer').forEach(element => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(30px)';
+                element.style.transition = 'all 0.6s ease';
+            });
+        });
+
+        window.addEventListener('scroll', animateOnScroll);
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                const sections = ['framework', 'tools', 'technical', 'market'];
+                const currentSection = document.querySelector('.section.active');
+                if (currentSection) {
+                    const currentIndex = sections.indexOf(currentSection.id);
+                    const nextIndex = (currentIndex + 1) % sections.length;
+                    showSection(sections[nextIndex]);
+                }
+            } else if (e.key === 'ArrowLeft') {
+                const sections = ['framework', 'tools', 'technical', 'market'];
+                const currentSection = document.querySelector('.section.active');
+                if (currentSection) {
+                    const currentIndex = sections.indexOf(currentSection.id);
+                    const prevIndex = (currentIndex - 1 + sections.length) % sections.length;
+                    showSection(sections[prevIndex]);
+                }
+            }
+        });
+
+        // Progress tracking
+        function updateProgress() {
+            const sections = ['framework', 'tools', 'technical', 'market'];
+            const currentSection = document.querySelector('.section.active');
+            if (currentSection) {
+                const currentIndex = sections.indexOf(currentSection.id);
+                const progress = ((currentIndex + 1) / sections.length) * 100;
+                const progressBar = document.querySelector('.progress-fill');
+                if (progressBar) {
+                    progressBar.style.width = progress + '%';
+                }
+            }
+        }
+
+        // Add smooth transitions between sections
+        function smoothTransition() {
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.transition = 'opacity 0.5s ease-in-out';
+            });
+        }
+
+        smoothTransition();
+    </script>
+</body>
+</html>
