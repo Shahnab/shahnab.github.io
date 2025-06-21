@@ -17,6 +17,8 @@
             color: #ffffff;
             overflow-x: hidden;
             line-height: 1.6;
+            -webkit-overflow-scrolling: touch;
+            -webkit-tap-highlight-color: rgba(0, 255, 157, 0.2);
         }
 
         /* Animated Background */
@@ -98,6 +100,8 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: bold;
+            -webkit-appearance: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .explore-btn:hover {
@@ -557,38 +561,307 @@
             font-size: 0.8rem;
         }
 
+        /* Mobile Navigation */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: #00ff9d;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 10px;
+            min-width: 44px;
+            min-height: 44px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .mobile-menu-btn:hover,
+        .mobile-menu-btn:active {
+            background-color: rgba(0, 255, 157, 0.1);
+        }
+
+        .nav-links.mobile-open {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            gap: 15px;
+            border-top: 1px solid rgba(0, 255, 157, 0.2);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .main-title {
-                font-size: 2.5rem;
+                font-size: 2rem;
+                line-height: 1.2;
+                margin-bottom: 1.5rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+                padding: 0 20px;
+            }
+
+            .explore-btn {
+                padding: 12px 30px;
+                font-size: 1rem;
             }
             
             .nav {
                 padding: 15px 20px;
+                position: relative;
             }
-            
-            .section {
-                padding: 80px 20px;
+
+            .mobile-menu-btn {
+                display: block;
             }
             
             .nav-links {
                 display: none;
             }
+            
+            .section {
+                padding: 60px 15px;
+            }
+
+            .section-title {
+                font-size: 2rem;
+                margin-bottom: 1.5rem;
+            }
 
             .framework-steps {
                 grid-template-columns: 1fr;
+                gap: 20px;
             }
 
             .tools-grid {
                 grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 15px;
             }
 
             .flowchart {
                 flex-direction: column;
+                gap: 15px;
             }
 
             .flow-arrow {
                 transform: rotate(90deg);
+                font-size: 1.5rem;
+            }
+
+            .flow-node {
+                min-width: 120px;
+                padding: 15px;
+                font-size: 0.9rem;
+            }
+
+            .step-card, .tool-card {
+                padding: 20px;
+            }
+
+            .step-number {
+                font-size: 2rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .step-title {
+                font-size: 1.2rem;
+                margin-bottom: 0.8rem;
+            }
+
+            .tool-name {
+                font-size: 1.1rem;
+            }
+
+            .expandable {
+                padding: 12px;
+            }
+
+            .expandable-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .expandable-header h4 {
+                font-size: 1rem;
+            }
+
+            .expand-icon {
+                align-self: flex-end;
+                margin-top: -25px;
+            }
+
+            .architecture-layers {
+                gap: 15px;
+            }
+
+            .layer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .layer-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+                align-self: center;
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 15px;
+            }
+
+            .metric-item {
+                padding: 15px 10px;
+            }
+
+            .metric-value {
+                font-size: 1.2rem;
+            }
+
+            .metric-label {
+                font-size: 0.75rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .info-box {
+                padding: 20px;
+                margin: 20px 0;
+            }
+
+            .info-box h4 {
+                font-size: 1.1rem;
+                margin-bottom: 8px;
+            }
+
+            .info-box p {
+                font-size: 0.9rem;
+            }
+
+            .architecture-title {
+                font-size: 1.2rem;
+                margin-bottom: 20px;
+            }
+
+            .architecture-diagram {
+                padding: 25px 15px;
+            }
+
+            .tool-features h5 {
+                font-size: 0.85rem;
+            }
+
+            .feature-list li {
+                font-size: 0.75rem;
+            }
+
+            .step-details h4 {
+                font-size: 1rem;
+            }
+
+            .step-details li {
+                font-size: 0.85rem;
+                margin-bottom: 6px;
+            }
+
+            /* Mobile-specific animations */
+            .particle {
+                width: 1px;
+                height: 1px;
+            }
+
+            /* Better touch targets */
+            .expandable {
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+            }
+
+            .flow-node {
+                min-height: 48px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            /* Mobile typography improvements */
+            .expandable-content p {
+                font-size: 0.85rem;
+                line-height: 1.5;
+                margin-bottom: 10px;
+            }
+
+            .expandable-content h5 {
+                font-size: 0.9rem;
+                margin-bottom: 8px;
+                margin-top: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-title {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 50px 10px;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .step-card, .tool-card {
+                padding: 15px;
+            }
+
+            .info-box {
+                padding: 15px;
+            }
+
+            .architecture-diagram {
+                padding: 20px 10px;
+            }
+
+            .layer {
+                padding: 12px;
+            }
+
+            .expandable {
+                padding: 10px;
+            }
+
+            .flow-node {
+                min-width: 100px;
+                padding: 12px;
             }
         }
     </style>
@@ -602,7 +875,8 @@
     <!-- Navigation -->
     <nav class="nav" id="nav">
         <div class="logo">AEO Blueprint</div>
-        <div class="nav-links">
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        <div class="nav-links" id="nav-links">
             <a href="#" class="nav-link" onclick="showSection('framework')">Framework</a>
             <a href="#" class="nav-link" onclick="showSection('tools')">Tools</a>
             <a href="#" class="nav-link" onclick="showSection('technical')">Technical</a>
@@ -1494,8 +1768,18 @@
             }
         }
 
-        // Show section and hide others
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('nav-links');
+            navLinks.classList.toggle('mobile-open');
+        }
+
+        // Close mobile menu when clicking a link
         function showSection(sectionId) {
+            // Close mobile menu
+            const navLinks = document.getElementById('nav-links');
+            navLinks.classList.remove('mobile-open');
+            
             // Hide all sections
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.remove('active');
@@ -1562,6 +1846,7 @@
         // Initialize
         window.addEventListener('load', () => {
             createParticles();
+            addTouchSupport();
             
             // Set initial styles for animated elements
             document.querySelectorAll('.step-card, .tool-card, .stat-card, .layer').forEach(element => {
@@ -1593,6 +1878,53 @@
                 }
             }
         });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const nav = document.getElementById('nav');
+            const navLinks = document.getElementById('nav-links');
+            const mobileBtn = document.querySelector('.mobile-menu-btn');
+            
+            if (!nav.contains(e.target) && navLinks.classList.contains('mobile-open')) {
+                navLinks.classList.remove('mobile-open');
+            }
+        });
+
+        // Prevent mobile menu from closing when clicking inside
+        document.getElementById('nav-links').addEventListener('click', (e) => {
+            if (e.target.classList.contains('nav-link')) {
+                document.getElementById('nav-links').classList.remove('mobile-open');
+            }
+        });
+
+        // Add touch-friendly interactions
+        function addTouchSupport() {
+            // Add touch events for better mobile interaction
+            document.querySelectorAll('.expandable').forEach(element => {
+                element.addEventListener('touchstart', function() {
+                    this.style.backgroundColor = 'rgba(0, 255, 157, 0.15)';
+                });
+                
+                element.addEventListener('touchend', function() {
+                    setTimeout(() => {
+                        this.style.backgroundColor = '';
+                    }, 150);
+                });
+            });
+
+            // Add touch events for cards
+            document.querySelectorAll('.step-card, .tool-card, .stat-card').forEach(element => {
+                element.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                
+                element.addEventListener('touchend', function() {
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+        }
 
         // Progress tracking
         function updateProgress() {
