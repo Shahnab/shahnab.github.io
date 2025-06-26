@@ -1,0 +1,1820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PM Workflow with Test Scenarios</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            font-weight: 300;
+            color: #34495e;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1em;
+            font-weight: 300;
+        }
+
+        .mode-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .mode-btn {
+            background: #ecf0f1;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .mode-btn.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .controls-panel {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+
+        .control-section {
+            margin-bottom: 25px;
+            border-bottom: 1px solid #ecf0f1;
+            padding-bottom: 20px;
+        }
+
+        .control-section:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .control-section h3 {
+            color: #34495e;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        .status-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9em;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .not-tested { background: #ecf0f1; border: 2px solid #bdc3c7; }
+        .passed { background: #2ecc71; border: 2px solid #27ae60; }
+        .failed { background: #e74c3c; border: 2px solid #c0392b; }
+        .in-testing { background: #f39c12; border: 2px solid #d68910; }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn.success { background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); }
+        .btn.warning { background: linear-gradient(135deg, #f39c12 0%, #d68910 100%); }
+        .btn.danger { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
+        .btn.info { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
+
+        .stats-panel {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .test-notes {
+            margin-top: 15px;
+        }
+
+        .test-notes textarea {
+            width: 100%;
+            height: 80px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9em;
+            resize: vertical;
+        }
+
+        .tester-info {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tester-info input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        .management-report {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+            display: none;
+        }
+
+        .management-report.active {
+            display: block;
+        }
+
+        .report-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .summary-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .summary-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .detailed-results {
+            margin-bottom: 30px;
+        }
+
+        .result-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            margin: 5px 0;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .result-status {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 15px;
+            margin-top: 2px;
+        }
+
+        .result-content {
+            flex: 1;
+        }
+
+        .result-title {
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .result-description {
+            color: #5d6d7e;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .result-scenarios {
+            font-size: 0.85em;
+            color: #7f8c8d;
+        }
+
+        .scenario-breakdown {
+            margin-bottom: 30px;
+        }
+
+        .component-scenarios {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .component-title {
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .scenario-result {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .scenario-result:last-child {
+            border-bottom: none;
+        }
+
+        .scenario-status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        .scenario-name {
+            flex: 1;
+            font-size: 0.9em;
+            color: #2c3e50;
+        }
+
+        .scenario-notes-preview {
+            font-size: 0.8em;
+            color: #7f8c8d;
+            font-style: italic;
+            margin-left: 24px;
+            margin-top: 4px;
+        }
+
+        .critical-issues {
+            margin-bottom: 30px;
+        }
+
+        .issue-item {
+            background: #fbeaea;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .issue-component {
+            font-weight: 500;
+            color: #c0392b;
+            margin-bottom: 5px;
+        }
+
+        .issue-description {
+            color: #2c3e50;
+            font-size: 0.9em;
+        }
+
+        .no-issues {
+            background: #d5f4e6;
+            border-left: 4px solid #2ecc71;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            color: #27ae60;
+            font-weight: 500;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .modal-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .modal-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 1em;
+            color: #7f8c8d;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .modal-tab.active {
+            color: #3498db;
+            border-bottom-color: #3498db;
+            font-weight: 500;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .test-scenarios {
+            margin-bottom: 25px;
+        }
+
+        .scenario-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #bdc3c7;
+        }
+
+        .scenario-item.passed {
+            border-left-color: #2ecc71;
+            background: #d5f4e6;
+        }
+
+        .scenario-item.failed {
+            border-left-color: #e74c3c;
+            background: #fbeaea;
+        }
+
+        .scenario-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .scenario-title {
+            font-weight: 500;
+            color: #2c3e50;
+            flex: 1;
+        }
+
+        .scenario-status {
+            display: flex;
+            gap: 5px;
+        }
+
+        .status-btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .status-btn.passed {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .status-btn.failed {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .status-btn.not-tested {
+            background: #ecf0f1;
+            color: #7f8c8d;
+        }
+
+        .scenario-description {
+            color: #5d6d7e;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .scenario-steps {
+            font-size: 0.85em;
+            color: #7f8c8d;
+        }
+
+        .scenario-steps ol {
+            margin-left: 20px;
+        }
+
+        .scenario-notes {
+            margin-top: 10px;
+        }
+
+        .scenario-notes textarea {
+            width: 100%;
+            height: 60px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.85em;
+            resize: vertical;
+        }
+
+        .overall-status {
+            background: #e8f4fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .overall-status select {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .scenario-progress {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f39c12 0%, #2ecc71 100%);
+            transition: width 0.3s ease;
+        }
+
+        .test-guidelines {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin-bottom: 20px;
+        }
+
+        .test-guidelines h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .test-guidelines ul {
+            color: #664d03;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls-panel {
+                position: relative;
+                top: 0;
+                max-height: none;
+            }
+        }
+
+        /* Animation for node updates */
+        .node-updated {
+            animation: pulseUpdate 0.6s ease-in-out;
+        }
+
+        @keyframes pulseUpdate {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .component-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .component-item {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .component-item:hover {
+            background: #f8f9fa;
+        }
+
+        .component-item:last-child {
+            border-bottom: none;
+        }
+
+        .component-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .component-name {
+            font-weight: 500;
+            color: #2c3e50;
+            flex: 1;
+        }
+
+        .component-progress {
+            font-size: 0.8em;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>PM Workflow with Test Scenarios</h1>
+            <p class="subtitle">Comprehensive workflow testing with predefined test scenarios and detailed tracking</p>
+            <div class="mode-toggle">
+                <button class="mode-btn active" onclick="switchMode('testing')">Testing Components</button>
+                <button class="mode-btn" onclick="switchMode('management')">Overall Testing Report</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="controls-panel" id="testingPanel">
+                <div class="control-section">
+                    <div class="tester-info">
+                        <h4>Tester Information</h4>
+                        <input type="text" id="testerName" placeholder="Tester Name" onchange="saveData()">
+                        <input type="date" id="testDate" onchange="saveData()">
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>Testing Status Legend</h3>
+                    <div class="status-legend">
+                        <div class="legend-item">
+                            <div class="legend-color not-tested"></div>
+                            <span>Not Tested</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color in-testing"></div>
+                            <span>In Testing</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color passed"></div>
+                            <span>Test Passed</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color failed"></div>
+                            <span>Test Failed</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>Components to Test</h3>
+                    <div class="component-list" id="componentList">
+                        <!-- Component list will be populated here -->
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>Testing Actions</h3>
+                    <div class="action-buttons">
+                        <button class="btn success" onclick="saveTestResults()">Save Test Results</button>
+                        <button class="btn" onclick="resetAllTests()">Reset All Tests</button>
+                    </div>
+                </div>
+
+                <div class="stats-panel">
+                    <h4>Testing Progress</h4>
+                    <div class="stat-item">
+                        <span>Total Components:</span>
+                        <span class="stat-value" id="totalNodes">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Tests Passed:</span>
+                        <span class="stat-value" id="passedNodes">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Tests Failed:</span>
+                        <span class="stat-value" id="failedNodes">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>In Testing:</span>
+                        <span class="stat-value" id="inTestingNodes">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Not Tested:</span>
+                        <span class="stat-value" id="notTestedNodes">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Completion Rate:</span>
+                        <span class="stat-value" id="completionRate">0%</span>
+                    </div>
+                </div>
+
+                <div class="test-notes">
+                    <h4>General Notes</h4>
+                    <textarea id="generalNotes" placeholder="Add general testing notes..." onchange="saveData()"></textarea>
+                </div>
+            </div>
+
+            <div class="management-report" id="managementPanel">
+                <div class="report-header">
+                    <h2>Workflow Testing Report</h2>
+                    <p>Alpha Testing Results Summary</p>
+                    <div class="timestamp" id="reportTimestamp"></div>
+                </div>
+
+                <div class="report-summary" id="reportSummary">
+                    <!-- Summary cards will be populated here -->
+                </div>
+
+                <div class="detailed-results">
+                    <h3>Component Testing Results</h3>
+                    <div id="detailedResults">
+                        <!-- Detailed results will be populated here -->
+                    </div>
+                </div>
+
+                <div class="scenario-breakdown">
+                    <h3>Scenario-Level Results</h3>
+                    <div id="scenarioBreakdown">
+                        <!-- Scenario breakdown will be populated here -->
+                    </div>
+                </div>
+
+                <div class="critical-issues" id="criticalIssues">
+                    <h3>Critical Issues Found</h3>
+                    <div id="issuesList">
+                        <!-- Issues will be populated here -->
+                    </div>
+                </div>
+
+                <div class="test-notes">
+                    <h3>Tester Notes & Recommendations</h3>
+                    <div id="reportNotes" style="background: white; padding: 15px; border-radius: 8px; margin-top: 10px;"></div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div id="chart" class="mermaid">
+                    flowchart TD
+                        Start[Project Created] --> Define_Groups{Define Groups?}
+                        Define_Groups -->|Use Default| UseDefault[Default Groups:<br/>Planning, Strategy, Creative,<br/>Production, Media Planning,<br/>Media Buying, Trading,<br/>Social Media, PR, Performance]
+                        Define_Groups -->|Custom| CustomGroup[Create Custom Group]
+                        CustomGroup --> UseDefault
+
+                        UseDefault --> ManageGroups{Manage Groups}
+                        ManageGroups -->|Add New Member| AddMember[Add Member to<br/>Existing Group]
+                        ManageGroups -->|Add New Group Local| AddGroupLocal[Add New Group<br/>to This Project]
+                        ManageGroups -->|Add New Group Global| AddGroupGlobal[Add New Group<br/>to All Projects]
+                        ManageGroups -->|Proceed| M_Assign{Manager assigns task}
+
+                        M_Assign -->|To Group| ChooseGroup[Select Target Group]
+                        M_Assign -->|Direct to Vendor| M_to_Vendor[Assign to Vendor]
+                        
+                        M_to_Vendor --> ExtVendorDecision{Vendor accepts?}
+                        ExtVendorDecision -->|Yes| InProgress[Task In Progress]
+                        ExtVendorDecision -->|No| M_Assign
+
+                        ChooseGroup -->|Group Busy| M_ReassignBusy[Manager reassigns<br/>to another Group]
+                        M_ReassignBusy --> ChooseGroup
+                        ChooseGroup -->|Available Group| G_Assign[Assign to Group]
+                        
+                        G_Assign --> G_Decide{Who assigns next?}
+                        G_Decide -->|Team Lead| TL_Assign[Team Lead Assignment]
+                        G_Decide -->|Member Self| MemberDecision
+
+                        TL_Assign --> TL_to{Assign to Member<br/>or External?}
+                        TL_to -->|Member| TL_to_Mem[Assign to Member]
+                        TL_to -->|Vendor/Consultant| TL_to_Ext[Assign to External]
+
+                        TL_to_Mem --> MemberDecision
+
+                        MemberDecision{Member action} 
+                        MemberDecision -->|Accept Task| InProgress
+                        MemberDecision -->|Delegate within Group| Delegate[Delegate to<br/>another Member]
+                        Delegate --> MemberDecision
+                        MemberDecision -->|Busy / On Leave| TL_Reassign[Team Lead reassigns<br/>to other Member]
+                        TL_Reassign --> MemberDecision
+                        MemberDecision -->|Group Busy| M_Assign
+
+                        TL_to_Ext --> ExtDecision{External accepts?}
+                        ExtDecision -->|Yes| InProgress
+                        ExtDecision -->|No| M_Assign
+
+                        InProgress --> ReassignGroup{Need to change Group?}
+                        ReassignGroup -->|Yes| M_Assign
+                        ReassignGroup -->|No| Done[Task Completed]
+
+                        Done --> LogHours[Member logs<br/>hours worked]
+                        LogHours --> TL_Approval{Team Lead<br/>Approval?}
+                        TL_Approval -->|Approved| TimesheetEntry{Timesheet Entry}
+                        TL_Approval -->|Rejected| LogHours
+                        TimesheetEntry --> ProjectTS[Project Timesheet:<br/>Total Hours]
+                        TimesheetEntry --> MemberTS[Member Timesheet:<br/>Individual Hours]
+
+                        classDef notTested fill:#ecf0f1,stroke:#bdc3c7,stroke-width:2px,color:#2c3e50
+                        classDef passed fill:#2ecc71,stroke:#27ae60,stroke-width:2px,color:white
+                        classDef failed fill:#e74c3c,stroke:#c0392b,stroke-width:2px,color:white
+                        classDef inTesting fill:#f39c12,stroke:#d68910,stroke-width:2px,color:white
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Component Testing Modal -->
+    <div id="testingModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Component Testing Details</h2>
+            
+            <div class="modal-tabs">
+                <button class="modal-tab active" onclick="switchTab('scenarios')">Test Scenarios</button>
+                <button class="modal-tab" onclick="switchTab('overall')">Overall Status</button>
+                <button class="modal-tab" onclick="switchTab('guidelines')">Test Guidelines</button>
+            </div>
+
+            <!-- Test Scenarios Tab -->
+            <div id="scenarios-tab" class="tab-content active">
+                <div class="test-scenarios" id="testScenarios">
+                    <!-- Test scenarios will be populated here -->
+                </div>
+                
+                <div class="scenario-progress">
+                    <span>Scenario Progress:</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="scenarioProgress" style="width: 0%"></div>
+                    </div>
+                    <span id="progressText">0/0</span>
+                </div>
+            </div>
+
+            <!-- Overall Status Tab -->
+            <div id="overall-tab" class="tab-content">
+                <div class="overall-status">
+                    <h4>Overall Component Status</h4>
+                    <select id="overallStatus" onchange="updateOverallStatus()">
+                        <option value="not-tested">Not Tested</option>
+                        <option value="in-testing">In Testing</option>
+                        <option value="passed">All Tests Passed</option>
+                        <option value="failed">Some Tests Failed</option>
+                    </select>
+                    
+                    <h4>Component Notes</h4>
+                    <textarea id="componentNotes" placeholder="Add overall notes for this component..."></textarea>
+                    
+                    <h4>Critical Issues</h4>
+                    <textarea id="componentIssues" placeholder="Document any critical issues found..."></textarea>
+                </div>
+            </div>
+
+            <!-- Test Guidelines Tab -->
+            <div id="guidelines-tab" class="tab-content">
+                <div class="test-guidelines">
+                    <h4>Testing Guidelines</h4>
+                    <ul id="testGuidelines">
+                        <!-- Guidelines will be populated based on component -->
+                    </ul>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; text-align: right;">
+                <button class="btn success" onclick="saveComponentTesting()">Save Component Testing</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden input for file import -->
+    <!-- Removed as per user request -->
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                background: '#ffffff',
+                primaryColor: '#ecf0f1',
+                primaryTextColor: '#2c3e50',
+                primaryBorderColor: '#bdc3c7',
+                lineColor: '#95a5a6',
+                secondaryColor: '#f8f9fa',
+                tertiaryColor: '#ffffff'
+            },
+            flowchart: {
+                nodeSpacing: 50,
+                rankSpacing: 60,
+                curve: 'basis'
+            }
+        });
+
+        // Global variables
+        let nodeStates = {};
+        let nodeScenarios = {};
+        let testingData = {
+            testerName: '',
+            testDate: '',
+            generalNotes: '',
+            lastSaved: '',
+            components: {}
+        };
+        let currentComponent = null;
+        const statusTypes = ['not-tested', 'in-testing', 'passed', 'failed'];
+        let isInitialized = false;
+        let currentMode = 'testing';
+
+        // Component definitions with test scenarios
+        const componentDefinitions = {
+            'Start': {
+                name: 'Project Creation',
+                description: 'Initial project setup and initialization',
+                scenarios: [
+                    {
+                        title: 'Create new project successfully',
+                        description: 'Verify project can be created with all required fields',
+                        steps: ['1. Navigate to project creation', '2. Fill required fields', '3. Click create', '4. Verify project appears in list'],
+                        status: 'not-tested',
+                        notes: ''
+                    },
+                    {
+                        title: 'Validation of required fields',
+                        description: 'Test form validation for missing required information',
+                        steps: ['1. Leave required fields empty', '2. Attempt to create project', '3. Verify error messages', '4. Test field validation'],
+                        status: 'not-tested',
+                        notes: ''
+                    }
+                ],
+                guidelines: ['Ensure all form fields are accessible', 'Test with various data inputs', 'Verify error handling', 'Check responsive design']
+            },
+            'Define_Groups': {
+                name: 'Group Definition Process',
+                description: 'Define team groups and organizational structure',
+                scenarios: [
+                    {
+                        title: 'Choose default groups option',
+                        description: 'Test selection of default group configuration',
+                        steps: ['1. Access group definition', '2. Select "Use Default" option', '3. Verify default groups load', '4. Confirm group structure'],
+                        status: 'not-tested',
+                        notes: ''
+                    },
+                    {
+                        title: 'Choose custom groups option',
+                        description: 'Test selection of custom group configuration',
+                        steps: ['1. Access group definition', '2. Select "Custom" option', '3. Verify custom setup opens', '4. Test navigation flow'],
+                        status: 'not-tested',
+                        notes: ''
+                    }
+                ],
+                guidelines: ['Test both decision paths', 'Verify UI feedback for selections', 'Check data persistence', 'Test back navigation']
+            },
+            'UseDefault': {
+                name: 'Default Groups Setup',
+                description: 'Load and configure default organizational groups',
+                scenarios: [
+                    {
+                        title: 'Load default groups successfully',
+                        description: 'Verify all default groups are loaded correctly',
+                        steps: ['1. Trigger default group loading', '2. Check all expected groups appear', '3. Verify group details', '4. Test group accessibility'],
+                        status: 'not-tested',
+                        notes: ''
+                    },
+                    {
+                        title: 'Default group permissions',
+                        description: 'Test that default groups have correct permissions',
+                        steps: ['1. Load default groups', '2. Check group permissions', '3. Test access levels', '4. Verify role assignments'],
+                        status: 'not-tested',
+                        notes: ''
+                    }
+                ],
+                guidelines: ['Verify all 10 default groups load correctly', 'Test group hierarchy', 'Check permission inheritance', 'Validate group descriptions']
+            },
+            'ManageGroups': {
+                name: 'Group Management Interface',
+                description: 'Interface for managing team groups and members',
+                scenarios: [
+                    {
+                        title: 'Add New Member on existing Group assigned to particular Project',
+                        description: 'Test adding team members to established project-specific groups',
+                        steps: ['1. Select project and existing group', '2. Click add member', '3. Enter member details and role', '4. Assign permissions', '5. Confirm addition and verify access'],
+                        status: 'not-tested',
+                        notes: ''
+                    },
+                    {
+                        title: 'Add New Group (with new members) to Existing project (Local)',
+                        description: 'Test creating project-specific groups with members',
+                        steps: ['1. Select add local group', '2. Enter group details', '3. Add new members to group', '4. Set project-specific permissions', '5. Save and verify group accessibility in project only'],
+                        status: 'not-tested',
+                        notes: ''
+                    },
+                    {
+                        title: 'Add New Group (with new members) to all projects (Global)',
+                        description: 'Test creating organization-wide groups with members',
+                        steps: ['1. Select add global group', '2. Enter group details', '3. Add new members to group', '4. Set global permissions', '5. Apply to all projects and verify availability'],
+                        status: 'not-tested',
+                        notes: ''
+                    }
+                ],
+                guidelines: ['Test all three management options', 'Verify member permissions inheritance', 'Check group visibility scope', 'Test member role assignments']
+            },
+            'M_Assign': {
+                name: 'Manager Task Assignment',
+                description: 'Manager assigns tasks to groups or vendors',
+                scenarios: [
+                    {
+                        title: 'Task added by Manager to the Group',
+                        description: 'Test task assignment to internal groups for further distribution',
+                        steps: ['1. Create/select task', '2. Choose target group', '3. Set priority/deadline', '4. Assign task to group', '5. Verify group receives assignment'],
+                        status: 'not-tested',
+                        notes: ''
+                    },
+                    {
+                        title: 'Task added by Manager directly to Vendor',
+                        description: 'Test direct task assignment to external vendor',
+                        steps: ['1. Create/select task', '2. Choose vendor option', '3. Select external vendor', '4. Set contract details', '5. Send assignment and verify vendor receives it'],
+                        status: 'not-tested',
+                        notes: ''
+                    },
+                    {
+                        title: 'Manager reassigns to another Group when Group busy',
+                        description: 'Test reassignment when original group is at capacity',
+                        steps: ['1. Assign task to busy group', '2. Receive busy notification', '3. Select alternative group', '4. Reassign task', '5. Verify new group assignment'],
+                        status: 'not-tested',
+                        notes: ''
+                    }
+                ],
+                guidelines: ['Test both assignment paths', 'Verify task details transfer correctly', 'Check notification systems', 'Test reassignment workflows']
+            },
+            'InProgress': {
+                name: 'Task Execution Phase',
+                description: 'Active task work and progress tracking',
+                scenarios: [
+                    {
+                        title: 'Task progress tracking',
+                        description: 'Test progress updates and status changes during task execution',
+                        steps: ['1. Start assigned task', '2. Update progress regularly', '3. Add status notes and milestones', '4. Save progress and notify stakeholders'],
+                        status: 'not-tested',
+                        notes: ''
+                    },
+                    {
+                        title: 'Time tracking integration',
+                        description: 'Test time logging during task execution',
+                        steps: ['1. Start task timer', '2. Work on task', '3. Pause/resume timer as needed', '4. Log time entries with descriptions'],
+                        status: 'not-tested',
+                        notes: ''
+                    }
+                ],
+                guidelines: ['Test progress indicators', 'Verify time tracking accuracy', 'Check data persistence', 'Test collaboration features']
+            },
+            'Done': {
+                name: 'Task Completion',
+                description: 'Task completion and handoff process',
+                scenarios: [
+                    {
+                        title: 'Mark task as complete',
+                        description: 'Test task completion workflow',
+                        steps: ['1. Complete task work', '2. Mark as done', '3. Add completion notes', '4. Submit for review'],
+                        status: 'not-tested',
+                        notes: ''
+                    },
+                    {
+                        title: 'Completion validation',
+                        description: 'Test completion criteria and validation',
+                        steps: ['1. Attempt completion', '2. Check validation rules', '3. Ensure requirements met', '4. Confirm completion'],
+                        status: 'not-tested',
+                        notes: ''
+                    }
+                ],
+                guidelines: ['Test completion validation', 'Verify deliverable submission', 'Check notification workflows', 'Test approval processes']
+            },
+            'LogHours': {
+                name: 'Hour Logging Process',
+                description: 'Log time spent on completed tasks',
+                scenarios: [
+                    {
+                        title: 'Manual hour entry',
+                        description: 'Test manual time entry for completed work',
+                        steps: ['1. Access hour logging', '2. Enter time spent', '3. Add work description', '4. Submit hours'],
+                        status: 'not-tested',
+                        notes: ''
+                    },
+                    {
+                        title: 'Automatic hour calculation',
+                        description: 'Test automated time calculation from tracking',
+                        steps: ['1. Complete tracked task', '2. Review calculated hours', '3. Adjust if needed', '4. Approve hours'],
+                        status: 'not-tested',
+                        notes: ''
+                    }
+                ],
+                guidelines: ['Test both manual and automatic entry', 'Verify calculation accuracy', 'Check data validation', 'Test edit capabilities']
+            },
+            'TimesheetEntry': {
+                name: 'Timesheet Entry Point',
+                description: 'Central timesheet data processing for approved hours',
+                scenarios: [
+                    {
+                        title: 'Process approved timesheet entries',
+                        description: 'Test timesheet data processing after team lead approval',
+                        steps: ['1. Receive approved hour entries from team lead', '2. Process through timesheet system', '3. Verify data routing to both project and member timesheets', '4. Check data integrity and completeness'],
+                        status: 'not-tested',
+                        notes: ''
+                    },
+                    {
+                        title: 'Handle approved hour modifications',
+                        description: 'Test processing hours that were modified during approval',
+                        steps: ['1. Receive modified approved hours', '2. Process original vs modified data', '3. Update timesheet with approved amounts', '4. Maintain audit trail of changes'],
+                        status: 'not-tested',
+                        notes: ''
+                    }
+                ],
+                guidelines: ['Test data flow from approved hours', 'Verify data integrity', 'Check error handling', 'Test audit trail maintenance']
+            },
+            'ProjectTS': {
+                name: 'Project Timesheet',
+                description: 'Project-level time tracking and reporting',
+                scenarios: [
+                    {
+                        title: 'Project time aggregation',
+                        description: 'Test project-level time totals and reporting',
+                        steps: ['1. View project timesheet', '2. Verify hour totals', '3. Check member breakdown', '4. Generate reports'],
+                        status: 'not-tested',
+                        notes: ''
+                    }
+                ],
+                guidelines: ['Test aggregation accuracy', 'Verify reporting functions', 'Check filtering options', 'Test export capabilities']
+            },
+            'MemberTS': {
+                name: 'Member Timesheet',
+                description: 'Individual member time tracking and history',
+                scenarios: [
+                    {
+                        title: 'Individual time tracking',
+                        description: 'Test member-specific time tracking and history',
+                        steps: ['1. View member timesheet', '2. Check personal hours', '3. Review project breakdown', '4. Verify accuracy'],
+                        status: 'not-tested',
+                        notes: ''
+                    }
+                ],
+                guidelines: ['Test personal time views', 'Verify cross-project totals', 'Check historical data', 'Test personal reporting']
+            }
+        };
+
+        // Initialize testing data structure
+        function initializeTestingData() {
+            Object.keys(componentDefinitions).forEach(componentId => {
+                const component = componentDefinitions[componentId];
+                nodeStates[componentId] = 'not-tested';
+                
+                if (!testingData.components[componentId]) {
+                    testingData.components[componentId] = {
+                        status: 'not-tested',
+                        scenarios: component.scenarios.map(scenario => ({
+                            ...scenario,
+                            status: 'not-tested',
+                            notes: ''
+                        })),
+                        notes: '',
+                        issues: ''
+                    };
+                }
+            });
+            
+            updateComponentList();
+            updateAllNodeStyles();
+            updateStats();
+            isInitialized = true;
+        }
+
+        // Update component list in sidebar
+        function updateComponentList() {
+            const componentList = document.getElementById('componentList');
+            let html = '';
+            
+            Object.keys(componentDefinitions).forEach(componentId => {
+                const component = componentDefinitions[componentId];
+                const status = nodeStates[componentId] || 'not-tested';
+                const componentData = testingData.components[componentId];
+                
+                let scenarioProgress = '';
+                if (componentData && componentData.scenarios) {
+                    const total = componentData.scenarios.length;
+                    const completed = componentData.scenarios.filter(s => s.status === 'passed' || s.status === 'failed').length;
+                    scenarioProgress = `${completed}/${total}`;
+                }
+                
+                html += `
+                    <div class="component-item" onclick="openComponentTesting('${componentId}')">
+                        <div class="component-status ${status}"></div>
+                        <div class="component-name">${component.name}</div>
+                        <div class="component-progress">${scenarioProgress}</div>
+                    </div>
+                `;
+            });
+            
+            componentList.innerHTML = html;
+        }
+
+        // Open component testing modal
+        function openComponentTesting(componentId) {
+            currentComponent = componentId;
+            const component = componentDefinitions[componentId];
+            const componentData = testingData.components[componentId];
+            
+            document.getElementById('modalTitle').textContent = `Testing: ${component.name}`;
+            
+            // Populate test scenarios
+            populateTestScenarios(componentId);
+            
+            // Populate overall status
+            document.getElementById('overallStatus').value = componentData.status;
+            document.getElementById('componentNotes').value = componentData.notes || '';
+            document.getElementById('componentIssues').value = componentData.issues || '';
+            
+            // Populate guidelines
+            const guidelinesList = document.getElementById('testGuidelines');
+            guidelinesList.innerHTML = component.guidelines.map(guideline => `<li>${guideline}</li>`).join('');
+            
+            document.getElementById('testingModal').style.display = 'block';
+        }
+
+        // Populate test scenarios in modal
+        function populateTestScenarios(componentId) {
+            const component = componentDefinitions[componentId];
+            const componentData = testingData.components[componentId];
+            const scenariosContainer = document.getElementById('testScenarios');
+            
+            let html = '';
+            componentData.scenarios.forEach((scenario, index) => {
+                html += `
+                    <div class="scenario-item ${scenario.status}">
+                        <div class="scenario-header">
+                            <div class="scenario-title">${scenario.title}</div>
+                            <div class="scenario-status">
+                                <button class="status-btn ${scenario.status === 'passed' ? 'passed' : 'not-tested'}" 
+                                        onclick="updateScenarioStatus(${index}, 'passed')">Pass</button>
+                                <button class="status-btn ${scenario.status === 'failed' ? 'failed' : 'not-tested'}" 
+                                        onclick="updateScenarioStatus(${index}, 'failed')">Fail</button>
+                            </div>
+                        </div>
+                        <div class="scenario-description">${scenario.description}</div>
+                        <div class="scenario-steps">
+                            <strong>Test Steps:</strong>
+                            <ol>${scenario.steps.map(step => `<li>${step}</li>`).join('')}</ol>
+                        </div>
+                        <div class="scenario-notes">
+                            <textarea placeholder="Add test notes for this scenario..." 
+                                      onchange="updateScenarioNotes(${index}, this.value)">${scenario.notes || ''}</textarea>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            scenariosContainer.innerHTML = html;
+            updateScenarioProgress();
+        }
+
+        // Update scenario status
+        function updateScenarioStatus(scenarioIndex, status) {
+            if (!currentComponent) return;
+            
+            const componentData = testingData.components[currentComponent];
+            componentData.scenarios[scenarioIndex].status = status;
+            
+            // Re-populate scenarios to update UI
+            populateTestScenarios(currentComponent);
+            
+            // Update overall component status based on scenarios
+            updateComponentStatusFromScenarios();
+            
+            // Auto-update management report
+            if (currentMode === 'management') {
+                generateManagementReport();
+            }
+            
+            saveData();
+        }
+
+        // Update scenario notes
+        function updateScenarioNotes(scenarioIndex, notes) {
+            if (!currentComponent) return;
+            
+            const componentData = testingData.components[currentComponent];
+            componentData.scenarios[scenarioIndex].notes = notes;
+            
+            // Auto-update management report
+            if (currentMode === 'management') {
+                generateManagementReport();
+            }
+            
+            saveData();
+        }
+
+        // Update scenario progress bar
+        function updateScenarioProgress() {
+            if (!currentComponent) return;
+            
+            const componentData = testingData.components[currentComponent];
+            const scenarios = componentData.scenarios;
+            const total = scenarios.length;
+            const completed = scenarios.filter(s => s.status === 'passed' || s.status === 'failed').length;
+            const passed = scenarios.filter(s => s.status === 'passed').length;
+            
+            const progressPercent = total > 0 ? (completed / total) * 100 : 0;
+            document.getElementById('scenarioProgress').style.width = progressPercent + '%';
+            document.getElementById('progressText').textContent = `${completed}/${total}`;
+        }
+
+        // Update component status based on scenarios
+        function updateComponentStatusFromScenarios() {
+            if (!currentComponent) return;
+            
+            const componentData = testingData.components[currentComponent];
+            const scenarios = componentData.scenarios;
+            
+            const hasFailures = scenarios.some(s => s.status === 'failed');
+            const allTested = scenarios.every(s => s.status === 'passed' || s.status === 'failed');
+            const someTested = scenarios.some(s => s.status === 'passed' || s.status === 'failed');
+            
+            let newStatus = 'not-tested';
+            if (hasFailures) {
+                newStatus = 'failed';
+            } else if (allTested) {
+                newStatus = 'passed';
+            } else if (someTested) {
+                newStatus = 'in-testing';
+            }
+            
+            componentData.status = newStatus;
+            nodeStates[currentComponent] = newStatus;
+            document.getElementById('overallStatus').value = newStatus;
+            
+            updateNodeStyle(currentComponent, newStatus);
+            updateComponentList();
+            updateStats();
+            
+            // Auto-update management report
+            if (currentMode === 'management') {
+                generateManagementReport();
+            }
+        }
+
+        // Update overall status manually
+        function updateOverallStatus() {
+            if (!currentComponent) return;
+            
+            const newStatus = document.getElementById('overallStatus').value;
+            const componentData = testingData.components[currentComponent];
+            
+            componentData.status = newStatus;
+            nodeStates[currentComponent] = newStatus;
+            
+            updateNodeStyle(currentComponent, newStatus);
+            updateComponentList();
+            updateStats();
+            
+            // Auto-update management report
+            if (currentMode === 'management') {
+                generateManagementReport();
+            }
+            
+            saveData();
+        }
+
+        // Save component testing data
+        function saveComponentTesting() {
+            if (!currentComponent) return;
+            
+            const componentData = testingData.components[currentComponent];
+            componentData.notes = document.getElementById('componentNotes').value;
+            componentData.issues = document.getElementById('componentIssues').value;
+            
+            updateComponentStatusFromScenarios();
+            
+            // Auto-update management report
+            generateManagementReport();
+            
+            saveData();
+            
+            document.getElementById('testingModal').style.display = 'none';
+            alert('Component testing saved successfully!');
+        }
+
+        // Switch modal tabs
+        function switchTab(tabName) {
+            // Remove active class from all tabs and content
+            document.querySelectorAll('.modal-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab and content
+            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            if (tabName === 'scenarios') {
+                updateScenarioProgress();
+            }
+        }
+
+        // Mode switching
+        function switchMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[onclick="switchMode('${mode}')"]`).classList.add('active');
+            
+            if (mode === 'testing') {
+                document.getElementById('testingPanel').style.display = 'block';
+                document.getElementById('managementPanel').classList.remove('active');
+            } else {
+                document.getElementById('testingPanel').style.display = 'none';
+                document.getElementById('managementPanel').classList.add('active');
+                generateManagementReport();
+            }
+        }
+
+        // Update node appearance
+        function updateNodeStyle(nodeId, status) {
+            const node = document.querySelector(`[id*="${nodeId}"]`);
+            if (node) {
+                statusTypes.forEach(type => node.classList.remove(type));
+                node.classList.add(status);
+                node.classList.add('node-updated');
+                setTimeout(() => node.classList.remove('node-updated'), 600);
+            }
+        }
+
+        // Update all nodes
+        function updateAllNodeStyles() {
+            Object.keys(nodeStates).forEach(nodeId => {
+                updateNodeStyle(nodeId, nodeStates[nodeId]);
+            });
+        }
+
+        // Add click listeners to nodes
+        function addNodeListeners() {
+            setTimeout(() => {
+                const svgElement = document.querySelector('#chart svg');
+                if (svgElement) {
+                    const nodes = svgElement.querySelectorAll('.node');
+                    nodes.forEach(node => {
+                        node.style.cursor = 'pointer';
+                        node.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const nodeId = extractNodeId(node);
+                            if (nodeId && componentDefinitions[nodeId]) {
+                                openComponentTesting(nodeId);
+                            }
+                        });
+                    });
+                }
+                if (!isInitialized) {
+                    initializeTestingData();
+                    loadData();
+                }
+            }, 1000);
+        }
+
+        // Extract node ID from clicked element
+        function extractNodeId(nodeElement) {
+            const rect = nodeElement.querySelector('rect, circle, polygon');
+            if (rect && rect.id) {
+                const id = rect.id;
+                const matches = id.match(/flowchart-(\w+)-\d+/);
+                if (matches && matches[1]) {
+                    return matches[1];
+                }
+            }
+            return null;
+        }
+
+        // Save data
+        function saveData() {
+            testingData.testerName = document.getElementById('testerName').value;
+            testingData.testDate = document.getElementById('testDate').value;
+            testingData.generalNotes = document.getElementById('generalNotes').value;
+            testingData.lastSaved = new Date().toISOString();
+
+            try {
+                localStorage.setItem('workflowTestingData', JSON.stringify(testingData));
+            } catch (e) {
+                console.warn('LocalStorage not available. Data will not persist between sessions.');
+            }
+        }
+
+        // Load data
+        function loadData() {
+            try {
+                const saved = localStorage.getItem('workflowTestingData');
+                if (saved) {
+                    const savedData = JSON.parse(saved);
+                    
+                    document.getElementById('testerName').value = savedData.testerName || '';
+                    document.getElementById('testDate').value = savedData.testDate || '';
+                    document.getElementById('generalNotes').value = savedData.generalNotes || '';
+
+                    if (savedData.components) {
+                        Object.keys(savedData.components).forEach(componentId => {
+                            if (testingData.components[componentId]) {
+                                testingData.components[componentId] = savedData.components[componentId];
+                                nodeStates[componentId] = savedData.components[componentId].status;
+                            }
+                        });
+                    }
+
+                    updateAllNodeStyles();
+                    updateComponentList();
+                    updateStats();
+                    
+                    // Auto-generate management report if in management mode
+                    if (currentMode === 'management') {
+                        generateManagementReport();
+                    }
+                }
+            } catch (e) {
+                console.warn('Could not load saved data.');
+            }
+        }
+
+        // Save test results
+        window.saveTestResults = function() {
+            console.log('Save test results called');
+            saveData();
+            alert('Test results saved successfully!');
+        }
+
+        // Reset all tests
+        window.resetAllTests = function() {
+            console.log('Reset all tests called');
+            if (confirm('Are you sure you want to reset all test results?')) {
+                Object.keys(componentDefinitions).forEach(componentId => {
+                    nodeStates[componentId] = 'not-tested';
+                    testingData.components[componentId] = {
+                        status: 'not-tested',
+                        scenarios: componentDefinitions[componentId].scenarios.map(scenario => ({
+                            ...scenario,
+                            status: 'not-tested',
+                            notes: ''
+                        })),
+                        notes: '',
+                        issues: ''
+                    };
+                });
+                updateAllNodeStyles();
+                updateComponentList();
+                updateStats();
+                
+                // Auto-update management report
+                if (currentMode === 'management') {
+                    generateManagementReport();
+                }
+                
+                saveData();
+                console.log('Reset completed');
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            const total = Object.keys(nodeStates).length;
+            const passed = Object.values(nodeStates).filter(status => status === 'passed').length;
+            const failed = Object.values(nodeStates).filter(status => status === 'failed').length;
+            const inTesting = Object.values(nodeStates).filter(status => status === 'in-testing').length;
+            const notTested = Object.values(nodeStates).filter(status => status === 'not-tested').length;
+            const completionRate = total > 0 ? Math.round(((passed + failed) / total) * 100) : 0;
+
+            document.getElementById('totalNodes').textContent = total;
+            document.getElementById('passedNodes').textContent = passed;
+            document.getElementById('failedNodes').textContent = failed;
+            document.getElementById('inTestingNodes').textContent = inTesting;
+            document.getElementById('notTestedNodes').textContent = notTested;
+            document.getElementById('completionRate').textContent = completionRate + '%';
+        }
+
+        // Generate comprehensive management report
+        function generateManagementReport() {
+            const total = Object.keys(nodeStates).length;
+            const passed = Object.values(nodeStates).filter(status => status === 'passed').length;
+            const failed = Object.values(nodeStates).filter(status => status === 'failed').length;
+            const inTesting = Object.values(nodeStates).filter(status => status === 'in-testing').length;
+            const notTested = Object.values(nodeStates).filter(status => status === 'not-tested').length;
+            const completionRate = total > 0 ? Math.round(((passed + failed) / total) * 100) : 0;
+
+            // Update timestamp
+            document.getElementById('reportTimestamp').textContent = 
+                `Generated on: ${new Date().toLocaleString()}`;
+
+            // Generate summary cards
+            const summaryHTML = `
+                <div class="summary-card">
+                    <div class="summary-value" style="color: #2ecc71;">${passed}</div>
+                    <div class="summary-label">Components Passed</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value" style="color: #e74c3c;">${failed}</div>
+                    <div class="summary-label">Components Failed</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value" style="color: #f39c12;">${inTesting}</div>
+                    <div class="summary-label">In Testing</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value" style="color: #95a5a6;">${notTested}</div>
+                    <div class="summary-label">Not Tested</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value" style="color: #3498db;">${completionRate}%</div>
+                    <div class="summary-label">Completion Rate</div>
+                </div>
+            `;
+            document.getElementById('reportSummary').innerHTML = summaryHTML;
+
+            // Generate detailed component results
+            let detailedHTML = '';
+            Object.keys(componentDefinitions).forEach(componentId => {
+                const component = componentDefinitions[componentId];
+                const componentData = testingData.components[componentId];
+                const status = componentData.status;
+                
+                let statusColor = '#bdc3c7';
+                switch(status) {
+                    case 'passed': statusColor = '#2ecc71'; break;
+                    case 'failed': statusColor = '#e74c3c'; break;
+                    case 'in-testing': statusColor = '#f39c12'; break;
+                }
+
+                const totalScenarios = componentData.scenarios.length;
+                const passedScenarios = componentData.scenarios.filter(s => s.status === 'passed').length;
+                const failedScenarios = componentData.scenarios.filter(s => s.status === 'failed').length;
+
+                detailedHTML += `
+                    <div class="result-item">
+                        <div class="result-status" style="background-color: ${statusColor};"></div>
+                        <div class="result-content">
+                            <div class="result-title">${component.name}</div>
+                            <div class="result-description">${component.description}</div>
+                            <div class="result-scenarios">
+                                Scenarios: ${passedScenarios} passed, ${failedScenarios} failed, ${totalScenarios - passedScenarios - failedScenarios} pending
+                            </div>
+                            ${componentData.notes ? `<div style="margin-top: 8px; font-size: 0.85em; color: #2c3e50;"><strong>Notes:</strong> ${componentData.notes}</div>` : ''}
+                            ${componentData.issues ? `<div style="margin-top: 5px; font-size: 0.85em; color: #e74c3c;"><strong>Issues:</strong> ${componentData.issues}</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('detailedResults').innerHTML = detailedHTML;
+
+            // Generate scenario breakdown
+            let scenarioHTML = '';
+            Object.keys(componentDefinitions).forEach(componentId => {
+                const component = componentDefinitions[componentId];
+                const componentData = testingData.components[componentId];
+                
+                if (componentData.scenarios.some(s => s.status !== 'not-tested' || s.notes)) {
+                    scenarioHTML += `
+                        <div class="component-scenarios">
+                            <div class="component-title">${component.name}</div>
+                    `;
+                    
+                    componentData.scenarios.forEach(scenario => {
+                        let statusColor = '#bdc3c7';
+                        switch(scenario.status) {
+                            case 'passed': statusColor = '#2ecc71'; break;
+                            case 'failed': statusColor = '#e74c3c'; break;
+                            case 'in-testing': statusColor = '#f39c12'; break;
+                        }
+                        
+                        scenarioHTML += `
+                            <div class="scenario-result">
+                                <div class="scenario-status-dot" style="background-color: ${statusColor};"></div>
+                                <div class="scenario-name">${scenario.title}</div>
+                            </div>
+                            ${scenario.notes ? `<div class="scenario-notes-preview">${scenario.notes}</div>` : ''}
+                        `;
+                    });
+                    
+                    scenarioHTML += '</div>';
+                }
+            });
+            
+            if (scenarioHTML) {
+                document.getElementById('scenarioBreakdown').innerHTML = scenarioHTML;
+            } else {
+                document.getElementById('scenarioBreakdown').innerHTML = '<p style="text-align: center; color: #7f8c8d; padding: 20px;">No scenario testing completed yet.</p>';
+            }
+
+            // Generate critical issues
+            let issuesHTML = '';
+            let hasIssues = false;
+            
+            Object.keys(componentDefinitions).forEach(componentId => {
+                const component = componentDefinitions[componentId];
+                const componentData = testingData.components[componentId];
+                
+                if (componentData.issues) {
+                    hasIssues = true;
+                    issuesHTML += `
+                        <div class="issue-item">
+                            <div class="issue-component">${component.name}</div>
+                            <div class="issue-description">${componentData.issues}</div>
+                        </div>
+                    `;
+                }
+                
+                // Also check scenario-level issues
+                componentData.scenarios.forEach(scenario => {
+                    if (scenario.status === 'failed' && scenario.notes) {
+                        hasIssues = true;
+                        issuesHTML += `
+                            <div class="issue-item">
+                                <div class="issue-component">${component.name} - ${scenario.title}</div>
+                                <div class="issue-description">${scenario.notes}</div>
+                            </div>
+                        `;
+                    }
+                });
+            });
+            
+            if (hasIssues) {
+                document.getElementById('issuesList').innerHTML = issuesHTML;
+            } else {
+                document.getElementById('issuesList').innerHTML = '<div class="no-issues">No critical issues found during testing.</div>';
+            }
+
+            // Update tester notes
+            document.getElementById('reportNotes').innerHTML = `
+                <p><strong>Tester:</strong> ${testingData.testerName || 'Not specified'}</p>
+                <p><strong>Test Date:</strong> ${testingData.testDate || 'Not specified'}</p>
+                <p><strong>Last Updated:</strong> ${testingData.lastSaved ? new Date(testingData.lastSaved).toLocaleString() : 'Never'}</p>
+                <p><strong>General Notes:</strong></p>
+                <p>${testingData.generalNotes || 'No additional notes provided.'}</p>
+            `;
+        }
+
+        // Modal controls
+        document.querySelector('.close').onclick = function() {
+            document.getElementById('testingModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('testingModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            addNodeListeners();
+            document.getElementById('testDate').value = new Date().toISOString().split('T')[0];
+        });
+
+        // Re-add listeners if mermaid re-renders
+        const observer = new MutationObserver(() => {
+            if (document.querySelector('#chart svg')) {
+                addNodeListeners();
+            }
+        });
+
+        observer.observe(document.getElementById('chart'), {
+            childList: true,
+            subtree: true
+        });
+    </script>
+</body>
+</html>
