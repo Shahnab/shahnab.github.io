@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Report</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff;
+            color: #000000;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: #000000;
+            color: #ffffff;
+            padding: 15px 30px;
+            text-align: center;
+            border-bottom: 2px solid #000000;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .container {
+            display: flex;
+            height: calc(100vh - 60px);
+        }
+
+        .left-panel {
+            width: 50%;
+            background-color: #ffffff;
+            border-right: 2px solid #000000;
+            position: relative;
+        }
+
+        .right-panel {
+            width: 50%;
+            background-color: #ffffff;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(100vh - 60px);
+        }
+
+        .pdf-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pdf-header {
+            background-color: #f8f8f8;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .pdf-header h3 {
+            font-size: 16px;
+            font-weight: 400;
+            color: #333;
+        }
+
+        .pdf-status {
+            font-size: 12px;
+            color: #666;
+            padding: 4px 8px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+        }
+
+        .pdf-viewer {
+            flex: 1;
+            width: 100%;
+            border: none;
+            background-color: #f5f5f5;
+        }
+
+        .pdf-fallback {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #666;
+            padding: 40px;
+        }
+
+        .pdf-fallback .icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+
+        .chart-container {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 20px;
+            margin-top: 10px;
+            position: relative;
+        }
+
+        .zoom-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 5px;
+            z-index: 10;
+        }
+
+        .zoom-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #000;
+            background-color: #fff;
+            color: #000;
+            cursor: pointer;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .zoom-btn:hover {
+            background-color: #000;
+            color: #fff;
+        }
+
+        .zoom-btn:active {
+            transform: scale(0.95);
+        }
+
+        .zoom-info {
+            position: absolute;
+            top: 55px;
+            right: 15px;
+            font-size: 12px;
+            color: #666;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 4px 8px;
+            border-radius: 3px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .content-sections {
+            margin-top: 30px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            background-color: #000000;
+            color: #ffffff;
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            font-size: 16px;
+            transition: background-color 0.2s ease;
+            user-select: none;
+        }
+
+        .section-header:hover {
+            background-color: #333333;
+        }
+
+        .section-header.active {
+            background-color: #333333;
+        }
+
+        .section-toggle {
+            font-size: 18px;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+
+        .section-toggle.rotated {
+            transform: rotate(180deg);
+        }
+
+        .section-content {
+            padding: 20px;
+            background-color: #ffffff;
+            line-height: 1.6;
+            font-size: 14px;
+            color: #333;
+            display: none;
+        }
+
+        .section-content.active {
+            display: block;
+        }
+
+        .section-content h4 {
+            color: #000;
+            font-size: 15px;
+            font-weight: 600;
+            margin: 20px 0 10px 0;
+        }
+
+        .section-content h4:first-child {
+            margin-top: 0;
+        }
+
+        .section-content p {
+            margin-bottom: 15px;
+        }
+
+        .section-content ol {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .section-content li {
+            margin-bottom: 15px;
+        }
+
+        .section-content strong {
+            color: #000;
+            font-weight: 600;
+        }
+
+        .section-content em {
+            font-style: italic;
+            color: #666;
+        }
+
+        .chart-header {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .chart-header h3 {
+            font-size: 18px;
+            font-weight: 400;
+            margin-bottom: 8px;
+            color: #000;
+        }
+
+        .chart-header p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        #mermaid-chart {
+            width: 100%;
+            height: auto;
+            min-height: 500px;
+            transition: transform 0.3s ease;
+            transform-origin: center top;
+            overflow: visible;
+        }
+
+        .chart-wrapper {
+            overflow: auto;
+            max-height: calc(100vh - 200px);
+            position: relative;
+            cursor: grab;
+        }
+
+        .chart-wrapper:active {
+            cursor: grabbing;
+        }
+
+        .chart-wrapper.dragging {
+            cursor: grabbing;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #000;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .left-panel, .right-panel {
+                width: 100%;
+            }
+            
+            .left-panel {
+                height: 50vh;
+                border-right: none;
+                border-bottom: 2px solid #000000;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Interactive Report</h1>
+    </div>
+
+    <div class="container">
+        <!-- Left Panel - PDF Viewer -->
+        <div class="left-panel">
+            <div class="pdf-container">
+                <div class="pdf-header">
+                    <h3>Research Paper</h3>
+                    <div class="pdf-status">PDF Document</div>
+                </div>
+                <iframe 
+                    src="paper.pdf" 
+                    class="pdf-viewer"
+                    type="application/pdf"
+                    onload="handlePdfLoad()"
+                    onerror="handlePdfError()">
+                </iframe>
+                <div class="pdf-fallback" id="pdf-fallback" style="display: none;">
+                    <div class="icon">📄</div>
+                    <h3>PDF Document</h3>
+                    <p>paper.pdf</p>
+                    <p style="margin-top: 10px; font-size: 12px;">
+                        PDF viewer not available or file not found.<br>
+                        Please ensure paper.pdf is in the same directory.
+                    </p>
+                    <a href="paper.pdf" target="_blank" style="margin-top: 15px; color: #000; text-decoration: underline;">
+                        Open PDF in new tab
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Mermaid Chart -->
+        <div class="right-panel">
+            <div class="chart-header">
+                <h3>Detection Methodology Flow</h3>
+                <p>Interactive flowchart showing the complete approach</p>
+            </div>
+            
+            <div class="chart-container">
+                <div class="zoom-controls">
+                    <button class="zoom-btn" onclick="zoomIn()" title="Zoom In">+</button>
+                    <button class="zoom-btn" onclick="zoomOut()" title="Zoom Out">−</button>
+                    <button class="zoom-btn" onclick="resetZoom()" title="Reset Zoom & Position">⌂</button>
+                </div>
+                <div class="zoom-info" id="zoom-info">100%</div>
+                <div style="position: absolute; top: 75px; right: 15px; font-size: 11px; color: #999; background-color: rgba(255, 255, 255, 0.9); padding: 3px 6px; border-radius: 3px; border: 1px solid #e0e0e0;">
+                    Click & drag to pan
+                </div>
+                <div class="loading" id="chart-loading">
+                    <div class="spinner"></div>
+                    Rendering flowchart...
+                </div>
+                <div class="chart-wrapper">
+                    <div id="mermaid-chart"></div>
+                </div>
+            </div>
+
+            <div class="content-sections">
+                    
+                <!-- Introduction Section -->
+
+                <!-- Strength Section -->
+                <div class="section">
+                    <div class="section-header" onclick="toggleSection(this)">
+                        <span>Strength</span>
+                        <span class="section-toggle">▼</span>
+                    </div>
+                    <div class="section-content">
+                        <ol>
+                            <li><strong>Comprehensive Pipeline:</strong> The paper integrates multiple complementary strategies (data augmentation, pseudo-labeling, multi-stage distillation, and hard example mining) in a single framework. This holistic approach is a strength because it addresses both data and model sides of the problem.</li>
+
+                            <li><strong>Real-Time Focus:</strong> Achieving high accuracy <em>and</em> real-time speed is challenging. The results (e.g. F1≈0.6318 at 145 FPS for D-Fine-M) indicate a good balance of performance, which is commendable for an on-edge scenario.</li>
+
+                            <li><strong>Empirical Improvements:</strong> Each proposed component (pseudo-labeling, style transfer, distillation stages) is empirically shown to help. The authors provide several ablation tables that quantify gains from pseudo labels and from each distillation stage.</li>
+
+                            <li><strong>Competition Relevance:</strong> Building on AI City Challenge trends (using VisDrone, LOAF, style transfer) shows the approach is informed by state-of-practice. The pipeline's effectiveness is demonstrated on a real benchmark and leaderboard </li>
+                        </ol>
+                    </div>
+                </div>
+
+
+
+
+                <!-- Experimental Design Enhancements Section -->
+                <div class="section">
+                    <div class="section-header" onclick="toggleSection(this)">
+                        <span>Experimental Design Enhancements</span>
+                        <span class="section-toggle">▼</span>
+                    </div>
+                    <div class="section-content">
+                        <ol>
+                            <li><strong>Ablation Studies:</strong> The paper provides some ablations, but more can be added. For example, an ablation of <em>each</em> data augmentation (CycleGAN night, flash, blur, pseudo-labeling, adaptive mining) in isolation could clarify their individual impact. Similarly, ablate components of distillation (e.g. <em>only</em> stage 2 vs all four stages). This could justify the complexity by showing which parts are truly necessary.</li>
+
+                            <li><strong>Baseline and Comparative Models:</strong> It could strengthen the paper to compare against more baselines. For instance, training a comparable YOLO or EfficientDet model using the same data pipeline to see if the gains are due to KD or just data. Also, comparing to existing fisheye-specialized detectors (if any) or to simply retraining a standard model on the augmented FishEye8K data.</li>
+
+                            <li><strong>Metrics and Evaluation:</strong> Reporting with only F1 and FPS (and their harmonic mean) as done in the challenge is understandable, but for a CVPR/ICCV audience maybe one should also report standard detection metrics (e.g. mAP@[.5:.95], AP@0.5) and even per-class AP. This allows fair comparison to prior work. For example, DETRDistill and KD-DETR papers report mAP gains. Also, error analysis (precision vs recall trade-offs, examples of failure cases) would be valuable.</li>
+
+                            <li><strong>Generalization Tests:</strong> To support the claim of "domain-agnostic" applicability, testing the final model (or pipeline) on a non-fisheye dataset (e.g. VisDrone or COCO vehicles). If the pipeline truly generalizes, the specialized data steps might still help on standard images. Demonstrating cross-domain performance (even if lower) would significantly strengthen the case.</li>
+
+                            <li><strong>Training Efficiency:</strong> The multi-stage distillation and adaptive mining substantially increase training time (multiple schedules, repeated epochs). It would be useful to report training details if deemed presentable (e.g. total epochs or GPU-hours) and perhaps even investigating more efficient alternatives (e.g. distilling in one end-to-end phase with carefully weighted losses).</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Result Enhancements Section -->
+                <div class="section">
+                    <div class="section-header" onclick="toggleSection(this)">
+                        <span>Result Enhancements</span>
+                        <span class="section-toggle">▼</span>
+                    </div>
+                    <div class="section-content">
+                        <ol>
+                            <li><strong>Incremental Benefit vs. Complexity:</strong> The four-stage distillation approach is intricate. According to data presented, each additional stage yields diminishing returns: Stage 2 (head-level distill) improves F1 by ~0.0116 (0.6412→0.6528), Stage 3 adds only ~0.0043 (0.6528→0.6571), and Stage 4 adds ~0.0065 (0.6571→0.6636). Combined, the full pipeline boosts the D-Fine-L by ~0.0224 F1. These gains (a few percentage points) are modest, especially given the added training complexity of separate freezing/unfreezing steps. By contrast, other KD methods (e.g. DETRDistill) report improvements exceeding 2% mAP, suggesting the benefits here are on the low side (if reading the data correctly). It would be prudent to analyze whether a simpler two-stage approach (like straight KD-DETR) could achieve similar results with less effort.</li>
+
+                            <li><strong>Fisheye Distortion Handling:</strong> The authors treat fisheye as a "stress test" rather than modeling it. However, ignoring geometric distortions can be suboptimal. As noted by Wang <em>et al.</em> (KD-DETR), DETR inherently lacks consistent query alignments, and fisheye distortion further breaks spatial correspondence. The current method relies on data augmentations to cover this gap. It might overlook the fact that convolutional networks can be explicitly adapted to fisheye (e.g. via <em>RectConv</em>) or learned positional embeddings. The paper does not discuss why they avoid distortion-specific modules, which is an assumption worth examining.</li>
+
+                            <li><strong>Pseudo-Label Quality and Noise:</strong> Using Co-DETR to relabel FishEye8K and LOAF is sensible, but the procedure can have potential pitfalls. The authors add any box that the model predicted and the human annotation missed (IoU<0.5). This could introduce false positives if the model is overconfident, especially in cluttered scenes. On the other hand, false negatives (missed real cars) are fixed, which is good. It's unclear how many boxes are added/removed. Quantitative analysis of annotation correction (e.g. how many changes, how IoU threshold was chosen) is missing. Also, the main model (Co-DETR) was not perfect (F1 ~0.4628 even after retraining), so its labels may still carry errors. More discussion of pseudo-label precision/recall would help assess how much annotation noise remains.</li>
+
+                            <li><strong>Day–Night Split Strategy:</strong> Training separate models for day and night is effective (0.67→0.69 F1) but introduces system complexity. Inference must first classify image as day or night (the authors rely average brightness). In practice, such routing can be unreliable. Moreover, maintaining two models means double memory footprint and deployment complexity. The speed drop from 47 to 45 FPS is minor, but that's only for D-Fine-X; a smaller model might see more slowdown under two-expert routing. Suggestion: An alternative could be to train a single model with domain-adaptive normalization or use a small classifier to pick modes, which might be cleaner. At minimum, the paper can clarify the overhead of this "divide-and-conquer" strategy versus just training on mixed data.</li>
+
+                            <li><strong>Evaluation Metrics:</strong> The primary metric is the harmonic mean of F1 and FPS (HMF1,FPS), which is non-standard in literature. While this suits the challenge, for an academic paper it would be better to also report plain mAP and precision/recall curves. The leaderboard data tables uses F1 alone to rank, but adding mean Average Precision (AP) would contextualize results for the vision community. Indeed, Table 7 gives AP values, but these are only briefly shown without discussion. For completeness, comparing to baselines on AP would strengthen the evaluation.</li>
+
+                            <li><strong>Claim of Generalization:</strong> The authors claim the pipeline "broadly applies to general vehicle detection" beyond fisheye. However, they only demonstrate results on fisheye benchmarks. To justify this claim, they should test or at least mention experiments on non-fisheye data (e.g. KITTI or BDD100K for vehicles). Without such evidence, the assertion that the method is sensor-agnostic remains speculative.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                
+
+                <!-- Improvement Areas Section -->
+                <div class="section">
+                    <div class="section-header" onclick="toggleSection(this)">
+                        <span>Food for thought: Improvement Areas</span>
+                        <span class="section-toggle">▼</span>
+                    </div>
+                    <div class="section-content">
+                        <ol>
+                            <li><strong>Incremental Novelty:</strong> Most individual ideas (KD-DETR, style transfer, adaptive mining) come from prior work, the papers strong point is the <em>integration</em> and staging. the incremental benefits can be highlighted more by comparing with other base models</li>
+
+                            <li><strong>Limited Generalization Evidence:</strong> The method is only tested on fisheye vehicle data. For "sensor-agnostic" or broadly applicable is unproven. A vision conference paper would be stronger if it showed results on at least one non-fisheye dataset.</li>
+
+                            <li><strong>Complexity vs. Gain:</strong> The multi-stage distillation and separate models add implementation complexity. Given that gains are only a few percentage points in F1, one must ask if the improvements justify the effort. To make a stronger point, the study can be optimized further (if possible) </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({ 
+            startOnLoad: false,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#ffffff',
+                primaryTextColor: '#000000',
+                primaryBorderColor: '#000000',
+                lineColor: '#000000',
+                sectionBkgColor: '#ffffff',
+                altSectionBkgColor: '#f8f8f8',
+                gridColor: '#e0e0e0',
+                secondaryColor: '#f5f5f5',
+                tertiaryColor: '#ffffff'
+            },
+            flowchart: {
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+
+        // Mermaid chart definition
+        const chartDefinition = `
+        flowchart TD
+            A["Start: Real‑world Vehicle Detection Problem"]
+            B["Challenge: Fisheye Images<br/>distorted, hard to detect vehicles"]
+            C["Goal: Fast + Accurate Detection on real‑time edge devices"]
+            D["Step 1: Teacher‑Student Learning"]
+            D1["Train a large model (Teacher)"]
+            D2["Teach a smaller model (Student)"]
+            D3["Student becomes fast and accurate"]
+            E["Step 2: Data Enhancement"]
+            E1["Pseudo‑Labeling<br/>Fix & add object labels using AI"]
+            E2["Style Transfer<br/>Turn day into night images"]
+            E3["Blur & Flash Augmentation<br/>Simulate poor visibility"]
+            F["Step 3: Hard Example Mining"]
+            F1["Find difficult training cases"]
+            F2["Repeat training on hard cases"]
+            G["Combine all improvements"]
+            H["Final Result: Fast + Accurate<br/>Vehicle Detector for real‑time use"]
+
+            A --> B
+            B --> C
+
+            C --> D
+            D --> D1
+            D --> D2
+            D2 --> D3
+
+            C --> E
+            E --> E1
+            E --> E2
+            E --> E3
+
+            C --> F
+            F --> F1
+            F1 --> F2
+
+            D3 --> G
+            E3 --> G
+            F2 --> G
+
+            G --> H
+        `;
+
+        // Render the Mermaid chart
+        async function renderChart() {
+            try {
+                const { svg } = await mermaid.render('mermaid-svg', chartDefinition);
+                document.getElementById('mermaid-chart').innerHTML = svg;
+                document.getElementById('chart-loading').style.display = 'none';
+            } catch (error) {
+                console.error('Error rendering Mermaid chart:', error);
+                document.getElementById('chart-loading').innerHTML = 'Error loading chart';
+            }
+        }
+
+        // PDF handling functions
+        function handlePdfLoad() {
+            console.log('PDF loaded successfully');
+        }
+
+        function handlePdfError() {
+            console.log('PDF failed to load, showing fallback');
+            document.querySelector('.pdf-viewer').style.display = 'none';
+            document.getElementById('pdf-fallback').style.display = 'flex';
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', function() {
+            renderChart();
+            initializeDragFunctionality();
+            
+            // Check if PDF loads after a short delay
+            setTimeout(() => {
+                const iframe = document.querySelector('.pdf-viewer');
+                try {
+                    // Try to access iframe content to check if PDF loaded
+                    if (!iframe.contentDocument && !iframe.contentWindow) {
+                        handlePdfError();
+                    }
+                } catch (e) {
+                    // Cross-origin or other error - PDF might still be loading
+                    console.log('PDF status uncertain, keeping iframe visible');
+                }
+            }, 2000);
+        });
+
+        // Zoom functionality for Mermaid chart
+        let currentZoom = 1.0;
+        const zoomStep = 0.2;
+        const minZoom = 0.5;
+        const maxZoom = 3.0;
+
+        // Pan functionality for Mermaid chart
+        let panX = 0;
+        let panY = 0;
+        let isDragging = false;
+        let dragStartX = 0;
+        let dragStartY = 0;
+        let lastPanX = 0;
+        let lastPanY = 0;
+
+        function updateTransform() {
+            const chart = document.getElementById('mermaid-chart');
+            const zoomInfo = document.getElementById('zoom-info');
+            
+            chart.style.transform = `translate(${panX}px, ${panY}px) scale(${currentZoom})`;
+            zoomInfo.textContent = `${Math.round(currentZoom * 100)}%`;
+        }
+
+        function zoomIn() {
+            if (currentZoom < maxZoom) {
+                currentZoom = Math.min(currentZoom + zoomStep, maxZoom);
+                updateTransform();
+            }
+        }
+
+        function zoomOut() {
+            if (currentZoom > minZoom) {
+                currentZoom = Math.max(currentZoom - zoomStep, minZoom);
+                updateTransform();
+            }
+        }
+
+        function resetZoom() {
+            currentZoom = 1.0;
+            panX = 0;
+            panY = 0;
+            updateTransform();
+        }
+
+        // Initialize drag functionality
+        function initializeDragFunctionality() {
+            const chartWrapper = document.querySelector('.chart-wrapper');
+            
+            // Mouse events
+            chartWrapper.addEventListener('mousedown', startDrag);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', endDrag);
+            
+            // Touch events for mobile
+            chartWrapper.addEventListener('touchstart', startDrag);
+            document.addEventListener('touchmove', drag);
+            document.addEventListener('touchend', endDrag);
+            
+            // Prevent default drag behavior on the chart
+            chartWrapper.addEventListener('dragstart', (e) => e.preventDefault());
+        }
+
+        function startDrag(e) {
+            isDragging = true;
+            const chartWrapper = document.querySelector('.chart-wrapper');
+            chartWrapper.classList.add('dragging');
+            
+            // Get coordinates (handle both mouse and touch)
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            
+            dragStartX = clientX - panX;
+            dragStartY = clientY - panY;
+            lastPanX = panX;
+            lastPanY = panY;
+            
+            e.preventDefault();
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            
+            // Get coordinates (handle both mouse and touch)
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            
+            panX = clientX - dragStartX;
+            panY = clientY - dragStartY;
+            
+            updateTransform();
+            e.preventDefault();
+        }
+
+        function endDrag(e) {
+            if (!isDragging) return;
+            
+            isDragging = false;
+            const chartWrapper = document.querySelector('.chart-wrapper');
+            chartWrapper.classList.remove('dragging');
+            
+            e.preventDefault();
+        }
+
+        // Keyboard shortcuts for zoom
+        document.addEventListener('keydown', function(event) {
+            // Only apply shortcuts when focus is on the right panel
+            if (event.target.closest('.right-panel') || event.target === document.body) {
+                if (event.ctrlKey || event.metaKey) {
+                    switch(event.key) {
+                        case '=':
+                        case '+':
+                            event.preventDefault();
+                            zoomIn();
+                            break;
+                        case '-':
+                            event.preventDefault();
+                            zoomOut();
+                            break;
+                        case '0':
+                            event.preventDefault();
+                            resetZoom();
+                            break;
+                    }
+                }
+            }
+        });
+
+        // Section toggle functionality
+        function toggleSection(header) {
+            const content = header.nextElementSibling;
+            const toggle = header.querySelector('.section-toggle');
+            
+            // Toggle active states
+            header.classList.toggle('active');
+            content.classList.toggle('active');
+            toggle.classList.toggle('rotated');
+        }
+
+        // Initialize first section as open
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstSection = document.querySelector('.section-header');
+            if (firstSection) {
+                toggleSection(firstSection);
+            }
+        });
+    </script>
+</body>
+</html>
