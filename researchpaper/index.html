@@ -514,46 +514,91 @@
 
         // Mermaid chart definition
         const chartDefinition = `
-        flowchart TD
-            A["Start: Real‑world Vehicle Detection Problem"]
-            B["Challenge: Fisheye Images<br/>distorted, hard to detect vehicles"]
-            C["Goal: Fast + Accurate Detection on real‑time edge devices"]
-            D["Step 1: Teacher‑Student Learning"]
-            D1["Train a large model (Teacher)"]
-            D2["Teach a smaller model (Student)"]
-            D3["Student becomes fast and accurate"]
-            E["Step 2: Data Enhancement"]
-            E1["Pseudo‑Labeling<br/>Fix & add object labels using AI"]
-            E2["Style Transfer<br/>Turn day into night images"]
-            E3["Blur & Flash Augmentation<br/>Simulate poor visibility"]
-            F["Step 3: Hard Example Mining"]
-            F1["Find difficult training cases"]
-            F2["Repeat training on hard cases"]
-            G["Combine all improvements"]
-            H["Final Result: Fast + Accurate<br/>Vehicle Detector for real‑time use"]
-
-            A --> B
-            B --> C
-
-            C --> D
-            D --> D1
-            D --> D2
-            D2 --> D3
-
-            C --> E
-            E --> E1
-            E --> E2
-            E --> E3
-
-            C --> F
-            F --> F1
-            F1 --> F2
-
-            D3 --> G
-            E3 --> G
-            F2 --> G
-
-            G --> H
+                flowchart LR
+            %% Data Sources
+            V1["Visdrone +<br/>Fisheye8K fold 0"]
+            V2["Visdrone +<br/>Fisheye8K fold 1"] 
+            V3["Visdrone +<br/>Fisheye8K fold 0"]
+            
+            %% Augmentation Types
+            Aug1["Augmentation<br/>Flip, Mosaic,<br/>Random Scale"]
+            Aug2["Augmentation<br/>Flip, Mosaic,<br/>Random Scale"]
+            Aug3["Augmentation<br/>Flip, Mosaic,<br/>Random Scale"]
+            
+            %% CO-DETR Processing
+            CO1["CO-DETR+TTA"]
+            CO2["CO-DETR+TTA"]
+            CO3["CO-DETR+TTA"]
+            
+            %% Original Annotation
+            OA["Original<br/>Annotation"]
+            FNs["FNs"]
+            
+            %% Pseudo Labels
+            Pseudo["Fisheye8K+Visdrone<br/>+LOAF+Fisheye1keval<br/>Pseudo"]
+            
+            %% Data Pool
+            DP["Data Pool"]
+            
+            %% Data Pool Processing
+            DPP["Data Pool Processing"]
+            
+            %% Data Split
+            DS["Data Split"]
+            Train["Fisheye8K+Visdrone<br/>+LOAF"]
+            Test["Test:<br/>Fisheye1keval"]
+            
+            %% Day/Night Processing
+            DNS["Day/Night<br/>Split"]
+            DD["Day Data"]
+            ND["Night Data"]
+            
+            %% Style Transfer
+            CGS["Cycle-GAN<br/>Style Transfer"]
+            
+            %% Flow connections
+            V1 --> Aug1
+            V2 --> Aug2  
+            V3 --> Aug3
+            
+            Aug1 --> CO1
+            Aug2 --> CO2
+            Aug3 --> CO3
+            
+            CO1 --> Pseudo
+            CO2 --> Pseudo
+            CO3 --> Pseudo
+            
+            OA --> FNs
+            FNs --> DP
+            Pseudo --> DP
+            
+            DP --> DPP
+            DPP --> DS
+            DS --> Train
+            DS --> Test
+            
+            DPP --> DNS
+            DNS --> DD
+            DNS --> ND
+            
+            DD --> CGS
+            CGS --> ND
+            
+            %% Styling
+            classDef dataSource fill:#e1bee7,stroke:#8e24aa,stroke-width:2px,color:#000
+            classDef augmentation fill:#c8e6c9,stroke:#388e3c,stroke-width:2px,color:#000
+            classDef processing fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
+            classDef dataPool fill:#2196f3,stroke:#1976d2,stroke-width:2px,color:#fff
+            classDef output fill:#ffecb3,stroke:#ffa000,stroke-width:2px,color:#000
+            classDef styleTransfer fill:#90a4ae,stroke:#455a64,stroke-width:2px,color:#fff
+            
+            class V1,V2,V3 dataSource
+            class Aug1,Aug2,Aug3 augmentation
+            class CO1,CO2,CO3,OA processing
+            class DP,DPP dataPool
+            class FNs,Pseudo,Train,Test,DD,ND output
+            class DS,DNS,CGS styleTransfer
         `;
 
         // Render the Mermaid chart
