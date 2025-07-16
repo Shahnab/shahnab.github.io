@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcription Capacity Analysis - RTX 4070 Super</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 2px solid #333;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #ffffff;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #888;
+            font-weight: 300;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            border-bottom: 1px solid #333;
+            margin-bottom: 30px;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .tab:hover {
+            color: #ffffff;
+            background: #1a1a1a;
+        }
+
+        .tab.active {
+            color: #ffffff;
+            background: #2a2a2a;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #ffffff;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .assumptions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .assumption-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 25px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .assumption-card:hover {
+            transform: translateY(-5px);
+            border-color: #555;
+        }
+
+        .assumptions-summary {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 25px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .assumptions-summary h3 {
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .assumptions-summary p {
+            color: #ccc;
+            font-size: 1rem;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        .assumption-card h3 {
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .assumption-card .details {
+            color: #ccc;
+            font-size: 0.95rem;
+        }
+
+        .workflow-container {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .workflow-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #2a2a2a;
+            border-radius: 6px;
+            border-left: 4px solid #666;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .workflow-step:hover {
+            border-left-color: #fff;
+            background: #333;
+        }
+
+        .workflow-step.active {
+            border-left-color: #fff;
+            background: #333;
+        }
+
+        .step-number {
+            background: #fff;
+            color: #000;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 0.9rem;
+        }
+
+        .step-info {
+            flex: 1;
+        }
+
+        .step-title {
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .step-time {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .step-description {
+            margin-top: 10px;
+            color: #ccc;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .workflow-step.active .step-description {
+            display: block;
+        }
+
+        .calculation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .calculation-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .calculation-card h3 {
+            color: #fff;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .big-number {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #fff;
+            margin: 15px 0;
+        }
+
+        .calculation-details {
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .results-display {
+            background: #0f0f0f;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            color: #0f0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #fff;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .detailed-breakdown {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 25px;
+        }
+
+        .breakdown-section {
+            margin-bottom: 25px;
+        }
+
+        .breakdown-section h3 {
+            color: #fff;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .breakdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .breakdown-label {
+            color: #ccc;
+        }
+
+        .breakdown-value {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .highlight {
+            background: #2a2a2a;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #fff;
+        }
+
+        /* Flow Visualization Styles */
+        .flow-visualization {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 30px 0;
+            padding: 20px;
+            background: #0f0f0f;
+            border-radius: 8px;
+            overflow-x: auto;
+            min-width: 800px;
+        }
+
+        .flow-stage {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .stage-box {
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .stage-box.active {
+            border-color: #fff;
+            background: #2a2a2a;
+        }
+
+        .stage-title {
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .stage-subtitle {
+            color: #888;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+        }
+
+        .file-counter, .queue-status, .gpu-status, .output-status {
+            color: #ccc;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .flow-arrow {
+            width: 60px;
+            height: 40px;
+            position: relative;
+            margin: 0 10px;
+        }
+
+        .arrow-line {
+            width: 40px;
+            height: 2px;
+            background: #666;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .arrow-line::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid #666;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+
+        .flow-data {
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            opacity: 0;
+        }
+
+        .flow-data.moving {
+            animation: flowData 2s ease-in-out;
+        }
+
+        @keyframes flowData {
+            0% { left: 0; opacity: 1; }
+            100% { left: 50px; opacity: 0; }
+        }
+
+        .workflow-controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .workflow-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+
+        .workflow-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        /* Analysis Cards */
+        .timing-analysis {
+            margin-top: 30px;
+            padding: 25px;
+            background: #0f0f0f;
+            border-radius: 8px;
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .analysis-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .analysis-title {
+            color: #ccc;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .analysis-value {
+            color: #fff;
+            font-size: 1.8rem;
+            font-weight: 300;
+            margin-bottom: 8px;
+        }
+
+        .analysis-breakdown {
+            color: #888;
+            font-size: 0.8rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Efficiency Breakdown */
+        .efficiency-breakdown {
+            margin-top: 25px;
+        }
+
+        .efficiency-container {
+            margin-bottom: 15px;
+        }
+
+        .efficiency-bar {
+            height: 40px;
+            background: #1a1a1a;
+            border-radius: 6px;
+            display: flex;
+            overflow: hidden;
+            border: 1px solid #333;
+            margin-bottom: 15px;
+        }
+
+        .efficiency-segment {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .gpu-segment {
+            background: #2a2a2a;
+            border-right: 1px solid #444;
+        }
+
+        .overhead-segment {
+            background: #404040;
+        }
+
+        .efficiency-labels {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .efficiency-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        .label-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            border: 1px solid #333;
+        }
+
+        .gpu-indicator {
+            background: #2a2a2a;
+        }
+
+        .overhead-indicator {
+            background: #404040;
+        }
+
+        /* Mobile Responsive Design */
+        @media (max-width: 1024px) {
+            .flow-visualization {
+                overflow-x: auto;
+                padding: 20px 10px;
+            }
+
+            .flow-stage {
+                min-width: 140px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .assumptions-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+                max-width: none;
+            }
+
+            .assumptions-summary {
+                max-width: none;
+                margin: 0;
+            }
+            
+            .calculation-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .tabs {
+                flex-direction: row;
+                justify-content: center;
+                gap: 0;
+            }
+            
+            .tab {
+                text-align: center;
+                flex: 1;
+                max-width: 150px;
+            }
+
+            .flow-visualization {
+                flex-direction: column;
+                min-width: auto;
+                gap: 20px;
+                overflow-x: visible;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+                margin: 10px 0;
+            }
+
+            .stage-box {
+                min-height: 80px;
+                max-width: 300px;
+                margin: 0 auto;
+            }
+
+            .analysis-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .efficiency-bar {
+                height: 35px;
+            }
+
+            .efficiency-labels {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .efficiency-label {
+                font-size: 0.85rem;
+            }
+
+            .workflow-btn {
+                display: block;
+                margin: 10px auto;
+                width: 80%;
+            }
+
+            .workflow-controls {
+                padding: 0 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+
+            .tabs {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .tab {
+                border-bottom: 1px solid #333;
+                max-width: none;
+                flex: none;
+            }
+
+            .workflow-step {
+                padding: 10px;
+            }
+
+            .step-description {
+                font-size: 0.85rem;
+            }
+
+            .analysis-card {
+                padding: 15px;
+            }
+
+            .analysis-value {
+                font-size: 1.5rem;
+            }
+
+            .efficiency-bar {
+                height: 25px;
+            }
+
+            .efficiency-bar {
+                height: 30px;
+            }
+
+            .efficiency-labels {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .efficiency-label {
+                font-size: 0.8rem;
+            }
+
+            .big-number {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Transcription Capacity Analysis</h1>
+            <p>RTX 4070 Super 16GB • OpenAI Whisper Large-v3 • Call Center Audio Processing</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="assumptions">Assumptions</button>
+            <button class="tab" data-tab="workflow">Processing Workflow</button>
+            <button class="tab" data-tab="calculations">Daily Capacity</button>
+        </div>
+
+        <div class="tab-content active" id="assumptions">
+            <div class="assumptions-grid">
+                <div class="assumption-card">
+                    <h3>Audio Specifications</h3>
+                    <div class="details">
+                        <p><strong>Format:</strong> MP3 @ 128 kbps</p>
+                        <p><strong>Duration:</strong> Maximum 15 minutes</p>
+                        <p><strong>File Size:</strong> ~14 MB per file</p>
+                        <p><strong>Source:</strong> Call center recordings</p>
+                    </div>
+                </div>
+
+                <div class="assumption-card">
+                    <h3>Hardware Configuration</h3>
+                    <div class="details">
+                        <p><strong>GPU:</strong> RTX 4070 Super</p>
+                        <p><strong>VRAM:</strong> 16 GB</p>
+                        <p><strong>CPU:</strong> Modern 6-8 cores</p>
+                        <p><strong>RAM:</strong> 24 GB system memory</p>
+                    </div>
+                </div>
+
+                <div class="assumption-card">
+                    <h3>AI Model Details</h3>
+                    <div class="details">
+                        <p><strong>Model:</strong> Whisper large-v3</p>
+                        <p><strong>Precision:</strong> Float16/bfloat16 (optimized)</p>
+                        <p><strong>Size:</strong> ~2.87 GB (vs 5.75 GB float32)</p>
+                        <p><strong>VRAM Usage:</strong> ~3 GB</p>
+                        <p><strong>Load Time:</strong> ~10 seconds (one-time)</p>
+                    </div>
+                </div>
+
+                <div class="assumption-card">
+                    <h3>Infrastructure</h3>
+                    <div class="details">
+                        <p><strong>Queue System:</strong> AWS SQS</p>
+                        <p><strong>Storage:</strong> S3 / DynamoDB</p>
+                        <p><strong>I/O Operations:</strong> ~1 second per file</p>
+                        <p><strong>Operation:</strong> 24/7 continuous processing</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="assumptions-summary">
+                <h3>Configuration Overview</h3>
+                <p>This analysis is based on processing standard call center audio files (MP3, 15 minutes, 14 MB) using OpenAI's Whisper large-v3 model on an RTX 4070 Super GPU. The model is optimized using float16/bfloat16 precision, reducing its size from 5.75 GB (float32) to 2.87 GB while maintaining transcription accuracy. The hardware configuration provides 16 GB of VRAM, which easily accommodates the optimized model requirements with room for efficient processing. The infrastructure leverages AWS services for queue management and storage, ensuring scalable operations. With modern CPU support and adequate system memory, this setup eliminates potential bottlenecks outside of GPU processing. The model loads once at startup and remains in memory for continuous operation, maximizing efficiency for high-volume transcription workloads.</p>
+            </div>
+        </div>
+
+        <div class="tab-content" id="workflow">
+            <div class="workflow-container">
+                <h2 style="margin-bottom: 25px; color: #fff;">Processing Workflow</h2>
+                
+                <!-- Animated Flow Visualization -->
+                <div class="flow-visualization">
+                    <div class="flow-stage" id="stage1">
+                        <div class="stage-box">
+                            <div class="stage-title">Audio Files</div>
+                            <div class="stage-subtitle">Directory</div>
+                            <div class="file-counter">0 processed</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flow-arrow">
+                        <div class="arrow-line"></div>
+                        <div class="flow-data"></div>
+                    </div>
+                    
+                    <div class="flow-stage" id="stage2">
+                        <div class="stage-box">
+                            <div class="stage-title">Queue System</div>
+                            <div class="stage-subtitle">AWS SQS</div>
+                            <div class="queue-status">Idle</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flow-arrow">
+                        <div class="arrow-line"></div>
+                        <div class="flow-data"></div>
+                    </div>
+                    
+                    <div class="flow-stage" id="stage3">
+                        <div class="stage-box">
+                            <div class="stage-title">GPU Processing</div>
+                            <div class="stage-subtitle">RTX 4070 Super</div>
+                            <div class="gpu-status">Ready</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flow-arrow">
+                        <div class="arrow-line"></div>
+                        <div class="flow-data"></div>
+                    </div>
+                    
+                    <div class="flow-stage" id="stage4">
+                        <div class="stage-box">
+                            <div class="stage-title">Output</div>
+                            <div class="stage-subtitle">S3 / Database</div>
+                            <div class="output-status">0 saved</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-controls">
+                    <button class="workflow-btn" onclick="startWorkflowAnimation()">Simulate Processing</button>
+                    <button class="workflow-btn" onclick="resetWorkflowAnimation()">Reset</button>
+                </div>
+
+                <div style="margin: 30px 0;">
+                    <h3 style="color: #fff; margin-bottom: 20px;">Detailed Step Analysis</h3>
+                </div>
+                
+                <div class="workflow-step" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-info">
+                        <div class="step-title">Queue File Pickup</div>
+                        <div class="step-time">~0.5 seconds</div>
+                        <div class="step-description">
+                            <p><strong>Process:</strong> AWS SQS monitors the directory and picks up the next audio file</p>
+                            <p><strong>Operations:</strong> File metadata reading, status update to "processing"</p>
+                            <p><strong>Calculation:</strong> File I/O on SSD (~0.1s) + Queue operations (~0.4s) = 0.5s</p>
+                            <p><strong>Bottleneck:</strong> Network latency to cloud queue (if using AWS SQS)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-step" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-info">
+                        <div class="step-title">Audio Decode & Preparation</div>
+                        <div class="step-time">~0.5 seconds</div>
+                        <div class="step-description">
+                            <p><strong>Process:</strong> MP3 file loaded from disk and decoded to PCM audio format</p>
+                            <p><strong>Operations:</strong> File reading (14MB), MP3 decoding, feature extraction</p>
+                            <p><strong>Calculation:</strong> 14MB read time (~0.1s) + MP3 decode (~0.3s) + prep (~0.1s) = 0.5s</p>
+                            <p><strong>CPU Usage:</strong> Single-threaded operation, can be parallelized with GPU work</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-step" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-info">
+                        <div class="step-title">GPU Transcription</div>
+                        <div class="step-time">~112 seconds</div>
+                        <div class="step-description">
+                            <p><strong>Process:</strong> Whisper large-v3 model processes 15-minute audio on RTX 4070 Super</p>
+                            <p><strong>Model Optimization:</strong> Uses float16/bfloat16 precision (2.87 GB vs 5.75 GB float32)</p>
+                            <p><strong>Performance:</strong> Optimized GPU processing for audio transcription</p>
+                            <p><strong>Calculation:</strong> Based on benchmarks for RTX 4070 Ti with long audio clips</p>
+                            <p><strong>Memory Usage:</strong> ~3GB VRAM out of 16GB available (18.75% utilization)</p>
+                            <p><strong>Bottleneck:</strong> This is the primary time constraint in the entire workflow</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-step" data-step="4">
+                    <div class="step-number">4</div>
+                    <div class="step-info">
+                        <div class="step-title">Save Transcript</div>
+                        <div class="step-time">~0.1 seconds</div>
+                        <div class="step-description">
+                            <p><strong>Process:</strong> Generated transcript text saved to storage with matching file ID</p>
+                            <p><strong>Operations:</strong> Text file creation, cloud upload (if using S3)</p>
+                            <p><strong>Calculation:</strong> Text file (~2-5KB) write time + network upload</p>
+                            <p><strong>Storage:</strong> Local folder or AWS S3/DynamoDB for scalability</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-step" data-step="5">
+                    <div class="step-number">5</div>
+                    <div class="step-info">
+                        <div class="step-title">Update Status & Next File</div>
+                        <div class="step-time">~0.1 seconds</div>
+                        <div class="step-description">
+                            <p><strong>Process:</strong> Mark current file as "Completed" and fetch next file from queue</p>
+                            <p><strong>Operations:</strong> Database update, queue polling for next file</p>
+                            <p><strong>Calculation:</strong> Status update (~0.05s) + next file fetch (~0.05s) = 0.1s</p>
+                            <p><strong>Continuity:</strong> Immediate transition to next file maintains GPU utilization</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timing-analysis">
+                    <h3 style="color: #fff; margin-bottom: 20px;">Timing Analysis & Calculations</h3>
+                    
+                    <div class="analysis-grid">
+                        <div class="analysis-card">
+                            <div class="analysis-title">Actual Processing Time</div>
+                            <div class="analysis-value">113.2s</div>
+                            <div class="analysis-breakdown">
+                                0.5s + 0.5s + 112s + 0.1s + 0.1s = 113.2s
+                            </div>
+                        </div>
+                        
+                        <div class="analysis-card">
+                            <div class="analysis-title">Safety Buffer</div>
+                            <div class="analysis-value">6.8s</div>
+                            <div class="analysis-breakdown">
+                                Accounts for system variability and overhead
+                            </div>
+                        </div>
+                        
+                        <div class="analysis-card">
+                            <div class="analysis-title">Total Time per File</div>
+                            <div class="analysis-value">120s</div>
+                            <div class="analysis-breakdown">
+                                Conservative estimate for capacity planning
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="efficiency-breakdown">
+                        <h4 style="color: #fff; margin: 20px 0 15px 0;">Efficiency Breakdown</h4>
+                        <div class="efficiency-container">
+                            <div class="efficiency-bar">
+                                <div class="efficiency-segment gpu-segment" style="width: 93.3%"></div>
+                                <div class="efficiency-segment overhead-segment" style="width: 6.7%"></div>
+                            </div>
+                            <div class="efficiency-labels">
+                                <div class="efficiency-label">
+                                    <div class="label-indicator gpu-indicator"></div>
+                                    <span>GPU Processing: 93.3% (112s)</span>
+                                </div>
+                                <div class="efficiency-label">
+                                    <div class="label-indicator overhead-indicator"></div>
+                                    <span>I/O Overhead: 6.7% (8s)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p style="color: #888; font-size: 0.9rem; margin-top: 15px;">
+                            GPU utilization is optimized at 93.3%, with minimal overhead from I/O operations
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="calculations">
+            <div class="calculation-grid">
+                <div class="calculation-card">
+                    <h3>Processing Time</h3>
+                    <div class="big-number">120s</div>
+                    <div class="calculation-details">
+                        Per 15-minute audio file<br>
+                        (113.2s actual + 6.8s buffer)
+                    </div>
+                </div>
+
+                <div class="calculation-card">
+                    <h3>Files per Day</h3>
+                    <div class="big-number">720</div>
+                    <div class="calculation-details">
+                        86,400s ÷ 120s = 720 files<br>
+                        in 24 hours continuous operation
+                    </div>
+                </div>
+
+                <div class="calculation-card">
+                    <h3>Audio Hours per Day</h3>
+                    <div class="big-number">180h</div>
+                    <div class="calculation-details">
+                        720 files × 15 minutes<br>
+                        = 10,800 minutes = 180 hours
+                    </div>
+                </div>
+            </div>
+
+            <div class="detailed-breakdown">
+                <h3>Capacity Analysis</h3>
+                <div class="breakdown-section">
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">GPU Utilization</span>
+                        <span class="breakdown-value">93.3% (112s/120s)</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">I/O & Queue Overhead</span>
+                        <span class="breakdown-value">6.7% (8s/120s)</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Model Memory Usage</span>
+                        <span class="breakdown-value">2.87 GB / 16 GB (17.9%)</span>
+                    </div>
+                </div>
+
+                <div class="breakdown-section">
+                    <h3>Scalability Factors</h3>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Conservative Estimate</span>
+                        <span class="breakdown-value">150-200 hours/day</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Optimistic Estimate</span>
+                        <span class="breakdown-value">Up to 220 hours/day</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">CPU Bottleneck Risk</span>
+                        <span class="breakdown-value">Low (modern 6-8 cores)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Workflow step interaction
+        document.querySelectorAll('.workflow-step').forEach(step => {
+            step.addEventListener('click', () => {
+                document.querySelectorAll('.workflow-step').forEach(s => s.classList.remove('active'));
+                step.classList.add('active');
+            });
+        });
+
+        // Workflow Animation Functions
+        let workflowInterval;
+        let currentProcessingFile = 0;
+        let totalFilesProcessed = 0;
+
+        function startWorkflowAnimation() {
+            resetWorkflowAnimation();
+            currentProcessingFile = 0;
+            totalFilesProcessed = 0;
+            
+            // Start the animation cycle
+            workflowInterval = setInterval(() => {
+                animateWorkflowCycle();
+            }, 3000); // 3 second cycle for demo purposes
+            
+            // Start first cycle immediately
+            animateWorkflowCycle();
+        }
+
+        function animateWorkflowCycle() {
+            currentProcessingFile++;
+            
+            // Stage 1: File pickup
+            setTimeout(() => {
+                activateStage('stage1');
+                updateStageStatus('stage1', 'file-counter', `Processing file ${currentProcessingFile}`);
+                updateStageStatus('stage2', 'queue-status', 'Picking up file...');
+                animateDataFlow(0);
+            }, 100);
+
+            // Stage 2: Queue processing
+            setTimeout(() => {
+                activateStage('stage2');
+                updateStageStatus('stage2', 'queue-status', 'Decoding audio...');
+                animateDataFlow(1);
+            }, 800);
+
+            // Stage 3: GPU processing
+            setTimeout(() => {
+                activateStage('stage3');
+                updateStageStatus('stage3', 'gpu-status', 'Transcribing...');
+                animateDataFlow(2);
+            }, 1300);
+
+            // Stage 4: Output
+            setTimeout(() => {
+                activateStage('stage4');
+                totalFilesProcessed++;
+                updateStageStatus('stage4', 'output-status', `${totalFilesProcessed} files completed`);
+                updateStageStatus('stage2', 'queue-status', 'Ready for next file');
+                updateStageStatus('stage3', 'gpu-status', 'Processing complete');
+                animateDataFlow(3);
+            }, 2500);
+
+            // Reset for next cycle
+            setTimeout(() => {
+                resetStageActivations();
+                updateStageStatus('stage1', 'file-counter', `${totalFilesProcessed} processed`);
+                updateStageStatus('stage2', 'queue-status', 'Idle');
+                updateStageStatus('stage3', 'gpu-status', 'Ready');
+            }, 2900);
+        }
+
+        function resetWorkflowAnimation() {
+            if (workflowInterval) {
+                clearInterval(workflowInterval);
+            }
+            currentProcessingFile = 0;
+            totalFilesProcessed = 0;
+            resetStageActivations();
+            updateStageStatus('stage1', 'file-counter', '0 processed');
+            updateStageStatus('stage2', 'queue-status', 'Idle');
+            updateStageStatus('stage3', 'gpu-status', 'Ready');
+            updateStageStatus('stage4', 'output-status', '0 saved');
+        }
+
+        function activateStage(stageId) {
+            resetStageActivations();
+            document.querySelector(`#${stageId} .stage-box`).classList.add('active');
+        }
+
+        function resetStageActivations() {
+            document.querySelectorAll('.stage-box').forEach(box => {
+                box.classList.remove('active');
+            });
+        }
+
+        function updateStageStatus(stageId, statusClass, text) {
+            const statusElement = document.querySelector(`#${stageId} .${statusClass}`);
+            if (statusElement) {
+                statusElement.textContent = text;
+            }
+        }
+
+        function animateDataFlow(arrowIndex) {
+            const arrows = document.querySelectorAll('.flow-arrow');
+            if (arrows[arrowIndex]) {
+                const flowData = arrows[arrowIndex].querySelector('.flow-data');
+                flowData.classList.remove('moving');
+                setTimeout(() => {
+                    flowData.classList.add('moving');
+                }, 10);
+            }
+        }
+
+        // Simulation functionality
+        function runSimulation() {
+            // Function removed - Interactive Simulation tab no longer available
+        }
+
+        // Add some initial animation
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.assumption-card').forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.animation = 'fadeIn 0.5s ease-in-out';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>
