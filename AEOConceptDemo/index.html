@@ -1,0 +1,2706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AEO Concept Demo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #fafafa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Landing Page Styles */
+        .landing-page {
+            height: 100vh;
+            background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .animated-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .floating-element:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            top: 20%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            bottom: 10%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        .floating-element:nth-child(4) {
+            width: 120px;
+            height: 120px;
+            top: 50%;
+            right: 5%;
+            animation-delay: 3s;
+        }
+
+        .floating-element:nth-child(5) {
+            width: 40px;
+            height: 40px;
+            bottom: 30%;
+            right: 30%;
+            animation-delay: 1s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.2; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.4; }
+        }
+
+        .landing-content {
+            text-align: center;
+            z-index: 10;
+            color: white;
+        }
+
+        .landing-title {
+            font-size: 4rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.5s forwards;
+            color: #ffffff;
+        }
+
+        .landing-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 1s forwards;
+            color: #cccccc;
+        }
+
+        .explore-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #eb001b;
+            color: #eb001b;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 1.5s forwards;
+            font-weight: 600;
+        }
+
+        .explore-btn:hover {
+            background: #eb001b;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(235, 0, 27, 0.3);
+        }
+
+        .landing-disclaimer {
+            font-size: 0.9rem;
+            margin-top: 2rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 2s forwards;
+            color: #888888;
+            font-style: italic;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Dashboard Styles */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: #eb001b;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .brand-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 0 2rem;
+        }
+
+        .nav-tab {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-tab.active {
+            border-bottom-color: #eb001b;
+            background: white;
+            color: #eb001b;
+        }
+
+        .nav-tab:hover {
+            background: #e9ecef;
+        }
+
+        .content {
+            padding: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .module {
+            display: none;
+        }
+
+        .module.active {
+            display: block;
+        }
+
+        .module-header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .module-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .module-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .summary-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            justify-content: space-between;
+        }
+
+        .summary-stat {
+            background: white;
+            padding: 1.2rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e5e5e5;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .summary-stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #eb001b;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .metrics-grid-large {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .metrics-grid-three {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e5e5e5;
+        }
+
+        .metric-card.large {
+            grid-column: span 2;
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .metric-title {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-change {
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .metric-change.positive {
+            color: #28a745;
+        }
+
+        .metric-change.negative {
+            color: #dc3545;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin: 1rem 0;
+        }
+
+        .chart-container.small {
+            height: 200px;
+        }
+
+        .chart-container.large {
+            height: 400px;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e5e5e5;
+            margin-bottom: 2rem;
+        }
+
+        .table-header {
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e5e5;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .expandable-row {
+            cursor: pointer;
+        }
+
+        .expand-icon {
+            margin-right: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .expand-icon.expanded {
+            transform: rotate(90deg);
+        }
+
+        .expanded-content {
+            display: none;
+            padding: 1rem 1.5rem;
+            background: #f8f9fa;
+            border-top: 1px solid #e5e5e5;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-badge.yes {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.no {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .competitor-list {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .competitor-tag {
+            background: #e9ecef;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #666;
+        }
+
+        select, input {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .filter-pill {
+            background: #f8f9fa;
+            border: 1px solid #e5e5e5;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-pill.active {
+            background: #eb001b;
+            color: white;
+            border-color: #eb001b;
+        }
+
+        .sentiment-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .sentiment-positive {
+            height: 100%;
+            background: #28a745;
+            float: left;
+        }
+
+        .sentiment-negative {
+            height: 100%;
+            background: #dc3545;
+            float: right;
+        }
+
+        .platform-icons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .platform-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            color: white;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .platform-chatgpt { background: #10a37f; }
+        .platform-perplexity { background: #0ea5e9; }
+        .platform-claude { background: #f97316; }
+        .platform-gemini { background: #4a5568; }
+        .platform-copilot { background: #0078d4; }
+
+        .export-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .export-btn:hover {
+            background: #5a6268;
+        }
+
+        .region-selector {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .region-btn {
+            padding: 0.3rem 0.8rem;
+            border: 1px solid #e5e5e5;
+            background: white;
+            border-radius: 4px;
+            cursor: default;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .region-btn.active {
+            background: #eb001b;
+            color: white;
+            border-color: #eb001b;
+        }
+
+        .region-btn.locked {
+            cursor: default;
+            opacity: 1;
+        }
+
+        .insight-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border: 1px solid #333333;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .insight-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #eb001b;
+        }
+
+        .insight-text {
+            opacity: 0.9;
+            color: #cccccc;
+            line-height: 1.6;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #eb001b;
+            transition: width 0.3s ease;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-item {
+            text-align: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .kpi-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #eb001b;
+        }
+
+        .kpi-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .trend-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.8rem;
+            margin-left: 8px;
+        }
+
+        .trend-up { color: #28a745; }
+        .trend-down { color: #dc3545; }
+
+        .data-table-wrapper {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: #f8f9fa;
+            border-top: 1px solid #e5e5e5;
+        }
+
+        .search-box {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 250px;
+        }
+
+        .tabs-secondary {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tab-secondary {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e5e5e5;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .tab-secondary.active {
+            background: #eb001b;
+            color: white;
+            border-color: #eb001b;
+        }
+    </style>
+</head>
+<body>
+    <!-- Landing Page -->
+    <div class="landing-page" id="landingPage">
+        <div class="animated-bg">
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+        </div>
+        <div class="landing-content">
+            <h1 class="landing-title">AEO Concept Demo</h1>
+            <p class="landing-subtitle">Brand Visibility Intelligence Dashboard</p>
+            <button class="explore-btn" onclick="showDashboard()">Explore</button>
+            <p class="landing-disclaimer">* All data shown is for demonstration and reference purposes only</p>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">M</div>
+                <span class="brand-name">Mastercard</span>
+            </div>
+            <div class="controls">
+                <div class="control-group">
+                    <span class="control-label">Last 7 Days</span>
+                    <select>
+                        <option>vs. Previous Period</option>
+                        <option>vs. Last Month</option>
+                        <option>vs. Last Year</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <span class="control-label">Daily</span>
+                </div>
+                <div class="region-selector">
+                    <div class="region-btn active locked">🇺🇸 USA</div>
+                    <div class="region-btn active locked">🇬🇧 UK</div>
+                </div>
+                <div class="control-group">
+                    <span class="control-label"># Topics</span>
+                    <span class="control-label">🏢 Platforms</span>
+                </div>
+                <button class="export-btn">Export 15.4k answers</button>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showModule('visibility')">Visibility</div>
+            <div class="nav-tab" onclick="showModule('sentiment')">Sentiment</div>
+            <div class="nav-tab" onclick="showModule('prompts')">Prompts</div>
+            <div class="nav-tab" onclick="showModule('citations')">Citations</div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Visibility Module -->
+            <div id="visibility" class="module active">
+                <div class="module-header">
+                    <div>
+                        <h2 class="module-title">Visibility Score</h2>
+                        <p class="module-subtitle">How often Mastercard appears in AI-generated answers</p>
+                    </div>
+                </div>
+
+                <!-- Key Insights -->
+                <div class="insight-card">
+                    <div class="insight-title">Key Insight</div>
+                    <div class="insight-text">Mastercard's visibility has increased 3.2% week-over-week, driven by strong performance in financial guidance and digital payment queries across ChatGPT and Perplexity platforms.</div>
+                </div>
+
+                <!-- Summary Stats -->
+                <div class="summary-stats">
+                    <div class="summary-stat">
+                        <div class="summary-stat-value">15.4k</div>
+                        <div class="summary-stat-label">Total Answers Analyzed</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-stat-value">8.1k</div>
+                        <div class="summary-stat-label">Mentions Found</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-stat-value">52.8%</div>
+                        <div class="summary-stat-label">Current Visibility</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-stat-value">#2</div>
+                        <div class="summary-stat-label">Market Rank</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-stat-value">5</div>
+                        <div class="summary-stat-label">AI Platforms</div>
+                    </div>
+                </div>
+
+                <!-- Main Metrics Grid -->
+                <div class="metrics-grid-large">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Visibility Score Trend</span>
+                            <div class="tabs-secondary">
+                                <div class="tab-secondary active">7 Days</div>
+                                <div class="tab-secondary">30 Days</div>
+                                <div class="tab-secondary">90 Days</div>
+                            </div>
+                        </div>
+                        <div class="metric-value">52.8% <span class="metric-change positive">+3.2%</span></div>
+                        <div class="chart-container large">
+                            <canvas id="visibilityTrendChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Competitor Ranking</span>
+                        </div>
+                        <div class="metric-value">#2 <span class="trend-indicator trend-up">↑1</span></div>
+                        <div style="margin-top: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 8px; background: #f8f9fa; border-radius: 4px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-weight: 600;">1.</span>
+                                    <div style="width: 20px; height: 20px; background: #1a1f71; border-radius: 3px; color: white; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold;">V</div>
+                                    <span>Visa</span>
+                                </div>
+                                <div>
+                                    <span style="font-weight: 600;">54.1%</span>
+                                    <span style="color: #28a745; font-size: 0.8rem; margin-left: 8px;">+0.2%</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 8px; background: #fff3e0; border-radius: 4px; border: 2px solid #eb001b;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-weight: 600;">2.</span>
+                                    <div style="width: 20px; height: 20px; background: #eb001b; border-radius: 3px; color: white; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold;">M</div>
+                                    <span style="font-weight: 600;">Mastercard</span>
+                                </div>
+                                <div>
+                                    <span style="font-weight: 600; color: #eb001b;">52.8%</span>
+                                    <span style="color: #28a745; font-size: 0.8rem; margin-left: 8px;">+3.2%</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 8px; background: #f8f9fa; border-radius: 4px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-weight: 600;">3.</span>
+                                    <div style="width: 20px; height: 20px; background: #006fcf; border-radius: 3px; color: white; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold;">AE</div>
+                                    <span>American Express</span>
+                                </div>
+                                <div>
+                                    <span style="font-weight: 600;">48.3%</span>
+                                    <span style="color: #dc3545; font-size: 0.8rem; margin-left: 8px;">-0.3%</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 8px; background: #f8f9fa; border-radius: 4px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-weight: 600;">4.</span>
+                                    <div style="width: 20px; height: 20px; background: #ff6000; border-radius: 3px; color: white; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold;">D</div>
+                                    <span>Discover</span>
+                                </div>
+                                <div>
+                                    <span style="font-weight: 600;">35.2%</span>
+                                    <span style="color: #dc3545; font-size: 0.8rem; margin-left: 8px;">-1.1%</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #f8f9fa; border-radius: 4px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-weight: 600;">5.</span>
+                                    <div style="width: 20px; height: 20px; background: #004879; border-radius: 3px; color: white; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold;">C1</div>
+                                    <span>Capital One</span>
+                                </div>
+                                <div>
+                                    <span style="font-weight: 600;">28.7%</span>
+                                    <span style="color: #28a745; font-size: 0.8rem; margin-left: 8px;">+0.8%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Secondary Metrics -->
+                <div class="metrics-grid-three">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Share of Voice</span>
+                        </div>
+                        <div class="metric-value">11.2% <span class="metric-change positive">+0.3%</span></div>
+                        <div class="chart-container">
+                            <canvas id="shareOfVoiceChart"></canvas>
+                        </div>
+                        <div style="margin-top: 1rem; font-size: 0.8rem; color: #666;">
+                            Mentions of Mastercard in AI-generated answers relative to competitors
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Platform Performance</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="platformChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Regional Breakdown</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="regionalChart"></canvas>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>🇺🇸 USA</span>
+                                <span>54.2% <span style="color: #28a745;">+2.8%</span></span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>🇬🇧 UK</span>
+                                <span>51.4% <span style="color: #28a745;">+3.6%</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Performance Table -->
+                <div class="table-container">
+                    <div class="table-header">
+                        Detailed Platform Analysis
+                        <div class="table-controls">
+                            <input type="text" placeholder="Search platforms..." class="search-box">
+                            <button class="export-btn">Export Data</button>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Platform</th>
+                                <th>Visibility Score</th>
+                                <th>Share of Voice</th>
+                                <th>Total Mentions</th>
+                                <th>Avg. Position</th>
+                                <th>Change (7d)</th>
+                                <th>Market Share</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div class="platform-icon platform-chatgpt">C</div>
+                                        <span>ChatGPT</span>
+                                    </div>
+                                </td>
+                                <td>58.2%</td>
+                                <td>12.8%</td>
+                                <td>4,247</td>
+                                <td>2.1</td>
+                                <td><span class="trend-indicator trend-up">+4.2%</span></td>
+                                <td>35.2%</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div class="platform-icon platform-perplexity">P</div>
+                                        <span>Perplexity</span>
+                                    </div>
+                                </td>
+                                <td>54.1%</td>
+                                <td>11.5%</td>
+                                <td>2,891</td>
+                                <td>2.3</td>
+                                <td><span class="trend-indicator trend-up">+2.1%</span></td>
+                                <td>28.7%</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div class="platform-icon platform-claude">Cl</div>
+                                        <span>Claude</span>
+                                    </div>
+                                </td>
+                                <td>48.9%</td>
+                                <td>9.8%</td>
+                                <td>1,523</td>
+                                <td>2.8</td>
+                                <td><span class="trend-indicator trend-up">+1.8%</span></td>
+                                <td>18.9%</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div class="platform-icon platform-gemini">G</div>
+                                        <span>Gemini</span>
+                                    </div>
+                                </td>
+                                <td>67.3%</td>
+                                <td>15.2%</td>
+                                <td>1,142</td>
+                                <td>1.8</td>
+                                <td><span class="trend-indicator trend-up">+6.1%</span></td>
+                                <td>12.4%</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div class="platform-icon platform-copilot">Co</div>
+                                        <span>Copilot</span>
+                                    </div>
+                                </td>
+                                <td>45.2%</td>
+                                <td>8.9%</td>
+                                <td>672</td>
+                                <td>3.2</td>
+                                <td><span class="trend-indicator trend-down">-0.8%</span></td>
+                                <td>4.8%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sentiment Module -->
+            <div id="sentiment" class="module">
+                <div class="module-header">
+                    <div>
+                        <h2 class="module-title">Sentiment Analysis</h2>
+                        <p class="module-subtitle">How positively AI responses reference Mastercard</p>
+                    </div>
+                </div>
+
+                <!-- Key Insights -->
+                <div class="insight-card">
+                    <div class="insight-title">Sentiment Insight</div>
+                    <div class="insight-text">Positive sentiment towards Mastercard has improved by 2.1% this week, primarily driven by mentions of security features, global acceptance, and digital innovation initiatives.</div>
+                </div>
+
+                <!-- KPI Grid -->
+                <div class="kpi-grid">
+                    <div class="kpi-item">
+                        <div class="kpi-value">71.3%</div>
+                        <div class="kpi-label">Positive Sentiment</div>
+                        <div class="trend-indicator trend-up">+2.1%</div>
+                    </div>
+                    <div class="kpi-item">
+                        <div class="kpi-value">28.7%</div>
+                        <div class="kpi-label">Negative Sentiment</div>
+                        <div class="trend-indicator trend-down">-2.1%</div>
+                    </div>
+                    <div class="kpi-item">
+                        <div class="kpi-value">4.2/5</div>
+                        <div class="kpi-label">Avg. Sentiment Score</div>
+                        <div class="trend-indicator trend-up">+0.3</div>
+                    </div>
+                    <div class="kpi-item">
+                        <div class="kpi-value">892</div>
+                        <div class="kpi-label">Total Mentions</div>
+                        <div class="trend-indicator trend-up">+12%</div>
+                    </div>
+                </div>
+
+                <!-- Main Metrics Grid -->
+                <div class="metrics-grid-large">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Sentiment Trend Analysis</span>
+                        </div>
+                        <div class="chart-container large">
+                            <canvas id="sentimentTrendChart"></canvas>
+                        </div>
+                        <div class="sentiment-bar">
+                            <div class="sentiment-positive" style="width: 71.3%;"></div>
+                            <div class="sentiment-negative" style="width: 28.7%;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
+                            <span>71.3% Positive</span>
+                            <span>28.7% Negative</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Sentiment by Platform</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="sentimentPlatformChart"></canvas>
+                        </div>
+                        <div style="margin-top: 1rem; font-size: 0.9rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>ChatGPT</span>
+                                <span style="color: #28a745; font-weight: 600;">73.2%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Gemini</span>
+                                <span style="color: #28a745; font-weight: 600;">75.8%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Perplexity</span>
+                                <span style="color: #28a745; font-weight: 600;">69.4%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Claude</span>
+                                <span style="color: #28a745; font-weight: 600;">68.7%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Copilot</span>
+                                <span style="color: #f39c12; font-weight: 600;">65.1%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theme Analysis Cards -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Top Positive Themes</span>
+                        </div>
+                        <div>
+                            <div style="margin-bottom: 1rem; padding: 1rem; background: #d4edda; border-radius: 6px; border-left: 4px solid #28a745;">
+                                <div style="font-weight: 600; color: #155724; margin-bottom: 0.5rem;">Global Acceptance & Security</div>
+                                <div style="font-size: 0.9rem; color: #155724;">Worldwide merchant acceptance, fraud protection, EMV chip technology</div>
+                                <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">247 mentions</div>
+                            </div>
+                            <div style="margin-bottom: 1rem; padding: 1rem; background: #d4edda; border-radius: 6px; border-left: 4px solid #28a745;">
+                                <div style="font-weight: 600; color: #155724; margin-bottom: 0.5rem;">Digital Innovation</div>
+                                <div style="font-size: 0.9rem; color: #155724;">Contactless payments, mobile wallet integration, digital-first solutions</div>
+                                <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">189 mentions</div>
+                            </div>
+                            <div style="padding: 1rem; background: #d4edda; border-radius: 6px; border-left: 4px solid #28a745;">
+                                <div style="font-weight: 600; color: #155724; margin-bottom: 0.5rem;">Business Solutions</div>
+                                <div style="font-size: 0.9rem; color: #155724;">Corporate card programs, expense management, B2B payment solutions</div>
+                                <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">156 mentions</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Negative Themes to Address</span>
+                        </div>
+                        <div>
+                            <div style="margin-bottom: 1rem; padding: 1rem; background: #f8d7da; border-radius: 6px; border-left: 4px solid #dc3545;">
+                                <div style="font-weight: 600; color: #721c24; margin-bottom: 0.5rem;">Transaction Fees</div>
+                                <div style="font-size: 0.9rem; color: #721c24;">International transaction fees, currency conversion costs, merchant processing fees</div>
+                                <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">98 mentions</div>
+                            </div>
+                            <div style="margin-bottom: 1rem; padding: 1rem; background: #f8d7da; border-radius: 6px; border-left: 4px solid #dc3545;">
+                                <div style="font-weight: 600; color: #721c24; margin-bottom: 0.5rem;">Customer Service</div>
+                                <div style="font-size: 0.9rem; color: #721c24;">Wait times, dispute resolution, customer support responsiveness</div>
+                                <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">73 mentions</div>
+                            </div>
+                            <div style="padding: 1rem; background: #f8d7da; border-radius: 6px; border-left: 4px solid #dc3545;">
+                                <div style="font-weight: 600; color: #721c24; margin-bottom: 0.5rem;">Limited Rewards</div>
+                                <div style="font-size: 0.9rem; color: #721c24;">Cashback rates, point redemption options, reward program complexity</div>
+                                <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">58 mentions</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Theme Analysis Table -->
+                <div class="table-container">
+                    <div class="table-header">
+                        Comprehensive Theme Analysis
+                        <div class="table-controls">
+                            <select>
+                                <option>All Sentiments</option>
+                                <option>Positive Only</option>
+                                <option>Negative Only</option>
+                                <option>Neutral</option>
+                            </select>
+                            <input type="text" placeholder="Search themes..." class="search-box">
+                        </div>
+                    </div>
+                    <div class="data-table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Theme</th>
+                                    <th>Sentiment</th>
+                                    <th>Occurrences</th>
+                                    <th>Trend (7d)</th>
+                                    <th>Platform Distribution</th>
+                                    <th>Sample Mention</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="expandable-row" onclick="toggleExpand(this)">
+                                    <td><span class="expand-icon">▶</span>Global Acceptance</td>
+                                    <td><span style="color: #28a745; font-weight: 600;">Positive</span></td>
+                                    <td>247</td>
+                                    <td><span class="trend-indicator trend-up">+18%</span></td>
+                                    <td>
+                                        <div class="platform-icons">
+                                            <div class="platform-icon platform-chatgpt">C</div>
+                                            <div class="platform-icon platform-perplexity">P</div>
+                                            <div class="platform-icon platform-gemini">G</div>
+                                            <span style="margin-left: 5px;">+2</span>
+                                        </div>
+                                    </td>
+                                    <td>"Mastercard is widely accepted worldwide..."</td>
+                                    <td>89</td>
+                                </tr>
+                                <tr class="expanded-content">
+                                    <td colspan="7">
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                            <div>
+                                                <strong>Sample Mentions:</strong>
+                                                <ul style="margin-top: 0.5rem; padding-left: 1rem;">
+                                                    <li>"Mastercard is widely accepted worldwide with over 70 million merchant locations"</li>
+                                                    <li>"Global payment network ensuring seamless transactions across countries"</li>
+                                                    <li>"Universal acceptance at merchants, ATMs, and online retailers"</li>
+                                                    <li>"International travel-friendly with broad merchant acceptance"</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <strong>Platform Breakdown:</strong>
+                                                <div style="margin-top: 0.5rem;">
+                                                    <div>ChatGPT: 89 mentions (36%)</div>
+                                                    <div>Perplexity: 67 mentions (27%)</div>
+                                                    <div>Gemini: 45 mentions (18%)</div>
+                                                    <div>Claude: 32 mentions (13%)</div>
+                                                    <div>Copilot: 14 mentions (6%)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="expandable-row" onclick="toggleExpand(this)">
+                                    <td><span class="expand-icon">▶</span>Security Features</td>
+                                    <td><span style="color: #28a745; font-weight: 600;">Positive</span></td>
+                                    <td>189</td>
+                                    <td><span class="trend-indicator trend-up">+12%</span></td>
+                                    <td>
+                                        <div class="platform-icons">
+                                            <div class="platform-icon platform-chatgpt">C</div>
+                                            <div class="platform-icon platform-claude">Cl</div>
+                                            <div class="platform-icon platform-gemini">G</div>
+                                            <span style="margin-left: 5px;">+2</span>
+                                        </div>
+                                    </td>
+                                    <td>"Advanced fraud protection and secure..."</td>
+                                    <td>72</td>
+                                </tr>
+                                <tr class="expanded-content">
+                                    <td colspan="7">
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                            <div>
+                                                <strong>Sample Mentions:</strong>
+                                                <ul style="margin-top: 0.5rem; padding-left: 1rem;">
+                                                    <li>"Advanced fraud protection with real-time monitoring"</li>
+                                                    <li>"EMV chip technology for enhanced security"</li>
+                                                    <li>"Secure payment processing with tokenization"</li>
+                                                    <li>"Zero liability protection for unauthorized transactions"</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <strong>Related Keywords:</strong>
+                                                <div style="margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                                    <span style="background: #e9ecef; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">fraud protection</span>
+                                                    <span style="background: #e9ecef; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">EMV chip</span>
+                                                    <span style="background: #e9ecef; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">tokenization</span>
+                                                    <span style="background: #e9ecef; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">zero liability</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="expandable-row" onclick="toggleExpand(this)">
+                                    <td><span class="expand-icon">▶</span>Digital Innovation</td>
+                                    <td><span style="color: #28a745; font-weight: 600;">Positive</span></td>
+                                    <td>156</td>
+                                    <td><span class="trend-indicator trend-up">+24%</span></td>
+                                    <td>
+                                        <div class="platform-icons">
+                                            <div class="platform-icon platform-perplexity">P</div>
+                                            <div class="platform-icon platform-gemini">G</div>
+                                            <span style="margin-left: 5px;">+3</span>
+                                        </div>
+                                    </td>
+                                    <td>"Leading in contactless and mobile payments..."</td>
+                                    <td>64</td>
+                                </tr>
+                                <tr class="expanded-content">
+                                    <td colspan="7">
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                            <div>
+                                                <strong>Sample Mentions:</strong>
+                                                <ul style="margin-top: 0.5rem; padding-left: 1rem;">
+                                                    <li>"Leading in contactless payment technology and mobile wallets"</li>
+                                                    <li>"Digital-first payment solutions for modern consumers"</li>
+                                                    <li>"Innovative tap-to-pay and biometric authentication"</li>
+                                                    <li>"Seamless integration with Apple Pay, Google Pay, and Samsung Pay"</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <strong>Innovation Areas:</strong>
+                                                <div style="margin-top: 0.5rem;">
+                                                    <div>• Contactless Payments (42%)</div>
+                                                    <div>• Mobile Wallet Integration (28%)</div>
+                                                    <div>• Biometric Authentication (18%)</div>
+                                                    <div>• Digital Account Management (12%)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="expandable-row" onclick="toggleExpand(this)">
+                                    <td><span class="expand-icon">▶</span>Transaction Fees</td>
+                                    <td><span style="color: #dc3545; font-weight: 600;">Negative</span></td>
+                                    <td>98</td>
+                                    <td><span class="trend-indicator trend-down">-8%</span></td>
+                                    <td>
+                                        <div class="platform-icons">
+                                            <div class="platform-icon platform-chatgpt">C</div>
+                                            <div class="platform-icon platform-perplexity">P</div>
+                                            <span style="margin-left: 5px;">+3</span>
+                                        </div>
+                                    </td>
+                                    <td>"Higher fees compared to some competitors..."</td>
+                                    <td>41</td>
+                                </tr>
+                                <tr class="expanded-content">
+                                    <td colspan="7">
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                            <div>
+                                                <strong>Sample Mentions:</strong>
+                                                <ul style="margin-top: 0.5rem; padding-left: 1rem;">
+                                                    <li>"Higher international transaction fees compared to competitors"</li>
+                                                    <li>"Foreign exchange charges can add up for frequent travelers"</li>
+                                                    <li>"Merchant processing fees impact small businesses"</li>
+                                                    <li>"Annual fees on premium cards may be prohibitive"</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <strong>Fee Types Mentioned:</strong>
+                                                <div style="margin-top: 0.5rem;">
+                                                    <div>• International Transaction Fees (45%)</div>
+                                                    <div>• Foreign Exchange Charges (28%)</div>
+                                                    <div>• Annual Card Fees (18%)</div>
+                                                    <div>• Merchant Processing Fees (9%)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="expandable-row" onclick="toggleExpand(this)">
+                                    <td><span class="expand-icon">▶</span>Customer Service</td>
+                                    <td><span style="color: #dc3545; font-weight: 600;">Negative</span></td>
+                                    <td>73</td>
+                                    <td><span class="trend-indicator trend-down">-5%</span></td>
+                                    <td>
+                                        <div class="platform-icons">
+                                            <div class="platform-icon platform-claude">Cl</div>
+                                            <div class="platform-icon platform-copilot">Co</div>
+                                            <span style="margin-left: 5px;">+1</span>
+                                        </div>
+                                    </td>
+                                    <td>"Customer service wait times can be lengthy..."</td>
+                                    <td>29</td>
+                                </tr>
+                                <tr class="expanded-content">
+                                    <td colspan="7">
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                            <div>
+                                                <strong>Sample Mentions:</strong>
+                                                <ul style="margin-top: 0.5rem; padding-left: 1rem;">
+                                                    <li>"Customer service wait times can be lengthy during peak hours"</li>
+                                                    <li>"Dispute resolution process sometimes takes longer than expected"</li>
+                                                    <li>"Phone support quality varies by representative"</li>
+                                                    <li>"Online chat support has limited availability"</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <strong>Service Issues:</strong>
+                                                <div style="margin-top: 0.5rem;">
+                                                    <div>• Long Wait Times (52%)</div>
+                                                    <div>• Dispute Resolution Delays (31%)</div>
+                                                    <div>• Inconsistent Support Quality (17%)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination">
+                        <span>Showing 1-5 of 23 themes</span>
+                        <div>
+                            <button style="margin-right: 0.5rem; padding: 0.25rem 0.5rem; border: 1px solid #ccc; background: white; cursor: pointer;">Previous</button>
+                            <button style="padding: 0.25rem 0.5rem; border: 1px solid #ccc; background: white; cursor: pointer;">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prompts Module -->
+            <div id="prompts" class="module">
+                <div class="module-header">
+                    <div>
+                        <h2 class="module-title">Prompt Analysis</h2>
+                        <p class="module-subtitle">15.4k answers analyzed across all platforms</p>
+                    </div>
+                </div>
+
+                <!-- Key Insights -->
+                <div class="insight-card">
+                    <div class="insight-title">Prompt Insight</div>
+                    <div class="insight-text">Credit card and payment-related queries show highest mention rates (68%), while business finance topics have grown 34% week-over-week. Travel and international payment queries drive strongest positive sentiment.</div>
+                </div>
+
+                <!-- Summary Stats -->
+                <div class="summary-stats">
+                    <div class="summary-stat">
+                        <div class="summary-stat-value">15.4k</div>
+                        <div class="summary-stat-label">Total Answers</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-stat-value">8.1k</div>
+                        <div class="summary-stat-label">Mentions Found</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-stat-value">52.6%</div>
+                        <div class="summary-stat-label">Mention Rate</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-stat-value">247</div>
+                        <div class="summary-stat-label">Unique Topics</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-stat-value">2.3</div>
+                        <div class="summary-stat-label">Avg. Position</div>
+                    </div>
+                </div>
+
+                <!-- Analytics Charts -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Mention Rate by Topic Category</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="topicMentionChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Daily Prompt Volume</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="promptVolumeChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Platform Distribution</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="promptPlatformChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter Controls -->
+                <div class="controls">
+                    <div class="filter-pill active">Last 7 Days</div>
+                    <div class="filter-pill">Last 30 Days</div>
+                    <div class="filter-pill">Last 90 Days</div>
+                    <select>
+                        <option>All Platforms</option>
+                        <option>ChatGPT</option>
+                        <option>Perplexity</option>
+                        <option>Claude</option>
+                        <option>Gemini</option>
+                        <option>Copilot</option>
+                    </select>
+                    <select>
+                        <option>All Topics</option>
+                        <option>Credit Cards</option>
+                        <option>Digital Payments</option>
+                        <option>Business Finance</option>
+                        <option>International Travel</option>
+                        <option>Online Security</option>
+                    </select>
+                    <select>
+                        <option>All Regions</option>
+                        <option>USA</option>
+                        <option>United Kingdom</option>
+                    </select>
+                    <div class="control-group">
+                        <input type="text" placeholder="Search prompts..." style="width: 250px;">
+                    </div>
+                </div>
+
+                <!-- Detailed Prompts Table -->
+                <div class="table-container">
+                    <div class="table-header">
+                        Detailed Prompt Analysis
+                        <div class="table-controls">
+                            <select>
+                                <option>All Responses</option>
+                                <option>Mentions Only</option>
+                                <option>No Mentions</option>
+                            </select>
+                            <button class="export-btn">Export Results</button>
+                        </div>
+                    </div>
+                    <div class="data-table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Topic</th>
+                                    <th>Prompt</th>
+                                    <th>Mentioned?</th>
+                                    <th>Position</th>
+                                    <th>Sentiment</th>
+                                    <th>Platform</th>
+                                    <th>Region</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="expandable-row" onclick="toggleExpand(this)">
+                                    <td>25 Jul, 2025</td>
+                                    <td>Travel Finance</td>
+                                    <td>best credit cards for international travel rewards</td>
+                                    <td><span class="status-badge yes">Yes</span></td>
+                                    <td>#2</td>
+                                    <td><span style="color: #28a745;">Positive</span></td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 5px;">
+                                            <div class="platform-icon platform-chatgpt">C</div>
+                                            <span style="font-size: 0.8rem;">ChatGPT</span>
+                                        </div>
+                                    </td>
+                                    <td>🇺🇸 USA</td>
+                                    <td><span class="expand-icon">▶</span></td>
+                                </tr>
+                                <tr class="expanded-content">
+                                    <td colspan="9">
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                            <div>
+                                                <strong>Full Response:</strong>
+                                                <p style="margin-top: 0.5rem; background: #f8f9fa; padding: 1rem; border-radius: 4px; font-size: 0.9rem;">
+                                                    "For international travel rewards, consider these top options: 1. <strong>Chase Sapphire Preferred</strong> - excellent travel benefits and no foreign transaction fees, 2. <strong>Mastercard World Elite cards</strong> - superior international acceptance and premium travel perks including airport lounge access, 3. Capital One Venture - straightforward rewards structure. Mastercard's global network ensures acceptance at over 70 million locations worldwide."
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <strong>Analysis:</strong>
+                                                <div style="margin-top: 0.5rem;">
+                                                    <div><strong>Mention Position:</strong> #2 out of 3 cards mentioned</div>
+                                                    <div><strong>Context:</strong> Premium travel benefits</div>
+                                                    <div><strong>Sentiment Score:</strong> 4.2/5 (Positive)</div>
+                                                    <div><strong>Key Themes:</strong> Global acceptance, premium perks</div>
+                                                    <div><strong>Competitors Mentioned:</strong> Chase Sapphire, Capital One Venture</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="expandable-row" onclick="toggleExpand(this)">
+                                    <td>25 Jul, 2025</td>
+                                    <td>Digital Security</td>
+                                    <td>most secure payment methods for online shopping</td>
+                                    <td><span class="status-badge yes">Yes</span></td>
+                                    <td>#1</td>
+                                    <td><span style="color: #28a745;">Positive</span></td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 5px;">
+                                            <div class="platform-icon platform-perplexity">P</div>
+                                            <span style="font-size: 0.8rem;">Perplexity</span>
+                                        </div>
+                                    </td>
+                                    <td>🇬🇧 UK</td>
+                                    <td><span class="expand-icon">▶</span></td>
+                                </tr>
+                                <tr class="expanded-content">
+                                    <td colspan="9">
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                            <div>
+                                                <strong>Full Response:</strong>
+                                                <p style="margin-top: 0.5rem; background: #f8f9fa; padding: 1rem; border-radius: 4px; font-size: 0.9rem;">
+                                                    "The most secure online payment methods include: 1. <strong>Mastercard with tokenization technology</strong> - replaces card numbers with unique tokens for each transaction, providing multiple layers of security. 2. PayPal - acts as intermediary without sharing card details. 3. Apple Pay/Google Pay - use biometric authentication and device-specific tokens. Mastercard's SecureCode adds an extra verification step for online purchases."
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <strong>Analysis:</strong>
+                                                <div style="margin-top: 0.5rem;">
+                                                    <div><strong>Mention Position:</strong> #1 (Primary recommendation)</div>
+                                                    <div><strong>Context:</strong> Security technology leader</div>
+                                                    <div><strong>Sentiment Score:</strong> 4.7/5 (Very Positive)</div>
+                                                    <div><strong>Key Themes:</strong> Tokenization, SecureCode, security layers</div>
+                                                    <div><strong>Competitors Mentioned:</strong> PayPal, Apple Pay, Google Pay</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="expandable-row" onclick="toggleExpand(this)">
+                                    <td>25 Jul, 2025</td>
+                                    <td>Business Finance</td>
+                                    <td>corporate credit card solutions for small businesses</td>
+                                    <td><span class="status-badge yes">Yes</span></td>
+                                    <td>#3</td>
+                                    <td><span style="color: #28a745;">Positive</span></td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 5px;">
+                                            <div class="platform-icon platform-claude">Cl</div>
+                                            <span style="font-size: 0.8rem;">Claude</span>
+                                        </div>
+                                    </td>
+                                    <td>🇺🇸 USA</td>
+                                    <td><span class="expand-icon">▶</span></td>
+                                </tr>
+                                <tr class="expanded-content">
+                                    <td colspan="9">
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                            <div>
+                                                <strong>Full Response:</strong>
+                                                <p style="margin-top: 0.5rem; background: #f8f9fa; padding: 1rem; border-radius: 4px; font-size: 0.9rem;">
+                                                    "For small business corporate cards, consider: 1. Chase Ink Business - comprehensive rewards and expense tracking, 2. American Express Business Gold - excellent customer service and benefits, 3. <strong>Mastercard Business cards</strong> - strong expense management tools, global acceptance, and competitive rates. Many offer integration with accounting software like QuickBooks."
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <strong>Analysis:</strong>
+                                                <div style="margin-top: 0.5rem;">
+                                                    <div><strong>Mention Position:</strong> #3 out of 3 options</div>
+                                                    <div><strong>Context:</strong> Business solutions focus</div>
+                                                    <div><strong>Sentiment Score:</strong> 3.8/5 (Positive)</div>
+                                                    <div><strong>Key Themes:</strong> Expense management, global acceptance</div>
+                                                    <div><strong>Competitors Mentioned:</strong> Chase Ink, American Express</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="expandable-row" onclick="toggleExpand(this)">
+                                    <td>24 Jul, 2025</td>
+                                    <td>Fintech Comparison</td>
+                                    <td>digital wallet apps vs traditional credit cards</td>
+                                    <td><span class="status-badge no">No</span></td>
+                                    <td>-</td>
+                                    <td><span style="color: #6c757d;">Neutral</span></td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 5px;">
+                                            <div class="platform-icon platform-gemini">G</div>
+                                            <span style="font-size: 0.8rem;">Gemini</span>
+                                        </div>
+                                    </td>
+                                    <td>🇬🇧 UK</td>
+                                    <td><span class="expand-icon">▶</span></td>
+                                </tr>
+                                <tr class="expanded-content">
+                                    <td colspan="9">
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                            <div>
+                                                <strong>Full Response:</strong>
+                                                <p style="margin-top: 0.5rem; background: #f8f9fa; padding: 1rem; border-radius: 4px; font-size: 0.9rem;">
+                                                    "Digital wallets like Apple Pay, Google Pay, and Samsung Pay offer convenience and security, while traditional credit cards provide broader acceptance and established reward programs. Digital wallets use tokenization for security but depend on underlying payment methods. Consider your spending patterns and merchant acceptance when choosing."
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <strong>Analysis:</strong>
+                                                <div style="margin-top: 0.5rem;">
+                                                    <div><strong>Mention Position:</strong> Not mentioned</div>
+                                                    <div><strong>Context:</strong> Generic comparison</div>
+                                                    <div><strong>Missed Opportunity:</strong> Could highlight Mastercard's integration with digital wallets</div>
+                                                    <div><strong>Competitors Mentioned:</strong> Apple Pay, Google Pay, Samsung Pay</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="expandable-row" onclick="toggleExpand(this)">
+                                    <td>24 Jul, 2025</td>
+                                    <td>Investment Advice</td>
+                                    <td>building credit score with first credit card</td>
+                                    <td><span class="status-badge yes">Yes</span></td>
+                                    <td>#2</td>
+                                    <td><span style="color: #28a745;">Positive</span></td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 5px;">
+                                            <div class="platform-icon platform-copilot">Co</div>
+                                            <span style="font-size: 0.8rem;">Copilot</span>
+                                        </div>
+                                    </td>
+                                    <td>🇺🇸 USA</td>
+                                    <td><span class="expand-icon">▶</span></td>
+                                </tr>
+                                <tr class="expanded-content">
+                                    <td colspan="9">
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                            <div>
+                                                <strong>Full Response:</strong>
+                                                <p style="margin-top: 0.5rem; background: #f8f9fa; padding: 1rem; border-radius: 4px; font-size: 0.9rem;">
+                                                    "For building credit with your first card: 1. Discover it Student - cash back rewards and free credit score monitoring, 2. <strong>Mastercard secured cards</strong> - help establish credit history with responsible use and graduate to unsecured cards, 3. Capital One Platinum - basic card for credit building. Always pay on time and keep utilization below 30%."
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <strong>Analysis:</strong>
+                                                <div style="margin-top: 0.5rem;">
+                                                    <div><strong>Mention Position:</strong> #2 out of 3 options</div>
+                                                    <div><strong>Context:</strong> Credit building solutions</div>
+                                                    <div><strong>Sentiment Score:</strong> 4.0/5 (Positive)</div>
+                                                    <div><strong>Key Themes:</strong> Credit building, secured cards, graduation path</div>
+                                                    <div><strong>Competitors Mentioned:</strong> Discover, Capital One</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination">
+                        <span>Showing 1-5 of 2,847 prompts</span>
+                        <div>
+                            <button style="margin-right: 0.5rem; padding: 0.25rem 0.5rem; border: 1px solid #ccc; background: white; cursor: pointer;">Previous</button>
+                            <span style="margin: 0 0.5rem;">Page 1 of 570</span>
+                            <button style="padding: 0.25rem 0.5rem; border: 1px solid #ccc; background: white; cursor: pointer;">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Citations Module -->
+            <div id="citations" class="module">
+                <div class="module-header">
+                    <div>
+                        <h2 class="module-title">Citation Share</h2>
+                        <p class="module-subtitle">How often mastercard.com is cited by AI-generated answers</p>
+                    </div>
+                </div>
+
+                <!-- Key Insights -->
+                <div class="insight-card">
+                    <div class="insight-title">Citation Insight</div>
+                    <div class="insight-text">Mastercard.com citations have increased 28% week-over-week, primarily from security and corporate information pages. Strong performance in earned citations compared to competitors.</div>
+                </div>
+
+                <!-- KPI Grid -->
+                <div class="kpi-grid">
+                    <div class="kpi-item">
+                        <div class="kpi-value">1.8%</div>
+                        <div class="kpi-label">Citation Share</div>
+                        <div class="trend-indicator trend-up">+0.3%</div>
+                    </div>
+                    <div class="kpi-item">
+                        <div class="kpi-value">#12</div>
+                        <div class="kpi-label">Citation Rank</div>
+                        <div class="trend-indicator trend-up">↑3</div>
+                    </div>
+                    <div class="kpi-item">
+                        <div class="kpi-value">2.4k</div>
+                        <div class="kpi-label">Total Citations</div>
+                        <div class="trend-indicator trend-up">+28%</div>
+                    </div>
+                    <div class="kpi-item">
+                        <div class="kpi-value">94.2%</div>
+                        <div class="kpi-label">Earned Citations</div>
+                        <div class="trend-indicator trend-up">+1.2%</div>
+                    </div>
+                </div>
+
+                <!-- Main Metrics Grid -->
+                <div class="metrics-grid-large">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Citation Share Trend</span>
+                        </div>
+                        <div class="metric-value">1.8% <span class="metric-change positive">+28%</span></div>
+                        <div class="chart-container large">
+                            <canvas id="citationTrendChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Citation Types Breakdown</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="citationTypesChart"></canvas>
+                        </div>
+                        <div style="margin-top: 1rem; font-size: 0.9rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Earned</span>
+                                <span style="font-weight: 600;">94.2%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Owned</span>
+                                <span style="font-weight: 600;">3.1%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Social</span>
+                                <span style="font-weight: 600;">2.4%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Competition</span>
+                                <span style="font-weight: 600;">0.3%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Citation Performance by Platform -->
+                <div class="metrics-grid-three">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Citations by Platform</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="citationPlatformChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Monthly Citation Growth</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="citationGrowthChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Top Content Categories</span>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.9rem;">Security & Fraud Protection</span>
+                                    <span style="font-weight: 600;">32%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 32%;"></div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.9rem;">Corporate Information</span>
+                                    <span style="font-weight: 600;">28%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 28%;"></div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.9rem;">Digital Innovation</span>
+                                    <span style="font-weight: 600;">24%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 24%;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.9rem;">Investor Relations</span>
+                                    <span style="font-weight: 600;">16%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 16%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Citation Domains Table -->
+                <div class="table-container">
+                    <div class="table-header">
+                        Top Citation Domains (Financial Services)
+                        <div class="table-controls">
+                            <select>
+                                <option>All Categories</option>
+                                <option>Earned</option>
+                                <option>Owned</option>
+                                <option>Social</option>
+                                <option>Competition</option>
+                            </select>
+                            <input type="text" placeholder="Search domains..." class="search-box">
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Domain</th>
+                                <th>Category</th>
+                                <th>Citations</th>
+                                <th>Share</th>
+                                <th>Change (7d)</th>
+                                <th>Avg. Position</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1.</td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div style="width: 16px; height: 16px; background: #1a1f71; border-radius: 2px;"></div>
+                                        <span>visa.com</span>
+                                    </div>
+                                </td>
+                                <td><span style="background: #e3f2fd; color: #1976d2; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Earned</span></td>
+                                <td>6.2k</td>
+                                <td>6.3%</td>
+                                <td><span style="color: #dc3545;">-0.2%</span></td>
+                                <td>1.8</td>
+                            </tr>
+                            <tr>
+                                <td>2.</td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div style="width: 16px; height: 16px; background: #006fcf; border-radius: 2px;"></div>
+                                        <span>americanexpress.com</span>
+                                    </div>
+                                </td>
+                                <td><span style="background: #e3f2fd; color: #1976d2; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Earned</span></td>
+                                <td>4.8k</td>
+                                <td>4.9%</td>
+                                <td><span style="color: #28a745;">+0.1%</span></td>
+                                <td>2.1</td>
+                            </tr>
+                            <tr>
+                                <td>3.</td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div style="width: 16px; height: 16px; background: #666; border-radius: 2px;"></div>
+                                        <span>investopedia.com</span>
+                                    </div>
+                                </td>
+                                <td><span style="background: #e3f2fd; color: #1976d2; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Earned</span></td>
+                                <td>3.9k</td>
+                                <td>4.0%</td>
+                                <td><span style="color: #28a745;">+0.8%</span></td>
+                                <td>3.2</td>
+                            </tr>
+                            <tr>
+                                <td>4.</td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div style="width: 16px; height: 16px; background: #ff6000; border-radius: 2px;"></div>
+                                        <span>discover.com</span>
+                                    </div>
+                                </td>
+                                <td><span style="background: #e3f2fd; color: #1976d2; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Earned</span></td>
+                                <td>3.1k</td>
+                                <td>3.2%</td>
+                                <td><span style="color: #dc3545;">-0.5%</span></td>
+                                <td>2.7</td>
+                            </tr>
+                            <tr>
+                                <td>5.</td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div style="width: 16px; height: 16px; background: #004879; border-radius: 2px;"></div>
+                                        <span>capitalone.com</span>
+                                    </div>
+                                </td>
+                                <td><span style="background: #e3f2fd; color: #1976d2; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Earned</span></td>
+                                <td>2.7k</td>
+                                <td>2.8%</td>
+                                <td><span style="color: #28a745;">+0.3%</span></td>
+                                <td>3.4</td>
+                            </tr>
+                            <tr style="background: #fff3e0;">
+                                <td><strong>12.</strong></td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div style="width: 16px; height: 16px; background: #eb001b; border-radius: 2px;"></div>
+                                        <span><strong>mastercard.com</strong></span>
+                                    </div>
+                                </td>
+                                <td><span style="background: #e3f2fd; color: #1976d2; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Earned</span></td>
+                                <td><strong>1.8k</strong></td>
+                                <td><strong>1.8%</strong></td>
+                                <td><span style="color: #28a745; font-weight: 600;">+0.3%</span></td>
+                                <td><strong>2.9</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Top Citation Pages Table -->
+                <div class="table-container">
+                    <div class="table-header">
+                        Top Citation Pages (mastercard.com)
+                        <div class="table-controls">
+                            <button class="export-btn">Export Page Data</button>
+                        </div>
+                    </div>
+                    <div class="data-table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Page URL</th>
+                                    <th>Category</th>
+                                    <th>Mentioned</th>
+                                    <th>Citations</th>
+                                    <th>CTR</th>
+                                    <th>Avg. Position</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="expandable-row" onclick="toggleExpand(this)">
+                                    <td>1.</td>
+                                    <td>mastercard.com/news/perspectives/2024/digital-payments-innovation</td>
+                                    <td><span style="background: #e3f2fd; color: #1976d2; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Earned</span></td>
+                                    <td><span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Mentioned</span></td>
+                                    <td>387</td>
+                                    <td>2.8%</td>
+                                    <td>2.1</td>
+                                    <td><span class="expand-icon">▶</span></td>
+                                </tr>
+                                <tr class="expanded-content">
+                                    <td colspan="8">
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                            <div>
+                                                <strong>Page Content Summary:</strong>
+                                                <p style="margin-top: 0.5rem; font-size: 0.9rem;">Comprehensive overview of Mastercard's digital payment innovations, including contactless technology, mobile wallet integration, and tokenization security features.</p>
+                                                <strong style="margin-top: 1rem; display: block;">Common Citation Context:</strong>
+                                                <ul style="margin-top: 0.5rem; padding-left: 1rem; font-size: 0.9rem;">
+                                                    <li>Digital payment security discussions</li>
+                                                    <li>Contactless payment technology explanations</li>
+                                                    <li>Financial innovation case studies</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <strong>Citation Analytics:</strong>
+                                                <div style="margin-top: 0.5rem; font-size: 0.9rem;">
+                                                    <div><strong>Primary Topics:</strong> Digital Innovation (67%), Security (23%), Mobile Payments (10%)</div>
+                                                    <div><strong>Platform Distribution:</strong> ChatGPT (45%), Perplexity (28%), Claude (15%), Gemini (12%)</div>
+                                                    <div><strong>Average Sentiment:</strong> 4.3/5 (Very Positive)</div>
+                                                    <div><strong>Peak Citation Period:</strong> July 22-24, 2025</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="expandable-row" onclick="toggleExpand(this)">
+                                    <td>2.</td>
+                                    <td>mastercard.com/about-us/security/fraud-prevention</td>
+                                    <td><span style="background: #e3f2fd; color: #1976d2; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Earned</span></td>
+                                    <td><span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Mentioned</span></td>
+                                    <td>342</td>
+                                    <td>3.1%</td>
+                                    <td>1.8</td>
+                                    <td><span class="expand-icon">▶</span></td>
+                                </tr>
+                                <tr class="expanded-content">
+                                    <td colspan="8">
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                            <div>
+                                                <strong>Page Content Summary:</strong>
+                                                <p style="margin-top: 0.5rem; font-size: 0.9rem;">Detailed information about Mastercard's security features, fraud prevention measures, and customer protection policies.</p>
+                                                <strong style="margin-top: 1rem; display: block;">Common Citation Context:</strong>
+                                                <ul style="margin-top: 0.5rem; padding-left: 1rem; font-size: 0.9rem;">
+                                                    <li>Payment security comparisons</li>
+                                                    <li>Fraud protection feature explanations</li>
+                                                    <li>Safe online shopping guides</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <strong>Citation Analytics:</strong>
+                                                <div style="margin-top: 0.5rem; font-size: 0.9rem;">
+                                                    <div><strong>Primary Topics:</strong> Security (78%), Fraud Prevention (15%), Customer Protection (7%)</div>
+                                                    <div><strong>Platform Distribution:</strong> Claude (38%), ChatGPT (32%), Perplexity (20%), Gemini (10%)</div>
+                                                    <div><strong>Average Sentiment:</strong> 4.6/5 (Very Positive)</div>
+                                                    <div><strong>Peak Citation Period:</strong> July 20-22, 2025</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="expandable-row" onclick="toggleExpand(this)">
+                                    <td>3.</td>
+                                    <td>mastercard.com/corporate/overview/corporate-overview</td>
+                                    <td><span style="background: #e3f2fd; color: #1976d2; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Earned</span></td>
+                                    <td><span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Mentioned</span></td>
+                                    <td>298</td>
+                                    <td>2.2%</td>
+                                    <td>2.4</td>
+                                    <td><span class="expand-icon">▶</span></td>
+                                </tr>
+                                <tr class="expanded-content">
+                                    <td colspan="8">
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                            <div>
+                                                <strong>Page Content Summary:</strong>
+                                                <p style="margin-top: 0.5rem; font-size: 0.9rem;">Corporate information, company history, business model overview, and key financial metrics for Mastercard.</p>
+                                                <strong style="margin-top: 1rem; display: block;">Common Citation Context:</strong>
+                                                <ul style="margin-top: 0.5rem; padding-left: 1rem; font-size: 0.9rem;">
+                                                    <li>Company background research</li>
+                                                    <li>Business model explanations</li>
+                                                    <li>Financial services industry analysis</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <strong>Citation Analytics:</strong>
+                                                <div style="margin-top: 0.5rem; font-size: 0.9rem;">
+                                                    <div><strong>Primary Topics:</strong> Corporate Info (56%), Business Model (28%), Financial Data (16%)</div>
+                                                    <div><strong>Platform Distribution:</strong> Perplexity (42%), ChatGPT (35%), Claude (13%), Gemini (10%)</div>
+                                                    <div><strong>Average Sentiment:</strong> 3.9/5 (Positive)</div>
+                                                    <div><strong>Peak Citation Period:</strong> July 19-21, 2025</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="expandable-row" onclick="toggleExpand(this)">
+                                    <td>4.</td>
+                                    <td>mastercard.com/solutions/business-solutions</td>
+                                    <td><span style="background: #e3f2fd; color: #1976d2; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Earned</span></td>
+                                    <td><span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Mentioned</span></td>
+                                    <td>267</td>
+                                    <td>1.9%</td>
+                                    <td>3.1</td>
+                                    <td><span class="expand-icon">▶</span></td>
+                                </tr>
+                                <tr class="expanded-content">
+                                    <td colspan="8">
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                            <div>
+                                                <strong>Page Content Summary:</strong>
+                                                <p style="margin-top: 0.5rem; font-size: 0.9rem;">Business payment solutions, corporate card programs, expense management tools, and B2B payment services.</p>
+                                                <strong style="margin-top: 1rem; display: block;">Common Citation Context:</strong>
+                                                <ul style="margin-top: 0.5rem; padding-left: 1rem; font-size: 0.9rem;">
+                                                    <li>Corporate credit card comparisons</li>
+                                                    <li>Business payment solution research</li>
+                                                    <li>Expense management tool guides</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <strong>Citation Analytics:</strong>
+                                                <div style="margin-top: 0.5rem; font-size: 0.9rem;">
+                                                    <div><strong>Primary Topics:</strong> Business Solutions (64%), Corporate Cards (25%), Expense Management (11%)</div>
+                                                    <div><strong>Platform Distribution:</strong> ChatGPT (40%), Claude (32%), Perplexity (18%), Gemini (10%)</div>
+                                                    <div><strong>Average Sentiment:</strong> 4.1/5 (Positive)</div>
+                                                    <div><strong>Peak Citation Period:</strong> July 23-25, 2025</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="expandable-row" onclick="toggleExpand(this)">
+                                    <td>5.</td>
+                                    <td>mastercard.com/news/media/travel-benefits-guide</td>
+                                    <td><span style="background: #e3f2fd; color: #1976d2; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Earned</span></td>
+                                    <td><span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Mentioned</span></td>
+                                    <td>231</td>
+                                    <td>2.7%</td>
+                                    <td>2.0</td>
+                                    <td><span class="expand-icon">▶</span></td>
+                                </tr>
+                                <tr class="expanded-content">
+                                    <td colspan="8">
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                                            <div>
+                                                <strong>Page Content Summary:</strong>
+                                                <p style="margin-top: 0.5rem; font-size: 0.9rem;">Comprehensive guide to Mastercard travel benefits, international acceptance, airport lounge access, and travel insurance coverage.</p>
+                                                <strong style="margin-top: 1rem; display: block;">Common Citation Context:</strong>
+                                                <ul style="margin-top: 0.5rem; padding-left: 1rem; font-size: 0.9rem;">
+                                                    <li>Travel credit card recommendations</li>
+                                                    <li>International payment guides</li>
+                                                    <li>Travel benefit comparisons</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <strong>Citation Analytics:</strong>
+                                                <div style="margin-top: 0.5rem; font-size: 0.9rem;">
+                                                    <div><strong>Primary Topics:</strong> Travel Benefits (72%), International Acceptance (18%), Insurance (10%)</div>
+                                                    <div><strong>Platform Distribution:</strong> ChatGPT (48%), Perplexity (29%), Gemini (15%), Claude (8%)</div>
+                                                    <div><strong>Average Sentiment:</strong> 4.4/5 (Very Positive)</div>
+                                                    <div><strong>Peak Citation Period:</strong> July 24-25, 2025</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination">
+                        <span>Showing 1-5 of 47 pages</span>
+                        <div>
+                            <button style="margin-right: 0.5rem; padding: 0.25rem 0.5rem; border: 1px solid #ccc; background: white; cursor: pointer;">Previous</button>
+                            <span style="margin: 0 0.5rem;">Page 1 of 10</span>
+                            <button style="padding: 0.25rem 0.5rem; border: 1px solid #ccc; background: white; cursor: pointer;">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation functions
+        function showDashboard() {
+            document.getElementById('landingPage').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            // Add a small delay to ensure DOM is ready
+            setTimeout(() => {
+                initializeCharts();
+            }, 100);
+        }
+
+        function showModule(moduleId) {
+            // Hide all modules
+            document.querySelectorAll('.module').forEach(module => {
+                module.classList.remove('active');
+            });
+            
+            // Show selected module
+            document.getElementById(moduleId).classList.add('active');
+            
+            // Update nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function toggleExpand(row) {
+            const expandIcon = row.querySelector('.expand-icon');
+            const nextRow = row.nextElementSibling;
+            
+            if (nextRow && nextRow.classList.contains('expanded-content')) {
+                if (nextRow.style.display === 'none' || nextRow.style.display === '') {
+                    nextRow.style.display = 'table-row';
+                    expandIcon.classList.add('expanded');
+                    expandIcon.textContent = '▼';
+                } else {
+                    nextRow.style.display = 'none';
+                    expandIcon.classList.remove('expanded');
+                    expandIcon.textContent = '▶';
+                }
+            }
+        }
+
+        // Chart initialization
+        function initializeCharts() {
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: { 
+                        backgroundColor: 'rgba(0,0,0,0.8)',
+                        titleColor: 'white',
+                        bodyColor: 'white'
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false } },
+                    y: { grid: { color: '#f0f0f0' } }
+                }
+            };
+
+            // Helper function to safely create charts
+            function createChart(canvasId, config) {
+                try {
+                    const canvas = document.getElementById(canvasId);
+                    if (canvas) {
+                        const ctx = canvas.getContext('2d');
+                        return new Chart(ctx, config);
+                    } else {
+                        console.warn(`Canvas element ${canvasId} not found`);
+                        return null;
+                    }
+                } catch (error) {
+                    console.error(`Error creating chart ${canvasId}:`, error);
+                    return null;
+                }
+            }
+
+            // Visibility Trend Chart (Enhanced)
+            createChart('visibilityTrendChart', {
+                type: 'line',
+                data: {
+                    labels: ['Jul 19', 'Jul 20', 'Jul 21', 'Jul 22', 'Jul 23', 'Jul 24', 'Jul 25'],
+                    datasets: [
+                        {
+                            label: 'Mastercard',
+                            data: [49.6, 50.1, 50.8, 51.4, 52.0, 52.4, 52.8],
+                            borderColor: '#eb001b',
+                            backgroundColor: 'rgba(235, 0, 27, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 3
+                        },
+                        {
+                            label: 'Visa',
+                            data: [53.8, 53.9, 54.0, 54.2, 54.1, 54.0, 54.1],
+                            borderColor: '#1a1f71',
+                            backgroundColor: 'rgba(26, 31, 113, 0.1)',
+                            fill: false,
+                            tension: 0.4,
+                            borderWidth: 2,
+                            borderDash: [5, 5]
+                        },
+                        {
+                            label: 'American Express',
+                            data: [48.8, 48.6, 48.4, 48.2, 48.1, 48.2, 48.3],
+                            borderColor: '#006fcf',
+                            backgroundColor: 'rgba(0, 111, 207, 0.1)',
+                            fill: false,
+                            tension: 0.4,
+                            borderWidth: 2,
+                            borderDash: [3, 3]
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: true, position: 'top' },
+                        tooltip: { 
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            titleColor: 'white',
+                            bodyColor: 'white'
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { min: 47, max: 56, grid: { color: '#f0f0f0' } }
+                    }
+                }
+            });
+
+            // Share of Voice Chart
+            createChart('shareOfVoiceChart', {
+                type: 'doughnut',
+                data: {
+                    labels: ['Mastercard', 'Visa', 'American Express', 'Discover', 'Capital One', 'Others'],
+                    datasets: [{
+                        data: [11.2, 15.8, 12.3, 8.7, 6.4, 45.6],
+                        backgroundColor: ['#eb001b', '#1a1f71', '#006fcf', '#ff6000', '#004879', '#e5e5e5'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Platform Performance Chart
+            createChart('platformChart', {
+                type: 'bar',
+                data: {
+                    labels: ['ChatGPT', 'Perplexity', 'Claude', 'Gemini', 'Copilot'],
+                    datasets: [{
+                        data: [58.2, 54.1, 48.9, 67.3, 45.2],
+                        backgroundColor: ['#10a37f', '#0ea5e9', '#f97316', '#4a5568', '#0078d4'],
+                        borderRadius: 4,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, max: 75 }
+                    }
+                }
+            });
+
+            // Regional Performance Chart
+            createChart('regionalChart', {
+                type: 'bar',
+                data: {
+                    labels: ['USA', 'UK'],
+                    datasets: [{
+                        label: 'Current Week',
+                        data: [54.2, 51.4],
+                        backgroundColor: '#eb001b',
+                        borderRadius: 4
+                    }, {
+                        label: 'Previous Week',
+                        data: [51.4, 47.8],
+                        backgroundColor: '#ffc0cb',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } },
+                    scales: {
+                        y: { beginAtZero: true, max: 60 }
+                    }
+                }
+            });
+
+            // Sentiment Trend Chart
+            createChart('sentimentTrendChart', {
+                type: 'line',
+                data: {
+                    labels: ['Jul 19', 'Jul 20', 'Jul 21', 'Jul 22', 'Jul 23', 'Jul 24', 'Jul 25'],
+                    datasets: [
+                        {
+                            label: 'Positive Sentiment',
+                            data: [68.5, 69.2, 70.1, 69.8, 70.5, 70.9, 71.3],
+                            borderColor: '#28a745',
+                            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 3
+                        },
+                        {
+                            label: 'Negative Sentiment',
+                            data: [31.5, 30.8, 29.9, 30.2, 29.5, 29.1, 28.7],
+                            borderColor: '#dc3545',
+                            backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } },
+                    scales: {
+                        y: { min: 25, max: 75 }
+                    }
+                }
+            });
+
+            // Sentiment by Platform Chart
+            createChart('sentimentPlatformChart', {
+                type: 'bar',
+                data: {
+                    labels: ['Gemini', 'ChatGPT', 'Perplexity', 'Claude', 'Copilot'],
+                    datasets: [{
+                        label: 'Positive Sentiment %',
+                        data: [75.8, 73.2, 69.4, 68.7, 65.1],
+                        backgroundColor: ['#4a5568', '#10a37f', '#0ea5e9', '#f97316', '#0078d4'],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { beginAtZero: true, max: 80 }
+                    }
+                }
+            });
+
+            // Topic Mention Rate Chart
+            createChart('topicMentionChart', {
+                type: 'bar',
+                data: {
+                    labels: ['Credit Cards', 'Digital Payments', 'Travel Finance', 'Business Solutions', 'Security', 'Investment'],
+                    datasets: [{
+                        data: [68.2, 59.7, 62.1, 45.3, 71.8, 32.4],
+                        backgroundColor: ['#eb001b', '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57'],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, max: 80 }
+                    }
+                }
+            });
+
+            // Prompt Volume Chart
+            createChart('promptVolumeChart', {
+                type: 'line',
+                data: {
+                    labels: ['Jul 19', 'Jul 20', 'Jul 21', 'Jul 22', 'Jul 23', 'Jul 24', 'Jul 25'],
+                    datasets: [{
+                        label: 'Daily Prompts',
+                        data: [2145, 2387, 2234, 2456, 2123, 2378, 2598],
+                        borderColor: '#eb001b',
+                        backgroundColor: 'rgba(235, 0, 27, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, max: 3000 }
+                    }
+                }
+            });
+
+            // Prompt Platform Distribution Chart
+            createChart('promptPlatformChart', {
+                type: 'pie',
+                data: {
+                    labels: ['ChatGPT', 'Perplexity', 'Claude', 'Gemini', 'Copilot'],
+                    datasets: [{
+                        data: [35.2, 28.7, 18.9, 12.4, 4.8],
+                        backgroundColor: ['#10a37f', '#0ea5e9', '#f97316', '#4a5568', '#0078d4'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Citation Trend Chart
+            createChart('citationTrendChart', {
+                type: 'line',
+                data: {
+                    labels: ['Jul 19', 'Jul 20', 'Jul 21', 'Jul 22', 'Jul 23', 'Jul 24', 'Jul 25'],
+                    datasets: [
+                        {
+                            label: 'Mastercard Citation Share',
+                            data: [1.4, 1.5, 1.6, 1.7, 1.8, 1.8, 1.8],
+                            borderColor: '#eb001b',
+                            backgroundColor: 'rgba(235, 0, 27, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 3
+                        },
+                        {
+                            label: 'Industry Average',
+                            data: [1.2, 1.2, 1.3, 1.3, 1.4, 1.4, 1.4],
+                            borderColor: '#6c757d',
+                            backgroundColor: 'rgba(108, 117, 125, 0.1)',
+                            fill: false,
+                            tension: 0.4,
+                            borderWidth: 2,
+                            borderDash: [5, 5]
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } },
+                    scales: {
+                        y: { min: 1.0, max: 2.0 }
+                    }
+                }
+            });
+
+            // Citation Types Chart
+            createChart('citationTypesChart', {
+                type: 'doughnut',
+                data: {
+                    labels: ['Earned', 'Owned', 'Social', 'Competition'],
+                    datasets: [{
+                        data: [94.2, 3.1, 2.4, 0.3],
+                        backgroundColor: ['#007bff', '#28a745', '#6c757d', '#dc3545'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Citation Platform Distribution Chart
+            createChart('citationPlatformChart', {
+                type: 'bar',
+                data: {
+                    labels: ['ChatGPT', 'Perplexity', 'Claude', 'Gemini', 'Copilot'],
+                    datasets: [{
+                        label: 'Citations',
+                        data: [847, 623, 445, 298, 187],
+                        backgroundColor: ['#10a37f', '#0ea5e9', '#f97316', '#4a5568', '#0078d4'],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, max: 1000 }
+                    }
+                }
+            });
+
+            // Citation Growth Chart
+            createChart('citationGrowthChart', {
+                type: 'line',
+                data: {
+                    labels: ['May', 'Jun', 'Jul'],
+                    datasets: [{
+                        label: 'Monthly Growth %',
+                        data: [12.3, 18.7, 28.1],
+                        borderColor: '#28a745',
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, max: 35 }
+                    }
+                }
+            });
+        }
+
+        // Interactive elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click handlers for filter pills
+            document.querySelectorAll('.filter-pill').forEach(pill => {
+                pill.addEventListener('click', function() {
+                    // Remove active class from siblings
+                    this.parentNode.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+                    // Add active class to clicked pill
+                    this.classList.add('active');
+                });
+            });
+
+            // Add click handlers for region buttons (only for non-locked buttons)
+            document.querySelectorAll('.region-btn:not(.locked)').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                });
+            });
+
+            // Add click handlers for tab secondary
+            document.querySelectorAll('.tab-secondary').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from siblings
+                    this.parentNode.querySelectorAll('.tab-secondary').forEach(t => t.classList.remove('active'));
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
