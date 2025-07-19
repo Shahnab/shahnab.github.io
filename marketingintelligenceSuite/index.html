@@ -1,0 +1,2421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic AI Workflow: Campaign Comms</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Animated Background Elements */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .floating-element {
+            position: absolute;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            left: 80%;
+            animation-delay: -5s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            left: 60%;
+            animation-delay: -10s;
+        }
+
+        .floating-element:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            left: 30%;
+            animation-delay: -15s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Glass Effect Styles */
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Landing Page */
+        .landing-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .landing-page.hidden {
+            display: none;
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 300;
+            margin-bottom: 3rem;
+            letter-spacing: 2px;
+            text-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
+            animation: fadeInUp 1.5s ease-out;
+        }
+
+        .explore-btn {
+            padding: 1rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: fadeInUp 1.5s ease-out 0.5s both;
+        }
+
+        .explore-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Main App Interface */
+        .main-app {
+            display: none;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .main-app.visible {
+            display: block;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .app-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .app-title {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        .app-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 300;
+        }
+
+        /* Tab Navigation */
+        .tab-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .tab-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-btn {
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 3rem;
+            min-height: 600px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tab-pane h2 {
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+            color: white;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 1rem;
+        }
+
+        .placeholder-content {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            text-align: center;
+            padding: 3rem;
+        }
+
+        /* Mermaid Chart Styling */
+        .mermaid-container {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            min-height: 600px;
+        }
+
+        /* Custom Workflow Styles */
+        .workflow-container {
+            position: relative;
+            width: 100%;
+            min-height: 800px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            overflow: hidden;
+        }
+
+        .workflow-node {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+            cursor: pointer;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-width: 200px;
+        }
+
+        .workflow-node:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .workflow-node.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .node-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .node-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+
+        .node-subtitle {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Flow Arrows */
+        .flow-arrow {
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.6);
+            animation: bounce 2s infinite;
+            margin: 0.5rem 0;
+        }
+
+        .flow-arrow.active {
+            color: rgba(52, 152, 219, 0.8);
+            animation: bounce 1s infinite, glow 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 5px rgba(52, 152, 219, 0.5); }
+            50% { text-shadow: 0 0 20px rgba(52, 152, 219, 0.8); }
+        }
+
+        .flow-split {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Start Node */
+        .start-node {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.3), rgba(41, 128, 185, 0.2));
+            border-color: rgba(52, 152, 219, 0.5);
+        }
+
+        /* Workflow Sections */
+        .workflow-section {
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+
+        .workflow-row {
+            display: flex;
+            gap: 2rem;
+            width: 100%;
+            max-width: 1200px;
+            align-items: flex-start;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .workflow-row > * {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-icon {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: white;
+        }
+
+        .section-nodes {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        /* User Inputs Section */
+        .workflow-section[data-section="inputs"] .section-nodes {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        }
+
+        .input-node {
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(39, 174, 96, 0.1));
+            border-color: rgba(46, 204, 113, 0.3);
+            padding: 0.75rem;
+            min-height: 60px;
+            min-width: auto;
+        }
+
+        /* Engine Node */
+        .engine-node {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.3), rgba(142, 68, 173, 0.2));
+            border-color: rgba(155, 89, 182, 0.5);
+        }
+
+        /* External Services */
+        .workflow-section[data-section="external"] .section-nodes {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .external-node {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(192, 57, 43, 0.1));
+            border-color: rgba(231, 76, 60, 0.3);
+            min-height: 70px;
+            min-width: auto;
+        }
+
+        /* Storage Node */
+        .storage-node {
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.3), rgba(211, 84, 0, 0.2));
+            border-color: rgba(243, 156, 18, 0.5);
+        }
+
+        /* Decision Node */
+        .decision-node {
+            background: linear-gradient(135deg, rgba(52, 73, 94, 0.3), rgba(44, 62, 80, 0.2));
+            border-color: rgba(52, 73, 94, 0.5);
+            border-radius: 15px;
+        }
+
+        .decision-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .decision-option {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 10px;
+        }
+
+        /* Modules Section */
+        .modules-section {
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .modules-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .module-node {
+            background: linear-gradient(135deg, rgba(26, 188, 156, 0.2), rgba(22, 160, 133, 0.1));
+            border-color: rgba(26, 188, 156, 0.3);
+            min-height: 80px;
+            min-width: auto;
+        }
+
+        /* Output Node */
+        .output-node {
+            background: linear-gradient(135deg, rgba(142, 68, 173, 0.3), rgba(125, 60, 152, 0.2));
+            border-color: rgba(142, 68, 173, 0.5);
+        }
+
+        /* Flow Controls */
+        .flow-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .control-btn {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .workflow-container {
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .workflow-row {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .workflow-row > * {
+                min-width: auto;
+            }
+
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .workflow-section[data-section="inputs"] .section-nodes {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-split {
+                gap: 1rem;
+            }
+
+            .flow-arrow {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Audience Insights Styles */
+        .audience-config {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .config-section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+
+        .section-header {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            color: white;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .form-select option {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        .persona-basis-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .basis-group {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .basis-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 0.5rem;
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 18px 2rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(20px);
+        }
+
+        .generate-btn:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-icon {
+            font-size: 1.3rem;
+        }
+
+        /* Loading Animation */
+        .loading-section {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            margin: 0 auto 2rem;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .loading-subtext {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Personas Results */
+        .personas-results {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .results-header h3 {
+            font-size: 2rem;
+            color: white;
+            margin: 0;
+        }
+
+        .back-config-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .back-config-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-3px);
+        }
+
+        .personas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .persona-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .persona-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+        }
+
+        .persona-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 15px 40px rgba(255, 255, 255, 0.1);
+        }
+
+        .persona-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .persona-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-right: 1rem;
+            color: white;
+        }
+
+        .persona-info {
+            flex: 1;
+        }
+
+        .persona-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+
+        .persona-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .target-size {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .target-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+
+        .target-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .persona-demographics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+        }
+
+        .demo-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            padding: 0.25rem 0;
+        }
+
+        .demo-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+
+        .demo-value {
+            color: white;
+            font-weight: 600;
+        }
+
+        .persona-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .section-content {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+
+        .personality-traits {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .trait-tag {
+            padding: 0.4rem 0.8rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: white;
+        }
+
+        .section-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .info-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .info-list li {
+            padding: 0.4rem 0;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .info-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .info-list li:last-child {
+            border-bottom: none;
+        }
+
+        .highlight-stat {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 3px solid rgba(255, 255, 255, 0.3);
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .highlight-stat strong {
+            color: white;
+        }
+
+        .media-breakdown {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .media-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.85rem;
+        }
+
+        .media-item:last-child {
+            border-bottom: none;
+        }
+
+        .media-platform {
+            color: white;
+            font-weight: 500;
+        }
+
+        .media-time {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .location-insights {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .location-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .location-icon {
+            font-size: 1rem;
+        }
+
+        .location-text {
+            color: white;
+        }
+
+        /* Chart Styles */
+        .chart-container {
+            margin: 1.5rem 0;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .chart {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Device Usage Chart for Minh */
+        .chart[data-chart="device-usage-minh"] {
+            background: conic-gradient(
+                #ffffff 0deg 126deg,
+                #e0e0e0 126deg 216deg,
+                #c0c0c0 216deg 270deg,
+                #a0a0a0 270deg 306deg,
+                #808080 306deg 342deg,
+                #606060 342deg 360deg
+            );
+        }
+
+        /* Content Consumption Chart for Linh */
+        .chart[data-chart="content-consumption-linh"] {
+            background: conic-gradient(
+                #ffffff 0deg 144deg,
+                #e0e0e0 144deg 216deg,
+                #c0c0c0 216deg 270deg,
+                #a0a0a0 270deg 306deg,
+                #808080 306deg 342deg,
+                #606060 342deg 360deg
+            );
+        }
+
+        /* Business Tools Chart for Duc */
+        .chart[data-chart="business-tools-duc"] {
+            background: conic-gradient(
+                #ffffff 0deg 108deg,
+                #e0e0e0 108deg 198deg,
+                #c0c0c0 198deg 270deg,
+                #a0a0a0 270deg 324deg,
+                #808080 324deg 349.2deg,
+                #606060 349.2deg 360deg
+            );
+        }
+
+        .chart::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            background: #0a0a0a;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .chart-legend {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            font-size: 0.8rem;
+            text-align: left;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Chart Animation */
+        .chart {
+            animation: chartSpin 2s ease-out;
+        }
+
+        @keyframes chartSpin {
+            from {
+                transform: rotate(-90deg);
+                opacity: 0;
+            }
+            to {
+                transform: rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        /* Spending Chart Styles */
+        .spending-chart {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .spending-bar {
+            display: grid;
+            grid-template-columns: 120px 1fr 60px;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .spending-bar:last-child {
+            margin-bottom: 0;
+        }
+
+        .spending-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            text-align: left;
+        }
+
+        .spending-bar-container {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .spending-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
+            border-radius: 6px;
+            transition: width 1.5s ease-out;
+            position: relative;
+        }
+
+        .spending-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .spending-value {
+            color: white;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .config-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .persona-basis-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .personas-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .persona-demographics {
+                grid-template-columns: 1fr;
+            }
+
+            .results-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+        }
+
+        /* Back Button */
+        .back-btn {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            z-index: 1000;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5rem;
+            }
+
+            .tab-nav {
+                justify-content: center;
+            }
+
+            .tab-btn {
+                font-size: 0.8rem;
+                padding: 0.6rem 1rem;
+            }
+
+            .tab-content {
+                padding: 1.5rem;
+            }
+
+            .back-btn {
+                top: 1rem;
+                left: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+    </div>
+
+    <!-- Landing Page -->
+    <div class="landing-page" id="landingPage">
+        <h1 class="main-title">Agentic AI Workflow: Campaign Comms</h1>
+        <button class="explore-btn" onclick="showMainApp()">Explore</button>
+    </div>
+
+    <!-- Main Application -->
+    <div class="main-app" id="mainApp">
+        <button class="back-btn" onclick="showLanding()">← Back</button>
+        
+        <div class="app-header">
+            <h1 class="app-title">Campaign Communications Suite</h1>
+            <p class="app-subtitle">Marketing Intelligence Platform: Roadmap & Modules</p>
+        </div>
+
+        <div class="tab-container">
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="showTab('agentic-workflow')">Agentic Workflow</button>
+                <button class="tab-btn" onclick="showTab('category-insights')">Category Insights</button>
+                <button class="tab-btn" onclick="showTab('competition-insights')">Competition Insights</button>
+                <button class="tab-btn" onclick="showTab('audience-insights')">Audience Insights</button>
+                <button class="tab-btn" onclick="showTab('brand-insights')">Brand Insights</button>
+                <button class="tab-btn" onclick="showTab('customer-journey')">Customer Journey Maps</button>
+                <button class="tab-btn" onclick="showTab('brand-strategy')">Brand Strategy</button>
+                <button class="tab-btn" onclick="showTab('creative-brief')">Creative Brief</button>
+                <button class="tab-btn" onclick="showTab('big-brand-idea')">Big Brand Idea</button>
+                <button class="tab-btn" onclick="showTab('comms-framework')">Comms Framework</button>
+                <button class="tab-btn" onclick="showTab('campaign-concept')">Campaign Concept</button>
+                <button class="tab-btn" onclick="showTab('execution-generator')">Execution Generator</button>
+            </div>
+
+            <div class="tab-content">
+                <!-- Agentic Workflow Tab -->
+                <div class="tab-pane active" id="agentic-workflow">
+                    <h2>Agentic Workflow</h2>
+                    <div class="workflow-container">
+                        
+                        <!-- Start Node -->
+                        <div class="workflow-node start-node" data-node="start">
+                            <div class="node-icon"></div>
+                            <div class="node-title">Start</div>
+                        </div>
+
+                        <!-- Flow Arrow -->
+                        <div class="flow-arrow">↓</div>
+
+                        <!-- User Inputs Section -->
+                        <div class="workflow-section" data-section="inputs">
+                            <div class="section-header">
+                                <div class="section-icon">👤</div>
+                                <div class="section-title">User Inputs</div>
+                            </div>
+                            <div class="section-nodes">
+                                <div class="workflow-node input-node" data-node="category">Category</div>
+                                <div class="workflow-node input-node" data-node="brand">Brand</div>
+                                <div class="workflow-node input-node" data-node="competitive">Competitive Brands</div>
+                                <div class="workflow-node input-node" data-node="product">Product/Service</div>
+                                <div class="workflow-node input-node" data-node="country">Country</div>
+                                <div class="workflow-node input-node" data-node="age">Age Group</div>
+                                <div class="workflow-node input-node" data-node="gender">Gender</div>
+                                <div class="workflow-node input-node" data-node="region">Region</div>
+                                <div class="workflow-node input-node" data-node="cities">Cities</div>
+                            </div>
+                        </div>
+
+                        <!-- Flow Arrow -->
+                        <div class="flow-arrow">↓</div>
+
+                        <!-- Prompt Engine -->
+                        <div class="workflow-node engine-node" data-node="engine">
+                            <div class="node-icon">⚙️</div>
+                            <div class="node-title">Prompt Engine</div>
+                            <div class="node-subtitle">Central Processing Hub</div>
+                        </div>
+
+                        <!-- Flow Arrows Split -->
+                        <div class="flow-split">
+                            <div class="flow-arrow">↙️</div>
+                            <div class="flow-arrow">↓</div>
+                            <div class="flow-arrow">↘️</div>
+                        </div>
+
+                        <!-- External Services and Storage Row -->
+                        <div class="workflow-row">
+                            <!-- External Services -->
+                            <div class="workflow-section" data-section="external">
+                                <div class="section-header">
+                                    <div class="section-icon">🌐</div>
+                                    <div class="section-title">External Services</div>
+                                </div>
+                                <div class="section-nodes">
+                                    <div class="workflow-node external-node" data-node="llm">
+                                        <div class="node-title">LLM Models</div>
+                                        <div class="node-subtitle">Claude/Gemini</div>
+                                    </div>
+                                    <div class="workflow-node external-node" data-node="search">
+                                        <div class="node-title">Search</div>
+                                        <div class="node-subtitle">Perplexity</div>
+                                    </div>
+                                    <div class="workflow-node external-node" data-node="audience">
+                                        <div class="node-title">Audience Data</div>
+                                        <div class="node-subtitle">Sqreem/Milieu</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Data Storage -->
+                            <div class="workflow-node storage-node" data-node="storage">
+                                <div class="node-icon"></div>
+                                <div class="node-title">Data Storage</div>
+                                <div class="node-subtitle">Centralized Repository</div>
+                            </div>
+
+                            <!-- Decision Point -->
+                            <div class="workflow-node decision-node" data-node="decision">
+                                <div class="node-icon"></div>
+                                <div class="node-title">Additional User Input Type?</div>
+                                <div class="decision-options">
+                                    <span class="decision-option">Overall Profile</span>
+                                    <span class="decision-option">Multiple Personas</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Flow Arrow -->
+                        <div class="flow-arrow">↓</div>
+
+                        <!-- Analysis Modules -->
+                        <div class="workflow-section modules-section" data-section="modules">
+                            <div class="section-header">
+                                <div class="section-icon">📊</div>
+                                <div class="section-title">Analysis Modules</div>
+                            </div>
+                            <div class="section-nodes modules-grid">
+                                <div class="workflow-node module-node" data-node="category-insights">Category Insights</div>
+                                <div class="workflow-node module-node" data-node="competition-insights">Competition Insights</div>
+                                <div class="workflow-node module-node" data-node="audience-insights">Audience Insights</div>
+                                <div class="workflow-node module-node" data-node="brand-insights">Brand Insights</div>
+                                <div class="workflow-node module-node" data-node="customer-journey">Customer Journey Maps</div>
+                                <div class="workflow-node module-node" data-node="brand-strategy">Brand Strategy</div>
+                                <div class="workflow-node module-node" data-node="creative-brief">Creative Brief</div>
+                                <div class="workflow-node module-node" data-node="big-brand-idea">Big Brand Idea</div>
+                                <div class="workflow-node module-node" data-node="comms-framework">Comms Framework</div>
+                                <div class="workflow-node module-node" data-node="campaign-concept">Campaign Concept</div>
+                                <div class="workflow-node module-node" data-node="execution-generator">Execution Generator</div>
+                            </div>
+                        </div>
+
+                        <!-- Flow Arrow -->
+                        <div class="flow-arrow">↓</div>
+
+                        <!-- Output -->
+                        <div class="workflow-node output-node" data-node="output">
+                            <div class="node-icon">📄</div>
+                            <div class="node-title">Download PDF</div>
+                            <div class="node-subtitle">Complete Report</div>
+                        </div>
+
+                        <!-- Flow Animation Controls -->
+                        <div class="flow-controls">
+                            <button class="control-btn" onclick="startFlowAnimation()">▶️ Start Flow</button>
+                            <button class="control-btn" onclick="resetFlowAnimation()">🔄 Reset</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category Insights Tab -->
+                <div class="tab-pane" id="category-insights">
+                    <h2>Category Insights</h2>
+                    <div class="placeholder-content">
+                        <p>Category Insights module will provide comprehensive analysis of market categories, trends, and opportunities.</p>
+                        <p>Content and features will be added here in the next iteration.</p>
+                    </div>
+                </div>
+
+                <!-- Competition Insights Tab -->
+                <div class="tab-pane" id="competition-insights">
+                    <h2>Competition Insights</h2>
+                    <div class="placeholder-content">
+                        <p>Competition Insights module will analyze competitive landscape, positioning, and strategic opportunities.</p>
+                        <p>Content and features will be added here in the next iteration.</p>
+                    </div>
+                </div>
+
+                <!-- Audience Insights Tab -->
+                <div class="tab-pane" id="audience-insights">
+                    <h2>Audience Insights</h2>
+                    
+                    <!-- Configuration Section -->
+                    <div class="audience-config" id="audienceConfig">
+                        <div class="config-grid">
+                            <div class="config-section">
+                                <h3 class="section-header">Campaign Configuration</h3>
+                                <div class="form-group">
+                                    <label class="form-label">Category</label>
+                                    <input type="text" class="form-input" value="Beer" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Brand</label>
+                                    <input type="text" class="form-input" value="Heineken" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Location</label>
+                                    <input type="text" class="form-input" value="Nationwide, Vietnam" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Number of Personas</label>
+                                    <select class="form-select">
+                                        <option>3</option>
+                                        
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="config-section">
+                                <h3 class="section-header">Persona Creation Basis</h3>
+                                <div class="persona-basis-grid">
+                                    <div class="basis-group">
+                                        <div class="basis-title">Demographic</div>
+                                        <select class="form-select">
+                                            <option>Age: Millennials (25-40)</option>
+                                            
+                                        </select>
+                                    </div>
+                                    <div class="basis-group">
+                                        <div class="basis-title">Geographic</div>
+                                        <select class="form-select">
+                                            <option>Urban City: Urban Areas</option>
+                                            
+                                        </select>
+                                    </div>
+                                    <div class="basis-group">
+                                        <div class="basis-title">Psychographic</div>
+                                        <select class="form-select">
+                                            <option>Lifestyle: Social & Entertainment</option>
+                                            
+                                        </select>
+                                    </div>
+                                    <div class="basis-group">
+                                        <div class="basis-title">Behavioral</div>
+                                        <select class="form-select">
+                                            <option>Purchase: Premium Seeker</option>
+                                            
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="generate-btn" onclick="generatePersonas()">
+                            <span class="btn-icon"></span>
+                            Generate Audience Personas
+                        </button>
+                    </div>
+
+                    <!-- Loading Animation -->
+                    <div class="loading-section" id="audienceLoading" style="display: none;">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-text">Creating AI-Powered Personas...</div>
+                        <div class="loading-subtext">Analyzing demographic patterns and consumer behavior</div>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div class="personas-results" id="personasResults" style="display: none;">
+                        <div class="results-header">
+                            <h3>Generated Audience Personas</h3>
+                            <button class="back-config-btn" onclick="showAudienceConfig()">← Back to Configuration</button>
+                        </div>
+                        
+                        <div class="personas-grid">
+                            <!-- Persona 1: Minh Nguyen -->
+                            <div class="persona-card">
+                                <div class="persona-header">
+                                    <div class="persona-avatar">M</div>
+                                    <div class="persona-info">
+                                        <div class="persona-name">Minh Nguyen</div>
+                                        <div class="persona-subtitle">The Social Professional</div>
+                                    </div>
+                                </div>
+
+                                <div class="target-size">
+                                    <div class="target-number">18,442</div>
+                                    <div class="target-label">Target Audience Size</div>
+                                </div>
+
+                                <div class="persona-demographics">
+                                    <div class="demo-item">
+                                        <span class="demo-label">Age:</span>
+                                        <span class="demo-value">32</span>
+                                    </div>
+                                    <div class="demo-item">
+                                        <span class="demo-label">Gender:</span>
+                                        <span class="demo-value">Male</span>
+                                    </div>
+                                    <div class="demo-item">
+                                        <span class="demo-label">Location:</span>
+                                        <span class="demo-value">Ho Chi Minh City</span>
+                                    </div>
+                                    <div class="demo-item">
+                                        <span class="demo-label">Education:</span>
+                                        <span class="demo-value">Bachelor's in Marketing</span>
+                                    </div>
+                                    <div class="demo-item">
+                                        <span class="demo-label">Income:</span>
+                                        <span class="demo-value">$32,000/year</span>
+                                    </div>
+                                    <div class="demo-item">
+                                        <span class="demo-label">Status:</span>
+                                        <span class="demo-value">Single</span>
+                                    </div>
+                                </div>
+
+                                <div class="persona-section">
+                                    <div class="section-title">Personality Traits</div>
+                                    <div class="personality-traits">
+                                        <span class="trait-tag">Extroverted</span>
+                                        <span class="trait-tag">Ambitious</span>
+                                        <span class="trait-tag">Social</span>
+                                        <span class="trait-tag">Brand-conscious</span>
+                                        <span class="trait-tag">Tech-savvy</span>
+                                    </div>
+                                </div>
+
+                                <div class="persona-section">
+                                    <div class="section-title">About</div>
+                                    <div class="section-content">
+                                        Minh is a dynamic marketing professional who leverages social connections for career advancement. He values premium experiences and brands that enhance his professional image.
+                                    </div>
+                                </div>
+
+                                <div class="chart-container">
+                                    <div class="section-title">Device Usage</div>
+                                    <div class="chart" data-chart="device-usage-minh"></div>
+                                    <div class="chart-legend">
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background: #ffffff;"></div>
+                                            <span>iPhone (35%)</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background: #e0e0e0;"></div>
+                                            <span>Android (25%)</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background: #c0c0c0;"></div>
+                                            <span>MacBook (15%)</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background: #a0a0a0;"></div>
+                                            <span>PC (10%)</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background: #808080;"></div>
+                                            <span>iPad (10%)</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background: #606060;"></div>
+                                            <span>Others (5%)</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="section-grid">
+                                    <div>
+                                        <div class="section-title">Goals</div>
+                                        <ul class="info-list">
+                                            <li>Advance to Marketing Director role</li>
+                                            <li>Build strong professional network</li>
+                                            <li>Maintain active social lifestyle</li>
+                                            <li>Establish personal brand presence</li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <div class="section-title">Interests</div>
+                                        <ul class="info-list">
+                                            <li>Digital marketing trends</li>
+                                            <li>Networking events</li>
+                                            <li>Craft beer culture</li>
+                                            <li>Social media optimization</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="highlight-stat">
+                                    <strong>Beer Consumption:</strong> 4-5 times per week, primarily social settings, spends $150-200/month on premium beer experiences
+                                </div>
+
+                                <div class="chart-container">
+                                    <div class="section-title">Monthly Spending Breakdown</div>
+                                    <div class="spending-chart">
+                                        <div class="spending-bar">
+                                            <span class="spending-label">Food & Drinks</span>
+                                            <div class="spending-bar-container">
+                                                <div class="spending-bar-fill" style="width: 45%;" data-value="45%"></div>
+                                            </div>
+                                            <span class="spending-value">$540</span>
+                                        </div>
+                                        <div class="spending-bar">
+                                            <span class="spending-label">Entertainment</span>
+                                            <div class="spending-bar-container">
+                                                <div class="spending-bar-fill" style="width: 25%;" data-value="25%"></div>
+                                            </div>
+                                            <span class="spending-value">$300</span>
+                                        </div>
+                                        <div class="spending-bar">
+                                            <span class="spending-label">Fashion</span>
+                                            <div class="spending-bar-container">
+                                                <div class="spending-bar-fill" style="width: 20%;" data-value="20%"></div>
+                                            </div>
+                                            <span class="spending-value">$240</span>
+                                        </div>
+                                        <div class="spending-bar">
+                                            <span class="spending-label">Tech & Gadgets</span>
+                                            <div class="spending-bar-container">
+                                                <div class="spending-bar-fill" style="width: 10%;" data-value="10%"></div>
+                                            </div>
+                                            <span class="spending-value">$120</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="persona-section">
+                                    <div class="section-title">Media Consumption</div>
+                                    <div class="media-breakdown">
+                                        <div class="media-item">
+                                            <span class="media-platform">Instagram</span>
+                                            <span class="media-time">45 min/day</span>
+                                        </div>
+                                        <div class="media-item">
+                                            <span class="media-platform">LinkedIn</span>
+                                            <span class="media-time">30 min/day</span>
+                                        </div>
+                                        <div class="media-item">
+                                            <span class="media-platform">YouTube</span>
+                                            <span class="media-time">1 hour/day</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="location-insights">
+                                    <div class="section-title">Location Insights: Stay • Work • Play</div>
+                                    <div class="location-item">
+                                        <span class="location-icon">🏠</span>
+                                        <span class="location-text">District 7 modern apartment</span>
+                                    </div>
+                                    <div class="location-item">
+                                        <span class="location-icon">💼</span>
+                                        <span class="location-text">District 1 modern office tower</span>
+                                    </div>
+                                    <div class="location-item">
+                                        <span class="location-icon">🎯</span>
+                                        <span class="location-text">Nguyen Hue Walking Street events</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Persona 2: Linh Tran -->
+                            <div class="persona-card">
+                                <div class="persona-header">
+                                    <div class="persona-avatar">L</div>
+                                    <div class="persona-info">
+                                        <div class="persona-name">Linh Tran</div>
+                                        <div class="persona-subtitle">The Creative Explorer</div>
+                                    </div>
+                                </div>
+
+                                <div class="target-size">
+                                    <div class="target-number">22,156</div>
+                                    <div class="target-label">Target Audience Size</div>
+                                </div>
+
+                                <div class="persona-demographics">
+                                    <div class="demo-item">
+                                        <span class="demo-label">Age:</span>
+                                        <span class="demo-value">28</span>
+                                    </div>
+                                    <div class="demo-item">
+                                        <span class="demo-label">Gender:</span>
+                                        <span class="demo-value">Female</span>
+                                    </div>
+                                    <div class="demo-item">
+                                        <span class="demo-label">Location:</span>
+                                        <span class="demo-value">Hanoi</span>
+                                    </div>
+                                    <div class="demo-item">
+                                        <span class="demo-label">Education:</span>
+                                        <span class="demo-value">Bachelor's in Visual Arts</span>
+                                    </div>
+                                    <div class="demo-item">
+                                        <span class="demo-label">Income:</span>
+                                        <span class="demo-value">$28,000/year</span>
+                                    </div>
+                                    <div class="demo-item">
+                                        <span class="demo-label">Status:</span>
+                                        <span class="demo-value">In Relationship</span>
+                                    </div>
+                                </div>
+
+                                <div class="persona-section">
+                                    <div class="section-title">Personality Traits</div>
+                                    <div class="personality-traits">
+                                        <span class="trait-tag">Creative</span>
+                                        <span class="trait-tag">Authentic</span>
+                                        <span class="trait-tag">Adventurous</span>
+                                        <span class="trait-tag">Eco-conscious</span>
+                                        <span class="trait-tag">Experience-focused</span>
+                                    </div>
+                                </div>
+
+                                <div class="persona-section">
+                                    <div class="section-title">About</div>
+                                    <div class="section-content">
+                                        Linh is a creative professional who values authentic experiences over material possessions. She appreciates both international brands and local craftsmanship.
+                                    </div>
+                                </div>
+
+                                <div class="chart-container">
+                                    <div class="section-title">Content Consumption</div>
+                                    <div class="chart" data-chart="content-consumption-linh"></div>
+                                    <div class="chart-legend">
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background: #ffffff;"></div>
+                                            <span>Instagram (40%)</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background: #e0e0e0;"></div>
+                                            <span>Pinterest (20%)</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background: #c0c0c0;"></div>
+                                            <span>YouTube (15%)</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background: #a0a0a0;"></div>
+                                            <span>TikTok (10%)</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background: #808080;"></div>
+                                            <span>Blogs (10%)</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background: #606060;"></div>
+                                            <span>Others (5%)</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="section-grid">
+                                    <div>
+                                        <div class="section-title">Goals</div>
+                                        <ul class="info-list">
+                                            <li>Build creative portfolio</li>
+                                            <li>Travel to inspiring destinations</li>
+                                            <li>Support sustainable brands</li>
+                                            <li>Develop artistic skills</li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <div class="section-title">Interests</div>
+                                        <ul class="info-list">
+                                            <li>Contemporary art & design</li>
+                                            <li>Sustainable living practices</li>
+                                            <li>Food & beverage photography</li>
+                                            <li>Cultural events & festivals</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="highlight-stat">
+                                    <strong>Beer Consumption:</strong> 2-3 times per week, focuses on unique experiences and craft varieties, spends $80-120/month
+                                </div>
+
+                                <div class="chart-container">
+                                    <div class="section-title">Monthly Spending Breakdown</div>
+                                    <div class="spending-chart">
+                                        <div class="spending-bar">
+                                            <span class="spending-label">Art & Supplies</span>
+                                            <div class="spending-bar-container">
+                                                <div class="spending-bar-fill" style="width: 35%;" data-value="35%"></div>
+                                            </div>
+                                            <span class="spending-value">$350</span>
+                                        </div>
+                                        <div class="spending-bar">
+                                            <span class="spending-label">Sustainable Fashion</span>
+                                            <div class="spending-bar-container">
+                                                <div class="spending-bar-fill" style="width: 30%;" data-value="30%"></div>
+                                            </div>
+                                            <span class="spending-value">$300</span>
+                                        </div>
+                                        <div class="spending-bar">
+                                            <span class="spending-label">Food & Drinks</span>
+                                            <div class="spending-bar-container">
+                                                <div class="spending-bar-fill" style="width: 25%;" data-value="25%"></div>
+                                            </div>
+                                            <span class="spending-value">$250</span>
+                                        </div>
+                                        <div class="spending-bar">
+                                            <span class="spending-label">Cultural Events</span>
+                                            <div class="spending-bar-container">
+                                                <div class="spending-bar-fill" style="width: 10%;" data-value="10%"></div>
+                                            </div>
+                                            <span class="spending-value">$100</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="persona-section">
+                                    <div class="section-title">Media Consumption</div>
+                                    <div class="media-breakdown">
+                                        <div class="media-item">
+                                            <span class="media-platform">Instagram</span>
+                                            <span class="media-time">1 hour/day</span>
+                                        </div>
+                                        <div class="media-item">
+                                            <span class="media-platform">Pinterest</span>
+                                            <span class="media-time">45 min/day</span>
+                                        </div>
+                                        <div class="media-item">
+                                            <span class="media-platform">YouTube</span>
+                                            <span class="media-time">2 hours/day</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="location-insights">
+                                    <div class="section-title">Location Insights: Stay • Work • Play</div>
+                                    <div class="location-item">
+                                        <span class="location-icon">🏠</span>
+                                        <span class="location-text">Ba Dinh district vintage apartment</span>
+                                    </div>
+                                    <div class="location-item">
+                                        <span class="location-icon">💼</span>
+                                        <span class="location-text">Dong Da creative co-working space</span>
+                                    </div>
+                                    <div class="location-item">
+                                        <span class="location-icon">🎯</span>
+                                        <span class="location-text">Hanoi Old Quarter art walks</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Persona 3: Duc Pham -->
+                            <div class="persona-card">
+                                <div class="persona-header">
+                                    <div class="persona-avatar">D</div>
+                                    <div class="persona-info">
+                                        <div class="persona-name">Duc Pham</div>
+                                        <div class="persona-subtitle">The Executive Connector</div>
+                                    </div>
+                                </div>
+
+                                <div class="target-size">
+                                    <div class="target-number">12,890</div>
+                                    <div class="target-label">Target Audience Size</div>
+                                </div>
+
+                                <div class="persona-demographics">
+                                    <div class="demo-item">
+                                        <span class="demo-label">Age:</span>
+                                        <span class="demo-value">35</span>
+                                    </div>
+                                    <div class="demo-item">
+                                        <span class="demo-label">Gender:</span>
+                                        <span class="demo-value">Male</span>
+                                    </div>
+                                    <div class="demo-item">
+                                        <span class="demo-label">Location:</span>
+                                        <span class="demo-value">HCMC, District 1</span>
+                                    </div>
+                                    <div class="demo-item">
+                                        <span class="demo-label">Education:</span>
+                                        <span class="demo-value">MBA Business</span>
+                                    </div>
+                                    <div class="demo-item">
+                                        <span class="demo-label">Income:</span>
+                                        <span class="demo-value">$65,000/year</span>
+                                    </div>
+                                    <div class="demo-item">
+                                        <span class="demo-label">Status:</span>
+                                        <span class="demo-value">Married + 1 Child</span>
+                                    </div>
+                                </div>
+
+                                <div class="persona-section">
+                                    <div class="section-title">Personality Traits</div>
+                                    <div class="personality-traits">
+                                        <span class="trait-tag">Leadership-focused</span>
+                                        <span class="trait-tag">Strategic</span>
+                                        <span class="trait-tag">Quality-conscious</span>
+                                        <span class="trait-tag">Time-efficient</span>
+                                        <span class="trait-tag">Status-aware</span>
+                                    </div>
+                                </div>
+
+                                <div class="persona-section">
+                                    <div class="section-title">About</div>
+                                    <div class="section-content">
+                                        Duc is a senior business executive who values efficiency, quality, and reputation. His beer consumption is strategic - used for business entertaining and relationship building.
+                                    </div>
+                                </div>
+
+                                <div class="chart-container">
+                                    <div class="section-title">Business Tools Usage</div>
+                                    <div class="chart" data-chart="business-tools-duc"></div>
+                                    <div class="chart-legend">
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background: #ffffff;"></div>
+                                            <span>LinkedIn (30%)</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background: #e0e0e0;"></div>
+                                            <span>Email (25%)</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background: #c0c0c0;"></div>
+                                            <span>WhatsApp (20%)</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background: #a0a0a0;"></div>
+                                            <span>Business Apps (15%)</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background: #808080;"></div>
+                                            <span>News Apps (7%)</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-color" style="background: #606060;"></div>
+                                            <span>Others (3%)</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="section-grid">
+                                    <div>
+                                        <div class="section-title">Goals</div>
+                                        <ul class="info-list">
+                                            <li>Expand business network regionally</li>
+                                            <li>Achieve C-level executive position</li>
+                                            <li>Build family financial security</li>
+                                            <li>Maintain work-life balance</li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <div class="section-title">Interests</div>
+                                        <ul class="info-list">
+                                            <li>Business strategy & innovation</li>
+                                            <li>Golf and executive sports</li>
+                                            <li>Fine dining experiences</li>
+                                            <li>Family travel & education</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="highlight-stat">
+                                    <strong>Beer Consumption:</strong> 2-3 times per week, primarily for business entertainment, spends $300-400/month on premium venues
+                                </div>
+
+                                <div class="chart-container">
+                                    <div class="section-title">Monthly Spending Breakdown</div>
+                                    <div class="spending-chart">
+                                        <div class="spending-bar">
+                                            <span class="spending-label">Business Entertainment</span>
+                                            <div class="spending-bar-container">
+                                                <div class="spending-bar-fill" style="width: 40%;" data-value="40%"></div>
+                                            </div>
+                                            <span class="spending-value">$2,400</span>
+                                        </div>
+                                        <div class="spending-bar">
+                                            <span class="spending-label">Family & Education</span>
+                                            <div class="spending-bar-container">
+                                                <div class="spending-bar-fill" style="width: 30%;" data-value="30%"></div>
+                                            </div>
+                                            <span class="spending-value">$1,800</span>
+                                        </div>
+                                        <div class="spending-bar">
+                                            <span class="spending-label">Luxury Goods</span>
+                                            <div class="spending-bar-container">
+                                                <div class="spending-bar-fill" style="width: 20%;" data-value="20%"></div>
+                                            </div>
+                                            <span class="spending-value">$1,200</span>
+                                        </div>
+                                        <div class="spending-bar">
+                                            <span class="spending-label">Golf & Sports</span>
+                                            <div class="spending-bar-container">
+                                                <div class="spending-bar-fill" style="width: 10%;" data-value="10%"></div>
+                                            </div>
+                                            <span class="spending-value">$600</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="persona-section">
+                                    <div class="section-title">Media Consumption</div>
+                                    <div class="media-breakdown">
+                                        <div class="media-item">
+                                            <span class="media-platform">LinkedIn</span>
+                                            <span class="media-time">45 min/day</span>
+                                        </div>
+                                        <div class="media-item">
+                                            <span class="media-platform">Bloomberg</span>
+                                            <span class="media-time">2 hours/day</span>
+                                        </div>
+                                        <div class="media-item">
+                                            <span class="media-platform">Business Podcasts</span>
+                                            <span class="media-time">1 hour/day</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="location-insights">
+                                    <div class="section-title">Location Insights: Stay • Work • Play</div>
+                                    <div class="location-item">
+                                        <span class="location-icon">🏠</span>
+                                        <span class="location-text">District 1 luxury penthouse</span>
+                                    </div>
+                                    <div class="location-item">
+                                        <span class="location-icon">💼</span>
+                                        <span class="location-text">Bitexco Financial Tower</span>
+                                    </div>
+                                    <div class="location-item">
+                                        <span class="location-icon">🎯</span>
+                                        <span class="location-text">Saigon Golf Club networking</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Brand Insights Tab -->
+                <div class="tab-pane" id="brand-insights">
+                    <h2>Brand Insights</h2>
+                    <div class="placeholder-content">
+                        <p>Brand Insights module will analyze brand positioning, perception, and strategic recommendations.</p>
+                        <p>Content and features will be added here in the next iteration.</p>
+                    </div>
+                </div>
+
+                <!-- Customer Journey Maps Tab -->
+                <div class="tab-pane" id="customer-journey">
+                    <h2>Customer Journey Maps</h2>
+                    <div class="placeholder-content">
+                        <p>Customer Journey Maps module will visualize customer touchpoints and experience optimization opportunities.</p>
+                        <p>Content and features will be added here in the next iteration.</p>
+                    </div>
+                </div>
+
+                <!-- Brand Strategy Tab -->
+                <div class="tab-pane" id="brand-strategy">
+                    <h2>Brand Strategy</h2>
+                    <div class="placeholder-content">
+                        <p>Brand Strategy module will develop comprehensive brand positioning and strategic frameworks.</p>
+                        <p>Content and features will be added here in the next iteration.</p>
+                    </div>
+                </div>
+
+                <!-- Creative Brief Tab -->
+                <div class="tab-pane" id="creative-brief">
+                    <h2>Creative Brief</h2>
+                    <div class="placeholder-content">
+                        <p>Creative Brief module will generate strategic creative direction and campaign briefs.</p>
+                        <p>Content and features will be added here in the next iteration.</p>
+                    </div>
+                </div>
+
+                <!-- Big Brand Idea Tab -->
+                <div class="tab-pane" id="big-brand-idea">
+                    <h2>Big Brand Idea</h2>
+                    <div class="placeholder-content">
+                        <p>Big Brand Idea module will develop central creative concepts and brand propositions.</p>
+                        <p>Content and features will be added here in the next iteration.</p>
+                    </div>
+                </div>
+
+                <!-- Comms Framework Tab -->
+                <div class="tab-pane" id="comms-framework">
+                    <h2>Comms Framework</h2>
+                    <div class="placeholder-content">
+                        <p>Comms Framework module will structure communication strategies and messaging hierarchies.</p>
+                        <p>Content and features will be added here in the next iteration.</p>
+                    </div>
+                </div>
+
+                <!-- Campaign Concept Tab -->
+                <div class="tab-pane" id="campaign-concept">
+                    <h2>Campaign Concept</h2>
+                    <div class="placeholder-content">
+                        <p>Campaign Concept module will develop integrated campaign ideas and strategic approaches.</p>
+                        <p>Content and features will be added here in the next iteration.</p>
+                    </div>
+                </div>
+
+                <!-- Execution Generator Tab -->
+                <div class="tab-pane" id="execution-generator">
+                    <h2>Execution Generator</h2>
+                    <div class="placeholder-content">
+                        <p>Execution Generator module will create tactical campaign executions and implementation plans.</p>
+                        <p>Content and features will be added here in the next iteration.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize simple workflow
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects to workflow nodes
+            document.addEventListener('mouseover', function(e) {
+                if (e.target.classList.contains('workflow-node')) {
+                    e.target.style.boxShadow = '0 0 25px rgba(255, 255, 255, 0.2)';
+                }
+            });
+
+            document.addEventListener('mouseout', function(e) {
+                if (e.target.classList.contains('workflow-node')) {
+                    e.target.style.boxShadow = '';
+                }
+            });
+        });
+
+        // Navigation Functions
+        function showMainApp() {
+            document.getElementById('landingPage').classList.add('hidden');
+            document.getElementById('mainApp').classList.add('visible');
+        }
+
+        function showLanding() {
+            document.getElementById('landingPage').classList.remove('hidden');
+            document.getElementById('mainApp').classList.remove('visible');
+        }
+
+        function showTab(tabId) {
+            // Hide all tab panes
+            const tabPanes = document.querySelectorAll('.tab-pane');
+            tabPanes.forEach(pane => {
+                pane.classList.remove('active');
+            });
+
+            // Remove active class from all tab buttons
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            tabBtns.forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab pane
+            document.getElementById(tabId).classList.add('active');
+
+            // Add active class to clicked tab button
+            event.target.classList.add('active');
+        }
+
+        // Simplified Workflow Animation Functions
+        let flowAnimationTimeout;
+        let currentStep = 0;
+
+        const flowSteps = [
+            { elements: ['.start-node'], delay: 1000 },
+            { elements: ['.flow-arrow'], delay: 500 },
+            { elements: ['.input-node'], delay: 1500 },
+            { elements: ['.flow-arrow'], delay: 500 },
+            { elements: ['.engine-node'], delay: 1000 },
+            { elements: ['.flow-split .flow-arrow'], delay: 800 },
+            { elements: ['.external-node', '.storage-node', '.decision-node'], delay: 1500 },
+            { elements: ['.flow-arrow'], delay: 500 },
+            { elements: ['.module-node'], delay: 2000 },
+            { elements: ['.flow-arrow'], delay: 500 },
+            { elements: ['.output-node'], delay: 1000 }
+        ];
+
+        function startFlowAnimation() {
+            resetFlowAnimation();
+            currentStep = 0;
+            animateNextStep();
+        }
+
+        function animateNextStep() {
+            if (currentStep >= flowSteps.length) {
+                // Animation complete, reset after a pause
+                setTimeout(resetFlowAnimation, 2000);
+                return;
+            }
+
+            const step = flowSteps[currentStep];
+            
+            // Activate elements for current step
+            step.elements.forEach(selector => {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach(element => {
+                    element.classList.add('active');
+                });
+            });
+
+            // Deactivate previous step elements after a brief overlap
+            if (currentStep > 0) {
+                setTimeout(() => {
+                    const prevStep = flowSteps[currentStep - 1];
+                    prevStep.elements.forEach(selector => {
+                        const elements = document.querySelectorAll(selector);
+                        elements.forEach(element => {
+                            element.classList.remove('active');
+                        });
+                    });
+                }, step.delay / 3);
+            }
+
+            currentStep++;
+            flowAnimationTimeout = setTimeout(animateNextStep, step.delay);
+        }
+
+        function resetFlowAnimation() {
+            if (flowAnimationTimeout) {
+                clearTimeout(flowAnimationTimeout);
+            }
+            
+            // Remove active class from all elements
+            document.querySelectorAll('.workflow-node, .flow-arrow').forEach(element => {
+                element.classList.remove('active');
+            });
+            
+            currentStep = 0;
+        }
+
+        // Audience Insights Functions
+        function generatePersonas() {
+            // Hide config and show loading
+            document.getElementById('audienceConfig').style.display = 'none';
+            document.getElementById('audienceLoading').style.display = 'block';
+            
+            // Simulate AI processing time
+            setTimeout(() => {
+                document.getElementById('audienceLoading').style.display = 'none';
+                document.getElementById('personasResults').style.display = 'block';
+                
+                // Initialize charts with animation
+                setTimeout(() => {
+                    initializePersonaCharts();
+                }, 300);
+            }, 3500);
+        }
+
+        function showAudienceConfig() {
+            document.getElementById('personasResults').style.display = 'none';
+            document.getElementById('audienceLoading').style.display = 'none';
+            document.getElementById('audienceConfig').style.display = 'block';
+        }
+
+        function initializePersonaCharts() {
+            // Add entrance animation to charts
+            const charts = document.querySelectorAll('.chart');
+            charts.forEach((chart, index) => {
+                setTimeout(() => {
+                    chart.style.opacity = '0';
+                    chart.style.transform = 'scale(0.8) rotate(-90deg)';
+                    
+                    requestAnimationFrame(() => {
+                        chart.style.transition = 'all 1s ease-out';
+                        chart.style.opacity = '1';
+                        chart.style.transform = 'scale(1) rotate(0deg)';
+                    });
+                }, index * 200);
+            });
+
+            // Animate spending chart bars
+            const spendingBars = document.querySelectorAll('.spending-bar-fill');
+            spendingBars.forEach((bar, index) => {
+                setTimeout(() => {
+                    const targetWidth = bar.style.width;
+                    bar.style.width = '0%';
+                    
+                    requestAnimationFrame(() => {
+                        bar.style.transition = 'width 1.5s ease-out';
+                        bar.style.width = targetWidth;
+                    });
+                }, 1000 + (index * 100));
+            });
+
+            // Add hover effects to legend items
+            const legendItems = document.querySelectorAll('.legend-item');
+            legendItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(5px)';
+                    this.style.transition = 'transform 0.2s ease';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0)';
+                });
+            });
+
+            // Add hover effects to spending bars
+            const spendingBarContainers = document.querySelectorAll('.spending-bar');
+            spendingBarContainers.forEach(bar => {
+                bar.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.02)';
+                    this.style.transition = 'transform 0.2s ease';
+                    this.style.background = 'rgba(255, 255, 255, 0.02)';
+                    this.style.borderRadius = '8px';
+                    this.style.padding = '0.5rem';
+                    this.style.margin = '0.25rem 0';
+                });
+                
+                bar.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                    this.style.background = 'transparent';
+                    this.style.padding = '0';
+                    this.style.margin = '1rem 0';
+                });
+            });
+        }
+
+        // Create additional floating elements dynamically
+        function createFloatingElements() {
+            const bgAnimation = document.querySelector('.bg-animation');
+            
+            setInterval(() => {
+                const element = document.createElement('div');
+                element.className = 'floating-element';
+                element.style.width = Math.random() * 60 + 40 + 'px';
+                element.style.height = element.style.width;
+                element.style.left = Math.random() * 100 + '%';
+                element.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                
+                bgAnimation.appendChild(element);
+                
+                // Remove element after animation
+                setTimeout(() => {
+                    if (element.parentNode) {
+                        element.parentNode.removeChild(element);
+                    }
+                }, 25000);
+            }, 3000);
+        }
+
+        // Initialize floating elements
+        createFloatingElements();
+    </script>
+</body>
+</html>
