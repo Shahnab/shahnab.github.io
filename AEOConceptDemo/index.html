@@ -669,6 +669,7 @@
         .data-table-wrapper {
             max-height: 500px;
             overflow-y: auto;
+            overflow-x: auto;
         }
 
         .pagination {
@@ -678,6 +679,8 @@
             padding: 1rem 1.5rem;
             background: #f8f9fa;
             border-top: 1px solid #e5e5e5;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .search-box {
@@ -685,12 +688,14 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             width: 250px;
+            max-width: 100%;
         }
 
         .tabs-secondary {
             display: flex;
             gap: 0.5rem;
             margin-bottom: 1rem;
+            flex-wrap: wrap;
         }
 
         .tab-secondary {
@@ -707,6 +712,223 @@
             color: white;
             border-color: #eb001b;
         }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .landing-title {
+                font-size: 2.5rem;
+            }
+
+            .landing-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+            }
+
+            .control-group {
+                justify-content: space-between;
+            }
+
+            .nav-tabs {
+                padding: 0 1rem;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+            }
+
+            .nav-tab {
+                white-space: nowrap;
+                min-width: max-content;
+            }
+
+            .content {
+                padding: 1rem;
+            }
+
+            .module-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .summary-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .summary-stat {
+                flex: none;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-grid-large {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-grid-three {
+                grid-template-columns: 1fr;
+            }
+
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            .table-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .table-controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+                width: 100%;
+            }
+
+            table {
+                min-width: 800px;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .pagination {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+
+            .insight-card {
+                padding: 1rem;
+            }
+
+            .insight-title {
+                font-size: 1rem;
+            }
+
+            .insight-text {
+                font-size: 0.9rem;
+            }
+
+            .tabs-secondary {
+                justify-content: center;
+            }
+
+            .region-selector {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .export-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .floating-element {
+                display: none;
+            }
+
+            .chart-container {
+                height: 250px;
+            }
+
+            .chart-container.large {
+                height: 300px;
+            }
+
+            .chart-container.small {
+                height: 200px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .landing-title {
+                font-size: 2rem;
+            }
+
+            .landing-subtitle {
+                font-size: 1rem;
+            }
+
+            .explore-btn {
+                padding: 12px 30px;
+                font-size: 1rem;
+            }
+
+            .metric-card {
+                padding: 1rem;
+            }
+
+            .metric-value {
+                font-size: 2rem;
+            }
+
+            .summary-stat-value {
+                font-size: 1.5rem;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                gap: 0.5rem;
+            }
+
+            .filter-pill {
+                font-size: 0.75rem;
+                padding: 0.25rem 0.6rem;
+            }
+
+            .nav-tab {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .module-title {
+                font-size: 1.5rem;
+            }
+
+            .module-subtitle {
+                font-size: 1rem;
+            }
+
+            th, td {
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+
+            .expanded-content {
+                font-size: 0.85rem;
+            }
+
+            .chart-container {
+                height: 200px;
+            }
+
+            .chart-container.large {
+                height: 250px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -721,7 +943,7 @@
         </div>
         <div class="landing-content">
             <h1 class="landing-title">AEO Concept Demo</h1>
-            <p class="landing-subtitle">Brand Visibility Intelligence Dashboard</p>
+            <p class="landing-subtitle">LLM Brand Visibility Intelligence Dashboard</p>
             <button class="explore-btn" onclick="showDashboard()">Explore</button>
             <p class="landing-disclaimer">* All data shown is for demonstration and reference purposes only</p>
         </div>
