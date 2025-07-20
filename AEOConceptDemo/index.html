@@ -761,7 +761,8 @@
             }
 
             .summary-stats {
-                flex-direction: column;
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
                 gap: 1rem;
             }
 
@@ -834,7 +835,8 @@
             }
 
             .region-selector {
-                flex-direction: column;
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
                 gap: 0.5rem;
             }
 
@@ -943,7 +945,7 @@
         </div>
         <div class="landing-content">
             <h1 class="landing-title">AEO Concept Demo</h1>
-            <p class="landing-subtitle">LLM Brand Visibility Intelligence Dashboard</p>
+            <p class="landing-subtitle">Brand Visibility Intelligence Dashboard</p>
             <button class="explore-btn" onclick="showDashboard()">Explore</button>
             <p class="landing-disclaimer">* All data shown is for demonstration and reference purposes only</p>
         </div>
@@ -970,8 +972,10 @@
                     <span class="control-label">Daily</span>
                 </div>
                 <div class="region-selector">
-                    <div class="region-btn active locked">🇺🇸 USA</div>
-                    <div class="region-btn active locked">🇬🇧 UK</div>
+                    <div class="region-btn active locked">🇻🇳 Vietnam</div>
+                    <div class="region-btn active locked">🇲🇾 Malaysia</div>
+                    <div class="region-btn active locked">🇹🇭 Thailand</div>
+                    <div class="region-btn active locked">🇸🇬 Singapore</div>
                 </div>
                 <div class="control-group">
                     <span class="control-label"># Topics</span>
@@ -1002,8 +1006,8 @@
 
                 <!-- Key Insights -->
                 <div class="insight-card">
-                    <div class="insight-title">Key Insight</div>
-                    <div class="insight-text">Mastercard's visibility has increased 3.2% week-over-week, driven by strong performance in financial guidance and digital payment queries across ChatGPT and Perplexity platforms.</div>
+                    <div class="insight-title">🚀 Key Insight</div>
+                    <div class="insight-text">Mastercard's visibility has increased 3.2% week-over-week, driven by strong performance in financial guidance and digital payment queries across ChatGPT and Perplexity platforms in Southeast Asian markets.</div>
                 </div>
 
                 <!-- Summary Stats -->
@@ -1023,6 +1027,10 @@
                     <div class="summary-stat">
                         <div class="summary-stat-value">#2</div>
                         <div class="summary-stat-label">Market Rank</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-stat-value">4</div>
+                        <div class="summary-stat-label">SEA Markets</div>
                     </div>
                     <div class="summary-stat">
                         <div class="summary-stat-value">5</div>
@@ -1145,12 +1153,20 @@
                         </div>
                         <div style="margin-top: 1rem;">
                             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                <span>🇺🇸 USA</span>
-                                <span>54.2% <span style="color: #28a745;">+2.8%</span></span>
+                                <span>🇻🇳 Vietnam</span>
+                                <span>56.1% <span style="color: #28a745;">+3.2%</span></span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>🇲🇾 Malaysia</span>
+                                <span>52.8% <span style="color: #28a745;">+2.8%</span></span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>🇹🇭 Thailand</span>
+                                <span>51.4% <span style="color: #28a745;">+3.1%</span></span>
                             </div>
                             <div style="display: flex; justify-content: space-between;">
-                                <span>🇬🇧 UK</span>
-                                <span>51.4% <span style="color: #28a745;">+3.6%</span></span>
+                                <span>🇸🇬 Singapore</span>
+                                <span>49.7% <span style="color: #28a745;">+2.4%</span></span>
                             </div>
                         </div>
                     </div>
@@ -1264,7 +1280,7 @@
 
                 <!-- Key Insights -->
                 <div class="insight-card">
-                    <div class="insight-title">Sentiment Insight</div>
+                    <div class="insight-title">💡 Sentiment Insight</div>
                     <div class="insight-text">Positive sentiment towards Mastercard has improved by 2.1% this week, primarily driven by mentions of security features, global acceptance, and digital innovation initiatives.</div>
                 </div>
 
@@ -1641,8 +1657,8 @@
 
                 <!-- Key Insights -->
                 <div class="insight-card">
-                    <div class="insight-title">Prompt Insight</div>
-                    <div class="insight-text">Credit card and payment-related queries show highest mention rates (68%), while business finance topics have grown 34% week-over-week. Travel and international payment queries drive strongest positive sentiment.</div>
+                    <div class="insight-title">🔍 Prompt Insight</div>
+                    <div class="insight-text">Credit card and payment-related queries show highest mention rates (68%), while business finance topics have grown 34% week-over-week. Travel and international payment queries drive strongest positive sentiment across Southeast Asian markets.</div>
                 </div>
 
                 <!-- Summary Stats -->
@@ -1722,8 +1738,10 @@
                     </select>
                     <select>
                         <option>All Regions</option>
-                        <option>USA</option>
-                        <option>United Kingdom</option>
+                        <option>Vietnam</option>
+                        <option>Malaysia</option>
+                        <option>Thailand</option>
+                        <option>Singapore</option>
                     </select>
                     <div class="control-group">
                         <input type="text" placeholder="Search prompts..." style="width: 250px;">
@@ -1772,7 +1790,7 @@
                                             <span style="font-size: 0.8rem;">ChatGPT</span>
                                         </div>
                                     </td>
-                                    <td>🇺🇸 USA</td>
+                                    <td>🇻🇳 Vietnam</td>
                                     <td><span class="expand-icon">▶</span></td>
                                 </tr>
                                 <tr class="expanded-content">
@@ -1810,7 +1828,7 @@
                                             <span style="font-size: 0.8rem;">Perplexity</span>
                                         </div>
                                     </td>
-                                    <td>🇬🇧 UK</td>
+                                    <td>🇲🇾 Malaysia</td>
                                     <td><span class="expand-icon">▶</span></td>
                                 </tr>
                                 <tr class="expanded-content">
@@ -1848,7 +1866,7 @@
                                             <span style="font-size: 0.8rem;">Claude</span>
                                         </div>
                                     </td>
-                                    <td>🇺🇸 USA</td>
+                                    <td>🇹🇭 Thailand</td>
                                     <td><span class="expand-icon">▶</span></td>
                                 </tr>
                                 <tr class="expanded-content">
@@ -1923,7 +1941,7 @@
                                             <span style="font-size: 0.8rem;">Copilot</span>
                                         </div>
                                     </td>
-                                    <td>🇺🇸 USA</td>
+                                    <td>🇸🇬 Singapore</td>
                                     <td><span class="expand-icon">▶</span></td>
                                 </tr>
                                 <tr class="expanded-content">
@@ -1973,8 +1991,8 @@
 
                 <!-- Key Insights -->
                 <div class="insight-card">
-                    <div class="insight-title">Citation Insight</div>
-                    <div class="insight-text">Mastercard.com citations have increased 28% week-over-week, primarily from security and corporate information pages. Strong performance in earned citations compared to competitors.</div>
+                    <div class="insight-title">📊 Citation Insight</div>
+                    <div class="insight-text">Mastercard.com citations have increased 28% week-over-week, primarily from security and corporate information pages. Strong performance in owned media citations with effective third-party earned coverage.</div>
                 </div>
 
                 <!-- KPI Grid -->
@@ -1995,7 +2013,7 @@
                         <div class="trend-indicator trend-up">+28%</div>
                     </div>
                     <div class="kpi-item">
-                        <div class="kpi-value">94.2%</div>
+                        <div class="kpi-value">92.4%</div>
                         <div class="kpi-label">Earned Citations</div>
                         <div class="trend-indicator trend-up">+1.2%</div>
                     </div>
@@ -2023,11 +2041,11 @@
                         <div style="margin-top: 1rem; font-size: 0.9rem;">
                             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                                 <span>Earned</span>
-                                <span style="font-weight: 600;">94.2%</span>
+                                <span style="font-weight: 600;">92.4%</span>
                             </div>
                             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                                 <span>Owned</span>
-                                <span style="font-weight: 600;">3.1%</span>
+                                <span style="font-weight: 600;">4.9%</span>
                             </div>
                             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                                 <span>Social</span>
@@ -2212,7 +2230,7 @@
                                         <span><strong>mastercard.com</strong></span>
                                     </div>
                                 </td>
-                                <td><span style="background: #e3f2fd; color: #1976d2; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Owned</span></td>
+                                <td><span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Owned</span></td>
                                 <td><strong>1.8k</strong></td>
                                 <td><strong>1.8%</strong></td>
                                 <td><span style="color: #28a745; font-weight: 600;">+0.3%</span></td>
@@ -2248,7 +2266,7 @@
                                 <tr class="expandable-row" onclick="toggleExpand(this)">
                                     <td>1.</td>
                                     <td>mastercard.com/news/perspectives/2024/digital-payments-innovation</td>
-                                    <td><span style="background: #e3f2fd; color: #1976d2; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Owned</span></td>
+                                    <td><span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Owned</span></td>
                                     <td><span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Mentioned</span></td>
                                     <td>387</td>
                                     <td>2.8%</td>
@@ -2283,7 +2301,7 @@
                                 <tr class="expandable-row" onclick="toggleExpand(this)">
                                     <td>2.</td>
                                     <td>mastercard.com/about-us/security/fraud-prevention</td>
-                                    <td><span style="background: #e3f2fd; color: #1976d2; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Owned</span></td>
+                                    <td><span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Owned</span></td>
                                     <td><span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Mentioned</span></td>
                                     <td>342</td>
                                     <td>3.1%</td>
@@ -2318,7 +2336,7 @@
                                 <tr class="expandable-row" onclick="toggleExpand(this)">
                                     <td>3.</td>
                                     <td>mastercard.com/corporate/overview/corporate-overview</td>
-                                    <td><span style="background: #e3f2fd; color: #1976d2; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Owned</span></td>
+                                    <td><span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Owned</span></td>
                                     <td><span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Mentioned</span></td>
                                     <td>298</td>
                                     <td>2.2%</td>
@@ -2353,7 +2371,7 @@
                                 <tr class="expandable-row" onclick="toggleExpand(this)">
                                     <td>4.</td>
                                     <td>mastercard.com/solutions/business-solutions</td>
-                                    <td><span style="background: #e3f2fd; color: #1976d2; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Owned</span></td>
+                                    <td><span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Owned</span></td>
                                     <td><span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Mentioned</span></td>
                                     <td>267</td>
                                     <td>1.9%</td>
@@ -2388,7 +2406,7 @@
                                 <tr class="expandable-row" onclick="toggleExpand(this)">
                                     <td>5.</td>
                                     <td>mastercard.com/news/media/travel-benefits-guide</td>
-                                    <td><span style="background: #e3f2fd; color: #1976d2; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Owned</span></td>
+                                    <td><span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Owned</span></td>
                                     <td><span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem;">Mentioned</span></td>
                                     <td>231</td>
                                     <td>2.7%</td>
@@ -2625,15 +2643,15 @@
             createChart('regionalChart', {
                 type: 'bar',
                 data: {
-                    labels: ['USA', 'UK'],
+                    labels: ['Vietnam', 'Malaysia', 'Thailand', 'Singapore'],
                     datasets: [{
                         label: 'Current Week',
-                        data: [54.2, 51.4],
+                        data: [56.1, 52.8, 51.4, 49.7],
                         backgroundColor: '#eb001b',
                         borderRadius: 4
                     }, {
                         label: 'Previous Week',
-                        data: [51.4, 47.8],
+                        data: [52.9, 50.0, 48.3, 47.3],
                         backgroundColor: '#ffc0cb',
                         borderRadius: 4
                     }]
@@ -2824,7 +2842,7 @@
                 data: {
                     labels: ['Earned', 'Owned', 'Social', 'Competition'],
                     datasets: [{
-                        data: [94.2, 3.1, 2.4, 0.3],
+                        data: [92.4, 4.9, 2.4, 0.3],
                         backgroundColor: ['#007bff', '#28a745', '#6c757d', '#dc3545'],
                         borderWidth: 2,
                         borderColor: '#fff'
