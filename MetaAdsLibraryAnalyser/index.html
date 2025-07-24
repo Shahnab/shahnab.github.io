@@ -1,0 +1,1893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meta Ads Library Analyzer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #a1a1aa;
+            font-size: 1.1rem;
+        }
+
+        .workflow-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .workflow-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .workflow-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .workflow-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .workflow-steps::before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            right: 25px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.2);
+            z-index: 1;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .step-circle.active {
+            background: linear-gradient(135deg, #14b8a6, #0891b2);
+            box-shadow: 0 0 20px rgba(20, 184, 166, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        .step-circle.completed {
+            background: #14b8a6;
+            border-color: #14b8a6;
+        }
+
+        .step-label {
+            font-size: 0.85rem;
+            text-align: center;
+            max-width: 120px;
+            color: #a1a1aa;
+        }
+
+        .step.active .step-label {
+            color: #14b8a6;
+            font-weight: 500;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .input-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #e4e4e7;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .form-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #14b8a6;
+            box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #14b8a6, #0891b2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(20, 184, 166, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-meta {
+            background: #ffffff;
+            color: #1a1a1a;
+            border: none;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        .btn-meta:hover {
+            background: #f0f0f0;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toggle {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle.active {
+            background: #14b8a6;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .toggle.active .toggle-slider {
+            transform: translateX(24px);
+        }
+
+        .progress-indicator {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .progress-indicator.show {
+            display: block;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid #14b8a6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .report-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            flex: 1;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tab {
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            color: #a1a1aa;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            color: #14b8a6;
+            background: rgba(20, 184, 166, 0.1);
+            border-bottom: 2px solid #14b8a6;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card.expanded {
+            transform: none;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(20, 184, 166, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-weight: 600;
+            color: #14b8a6;
+        }
+
+        .card-date {
+            font-size: 0.85rem;
+            color: #a1a1aa;
+        }
+
+        .card-content {
+            line-height: 1.6;
+            color: #e4e4e7;
+        }
+
+        .ad-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .ad-image.expanded {
+            height: 300px;
+        }
+
+        .card-content {
+            line-height: 1.6;
+            color: #e4e4e7;
+        }
+
+        .card-content.collapsed {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+
+        .expand-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(20, 184, 166, 0.2);
+            border: 1px solid rgba(20, 184, 166, 0.4);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #14b8a6;
+            transition: all 0.3s ease;
+        }
+
+        .expand-indicator:hover {
+            background: rgba(20, 184, 166, 0.3);
+            transform: scale(1.1);
+        }
+
+        .card-footer {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+        }
+
+        .card.expanded .card-footer {
+            display: block;
+        }
+
+        .full-content {
+            display: none;
+        }
+
+        .card.expanded .full-content {
+            display: block;
+        }
+
+        .card.expanded .collapsed-content {
+            display: none;
+        }
+
+        .ad-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            background: rgba(20, 184, 166, 0.1);
+            border: 1px solid rgba(20, 184, 166, 0.2);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #a1a1aa;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #14b8a6;
+        }
+
+        .analysis-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .analysis-title {
+            font-weight: 600;
+            color: #14b8a6;
+            margin-bottom: 10px;
+        }
+
+        .status-message {
+            text-align: center;
+            color: #a1a1aa;
+            font-style: italic;
+            padding: 40px;
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .report-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .final-report {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .report-metric {
+            background: rgba(20, 184, 166, 0.1);
+            border: 1px solid rgba(20, 184, 166, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .metric-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #14b8a6;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .insights-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .insights-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .insights-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #14b8a6;
+            font-weight: bold;
+        }
+
+        .url-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .url-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .url-text {
+            flex: 1;
+            color: #e4e4e7;
+            font-size: 14px;
+        }
+
+        .remove-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .email-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .email-modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #a1a1aa;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Final Report Styles */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .report-metric {
+            background: rgba(20, 184, 166, 0.1);
+            border: 1px solid rgba(20, 184, 166, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .report-metric:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(20, 184, 166, 0.2);
+        }
+
+        .metric-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #14b8a6;
+            font-weight: 300;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .metric-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #14b8a6;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .metric-subtitle {
+            font-size: 0.85rem;
+            color: #a1a1aa;
+        }
+
+        .chart-section {
+            margin: 40px 0;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chart-section h3 {
+            margin-bottom: 25px;
+            color: #14b8a6;
+            font-size: 1.3rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+
+        .insights-section {
+            margin: 40px 0;
+        }
+
+        .insights-section h3 {
+            margin-bottom: 25px;
+            color: #14b8a6;
+            font-size: 1.3rem;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .insight-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .insight-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(20, 184, 166, 0.3);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .insight-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .insight-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #14b8a6;
+            margin-bottom: 12px;
+        }
+
+        .insight-content {
+            color: #e4e4e7;
+            line-height: 1.6;
+        }
+
+        .approach-section {
+            margin: 40px 0;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .approach-section h3 {
+            margin-bottom: 25px;
+            color: #14b8a6;
+            font-size: 1.3rem;
+        }
+
+        .approach-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .approach-item {
+            display: grid;
+            grid-template-columns: 200px 1fr 60px;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .approach-label {
+            font-weight: 500;
+            color: #e4e4e7;
+        }
+
+        .approach-bar {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .approach-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #14b8a6, #0891b2);
+            border-radius: 6px;
+            transition: width 1s ease;
+        }
+
+        .approach-value {
+            font-weight: 600;
+            color: #14b8a6;
+            text-align: right;
+        }
+
+        .recommendations-section {
+            margin: 40px 0;
+        }
+
+        .recommendations-section h3 {
+            margin-bottom: 25px;
+            color: #14b8a6;
+            font-size: 1.3rem;
+        }
+
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .recommendation-card {
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .priority-high {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .priority-medium {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .priority-low {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .rec-priority {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .priority-high .rec-priority {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .priority-medium .rec-priority {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .priority-low .rec-priority {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .rec-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 12px;
+        }
+
+        .rec-content {
+            color: #e4e4e7;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .rec-impact {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #14b8a6;
+        }
+
+        /* Additional Final Report Styles */
+        .overview-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .thematic-grid {
+            display: grid;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .thematic-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .thematic-item:hover {
+            border-color: rgba(20, 184, 166, 0.3);
+            transform: translateX(5px);
+        }
+
+        .thematic-icon {
+            font-size: 2rem;
+            min-width: 50px;
+        }
+
+        .thematic-content {
+            flex: 1;
+        }
+
+        .thematic-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #14b8a6;
+            margin-bottom: 8px;
+        }
+
+        .thematic-description {
+            color: #e4e4e7;
+            line-height: 1.6;
+        }
+
+        .approach-analysis {
+            display: grid;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .approach-item-detailed {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .approach-item-detailed:hover {
+            border-color: rgba(20, 184, 166, 0.3);
+            background: rgba(20, 184, 166, 0.05);
+        }
+
+        .approach-item-detailed .approach-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .approach-item-detailed .approach-description {
+            color: #e4e4e7;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .final-analysis-grid {
+            display: grid;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .analysis-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            background: rgba(20, 184, 166, 0.05);
+            border: 1px solid rgba(20, 184, 166, 0.2);
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .analysis-point:hover {
+            border-color: rgba(20, 184, 166, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(20, 184, 166, 0.1);
+        }
+
+        .analysis-icon {
+            font-size: 2rem;
+            min-width: 50px;
+        }
+
+        .analysis-content {
+            flex: 1;
+        }
+
+        .analysis-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #14b8a6;
+            margin-bottom: 10px;
+        }
+
+        .analysis-text {
+            color: #e4e4e7;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Meta Ads Library Analyzer</h1>
+            <p>Agentic AI to Analyze category ads or competitive brands ad</p>
+            <button class="btn btn-meta">Powered by Meta</button>
+        </div>
+
+        <!-- Workflow Section -->
+        <div class="workflow-section">
+            <div class="workflow-header">
+                <h2 class="workflow-title">Workflow Progress</h2>
+            </div>
+
+            <div class="workflow-steps">
+                <div class="step" id="step1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Profile Input</div>
+                </div>
+                <div class="step" id="step2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Meta Ad Search</div>
+                </div>
+                <div class="step" id="step3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Ad Analysis</div>
+                </div>
+                <div class="step" id="step4">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Report Processing</div>
+                </div>
+                <div class="step" id="step5">
+                    <div class="step-circle">5</div>
+                    <div class="step-label">Final Report</div>
+                </div>
+            </div>
+
+            <div class="input-section" id="inputSection">
+                <div class="form-group">
+                    <label class="form-label">Facebook Profile URLs</label>
+                    <div class="input-container">
+                        <input type="url" class="form-input" id="profileInput" 
+                               placeholder="https://www.facebook.com/starbucksvietnam" 
+                               value="https://www.facebook.com/starbucksvietnam">
+                        <button class="btn btn-secondary" onclick="addProfile()">Add</button>
+                    </div>
+                    <ul class="url-list" id="profileList">
+                        <li class="url-item">
+                            <span class="url-text">https://www.facebook.com/starbucksvietnam</span>
+                            <button class="remove-btn" onclick="removeProfile(this)">Remove</button>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="form-group">
+                    <div class="toggle-container">
+                        <span class="form-label">Weekly Auto-Run</span>
+                        <div class="toggle" id="weeklyToggle" onclick="toggleWeekly()">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="startWorkflow()">Start Analysis</button>
+            </div>
+
+            <div class="progress-indicator" id="progressIndicator">
+                <div class="spinner"></div>
+                <div id="progressText">Initializing workflow...</div>
+            </div>
+        </div>
+
+        <!-- Report Section -->
+        <div class="report-section">
+            <div class="report-header">
+                <h2>Analysis Results</h2>
+                <div class="report-controls">
+                    <div class="toggle-container">
+                        <span class="form-label">Auto Email</span>
+                        <div class="toggle" id="emailToggle" onclick="toggleAutoEmail()">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="showEmailModal()">Share Report</button>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="overview">Overview</button>
+                <button class="tab" data-tab="ads-details">Meta Ads Details</button>
+                <button class="tab" data-tab="ads-analysis">Ads Analysis</button>
+                <button class="tab" data-tab="final-report">Final Report</button>
+            </div>
+
+            <div class="tab-content active" id="overview">
+                <div class="status-message">
+                    Ready to start analysis. Click "Start Analysis" to begin the workflow.
+                </div>
+            </div>
+
+            <div class="tab-content" id="ads-details">
+                <div class="status-message">
+                    Ad details will appear here after Step 2 completion.
+                </div>
+            </div>
+
+            <div class="tab-content" id="ads-analysis">
+                <div class="status-message">
+                    Individual ad analyses will appear here after Step 3 completion.
+                </div>
+            </div>
+
+            <div class="tab-content" id="final-report">
+                <div class="status-message">
+                    Final comprehensive report will appear here after Step 5 completion.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Modal -->
+    <div class="email-modal" id="emailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Share Analysis Report</h3>
+                <button class="close-btn" onclick="closeEmailModal()">&times;</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email Addresses (comma-separated)</label>
+                <textarea class="form-input" rows="3" placeholder="john@example.com, jane@example.com"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Subject</label>
+                <input type="text" class="form-input" value="Meta Ads Library Analysis Report">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Message</label>
+                <textarea class="form-input" rows="4" placeholder="Please find the attached Meta Ads Library analysis report..."></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="sendEmail()">Send Report</button>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 0;
+        let workflowRunning = false;
+        let weeklyEnabled = false;
+        let autoEmailEnabled = false;
+
+        // Sample data for simulation
+        const sampleAdsData = [
+            {
+                "Ad Media Url": "https://scontent.fluh1-4.fna.fbcdn.net/v/t39.35426-6/520237770_756163013761776_7703272619097427426_n.jpg",
+                "Body Text": "Một ly cà phê mát lạnh, vừa chill vừa tỉnh táo – đủ \"nạp pin\" cho cả ngày!\n📍Follow ngay trang chính thức của Starbucks để không bỏ lỡ ưu đãi & trải nghiệm cà phê mới nhất! ☕💚",
+                "Library ID": "719207284332252",
+                "Start Date": "2025-07-21T07:00:00"
+            },
+            {
+                "Ad Media Url": "https://scontent.fluh1-2.fna.fbcdn.net/v/t39.35426-6/520624859_1033051938965748_8695307994211473890_n.jpg",
+                "Body Text": "☕ Follow Starbucks Vietnam để cùng sống chậm, chill và khám phá thêm nhiều điều thú vị mỗi ngày.",
+                "Library ID": "720360857672087",
+                "Start Date": "2025-07-21T07:00:00"
+            },
+            {
+                "Ad Media Url": "https://scontent.fluh1-3.fna.fbcdn.net/v/t39.35426-6/518336887_1039219481332079_5204239727842253592_n.jpg",
+                "Body Text": "Bữa sáng tinh gọn, chuẩn vị cùng Starbucks ✨\n👉 Follow Starbucks Vietnam để khám phá thêm nhiều combo sáng thú vị và ưu đãi hấp dẫn mỗi tuần!",
+                "Library ID": "746703594567813",
+                "Start Date": "2025-07-21T07:00:00"
+            }
+        ];
+
+        const analysisData = [
+            {
+                "Value": "1",
+                "Analysis": "Content Overview:\n- The image shows a cup of iced coffee from Starbucks placed on a table in front of a laptop, suggesting a work or study environment.\n- Text on the image: \"MOOD TỤT? STARBUCKS GÚT LẠI MOOD NÈ!\" (\"Feeling down? Starbucks will lift your mood!\").\n- Caption emphasizes the refreshing and energizing qualities of the iced coffee, calling it a way to \"recharge your battery\" for the day.\n\nStrategy:\n- Targets low‑energy consumers (students, professionals) during work/study.\n- Positions iced coffee as mood and energy booster.\n- Uses casual slang to connect with youth.\n\nTone:\n- Informal, upbeat, playful, empathetic.\n- Modern, relatable to Vietnamese youth culture.",
+                "Link": "https://www.facebook.com/ads/library/?id=719207284332252"
+            },
+            {
+                "Value": "2",
+                "Analysis": "Content Overview:\n- Close‑up of hand holding steaming Starbucks cup on wooden table; warm, inviting scene.\n- Text overlay: \"Sống chậm với từng ngụm cà phê\" (\"Live slowly with every sip of coffee\").\n- Caption: encourages followers to live slowly, chill, and discover daily joys.\n\nStrategy:\n- Emotional appeal: mindfulness and savoring moments.\n- Local relevance: Vietnamese language connects culturally.\n- Brand reinforcement: iconic logo and cup.\n\nTone:\n- Relaxed, inviting, warm, comforting, friendly.",
+                "Link": "https://www.facebook.com/ads/library/?id=720360857672087"
+            },
+            {
+                "Value": "3",
+                "Analysis": "Content:\n- Minimalist breakfast set: latte art coffee, flaky pastry, lifestyle magazine.\n- Text: \"Bữa sáng tinh gọn, chuẩn vị cùng Starbucks\"; invites follow for breakfast combos & weekly offers.\n\nStrategy:\n- Position Starbucks as quality, convenient breakfast choice.\n- Appeals to style‑conscious urban consumers.\n- Teases exclusive weekly combos to drive follower growth.\n\nTone:\n- Elegant, clean, aspirational yet approachable.",
+                "Link": "https://www.facebook.com/ads/library/?id=746703594567813"
+            }
+        ];
+
+        // Initialize tabs
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                
+                tab.classList.add('active');
+                const targetTab = document.getElementById(tab.dataset.tab);
+                targetTab.classList.add('active');
+                
+                // Trigger chart resize if switching to final report
+                if (tab.dataset.tab === 'final-report') {
+                    setTimeout(() => {
+                        if (typeof Chart !== 'undefined') {
+                            Object.values(Chart.instances || {}).forEach(instance => {
+                                if (instance && typeof instance.resize === 'function') {
+                                    instance.resize();
+                                }
+                            });
+                        }
+                    }, 100);
+                }
+            });
+        });
+
+        function addProfile() {
+            const input = document.getElementById('profileInput');
+            const list = document.getElementById('profileList');
+            
+            if (input.value.trim()) {
+                const li = document.createElement('li');
+                li.className = 'url-item';
+                li.innerHTML = `
+                    <span class="url-text">${input.value}</span>
+                    <button class="remove-btn" onclick="removeProfile(this)">Remove</button>
+                `;
+                list.appendChild(li);
+                input.value = '';
+            }
+        }
+
+        function removeProfile(btn) {
+            btn.parentElement.remove();
+        }
+
+        function toggleWeekly() {
+            const toggle = document.getElementById('weeklyToggle');
+            weeklyEnabled = !weeklyEnabled;
+            toggle.classList.toggle('active', weeklyEnabled);
+        }
+
+        function toggleAutoEmail() {
+            const toggle = document.getElementById('emailToggle');
+            autoEmailEnabled = !autoEmailEnabled;
+            toggle.classList.toggle('active', autoEmailEnabled);
+        }
+
+        function showEmailModal() {
+            document.getElementById('emailModal').classList.add('show');
+        }
+
+        function closeEmailModal() {
+            document.getElementById('emailModal').classList.remove('show');
+        }
+
+        function sendEmail() {
+            alert('Report sent successfully!');
+            closeEmailModal();
+        }
+
+        async function startWorkflow() {
+            if (workflowRunning) return;
+            
+            workflowRunning = true;
+            currentStep = 0;
+            
+            document.getElementById('inputSection').style.display = 'none';
+            document.getElementById('progressIndicator').classList.add('show');
+            
+            // Step 1: Profile Input Processing
+            await executeStep(1, "Processing Facebook profiles...", async () => {
+                await sleep(5000);
+                updateOverview("Profile processing completed. Found 1 Facebook page: Starbucks Vietnam");
+            });
+
+            // Step 2: Meta Ad Library Search
+            await executeStep(2, "Searching Meta Ad Library...", async () => {
+                await sleep(5000);
+                updateOverview("Meta Ad Library search completed. Found 11 active ads.");
+                populateAdsDetails();
+            });
+
+            // Step 3: Individual Ad Analysis
+            await executeStep(3, "Analyzing individual ads...", async () => {
+                for (let i = 1; i <= 11; i++) {
+                    document.getElementById('progressText').textContent = `Analyzing ad ${i}/11...`;
+                    await sleep(1000);
+                }
+                updateOverview("Individual ad analysis completed for all 11 ads.");
+                populateAdsAnalysis();
+            });
+
+            // Step 4: Report Processing
+            await executeStep(4, "Processing comprehensive report...", async () => {
+                await sleep(5000);
+                updateOverview("Report processing completed. Generating final insights...");
+            });
+
+            // Step 5: Final Report Generation
+            await executeStep(5, "Generating final report...", async () => {
+                await sleep(5000);
+                updateOverview("Workflow completed successfully! Final report is ready.");
+                populateFinalReport();
+            });
+
+            document.getElementById('progressIndicator').classList.remove('show');
+            workflowRunning = false;
+        }
+
+        async function executeStep(stepNum, message, action) {
+            // Update step styling
+            document.querySelectorAll('.step').forEach((step, index) => {
+                const circle = step.querySelector('.step-circle');
+                if (index + 1 < stepNum) {
+                    step.classList.add('completed');
+                    circle.classList.add('completed');
+                    circle.classList.remove('active');
+                } else if (index + 1 === stepNum) {
+                    step.classList.add('active');
+                    circle.classList.add('active');
+                } else {
+                    step.classList.remove('active', 'completed');
+                    circle.classList.remove('active', 'completed');
+                }
+            });
+
+            document.getElementById('progressText').textContent = message;
+            await action();
+            
+            // Mark step as completed
+            const step = document.getElementById(`step${stepNum}`);
+            const circle = step.querySelector('.step-circle');
+            step.classList.remove('active');
+            step.classList.add('completed');
+            circle.classList.remove('active');
+            circle.classList.add('completed');
+            circle.innerHTML = '✓';
+        }
+
+        function updateOverview(message) {
+            const overview = document.getElementById('overview');
+            if (overview.querySelector('.status-message')) {
+                overview.innerHTML = '';
+            }
+            
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.innerHTML = `
+                <div class="card-content">
+                    ${message}
+                </div>
+            `;
+            overview.appendChild(div);
+        }
+
+        function populateAdsDetails() {
+            const container = document.getElementById('ads-details');
+            container.innerHTML = '<div class="cards-grid"></div>';
+            const grid = container.querySelector('.cards-grid');
+
+            // Simulate all 11 ads with varying data
+            for (let i = 0; i < 11; i++) {
+                const ad = sampleAdsData[i % sampleAdsData.length];
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.onclick = () => toggleCardExpansion(card);
+                
+                const startDate = new Date(ad['Start Date']);
+                const formattedDate = startDate.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+
+                // Create a styled placeholder instead of trying to load Facebook images
+                const placeholderContent = createAdPlaceholder(ad['Body Text'], i + 1);
+
+                card.innerHTML = `
+                    <div class="expand-indicator">+</div>
+                    <div class="card-header">
+                        <div class="card-title">Ad Campaign #${i + 1}</div>
+                        <div class="card-date">${formattedDate}</div>
+                    </div>
+                    
+                    <div class="ad-placeholder" style="width: 100%; height: 200px; background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%); border-radius: 8px; margin-bottom: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid rgba(255,255,255,0.1); position: relative; overflow: hidden;">
+                        <div style="position: absolute; top: 10px; right: 10px; background: rgba(20, 184, 166, 0.8); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">
+                            STARBUCKS VN
+                        </div>
+                        <div style="text-align: center; padding: 20px; color: #e4e4e7;">
+                            <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; color: #14b8a6;">
+                                ${getAdTheme(i)}
+                            </div>
+                            <div style="font-size: 0.9rem; line-height: 1.4; opacity: 0.8;">
+                                ${ad['Body Text'].substring(0, 80)}...
+                            </div>
+                        </div>
+                        <div style="position: absolute; bottom: 10px; left: 10px; right: 10px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;">
+                            <div style="height: 100%; width: ${Math.random() * 60 + 20}%; background: linear-gradient(90deg, #14b8a6, #0891b2); border-radius: 2px;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-content">
+                        <div class="collapsed-content">
+                            <p><strong>Library ID:</strong> ${ad['Library ID']}</p>
+                            <p><strong>Content Preview:</strong> ${ad['Body Text'].substring(0, 100)}...</p>
+                        </div>
+                        
+                        <div class="full-content">
+                            <p><strong>Library ID:</strong> ${ad['Library ID']}</p>
+                            <p><strong>Campaign Start Date:</strong> ${formattedDate}</p>
+                            <p><strong>Ad Type:</strong> Image Campaign</p>
+                            <p><strong>Full Content:</strong></p>
+                            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 3px solid #14b8a6;">
+                                ${ad['Body Text'].replace(/\n/g, '<br>')}
+                            </div>
+                            
+                            <div class="ad-stats">
+                                <div class="stat-item">
+                                    <div class="stat-label">Status</div>
+                                    <div class="stat-value">Active</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Platform</div>
+                                    <div class="stat-value">Facebook</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Language</div>
+                                    <div class="stat-value">Vietnamese</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="https://www.facebook.com/ads/library/?id=${ad['Library ID']}" 
+                           target="_blank" 
+                           class="btn btn-primary" 
+                           onclick="event.stopPropagation()"
+                           style="margin-right: 10px;">
+                            View in Meta Ad Library
+                        </a>
+                        <button class="btn btn-secondary" onclick="event.stopPropagation(); shareAd('${ad['Library ID']}')">
+                            Share Ad
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            }
+        }
+
+        function getAdTheme(index) {
+            const themes = [
+                "Mood Boost Campaign",
+                "Lifestyle Integration", 
+                "Morning Routine",
+                "Social Engagement",
+                "Energy & Focus",
+                "Chill Moments",
+                "Coffee Culture",
+                "Daily Companion",
+                "Work Break",
+                "Social Connection",
+                "Concert Event"
+            ];
+            return themes[index] || "Brand Campaign";
+        }
+
+        function createAdPlaceholder(bodyText, adNumber) {
+            // This creates a styled placeholder that represents the ad content visually
+            return `
+                <div class="ad-placeholder-content">
+                    <div class="placeholder-brand">STARBUCKS VIETNAM</div>
+                    <div class="placeholder-text">${bodyText.substring(0, 60)}...</div>
+                </div>
+            `;
+        }
+
+        function populateAdsAnalysis() {
+            const container = document.getElementById('ads-analysis');
+            container.innerHTML = '<div class="cards-grid"></div>';
+            const grid = container.querySelector('.cards-grid');
+
+            for (let i = 0; i < 11; i++) {
+                const analysis = analysisData[i % analysisData.length];
+                const ad = sampleAdsData[i % sampleAdsData.length];
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.onclick = () => toggleCardExpansion(card);
+                
+                // Split analysis into sections
+                const analysisText = analysis.Analysis;
+                const sections = analysisText.split('\n\n');
+                const preview = sections[0].substring(0, 150);
+                
+                card.innerHTML = `
+                    <div class="expand-indicator">+</div>
+                    <div class="card-header">
+                        <div class="card-title">Strategic Analysis #${i + 1}</div>
+                        <div class="card-date">Analysis Complete</div>
+                    </div>
+                    
+                    <div class="card-content">
+                        <div class="collapsed-content">
+                            <p><strong>Quick Overview:</strong></p>
+                            <p>${preview}...</p>
+                        </div>
+                        
+                        <div class="full-content">
+                            <div class="analysis-section">
+                                <div class="analysis-title">Content Overview</div>
+                                <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin: 10px 0;">
+                                    ${sections[0] ? sections[0].replace(/\n/g, '<br>') : 'Content analysis pending...'}
+                                </div>
+                            </div>
+                            
+                            <div class="analysis-section">
+                                <div class="analysis-title">Strategy Analysis</div>
+                                <div style="background: rgba(20, 184, 166, 0.05); padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 3px solid #14b8a6;">
+                                    ${sections[1] ? sections[1].replace(/\n/g, '<br>') : 'Strategy analysis in progress...'}
+                                </div>
+                            </div>
+                            
+                            <div class="analysis-section">
+                                <div class="analysis-title">Tone & Style</div>
+                                <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin: 10px 0;">
+                                    ${sections[2] ? sections[2].replace(/\n/g, '<br>') : 'Tone analysis completed...'}
+                                </div>
+                            </div>
+
+                            <div class="ad-stats">
+                                <div class="stat-item">
+                                    <div class="stat-label">Sentiment</div>
+                                    <div class="stat-value">Positive</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Target Demo</div>
+                                    <div class="stat-value">Youth</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Content Type</div>
+                                    <div class="stat-value">Lifestyle</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">CTA Focus</div>
+                                    <div class="stat-value">Social</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="${analysis.Link}" 
+                           target="_blank" 
+                           class="btn btn-primary" 
+                           onclick="event.stopPropagation()"
+                           style="margin-right: 10px;">
+                            View Original Ad
+                        </a>
+                        <button class="btn btn-secondary" onclick="event.stopPropagation(); exportAnalysis(${i + 1})">
+                            Export Analysis
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            }
+        }
+
+        function populateFinalReport() {
+            const container = document.getElementById('final-report');
+            container.innerHTML = `
+                <div class="final-report">
+                    <div class="report-header-section">
+                        <h2>Starbucks Vietnam - Campaign Analysis Report</h2>
+                        <p style="color: #a1a1aa; margin-bottom: 30px;">Comprehensive analysis powered by Meta Ads Library data</p>
+                    </div>
+
+                    <!-- Executive Dashboard -->
+                    <div class="dashboard-grid">
+                        <div class="report-metric">
+                            <div class="metric-icon">∑</div>
+                            <div class="metric-title">Total Ads Analyzed</div>
+                            <div class="metric-value">11</div>
+                            <div class="metric-subtitle">Active campaigns</div>
+                        </div>
+                        <div class="report-metric">
+                            <div class="metric-icon">◯</div>
+                            <div class="metric-title">Analysis Period</div>
+                            <div class="metric-value">7</div>
+                            <div class="metric-subtitle">Days of activity</div>
+                        </div>
+                        <div class="report-metric">
+                            <div class="metric-icon">◈</div>
+                            <div class="metric-title">Content Themes</div>
+                            <div class="metric-value">4</div>
+                            <div class="metric-subtitle">Primary categories</div>
+                        </div>
+                        <div class="report-metric">
+                            <div class="metric-icon">◐</div>
+                            <div class="metric-title">Market Focus</div>
+                            <div class="metric-value">VN</div>
+                            <div class="metric-subtitle">Vietnam localized</div>
+                        </div>
+                    </div>
+
+                    <!-- Campaign Overview -->
+                    <div class="insights-section">
+                        <h3>Campaign Overview</h3>
+                        <div class="overview-card">
+                            <div class="card-content">
+                                <p>The brand (Starbucks Vietnam) is heavily focused on short, visually appealing image ads and some video content. Their messaging consistently spotlights: a youthful, casual tone leveraging local slang and Vietnamese language; lifestyle alignment (mood boosts, productivity, relaxation, or social bonding); calls to follow or like their social accounts, often emphasizing exclusive updates and promotions; product visuals (iced coffees, breakfast combos) and brand-building (concert events, community campaigns). They've maintained a high ad frequency this week, suggesting an aggressive push to reinforce brand presence and grow social media engagement.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Thematic Content Distribution -->
+                    <div class="chart-section">
+                        <h3>Thematic Content Breakdown</h3>
+                        <div class="chart-container">
+                            <canvas id="themeChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Volume & Variety Structure -->
+                    <div class="insights-section">
+                        <h3>Volume & Variety Structure</h3>
+                        <div class="insights-grid">
+                            <div class="insight-card">
+                                <div class="insight-icon">↗</div>
+                                <div class="insight-title">High Ad Volume</div>
+                                <div class="insight-content">Seven distinct ads in just one week indicates a strong, ongoing campaign strategy with aggressive market presence.</div>
+                            </div>
+                            <div class="insight-card">
+                                <div class="insight-icon">◎</div>
+                                <div class="insight-title">Content Type Mix</div>
+                                <div class="insight-content">Mostly images with short copy, plus one concert promotion (mixed media) creating diverse engagement touchpoints.</div>
+                            </div>
+                            <div class="insight-card">
+                                <div class="insight-icon">◐</div>
+                                <div class="insight-title">Local Flavor Integration</div>
+                                <div class="insight-content">Vietnamese language + local references ground the brand in the market, creating authentic cultural connections.</div>
+                            </div>
+                            <div class="insight-card">
+                                <div class="insight-icon">◇</div>
+                                <div class="insight-title">Event Marketing</div>
+                                <div class="insight-content">The "Siren Calling" music concert unites brand and cultural experiences, expanding beyond traditional coffee marketing.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Thematic Threads Analysis -->
+                    <div class="approach-section">
+                        <h3>Thematic Thread Analysis</h3>
+                        <div class="thematic-grid">
+                            <div class="thematic-item">
+                                <div class="thematic-icon">⚬</div>
+                                <div class="thematic-content">
+                                    <div class="thematic-title">Mood/Energy Focus</div>
+                                    <div class="thematic-description">Multiple ads promise a quick mood fix with iced coffee focus, targeting productivity and wellness needs.</div>
+                                </div>
+                            </div>
+                            <div class="thematic-item">
+                                <div class="thematic-icon">◦</div>
+                                <div class="thematic-content">
+                                    <div class="thematic-title">Lifestyle Integration</div>
+                                    <div class="thematic-description">"Live slowly," "chill," new experiences, morning routines positioning the brand as life companion.</div>
+                                </div>
+                            </div>
+                            <div class="thematic-item">
+                                <div class="thematic-icon">◯</div>
+                                <div class="thematic-content">
+                                    <div class="thematic-title">Social Engagement</div>
+                                    <div class="thematic-description">Many direct CTAs to follow or like, fueling page growth and community building initiatives.</div>
+                                </div>
+                            </div>
+                            <div class="thematic-item">
+                                <div class="thematic-icon">◈</div>
+                                <div class="thematic-content">
+                                    <div class="thematic-title">Emotional Hooks</div>
+                                    <div class="thematic-description">Using local slang ("mood tụt," "gút mood," "sống chậm") resonates with younger consumers emotionally.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Observed Approach -->
+                    <div class="chart-section">
+                        <h3>Observed Campaign Approach</h3>
+                        <div class="approach-analysis">
+                            <div class="approach-item-detailed">
+                                <div class="approach-label">◆ Consistent Branding</div>
+                                <div class="approach-description">All visuals feature Starbucks cups or logos prominently, maintaining strong brand recognition.</div>
+                            </div>
+                            <div class="approach-item-detailed">
+                                <div class="approach-label">◇ Energy & Mood Messaging</div>
+                                <div class="approach-description">Repeated references to "boosting mood" or "recharging" suggest a functional coffee benefit positioning.</div>
+                            </div>
+                            <div class="approach-item-detailed">
+                                <div class="approach-label">◈ Sophisticated Yet Approachable</div>
+                                <div class="approach-description">Premium but relatable tone—balancing lifestyle imagery with casual copy for broad appeal.</div>
+                            </div>
+                            <div class="approach-item-detailed">
+                                <div class="approach-label">◎ Ongoing Engagement</div>
+                                <div class="approach-description">Heavy emphasis on social media followership for updates, promos, and brand community building.</div>
+                            </div>
+                            <div class="approach-item-detailed">
+                                <div class="approach-label">◐ Cultural Relevance</div>
+                                <div class="approach-description">Vietnamese slang and local context deepen emotional ties and market authenticity.</div>
+                            </div>
+                            <div class="approach-item-detailed">
+                                <div class="approach-label">◯ Lifestyle Integration</div>
+                                <div class="approach-description">Positioning Starbucks as part of daily routines, breakfast occasions, or social events.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Final Analysis -->
+                    <div class="insights-section">
+                        <h3>Final Strategic Analysis</h3>
+                        <div class="final-analysis-grid">
+                            <div class="analysis-point">
+                                <div class="analysis-icon">◆</div>
+                                <div class="analysis-content">
+                                    <div class="analysis-title">Lifestyle-First Marketing</div>
+                                    <div class="analysis-text">They're prioritizing lifestyle-based marketing over hard-sell product pushes, creating deeper brand connections.</div>
+                                </div>
+                            </div>
+                            <div class="analysis-point">
+                                <div class="analysis-icon">↗</div>
+                                <div class="analysis-content">
+                                    <div class="analysis-title">Social Growth Strategy</div>
+                                    <div class="analysis-text">There's a clear strategy to grow social media followers—almost every ad includes a CTA to "follow" or "like."</div>
+                                </div>
+                            </div>
+                            <div class="analysis-point">
+                                <div class="analysis-icon">◈</div>
+                                <div class="analysis-content">
+                                    <div class="analysis-title">Pain Point Targeting</div>
+                                    <div class="analysis-text">Consistently addressing common consumer "pain points" (low energy, needing a break) suggests they're tapping wide consumer segments.</div>
+                                </div>
+                            </div>
+                            <div class="analysis-point">
+                                <div class="analysis-icon">◇</div>
+                                <div class="analysis-content">
+                                    <div class="analysis-title">Multi-Angle Approach</div>
+                                    <div class="analysis-text">They vary content (mood-lift, breakfast combos, concert events) but keep consistent brand visuals and cheerful, local-language messaging.</div>
+                                </div>
+                            </div>
+                            <div class="analysis-point">
+                                <div class="analysis-icon">◎</div>
+                                <div class="analysis-content">
+                                    <div class="analysis-title">Daily Integration Success</div>
+                                    <div class="analysis-text">Overall, this multi-angle approach cements Starbucks as a daily go-to, offering emotional and functional benefits while fostering an active online community.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Initialize charts after DOM is ready
+            setTimeout(() => {
+                initializeCharts();
+            }, 100);
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function toggleCardExpansion(card) {
+            const isExpanded = card.classList.contains('expanded');
+            const indicator = card.querySelector('.expand-indicator');
+            const image = card.querySelector('.ad-image');
+            
+            if (isExpanded) {
+                card.classList.remove('expanded');
+                indicator.textContent = '+';
+                if (image) image.classList.remove('expanded');
+            } else {
+                card.classList.add('expanded');
+                indicator.textContent = '−';
+                if (image) image.classList.add('expanded');
+            }
+        }
+
+        function shareAd(libraryId) {
+            const url = `https://www.facebook.com/ads/library/?id=${libraryId}`;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Meta Ads Library Analysis',
+                    text: 'Check out this ad analysis from our Meta Ads Library Analyzer',
+                    url: url
+                });
+            } else {
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('Ad link copied to clipboard! 📋');
+                });
+            }
+        }
+
+        function exportAnalysis(adNumber) {
+            const analysisData = {
+                adNumber: adNumber,
+                timestamp: new Date().toISOString(),
+                analysis: `Detailed analysis for Ad #${adNumber}`,
+                recommendations: ['Increase social engagement', 'Focus on mobile optimization']
+            };
+            
+            const blob = new Blob([JSON.stringify(analysisData, null, 2)], {
+                type: 'application/json'
+            });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ad-analysis-${adNumber}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert(`Analysis #${adNumber} exported successfully!`);
+        }
+
+        function initializeCharts() {
+            // Content Theme Distribution Chart
+            const themeCtx = document.getElementById('themeChart');
+            if (themeCtx) {
+                new Chart(themeCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Mood/Energy', 'Lifestyle', 'Social Engagement', 'Event Promotion'],
+                        datasets: [{
+                            data: [35, 25, 30, 10],
+                            backgroundColor: [
+                                '#14b8a6',
+                                '#0891b2',
+                                '#06b6d4',
+                                '#0284c7'
+                            ],
+                            borderColor: '#1a1a1a',
+                            borderWidth: 2,
+                            hoverOffset: 10
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    color: '#e4e4e7',
+                                    padding: 20,
+                                    usePointStyle: true,
+                                    font: {
+                                        family: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
+                                        size: 12
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.label + ': ' + context.parsed + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Initialize with sample profile
+        document.addEventListener('DOMContentLoaded', () => {
+            // Auto-focus the workflow on load
+            document.querySelector('.workflow-section').scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
