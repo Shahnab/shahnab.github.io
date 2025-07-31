@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Agentic AI Journey Assessment</title>
     <style>
         * {
@@ -223,9 +223,95 @@
             color: white;
         }
 
-        .share-icon {
-            width: 18px;
-            height: 18px;
+                .pdf-content {
+            background: white !important;
+            color: black !important;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+        }
+
+        .pdf-content h1, .pdf-content h2, .pdf-content h3, .pdf-content h4 {
+            color: #000 !important;
+        }
+
+        .pdf-content .section-title {
+            color: #1a1a1a !important;
+            border-bottom: 2px solid #007AFF;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            page-break-after: avoid;
+        }
+
+        .pdf-content .section-description {
+            background: #f8f9fa !important;
+            color: #333 !important;
+            border-left: 4px solid #007AFF !important;
+        }
+
+        .pdf-content .card-title {
+            color: #1a1a1a !important;
+        }
+
+        .pdf-content .recommendation-card {
+            border: 1px solid #ddd !important;
+            background: #f9f9f9 !important;
+            margin-bottom: 15px;
+            page-break-inside: avoid;
+        }
+
+        .pdf-content .criteria-table {
+            background: white !important;
+        }
+
+        .pdf-content .criteria-table th {
+            background: #f0f0f0 !important;
+            color: black !important;
+        }
+
+        .pdf-content .criteria-table td {
+            color: black !important;
+        }
+
+        .pdf-content .checklist-item {
+            background: white !important;
+            border: 1px solid #eee !important;
+            page-break-inside: avoid;
+        }
+
+        .pdf-content .highlight-box {
+            background: #e3f2fd !important;
+            border: 1px solid #007AFF !important;
+            color: #1a1a1a !important;
+        }
+
+        .pdf-content .highlight-title {
+            color: #007AFF !important;
+        }
+
+        .pdf-hide {
+            display: none !important;
+        }
+
+        /* Print styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            
+            .recommendations, .recommendations * {
+                visibility: visible;
+            }
+            
+            .recommendations {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+            
+            .share-section, .action-buttons {
+                display: none !important;
+            }
         }
 
         .recommendations {
@@ -486,14 +572,258 @@
             display: block;
         }
 
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(255, 255, 255, 0.2);
-            border-top: 3px solid #007AFF;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+        .recommendations {
+            display: none;
+            padding: 40px 0;
+        }
+
+        .recommendations.show {
+            display: block;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .recommendation-section {
+            margin-bottom: 50px;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #007AFF, #00C7BE);
+            transition: width 1s ease-out;
+        }
+
+        .recommendation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #007AFF, #00C7BE);
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .criteria-table th {
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .criteria-table td {
+            color: #cccccc;
+        }
+
+        .checklist-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: linear-gradient(90deg, #007AFF, #00C7BE);
+        }
+
+        .comparison-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .comparison-card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .comparison-card.recommended {
+            border-color: #00C7BE;
+            background: rgba(0, 199, 190, 0.1);
+        }
+
+        .comparison-title {
+            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #007AFF;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .use-case-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .use-case-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .use-case-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .use-case-title {
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .use-case-description {
+            font-size: clamp(0.9rem, 2vw, 0.95rem);
+            color: #cccccc;
+            line-height: 1.5;
+        }
+
+        .workflow-step {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: clamp(20px, 4vw, 25px);
+            margin: 20px 0;
+            border-left: 4px solid #007AFF;
+            transition: all 0.3s ease;
+        }
+
+        .workflow-step:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(3px);
+        }
+
+        .workflow-title {
+            font-size: clamp(1.1rem, 2.5vw, 1.2rem);
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .workflow-description {
+            color: #cccccc;
+            line-height: 1.6;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .risk-item {
+            background: rgba(255, 87, 87, 0.1);
+            border: 1px solid rgba(255, 87, 87, 0.3);
+            border-radius: 10px;
+            padding: clamp(15px, 3vw, 20px);
+            margin: 15px 0;
+        }
+
+        .risk-title {
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            font-weight: 600;
+            color: #FF5757;
+            margin-bottom: 8px;
+        }
+
+        .risk-description {
+            color: #cccccc;
+            font-size: clamp(0.9rem, 2vw, 0.95rem);
+            line-height: 1.5;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(0, 122, 255, 0.1), rgba(0, 199, 190, 0.1));
+            border: 1px solid rgba(0, 122, 255, 0.3);
+            border-radius: 12px;
+            padding: clamp(20px, 4vw, 25px);
+            margin: 25px 0;
+        }
+
+        .highlight-title {
+            font-size: clamp(1.2rem, 3vw, 1.3rem);
+            font-weight: 600;
+            color: #007AFF;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .value-driver-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: clamp(15px, 3vw, 20px);
+            margin: 15px 0;
+            border-left: 4px solid #00C7BE;
+        }
+
+        .value-driver-title {
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            font-weight: 600;
+            color: #00C7BE;
+            margin-bottom: 8px;
+        }
+
+        .share-email {
+            background: #EA4335;
+            color: white;
+        }
+
+        .share-whatsapp {
+            background: #25D366;
+            color: white;
+        }
+
+        .share-facebook {
+            background: #1877F2;
+            color: white;
+        }
+
+        .share-linkedin {
+            background: #0A66C2;
+            color: white;
+        }
+
+        .share-icon {
+            width: clamp(16px, 3vw, 18px);
+            height: clamp(16px, 3vw, 18px);
+            flex-shrink: 0;
         }
 
         @keyframes spin {
@@ -610,46 +940,305 @@
             margin-bottom: 8px;
         }
 
+        /* Mobile-first responsive design */
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2.5rem;
+            .container {
+                padding: 0 10px;
             }
-            
+
+            .header {
+                padding: 30px 0 20px;
+            }
+
+            .assessment-form {
+                padding: 30px 0;
+            }
+
+            .question-card {
+                margin-bottom: 15px;
+                border-radius: 12px;
+            }
+
             .cards-grid {
                 grid-template-columns: 1fr;
+                gap: 15px;
             }
-            
+
             .timeline {
                 flex-direction: column;
-                gap: 30px;
+                gap: 25px;
             }
-            
+
             .timeline::before {
                 display: none;
             }
-            
+
+            .timeline-item {
+                min-width: auto;
+            }
+
             .comparison-grid {
                 grid-template-columns: 1fr;
+                gap: 15px;
             }
 
             .action-buttons {
                 flex-direction: column;
                 align-items: stretch;
+                gap: 15px;
             }
 
             .action-buttons button {
-                margin: 5px 0;
+                margin: 0;
                 width: 100%;
+                min-height: 50px;
             }
 
             .share-buttons {
                 flex-direction: column;
                 align-items: stretch;
+                gap: 12px;
             }
 
             .share-btn {
                 justify-content: center;
-                margin: 5px 0;
+                margin: 0;
+                min-height: 50px;
+                width: 100%;
+            }
+
+            .btn-secondary {
+                margin-right: 0;
+            }
+
+            .criteria-table {
+                font-size: 0.9rem;
+            }
+
+            .criteria-table th,
+            .criteria-table td {
+                padding: 12px 8px;
+            }
+
+            .recommendation-section {
+                margin-bottom: 40px;
+            }
+
+            .use-case-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .checklist-item {
+                padding: 12px;
+                margin-bottom: 12px;
+            }
+
+            .workflow-step {
+                padding: 20px;
+                margin: 15px 0;
+            }
+
+            .highlight-box {
+                padding: 20px;
+                margin: 20px 0;
+            }
+
+            .value-driver-card {
+                padding: 15px;
+                margin: 12px 0;
+            }
+
+            .risk-item {
+                padding: 15px;
+                margin: 12px 0;
+            }
+
+            .share-section {
+                margin: 25px 0;
+            }
+
+            /* Improve touch targets */
+            select {
+                min-height: 50px;
+                padding: 15px;
+            }
+
+            /* Better spacing for mobile */
+            .recommendations {
+                padding: 30px 0;
+            }
+
+            /* Mobile typography adjustments */
+            .workflow-title {
+                font-size: 1.1rem;
+            }
+
+            .workflow-description {
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Small mobile devices */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 5px;
+            }
+
+            .question-card {
+                padding: 15px;
+            }
+
+            .share-section {
+                padding: 15px;
+            }
+
+            .recommendation-card {
+                padding: 15px;
+            }
+
+            .checklist {
+                padding: 15px;
+            }
+
+            .criteria-table th,
+            .criteria-table td {
+                padding: 8px 6px;
+                font-size: 0.8rem;
+            }
+
+            .share-btn {
+                padding: 12px;
+                font-size: 0.85rem;
+            }
+
+            .btn-primary, .btn-secondary {
+                padding: 15px 20px;
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Large mobile/tablet */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .comparison-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .use-case-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .question-card:hover {
+                transform: none;
+            }
+
+            .recommendation-card:hover {
+                transform: none;
+            }
+
+            .share-btn:hover {
+                transform: none;
+            }
+
+            .btn-primary:hover,
+            .btn-secondary:hover {
+                transform: none;
+            }
+
+            /* Add active states for touch */
+            .question-card:active {
+                background: rgba(255, 255, 255, 0.08);
+                transform: scale(0.98);
+            }
+
+            .btn-primary:active {
+                transform: scale(0.95);
+                background: linear-gradient(135deg, #0051D5 0%, #003A99 100%);
+            }
+
+            .btn-secondary:active {
+                transform: scale(0.95);
+                background: rgba(255, 255, 255, 0.2);
+            }
+
+            .share-btn:active {
+                transform: scale(0.95);
+                opacity: 0.8;
+            }
+        }
+
+        /* Landscape orientation optimizations */
+        @media screen and (orientation: landscape) and (max-height: 500px) {
+            .header {
+                padding: 20px 0 15px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+                margin-bottom: 10px;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+
+            .assessment-form {
+                padding: 20px 0;
+            }
+
+            .question-card {
+                padding: 20px;
+                margin-bottom: 15px;
+            }
+        }
+
+        /* High DPI displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .share-icon {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        /* Accessibility improvements */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            .spinner {
+                animation: none;
+                border: 3px solid #007AFF;
+            }
+        }
+
+        /* Dark mode support for mobile devices */
+        @media (prefers-color-scheme: dark) {
+            .pdf-content {
+                background: #1a1a1a !important;
+                color: #ffffff !important;
+            }
+
+            .pdf-content .section-title {
+                color: #ffffff !important;
+            }
+
+            .pdf-content .criteria-table th {
+                background: #2a2a2a !important;
+                color: #ffffff !important;
+            }
+
+            .pdf-content .criteria-table td {
+                color: #cccccc !important;
             }
         }
     </style>
@@ -748,6 +1337,7 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
         function generateRecommendations() {
             // Validate form
@@ -1244,6 +1834,12 @@
                     <div class="share-title">Share Your Agentic AI Assessment Report</div>
                     <p style="color: #cccccc; margin-bottom: 25px;">Share your personalized recommendations with your team or stakeholders</p>
                     <div class="share-buttons">
+                        <button class="share-btn" id="nativeShareBtn" onclick="nativeShare()" style="background: #007AFF; color: white; display: none;">
+                            <svg class="share-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.50-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92S19.61 16.08 18 16.08z"/>
+                            </svg>
+                            Share
+                        </button>
                         <button class="share-btn share-email" onclick="shareViaEmail()">
                             <svg class="share-icon" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
@@ -1275,7 +1871,7 @@
                     <button class="btn-secondary" onclick="goBackToAssessment()">
                         ← Take Assessment Again
                     </button>
-                    <button class="btn-primary" onclick="window.print()">
+                    <button class="btn-primary" onclick="downloadPDFReport()">
                         📄 Download PDF Report
                     </button>
                 </div>
@@ -2707,6 +3303,183 @@
             return immediateActions;
         }
 
+        function downloadPDFReport() {
+            // Check if html2pdf is available
+            if (typeof html2pdf === 'undefined') {
+                // Fallback to print
+                printReport();
+                return;
+            }
+
+            // Get the recommendations content
+            const element = document.getElementById('recommendations');
+            
+            // Create a clone for PDF generation
+            const clone = element.cloneNode(true);
+            
+            // Add PDF-specific styling
+            clone.classList.add('pdf-content');
+            
+            // Hide share section and action buttons in PDF
+            const shareSection = clone.querySelector('.share-section');
+            const actionButtons = clone.querySelector('.action-buttons');
+            if (shareSection) shareSection.classList.add('pdf-hide');
+            if (actionButtons) actionButtons.classList.add('pdf-hide');
+            
+            // Get user details for filename
+            const aiMaturity = document.getElementById('aiMaturity').value;
+            const processType = document.getElementById('processType').value;
+            const readinessScore = calculateReadinessScore(aiMaturity);
+            
+            // Generate filename with current date
+            const date = new Date().toISOString().split('T')[0];
+            const filename = `Agentic-AI-Assessment-Report-${readinessScore}%-Ready-${date}.pdf`;
+            
+            // Mobile-optimized PDF options
+            const isMobile = isMobileDevice();
+            const opt = {
+                margin: isMobile ? [0.3, 0.3, 0.3, 0.3] : [0.5, 0.5, 0.5, 0.5],
+                filename: filename,
+                image: { 
+                    type: 'jpeg', 
+                    quality: isMobile ? 0.8 : 0.95 // Lower quality for mobile to reduce file size
+                },
+                html2canvas: { 
+                    scale: isMobile ? 1 : 1.5, // Lower scale for mobile performance
+                    useCORS: true,
+                    letterRendering: true,
+                    logging: false,
+                    width: isMobile ? window.innerWidth : undefined,
+                    height: isMobile ? window.innerHeight : undefined
+                },
+                jsPDF: { 
+                    unit: 'in', 
+                    format: 'a4', 
+                    orientation: 'portrait',
+                    putOnlyUsedFonts: true,
+                    compress: true // Enable compression for smaller file size
+                }
+            };
+            
+            // Show loading state
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = isMobile ? '⏳ Creating PDF...' : '⏳ Generating PDF...';
+            button.disabled = true;
+            
+            // Add mobile-specific handling
+            if (isMobile) {
+                // Provide user feedback for slower mobile processing
+                const loadingText = ['⏳ Creating PDF...', '📄 Processing...', '🔄 Almost done...'];
+                let textIndex = 0;
+                const loadingInterval = setInterval(() => {
+                    textIndex = (textIndex + 1) % loadingText.length;
+                    button.innerHTML = loadingText[textIndex];
+                }, 2000);
+                
+                // Clear interval when done
+                const originalThen = () => {
+                    clearInterval(loadingInterval);
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                };
+                
+                const originalCatch = (error) => {
+                    clearInterval(loadingInterval);
+                    console.error('PDF generation failed:', error);
+                    // On mobile, always fall back to print if PDF fails
+                    printReport();
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                };
+                
+                // Generate PDF with mobile optimizations
+                html2pdf()
+                    .set(opt)
+                    .from(clone)
+                    .save()
+                    .then(originalThen)
+                    .catch(originalCatch);
+            } else {
+                // Desktop PDF generation
+                html2pdf()
+                    .set(opt)
+                    .from(clone)
+                    .save()
+                    .then(() => {
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                    })
+                    .catch((error) => {
+                        console.error('PDF generation failed:', error);
+                        printReport();
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                    });
+            }
+        }
+
+        function printReport() {
+            // Alternative print function
+            const printWindow = window.open('', '_blank');
+            const recommendations = document.getElementById('recommendations').innerHTML;
+            
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Agentic AI Assessment Report</title>
+                    <style>
+                        body { 
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+                            line-height: 1.6;
+                            color: #333;
+                            max-width: 800px;
+                            margin: 0 auto;
+                            padding: 20px;
+                        }
+                        .section-title { 
+                            color: #1a1a1a;
+                            border-bottom: 2px solid #007AFF;
+                            padding-bottom: 10px;
+                            margin: 30px 0 20px 0;
+                        }
+                        .recommendation-card { 
+                            border: 1px solid #ddd;
+                            background: #f9f9f9;
+                            padding: 20px;
+                            margin: 15px 0;
+                            border-radius: 8px;
+                        }
+                        .share-section, .action-buttons { display: none !important; }
+                        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+                        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+                        th { background-color: #f0f0f0; }
+                        .highlight-box { 
+                            background: #e3f2fd;
+                            border: 1px solid #007AFF;
+                            padding: 20px;
+                            margin: 20px 0;
+                            border-radius: 8px;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>Agentic AI Journey Assessment Report</h1>
+                    ${recommendations}
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            printWindow.focus();
+            
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
+        }
+
         function goBackToAssessment() {
             document.getElementById('recommendations').classList.remove('show');
             document.getElementById('assessmentForm').style.display = 'block';
@@ -2736,14 +3509,28 @@
             const subject = encodeURIComponent(content.title);
             const body = encodeURIComponent(`${content.summary}\n\nGet your own personalized Agentic AI roadmap: ${content.url}\n\n#AgenticAI #AITransformation`);
             
-            window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
+            // Mobile-friendly email sharing
+            if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                window.location.href = `mailto:?subject=${subject}&body=${body}`;
+            } else {
+                window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
+            }
         }
 
         function shareViaWhatsApp() {
             const content = generateShareContent();
             const text = encodeURIComponent(`${content.summary}\n\nGet your own personalized Agentic AI roadmap: ${content.url}\n\n#AgenticAI #AITransformation`);
             
-            window.open(`https://wa.me/?text=${text}`, '_blank');
+            // Check if mobile WhatsApp app is available
+            if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                // Try to open WhatsApp app first, fall back to web version
+                window.location.href = `whatsapp://send?text=${text}`;
+                setTimeout(() => {
+                    window.open(`https://wa.me/?text=${text}`, '_blank');
+                }, 1000);
+            } else {
+                window.open(`https://wa.me/?text=${text}`, '_blank');
+            }
         }
 
         function shareViaFacebook() {
@@ -2751,7 +3538,12 @@
             const url = encodeURIComponent(content.url);
             const quote = encodeURIComponent(content.summary);
             
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${quote}`, '_blank', 'width=600,height=400');
+            // Mobile-optimized Facebook sharing
+            if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                window.open(`https://m.facebook.com/sharer/sharer.php?u=${url}&quote=${quote}`, '_blank');
+            } else {
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${quote}`, '_blank', 'width=600,height=400');
+            }
         }
 
         function shareViaLinkedIn() {
@@ -2760,8 +3552,126 @@
             const title = encodeURIComponent(content.title);
             const summary = encodeURIComponent(content.summary);
             
-            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}&title=${title}&summary=${summary}`, '_blank', 'width=600,height=400');
+            // Mobile-optimized LinkedIn sharing
+            if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
+            } else {
+                window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}&title=${title}&summary=${summary}`, '_blank', 'width=600,height=400');
+            }
         }
+
+        // Native Web Share API for modern mobile browsers
+        function nativeShare() {
+            if (navigator.share) {
+                const content = generateShareContent();
+                navigator.share({
+                    title: content.title,
+                    text: content.summary,
+                    url: content.url,
+                }).catch(err => console.log('Error sharing:', err));
+            }
+        }
+
+        // Enhanced mobile detection
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                   (window.innerWidth <= 768 && window.innerHeight <= 1024);
+        }
+
+        // Add touch event handlers for better mobile interaction
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show native share button if Web Share API is supported
+            if (navigator.share && isMobileDevice()) {
+                const nativeShareBtn = document.getElementById('nativeShareBtn');
+                if (nativeShareBtn) {
+                    nativeShareBtn.style.display = 'flex';
+                }
+            }
+
+            // Improve form interactions on mobile
+            const selects = document.querySelectorAll('select');
+            selects.forEach(select => {
+                // Add mobile-friendly focus handling
+                select.addEventListener('focus', function() {
+                    if (isMobileDevice()) {
+                        this.style.fontSize = '16px'; // Prevent zoom on iOS
+                    }
+                });
+
+                select.addEventListener('blur', function() {
+                    if (isMobileDevice()) {
+                        this.style.fontSize = ''; // Reset font size
+                    }
+                });
+            });
+
+            // Add haptic feedback for mobile devices (if supported)
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if ('vibrate' in navigator && isMobileDevice()) {
+                        navigator.vibrate(50); // Short vibration for feedback
+                    }
+                });
+            });
+
+            // Optimize scrolling for mobile
+            if (isMobileDevice()) {
+                document.body.style.overflowX = 'hidden';
+                document.documentElement.style.overflowX = 'hidden';
+                
+                // Add smooth scrolling behavior
+                document.documentElement.style.scrollBehavior = 'smooth';
+            }
+
+            // Add orientation change handler
+            window.addEventListener('orientationchange', function() {
+                // Delay to ensure proper recalculation after orientation change
+                setTimeout(function() {
+                    // Force a redraw to fix any layout issues
+                    window.dispatchEvent(new Event('resize'));
+                }, 100);
+            });
+
+            // Add pull-to-refresh prevention on mobile
+            if (isMobileDevice()) {
+                document.body.addEventListener('touchstart', function(e) {
+                    if (e.touches.length === 1 && window.pageYOffset === 0) {
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+
+                document.body.addEventListener('touchmove', function(e) {
+                    if (e.touches.length === 1 && window.pageYOffset === 0) {
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+            }
+
+            // Optimize tap delays on mobile
+            if ('ontouchstart' in window) {
+                const style = document.createElement('style');
+                style.innerHTML = `
+                    * {
+                        -webkit-tap-highlight-color: transparent;
+                        -webkit-touch-callout: none;
+                        -webkit-user-select: none;
+                        -khtml-user-select: none;
+                        -moz-user-select: none;
+                        -ms-user-select: none;
+                        user-select: none;
+                    }
+                    input, textarea, select {
+                        -webkit-user-select: auto;
+                        -khtml-user-select: auto;
+                        -moz-user-select: auto;
+                        -ms-user-select: auto;
+                        user-select: auto;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        });
     </script>
 </body>
 </html>
