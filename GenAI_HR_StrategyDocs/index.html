@@ -1,0 +1,3025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generative AI for HR Innovation Strategy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Landing Page Styles */
+        .landing-page {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+            padding: 20px;
+            text-align: center;
+            transition: all 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        .animated-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120%;
+            height: 120%;
+            opacity: 0.1;
+            background: radial-gradient(circle at 50% 50%, #fff 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                transform: translate(-50%, -50%) scale(1); 
+                opacity: 0.1; 
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.1); 
+                opacity: 0.2; 
+            }
+        }
+
+        .landing-title {
+            text-align: center;
+            z-index: 2;
+            animation: fadeInUp 1.5s ease-out;
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .landing-title h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, #ccc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+            text-align: center;
+            width: 100%;
+        }
+
+        .landing-title p {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            color: #999;
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            line-height: 1.6;
+            text-align: center;
+            width: 100%;
+        }
+
+        .explore-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 18px 45px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .explore-btn span {
+            position: relative;
+            z-index: 2;
+            transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .explore-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s;
+            z-index: 1;
+        }
+
+        .explore-btn:hover::before {
+            left: 100%;
+        }
+
+        .explore-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(255, 255, 255, 0.3);
+            background: #f5f5f5;
+        }
+
+        .explore-btn:hover span {
+            transform: translateY(-1px);
+        }
+
+        .explore-btn:active {
+            transform: translateY(-1px) scale(1.02);
+            transition: all 0.1s ease;
+        }
+
+        /* Professional Loading State */
+        .explore-btn.loading {
+            pointer-events: none;
+            background: #f0f0f0;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(255, 255, 255, 0.25);
+        }
+
+        .explore-btn.loading span {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .explore-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid #ccc;
+            border-top: 2px solid #333;
+            border-radius: 50%;
+            animation: professionalSpin 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+            z-index: 3;
+        }
+
+        .explore-btn.loading::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 32px;
+            height: 32px;
+            margin: -16px 0 0 -16px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            animation: professionalPulse 2s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes professionalSpin {
+            0% { 
+                transform: rotate(0deg) scale(1);
+                opacity: 1;
+            }
+            50% { 
+                transform: rotate(180deg) scale(1.1);
+                opacity: 0.8;
+            }
+            100% { 
+                transform: rotate(360deg) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes professionalPulse {
+            0%, 100% { 
+                transform: scale(1);
+                opacity: 0.3;
+            }
+            50% { 
+                transform: scale(1.2);
+                opacity: 0.1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            display: none;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .main-content.active {
+            display: block;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Enhanced Navigation for better mobile experience */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 15px 0;
+            border-bottom: 1px solid #333;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav-tab {
+            color: #999;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .nav-tab::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #fff;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-tab:hover,
+        .nav-tab.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-tab.active::after {
+            width: 80%;
+        }
+
+        /* Content Container */
+        .content-container {
+            margin-top: 120px;
+            padding: 50px 30px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Section Styles */
+        .section {
+            display: none;
+            animation: slideIn 0.6s ease-out;
+            min-height: 70vh;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #fff 0%, #ccc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .section-subtitle {
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            font-weight: 600;
+            margin: 50px 0 30px 0;
+            color: #fff;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .section-subtitle::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, #fff, #999);
+            border-radius: 2px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Enhanced Cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #4ecdc4, #44a08d);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-12px);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #fff;
+            line-height: 1.3;
+        }
+
+        .card p {
+            color: #ccc;
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        .card strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* Enhanced Metrics Table */
+        .metrics-table {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 40px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .metrics-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .metrics-table th,
+        .metrics-table td {
+            padding: 20px 25px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            vertical-align: middle;
+        }
+
+        .metrics-table th {
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: 700;
+            color: #fff;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        .metrics-table th::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #4ecdc4, #44a08d);
+        }
+
+        .metrics-table td {
+            color: #ccc;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .metrics-table tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .metrics-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .metric-improve {
+            color: #4CAF50;
+            font-weight: 700;
+            font-size: 1.1rem;
+            position: relative;
+        }
+
+        .metric-improve::before {
+            content: '↗';
+            margin-right: 5px;
+            color: #4CAF50;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 40px 30px;
+            margin: 30px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .chart-container h3 {
+            color: #fff;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .chart-container canvas {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .chart-container {
+                padding: 25px 15px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .chart-container canvas {
+                min-width: 450px;
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .chart-container canvas {
+                min-width: 400px;
+                padding: 10px;
+            }
+        }
+
+        /* Enhanced Use Case Detail */
+        .use-case-detail {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 25px;
+            padding: 50px;
+            margin: 40px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .use-case-detail::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4ecdc4, #44a08d, #667eea);
+        }
+
+        .use-case-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 35px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .use-case-number {
+            background: linear-gradient(135deg, #fff, #f0f0f0);
+            color: #000;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.4rem;
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+        }
+
+        .use-case-header h2 {
+            font-size: clamp(1.5rem, 3vw, 2.2rem);
+            margin: 0;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .problem-solution {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 35px 0;
+        }
+
+        .problem-box,
+        .solution-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            border-left: 5px solid;
+            position: relative;
+        }
+
+        .problem-box {
+            border-left-color: #ff6b6b;
+        }
+
+        .solution-box {
+            border-left-color: #4ecdc4;
+        }
+
+        .problem-box h3,
+        .solution-box h3 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .workflow-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 35px 0;
+        }
+
+        .workflow-step {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .workflow-step:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .workflow-step::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #4ecdc4, transparent, #667eea, transparent, #4ecdc4);
+            border-radius: 20px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .workflow-step:hover::before {
+            opacity: 0.3;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #fff, #f0f0f0);
+            color: #000;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .workflow-step h4 {
+            color: #fff;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .workflow-step p {
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .nav-tabs {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .content-container {
+                margin-top: 140px;
+                padding: 20px 15px;
+            }
+
+            .problem-solution {
+                grid-template-columns: 1fr;
+            }
+
+            .workflow-steps {
+                flex-direction: column;
+            }
+
+            .landing-title h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #333;
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Section Loading State */
+        .section-loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            opacity: 0.7;
+        }
+
+        .section-loading .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Enhanced Animations */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .card {
+            animation: slideInUp 0.6s ease-out forwards;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+        .card:nth-child(5) { animation-delay: 0.5s; }
+        .card:nth-child(6) { animation-delay: 0.6s; }
+
+        .workflow-step {
+            animation: fadeInScale 0.5s ease-out forwards;
+        }
+
+        .workflow-step:nth-child(1) { animation-delay: 0.1s; }
+        .workflow-step:nth-child(2) { animation-delay: 0.2s; }
+        .workflow-step:nth-child(3) { animation-delay: 0.3s; }
+        .workflow-step:nth-child(4) { animation-delay: 0.4s; }
+        .workflow-step:nth-child(5) { animation-delay: 0.5s; }
+        .workflow-step:nth-child(6) { animation-delay: 0.6s; }
+
+        /* Improved Focus States */
+        .nav-tab:focus {
+            outline: 2px solid #4ecdc4;
+            outline-offset: 2px;
+        }
+
+        .explore-btn:focus {
+            outline: 2px solid #000;
+            outline-offset: 4px;
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Print Styles */
+        @media print {
+            .header,
+            .nav-tabs,
+            .explore-btn {
+                display: none;
+            }
+
+            .content-container {
+                margin-top: 0;
+                padding: 20px;
+            }
+
+            .section {
+                display: block !important;
+                page-break-before: always;
+            }
+
+            .section:first-child {
+                page-break-before: auto;
+            }
+
+            .card,
+            .workflow-step {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Landing Page -->
+    <div class="landing-page" id="landingPage">
+        <div class="animated-bg"></div>
+        <div class="landing-title">
+            <h1>Generative AI for HR Innovation Strategy</h1>
+            <p>Transform your HR operations with AI-powered solutions that drive efficiency, personalization, and strategic insights across your organization</p>
+            <button class="explore-btn" onclick="showMainContent()">
+                <span>Explore Report</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="logo">GenAI HR Strategy</div>
+                <nav class="nav-tabs">
+                    <a href="#" class="nav-tab active" onclick="showSection('overview', this)">Overview</a>
+                    <a href="#" class="nav-tab" onclick="showSection('framework', this)">Framework</a>
+                    <a href="#" class="nav-tab" onclick="showSection('use-case-1', this)">Reporting</a>
+                    <a href="#" class="nav-tab" onclick="showSection('use-case-2', this)">Career</a>
+                    <a href="#" class="nav-tab" onclick="showSection('use-case-3', this)">Process</a>
+                    <a href="#" class="nav-tab" onclick="showSection('use-case-4', this)">Engagement</a>
+                    <a href="#" class="nav-tab" onclick="showSection('use-case-5', this)">Performance</a>
+                    <a href="#" class="nav-tab" onclick="showSection('use-case-6', this)">Data Updater</a>
+                    <a href="#" class="nav-tab" onclick="showSection('metrics', this)">Metrics</a>
+                </nav>
+            </div>
+        </div>
+
+        <div class="content-container">
+            <!-- Overview Section -->
+            <div class="section active" id="overview">
+                <h1 class="section-title">Executive Summary</h1>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3>Current Challenge</h3>
+                        <p>The HR function is bogged down by manual Excel reporting, slow cross-border processes and high attrition (20% annually), leaving little time for strategic work. HR spends <strong>1,000+ hours per month</strong> on manual tasks that should drive strategic conversations.</p>
+                    </div>
+                    <div class="card">
+                        <h3>AI Opportunity</h3>
+                        <p>McKinsey research shows AI could free <strong>60–70% of HR's time</strong> from administrative tasks, while surveys suggest HR productivity could jump ~30%. Generative AI has been proven to boost worker productivity by 33% per hour of use.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Strategic Approach</h3>
+                        <p>A phased, AI-driven HR framework that balances Efficiency, Personalization and Insight through three progressive phases, starting with automation and scaling to strategic innovation.</p>
+                    </div>
+                </div>
+
+                <h2 class="section-subtitle">Market Context & Urgency</h2>
+                <div class="problem-solution" style="margin: 30px 0;">
+                    <div class="problem-box">
+                        <h3>Industry Imperative</h3>
+                        <p>Gartner research shows <strong>76% of HR leaders</strong> believe they must adopt AI within two years to remain competitive. Organizations that delay AI adoption risk falling behind in talent acquisition, retention, and operational efficiency.</p>
+                    </div>
+                    <div class="solution-box">
+                        <h3>Competitive Advantage</h3>
+                        <p>Early GenAI adopters report significant improvements: 33% productivity increase per hour, 60-70% reduction in admin time, and enhanced employee experience through personalized services.</p>
+                    </div>
+                </div>
+
+                <h2 class="section-subtitle">Current State Analysis</h2>
+                <div class="metrics-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Challenge Area</th>
+                                <th>Current Impact</th>
+                                <th>Root Cause</th>
+                                <th>GenAI Solution</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Manual Reporting</td>
+                                <td>1,000 hrs/month, 8 errors/report</td>
+                                <td>Excel-based processes, data silos</td>
+                                <td>Automated Analytics Assistant</td>
+                            </tr>
+                            <tr>
+                                <td>Career Development</td>
+                                <td>20% attrition, low engagement</td>
+                                <td>One-size-fits-all approach</td>
+                                <td>Personalized Career Navigator</td>
+                            </tr>
+                            <tr>
+                                <td>Process Delays</td>
+                                <td>15-day approval cycles</td>
+                                <td>Cross-border complexity</td>
+                                <td>Workflow Optimizer</td>
+                            </tr>
+                            <tr>
+                                <td>Culture Issues</td>
+                                <td>Hidden dissatisfaction</td>
+                                <td>Reactive pulse surveys</td>
+                                <td>Sentiment Monitor</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 class="section-subtitle">AI Transformation Across HR Functions</h2>
+                <div class="chart-container">
+                    <h3 style="margin-bottom: 20px;">From Manual to Intelligent: HR Evolution</h3>
+                    <canvas id="productivityChart" width="600" height="280" style="max-width: 100%; height: auto;"></canvas>
+                </div>
+
+                <div class="cards-grid" style="margin-top: 30px;">
+                    <div class="card">
+                        <h3>Phase 1 Impact (Q1-Q2)</h3>
+                        <p><strong>700 hours/month</strong> reclaimed through automated reporting and performance assistance. Immediate ROI through efficiency gains and error reduction.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Phase 2 Impact (Q3-Q4)</h3>
+                        <p><strong>50% attrition reduction</strong> through personalized career paths and proactive engagement monitoring. Enhanced employee experience drives retention.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Phase 3 Impact (Year 2)</h3>
+                        <p><strong>Strategic transformation</strong> of HR from back-office function to AI-empowered talent enabler with predictive insights and continuous optimization.</p>
+                    </div>
+                </div>
+
+                <h2 class="section-subtitle">Strategic Imperatives</h2>
+                <div class="use-case-detail" style="margin-top: 20px;">
+                    <h3 style="margin-bottom: 20px;">Why GenAI for HR Now?</h3>
+                    <div class="problem-solution">
+                        <div class="problem-box">
+                            <h3>Market Pressure</h3>
+                            <p>Organizations that delay AI adoption risk falling behind in talent acquisition, retention, and operational efficiency. The competitive advantage window is narrowing rapidly as early adopters establish significant leads.</p>
+                        </div>
+                        <div class="solution-box">
+                            <h3>Technology Maturity</h3>
+                            <p>GenAI technology has reached enterprise readiness with proven ROI. Industry leaders report 33% productivity gains per hour of use, with clear implementation pathways and risk mitigation strategies.</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 15px 0;">Industry Benchmarks</h3>
+                    <div class="metrics-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Industry Metric</th>
+                                    <th>Traditional HR</th>
+                                    <th>AI-Enabled HR</th>
+                                    <th>Source</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Admin Time Allocation</td>
+                                    <td>60-70% of HR time</td>
+                                    <td class="metric-improve">20-30% of HR time</td>
+                                    <td>McKinsey Research</td>
+                                </tr>
+                                <tr>
+                                    <td>Employee Self-Service Adoption</td>
+                                    <td>40-50%</td>
+                                    <td class="metric-improve">80-90%</td>
+                                    <td>Gartner Studies</td>
+                                </tr>
+                                <tr>
+                                    <td>Time-to-Fill Positions</td>
+                                    <td>36 days average</td>
+                                    <td class="metric-improve">22 days average</td>
+                                    <td>Industry Benchmarks</td>
+                                </tr>
+                                <tr>
+                                    <td>HR Leader AI Adoption Plans</td>
+                                    <td>Current: 24%</td>
+                                    <td class="metric-improve">2026 Target: 76%</td>
+                                    <td>Gartner Survey</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategic Framework Section -->
+            <div class="section" id="framework">
+                <h1 class="section-title">Strategic Framework & Roadmap</h1>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3>Phase 1 – Automate (Efficiency)</h3>
+                        <p><strong>Timeline:</strong> Q1-Q2 (6 months)<br>
+                        <strong>Focus:</strong> Target "low-hanging fruit" in HR operations. Deploy GenAI to automate reports, email drafting and data-synthesis. Early wins (e.g. auto-generated reports from Workday data) validate ROI and free up HR time.<br>
+                        <strong>Key Use Cases:</strong> Reporting Assistant, Performance Companion</p>
+                    </div>
+                    <div class="card">
+                        <h3>Phase 2 – Augment (Personalization)</h3>
+                        <p><strong>Timeline:</strong> Q3-Q4 (6 months)<br>
+                        <strong>Focus:</strong> Personalize employee services. Introduce AI-driven career/learning coaches and sentiment analysis to boost engagement and retention. AI crafts individualized career paths making HR "more strategic and knowledgeable".<br>
+                        <strong>Key Use Cases:</strong> Career Navigator, Engagement Monitor</p>
+                    </div>
+                    <div class="card">
+                        <h3>Phase 3 – Innovate (Insight)</h3>
+                        <p><strong>Timeline:</strong> Year 2 (12 months)<br>
+                        <strong>Focus:</strong> Embed AI in strategic planning and process design. Use generative models to simulate organizational changes (e.g. new approval workflows, org charts) and predict talent trends. Creates agile, data-driven HR.<br>
+                        <strong>Key Use Cases:</strong> Process Optimizer, Advanced Analytics</p>
+                    </div>
+                </div>
+
+                <h2 class="section-subtitle">Implementation Governance</h2>
+                <div class="problem-solution">
+                    <div class="problem-box">
+                        <h3>Cross-Functional Leadership</h3>
+                        <p>Each phase has clear ownership and KPIs. Partner HR and IT to define data sources and governance, following McKinsey's guidance to establish a strategic roadmap and manage bias/cybersecurity risks upfront.</p>
+                    </div>
+                    <div class="solution-box">
+                        <h3>Risk Management</h3>
+                        <p>McKinsey emphasizes practicing solid risk management (privacy, bias) and building AI literacy alongside adoption. Continuous measurement of impact through established metrics.</p>
+                    </div>
+                </div>
+
+                <h2 class="section-subtitle">Technology Foundation</h2>
+                <div class="workflow-steps">
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <h4>Data Infrastructure</h4>
+                        <p><strong>Core Systems:</strong> Workday API integration, HR Data Lake (Snowflake), Excel/CSV imports<br>
+                        <strong>Governance:</strong> Cleanse and consolidate HR data for accurate model inputs</p>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <h4>AI Platform</h4>
+                        <p><strong>LLM:</strong> GPT-4 with HR-specific fine-tuning<br>
+                        <strong>Orchestration:</strong> Python/Node.js microservices (AWS Lambda)<br>
+                        <strong>Frontend:</strong> React-based portals, MS Teams integration</p>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <h4>Integration Layer</h4>
+                        <p><strong>APIs:</strong> Workday, LMS, BPM platforms<br>
+                        <strong>Security:</strong> Audit logging, privacy filters, bias detection<br>
+                        <strong>Scalability:</strong> Microservices architecture for rapid expansion</p>
+                    </div>
+                </div>
+
+                <h2 class="section-subtitle">Success Metrics by Phase</h2>
+                <div class="metrics-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Phase</th>
+                                <th>Primary KPI</th>
+                                <th>Target Improvement</th>
+                                <th>Business Impact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Phase 1 - Automate</td>
+                                <td>HR Admin Hours</td>
+                                <td class="metric-improve">-60-70%</td>
+                                <td>700 hours/month reclaimed</td>
+                            </tr>
+                            <tr>
+                                <td>Phase 2 - Augment</td>
+                                <td>Employee Engagement</td>
+                                <td class="metric-improve">+15-20 pts</td>
+                                <td>50% attrition reduction</td>
+                            </tr>
+                            <tr>
+                                <td>Phase 3 - Innovate</td>
+                                <td>Strategic Impact</td>
+                                <td class="metric-improve">+30% productivity</td>
+                                <td>AI-empowered talent enabler</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 class="section-subtitle">Implementation Timeline</h2>
+                <div class="chart-container">
+                    <h3 style="margin-bottom: 20px;">Phased Rollout Schedule</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin: 30px 0;">
+                        <div style="text-align: center; flex: 1;">
+                            <div style="background: #fff; color: #000; padding: 10px 20px; border-radius: 25px; margin-bottom: 10px; font-weight: 600;">Q1-Q2</div>
+                            <p style="color: #ccc; margin-bottom: 10px;"><strong>Phase 1 Foundation</strong></p>
+                            <p style="color: #999; font-size: 0.9rem;">Reporting Assistant<br>Performance Companion<br>Data Infrastructure</p>
+                        </div>
+                        <div style="text-align: center; flex: 1;">
+                            <div style="background: rgba(255,255,255,0.7); color: #000; padding: 10px 20px; border-radius: 25px; margin-bottom: 10px; font-weight: 600;">Q3-Q4</div>
+                            <p style="color: #ccc; margin-bottom: 10px;"><strong>Phase 2 Expansion</strong></p>
+                            <p style="color: #999; font-size: 0.9rem;">Career Navigator<br>Engagement Monitor<br>Personalization Engine</p>
+                        </div>
+                        <div style="text-align: center; flex: 1;">
+                            <div style="background: rgba(255,255,255,0.4); color: #fff; padding: 10px 20px; border-radius: 25px; margin-bottom: 10px; font-weight: 600;">Year 2</div>
+                            <p style="color: #ccc; margin-bottom: 10px;"><strong>Phase 3 Innovation</strong></p>
+                            <p style="color: #999; font-size: 0.9rem;">Process Optimizer<br>Predictive Analytics<br>Strategic Planning</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="section-subtitle">Change Management Strategy</h2>
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3>Communication & Transparency</h3>
+                        <p>Communicate transparently about AI initiatives to all stakeholders. Build confidence through early wins and clear demonstration of value.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Skill Development</h3>
+                        <p>Upskill HR team on AI tools and capabilities. Build AI literacy alongside adoption to ensure successful implementation.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Agile Methodology</h3>
+                        <p>Use agile sprints for implementation. Gather feedback after each pilot, refine models through prompt engineering, and expand systematically.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Use Case 1: Reporting Assistant -->
+            <div class="section" id="use-case-1">
+                <h1 class="section-title">Automated Reporting & Analytics Assistant</h1>
+                
+                <div class="use-case-detail">
+                    <div class="use-case-header">
+                        <div class="use-case-number">1</div>
+                        <h2>Transforming HR Data into Actionable Insights</h2>
+                    </div>
+
+                    <div class="problem-solution">
+                        <div class="problem-box">
+                            <h3 style="margin-bottom: 15px; color: #ff6b6b;">Problem Statement</h3>
+                            <p>The HR team spends an estimated <strong>1,000 hours per month</strong> compiling headcount, turnover, hiring funnel, diversity and other key reports by manually extracting data from Workday and disparate Excel files. This is labor-intensive, prone to transcription errors and delays decision-making—reports that should drive strategic conversations instead become check-the-box exercises.</p>
+                        </div>
+                        <div class="solution-box">
+                            <h3 style="margin-bottom: 15px; color: #4ecdc4;">Solution Concept</h3>
+                            <p>Implement a <strong>GenAI-powered Reporting & Analytics Assistant</strong> that:<br>
+                            • Ingests raw HR data (Workday API feeds + existing Excel logs + survey outputs)<br>
+                            • Generates standardized visual dashboards and narrative summaries on demand<br>
+                            • Highlights anomalies and suggests follow-up actions<br>
+                            • Delivers via interactive chat or scheduled email</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Detailed AI Workflow</h3>
+                    <div class="workflow-steps">
+                        <div class="workflow-step">
+                            <div class="step-number">1</div>
+                            <h4>Data Extraction</h4>
+                            <p><strong>Process:</strong> Scheduled ETL connectors pull Workday objects (employee, org-structure, compensation, attrition) and ingest Excel-based logs into a data lake.<br>
+                            <strong>Frequency:</strong> Real-time for critical metrics, daily batch for historical data</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">2</div>
+                            <h4>Data Normalization</h4>
+                            <p><strong>Process:</strong> Automated scripts clean and align fields (e.g., department names, date formats), ensuring a single source of truth.<br>
+                            <strong>Quality:</strong> Data validation rules, duplicate detection, missing value handling</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">3</div>
+                            <h4>Prompted Analysis</h4>
+                            <p><strong>Interface:</strong> HR issues natural-language queries ("Show me Q2 turnover by region and function," "Compare gender balance vs. last quarter")<br>
+                            <strong>Flexibility:</strong> Ad-hoc queries and scheduled reports</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">4</div>
+                            <h4>LLM-driven Synthesis</h4>
+                            <p><strong>AI Engine:</strong> GPT-4 fine-tuned on HR taxonomy parses queries, retrieves relevant metrics and crafts:<br>
+                            • Visuals (bar/line charts, cross-tabs)<br>
+                            • Narrative summary ("Turnover in APAC rose 12% due to peak resignations in SEA...")<br>
+                            • Actionable insights ("Recommend targeted stay interviews in Market X")</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">5</div>
+                            <h4>Review & Delivery</h4>
+                            <p><strong>Portal:</strong> HR reviews draft report in low-code portal and publishes with one click<br>
+                            <strong>Distribution:</strong> Automated delivery to stakeholders via email or dashboard</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">6</div>
+                            <h4>Continuous Learning</h4>
+                            <p><strong>Feedback Loop:</strong> AI tracks frequent queries and refines templates<br>
+                            <strong>Improvement:</strong> HR can upvote or correct summaries for model training</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Internal Data & Integrations</h3>
+                    <div class="cards-grid">
+                        <div class="card">
+                            <h3>Workday API</h3>
+                            <p>Headcount, hires, terminations, compensation, org-structure data with real-time API connections for live reporting.</p>
+                        </div>
+                        <div class="card">
+                            <h3>HR Data Lake</h3>
+                            <p>Centralized repository (Snowflake) for cleansed tables and historical data with version control and audit trails.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Excel/CSV Imports</h3>
+                            <p>Localized headcount trackers, survey exports, and legacy data sources with automated ingestion pipelines.</p>
+                        </div>
+                        <div class="card">
+                            <h3>BI/Portal Interface</h3>
+                            <p>Web-based chat/report portal embedded in intranet with user authentication and role-based access.</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Implementation Phases</h3>
+                    <div class="workflow-steps">
+                        <div class="workflow-step">
+                            <div class="step-number">1</div>
+                            <h4>Phase-1 Pilot (1-2 months)</h4>
+                            <p><strong>Scope:</strong> Core headcount and turnover reports<br>
+                            <strong>Deliverables:</strong><br>
+                            • ETL pipelines for Workday "Terminations" and "New Hires" feeds<br>
+                            • LLM prompts/templates for "monthly turnover summary"<br>
+                            • Basic portal for "generate turnover report" button</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">2</div>
+                            <h4>Phase-2 Expansion (3-5 months)</h4>
+                            <p><strong>Scope:</strong> Add diversity, recruiting funnel, learning metrics and ad-hoc queries<br>
+                            <strong>Deliverables:</strong><br>
+                            • Data model extensions (e.g., DE&I fields)<br>
+                            • Advanced narrative prompts (e.g., "Why did offer acceptance rate drop?")<br>
+                            • Scheduled cadence (daily/weekly) distribution</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">3</div>
+                            <h4>Phase-3 Optimization (6-9 months)</h4>
+                            <p><strong>Scope:</strong> Predictive insights, integration with other systems (payroll, L&D)<br>
+                            <strong>Deliverables:</strong><br>
+                            • Fine-tuned model for anomaly detection<br>
+                            • Executive dashboard with "one-click" board-level report generation</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Technology Stack</h3>
+                    <div class="problem-solution">
+                        <div class="problem-box">
+                            <h3>Core Technologies</h3>
+                            <p><strong>LLM:</strong> GPT-4 (with HR-specific fine-tuning)<br>
+                            <strong>Middleware:</strong> Python-based orchestration (Airflow or AWS Lambda)<br>
+                            <strong>Data Warehouse:</strong> Snowflake or equivalent<br>
+                            <strong>Frontend:</strong> Lightweight React portal or MS Teams integration</p>
+                        </div>
+                        <div class="solution-box">
+                            <h3>Infrastructure</h3>
+                            <p><strong>Cloud Platform:</strong> AWS/Azure for scalability<br>
+                            <strong>Security:</strong> End-to-end encryption, RBAC<br>
+                            <strong>Monitoring:</strong> Real-time performance tracking<br>
+                            <strong>Backup:</strong> Automated data backup and recovery</p>
+                        </div>
+                    </div>
+
+                    <div class="metrics-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>KPI</th>
+                                    <th>Baseline</th>
+                                    <th>Target</th>
+                                    <th>Measurement Approach</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>HR Admin Hours</strong></td>
+                                    <td>1,000 hrs/month</td>
+                                    <td class="metric-improve">300 hrs/month (-70%)</td>
+                                    <td>Time-tracking tool; compare pre- and post-deployment</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Report Turnaround Time</strong></td>
+                                    <td>5 days/report</td>
+                                    <td class="metric-improve">&lt;1 day/report</td>
+                                    <td>Timestamps: request vs. final delivery</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Error Rate in Reports</strong></td>
+                                    <td>~8 errors/report</td>
+                                    <td class="metric-improve">&lt;1 error/report</td>
+                                    <td>Sample audits of generated outputs</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Stakeholder Satisfaction</strong></td>
+                                    <td>65 pts (survey index)</td>
+                                    <td class="metric-improve">≥90 pts</td>
+                                    <td>Quarterly stakeholder survey</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Query Volume Served</strong></td>
+                                    <td>10 ad-hoc queries/mo</td>
+                                    <td class="metric-improve">100 ad-hoc queries/mo</td>
+                                    <td>System logs of executed LLM queries</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Expected Business Impact</h3>
+                    <p style="color: #ccc; margin-bottom: 20px;">By automating and augmenting reporting, HR reclaims <strong>700 hours per month</strong>, slashes error rates, and provides leadership with faster, richer insights—fueling data-driven talent decisions while laying the foundation for deeper GenAI-powered HR transformation.</p>
+                </div>
+            </div>
+
+            <!-- Use Case 2: Career Navigator -->
+            <div class="section" id="use-case-2">
+                <h1 class="section-title">Personalized Career & Learning Navigator</h1>
+                
+                <div class="use-case-detail">
+                    <div class="use-case-header">
+                        <div class="use-case-number">2</div>
+                        <h2>AI-Powered Career Development Pathways</h2>
+                    </div>
+
+                    <div class="problem-solution">
+                        <div class="problem-box">
+                            <h3 style="margin-bottom: 15px; color: #ff6b6b;">Problem Statement</h3>
+                            <p>Employees lack clear, structured pathways for career progression and skills development. HR's current <strong>"one-size-fits-all" approach</strong>—generic training catalogs and infrequent check-ins—fails to engage staff, contributing to stagnant skill growth and suboptimal retention (currently <strong>20% attrition</strong>).</p>
+                        </div>
+                        <div class="solution-box">
+                            <h3 style="margin-bottom: 15px; color: #4ecdc4;">Solution Concept</h3>
+                            <p>Deploy a <strong>GenAI-driven Career & Learning Navigator</strong> that delivers tailored development journeys for each employee. By analyzing role requirements, individual performance data, expressed aspirations and existing skill gaps, the system generates:<br>
+                            • Custom career roadmap (milestones, target roles, suggested lateral moves)<br>
+                            • Personalized learning plan (courses, micro-learning modules, stretch assignments)<br>
+                            • Mentor matches and internal mobility notifications</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Detailed AI Workflow</h3>
+                    <div class="workflow-steps">
+                        <div class="workflow-step">
+                            <div class="step-number">1</div>
+                            <h4>Profile Ingestion</h4>
+                            <p><strong>Data Sources:</strong> Pull employee data from Workday (current role, tenure, performance ratings, competencies) and internal learning platforms (completed courses)<br>
+                            <strong>Integration:</strong> Real-time sync with HRIS and LMS for up-to-date profiles</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">2</div>
+                            <h4>Aspiration Capture</h4>
+                            <p><strong>Interface:</strong> Conversational interface prompts employee for career goals (e.g., "next role: Senior Manager, timeline: 18 months")<br>
+                            <strong>Method:</strong> Natural language processing of career aspirations and preferences</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">3</div>
+                            <h4>Skill Gap Analysis</h4>
+                            <p><strong>Process:</strong> LLM evaluates current vs. target-role competency matrix (sourced from job descriptions in Workday or competency libraries) to identify skill gaps<br>
+                            <strong>Output:</strong> Prioritized list of skills needed for career progression</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">4</div>
+                            <h4>Roadmap & Plan Generation</h4>
+                            <p><strong>AI Construction:</strong> GenAI constructs sequenced career roadmap with recommended milestones, suggested projects and role-critical experiences<br>
+                            <strong>Learning Plan:</strong> Generates bespoke Learning Plan with course links (internal/LMS or external)</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">5</div>
+                            <h4>Mentor & Project Match</h4>
+                            <p><strong>Social Graph Analysis:</strong> Using org-structure data, AI recommends internal mentors or stretch-assignment supervisors<br>
+                            <strong>Matching Algorithm:</strong> Leverages past collaborations and expertise alignment</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">6</div>
+                            <h4>Continuous Adaptation</h4>
+                            <p><strong>Quarterly Reviews:</strong> AI re-evaluates progress (course completions, feedback) and dynamically adjusts the roadmap<br>
+                            <strong>Evolution:</strong> Adding new stretch goals or changing timelines based on performance</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Internal Data & Integrations</h3>
+                    <div class="cards-grid">
+                        <div class="card">
+                            <h3>Workday Talent Objects</h3>
+                            <p>Roles, competencies, performance reviews, job descriptions, and organizational hierarchy for comprehensive talent mapping.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Learning Management System (LMS)</h3>
+                            <p>Course catalogs, completion records, skill assessments, and certification tracking for personalized learning paths.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Internal Project Tracker</h3>
+                            <p>Ongoing assignments and team rosters for identifying stretch assignment opportunities and cross-functional experiences.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Employee Feedback Systems</h3>
+                            <p>Pulse surveys, 360° feedback for mentor matching and development opportunity identification.</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Implementation Phases</h3>
+                    <div class="workflow-steps">
+                        <div class="workflow-step">
+                            <div class="step-number">1</div>
+                            <h4>Phase 1 – Core Roadmap Pilot (2-3 months)</h4>
+                            <p><strong>Scope:</strong> Generate career roadmaps for one function (e.g., Marketing)<br>
+                            <strong>Deliverables:</strong><br>
+                            • Competency matrix ingestion<br>
+                            • Initial LLM prompts/templates<br>
+                            • Portal UI for roadmap viewing</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">2</div>
+                            <h4>Phase 2 – Learning Plan & Integration (4-6 months)</h4>
+                            <p><strong>Scope:</strong> Link LMS and project data; enable learning-plan creation and mentor recommendations<br>
+                            <strong>Deliverables:</strong><br>
+                            • API connectors to LMS<br>
+                            • AI matching algorithms for mentors<br>
+                            • Email notifications for recommended actions</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">3</div>
+                            <h4>Phase 3 – Dynamic Adaptation & Scaling (7-12 months)</h4>
+                            <p><strong>Scope:</strong> Roll out across all departments; automate quarterly progress checks and plan updates<br>
+                            <strong>Deliverables:</strong><br>
+                            • Feedback loop implementation<br>
+                            • Advanced prompt tuning for nuanced plan adjustments<br>
+                            • Executive dashboard for HR to monitor overall development health</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Technology Stack</h3>
+                    <div class="problem-solution">
+                        <div class="problem-box">
+                            <h3>Core Technologies</h3>
+                            <p><strong>LLM:</strong> GPT-4 (fine-tuned on your competency frameworks and organizational language)<br>
+                            <strong>Orchestration:</strong> Python microservices (AWS Lambda or on-prem scripts)<br>
+                            <strong>Data Store:</strong> Snowflake or Azure Synapse (for talent and learning data)<br>
+                            <strong>Frontend:</strong> React-based HR portal plugin or MS Teams integration</p>
+                        </div>
+                        <div class="solution-box">
+                            <h3>Advanced Features</h3>
+                            <p><strong>ML Models:</strong> Recommendation engines for career paths<br>
+                            <strong>NLP Processing:</strong> Career aspiration analysis<br>
+                            <strong>Graph Analytics:</strong> Mentor-mentee matching algorithms<br>
+                            <strong>Progress Tracking:</strong> Real-time skill development monitoring</p>
+                        </div>
+                    </div>
+
+                    <div class="metrics-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>KPI</th>
+                                    <th>Baseline</th>
+                                    <th>Target</th>
+                                    <th>Measurement Approach</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Retention Rate (%)</strong></td>
+                                    <td>80% (20% attrition)</td>
+                                    <td class="metric-improve">90% (10% attrition)</td>
+                                    <td>HRIS attrition reports, comparing cohorts</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Employee Engagement Score</strong></td>
+                                    <td>70 pts</td>
+                                    <td class="metric-improve">≥85 pts</td>
+                                    <td>Quarterly eNPS or engagement survey</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Training Completion Rate (%)</strong></td>
+                                    <td>60%</td>
+                                    <td class="metric-improve">90%</td>
+                                    <td>LMS completion records</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Internal Mobility Rate (%)</strong></td>
+                                    <td>5% lateral/vertical moves</td>
+                                    <td class="metric-improve">15%</td>
+                                    <td>Workday job-change logs</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Time to Competency (months)</strong></td>
+                                    <td>12</td>
+                                    <td class="metric-improve">6-8</td>
+                                    <td>Measure average time from plan start to competency sign-off</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Manager Satisfaction Score</strong></td>
+                                    <td>65 pts</td>
+                                    <td class="metric-improve">≥85 pts</td>
+                                    <td>Bi-annual manager survey on quality of career support</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Expected Business Impact</h3>
+                    <p style="color: #ccc; margin-bottom: 20px;">By delivering hyper-personalized career pathways and adaptive learning plans, this use case elevates the HR function into a strategic enabler—driving engagement, slashing attrition and cultivating an agile, future-ready workforce. GenAI personalization is shown to "foster a more motivated and productive" workforce through individualized development journeys.</p>
+                </div>
+            </div>
+
+            <!-- Use Case 3: Process Optimizer -->
+            <div class="section" id="use-case-3">
+                <h1 class="section-title">Generative Process & Workflow Optimizer</h1>
+                
+                <div class="use-case-detail">
+                    <div class="use-case-header">
+                        <div class="use-case-number">3</div>
+                        <h2>AI-Driven Workflow Redesign</h2>
+                    </div>
+
+                    <div class="problem-solution">
+                        <div class="problem-box">
+                            <h3 style="margin-bottom: 15px; color: #ff6b6b;">Problem Statement</h3>
+                            <p>Cross-border approvals and complex HR workflows (e.g., transfers, promotions, policy acknowledgements) span multiple markets (APAC, SEA), leading to <strong>average approval cycles of 15 days</strong>, redundant steps, and frequent hand-offs. This creates bottlenecks, low HR throughput and frustrated employees.</p>
+                        </div>
+                        <div class="solution-box">
+                            <h3 style="margin-bottom: 15px; color: #4ecdc4;">Solution Concept</h3>
+                            <p>Introduce a <strong>GenAI-powered Workflow Optimizer</strong> that:<br>
+                            • Ingests existing process definitions (flowcharts, SOP documents, legacy approvals)<br>
+                            • Analyzes steps, roles, hand-off points and SLA targets<br>
+                            • Generates redesigned, leaner workflows—optimizing sequence, reassigning approvals locally where possible<br>
+                            • Simulates "what-if" scenarios to forecast cycle-time improvements<br>
+                            • Exports executable workflow definitions into BPM or ticketing system</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Detailed AI Workflow</h3>
+                    <div class="workflow-steps">
+                        <div class="workflow-step">
+                            <div class="step-number">1</div>
+                            <h4>Process Harvesting</h4>
+                            <p><strong>Input Sources:</strong> HR uploads process artifacts: Visio flowcharts, Word/PDF SOPs, email-thread snapshots<br>
+                            <strong>Data Extraction:</strong> OCR and document parsing to extract process steps and decision points</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">2</div>
+                            <h4>Semantic Parsing</h4>
+                            <p><strong>AI Analysis:</strong> LLM ingests text and diagram metadata to identify actors, decision points, branches and SLAs<br>
+                            <strong>Process Mapping:</strong> Automatic conversion of unstructured process documents into structured workflow models</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">3</div>
+                            <h4>Bottleneck Detection</h4>
+                            <p><strong>Analytics:</strong> AI applies rules and learns from historical timestamps (e.g., avg. hand-off times) to flag steps with high latency or rework loops<br>
+                            <strong>Root Cause Analysis:</strong> Identification of systemic delays and inefficiencies</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">4</div>
+                            <h4>Workflow Re-engineering</h4>
+                            <p><strong>Optimization:</strong> GenAI proposes streamlined process improvements:<br>
+                            • Combine parallel approval steps under one role<br>
+                            • Delegate routine decisions to local market HR<br>
+                            • Automate policy checks via API calls instead of manual review</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">5</div>
+                            <h4>Simulation & Comparison</h4>
+                            <p><strong>Scenario Analysis:</strong> AI runs scenario-based prompts ("What if we remove step X?") and uses historical data to predict new cycle times<br>
+                            <strong>Impact Modeling:</strong> Before/after comparison with quantified improvements</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">6</div>
+                            <h4>Deployment Package</h4>
+                            <p><strong>Deliverables:</strong> Generates deployable artifacts: BPMN files, API-integration specs and a "Change Brief" for stakeholders showing before/after metrics<br>
+                            <strong>Implementation:</strong> Direct integration with BPM platforms for immediate deployment</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Internal Data & Integrations</h3>
+                    <div class="cards-grid">
+                        <div class="card">
+                            <h3>Historic Process Logs</h3>
+                            <p>Timestamps from ticketing or HRIS for each step, providing baseline performance data and bottleneck identification.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Process Documentation</h3>
+                            <p>SOPs, flow diagrams, policy texts across multiple formats (Visio, Word, PDF) for comprehensive process mapping.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Workday & IT Systems</h3>
+                            <p>API-based policy checks (e.g., eligibility rules) and system integration points for automated decision-making.</p>
+                        </div>
+                        <div class="card">
+                            <h3>BPM/Ticketing Platform</h3>
+                            <p>ServiceNow, JIRA integration to import optimized process definitions and track performance improvements.</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Implementation Phases</h3>
+                    <div class="workflow-steps">
+                        <div class="workflow-step">
+                            <div class="step-number">1</div>
+                            <h4>Phase 1 – Discovery & Pilot (1-2 months)</h4>
+                            <p><strong>Scope:</strong> Select one high-latency process (e.g., cross-market promotion approvals)<br>
+                            <strong>Deliverables:</strong><br>
+                            • Ingest artifacts and run AI-led analysis<br>
+                            • Deliver "Optimized Workflow Draft" and cycle-time simulation</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">2</div>
+                            <h4>Phase 2 – Build & Integrate (3-4 months)</h4>
+                            <p><strong>Scope:</strong> Develop middleware and integration capabilities<br>
+                            <strong>Deliverables:</strong><br>
+                            • Middleware to convert AI output into BPMN/API specs<br>
+                            • Integrate with ticketing system for live routing<br>
+                            • Train local HR users on new process and monitor adoption</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">3</div>
+                            <h4>Phase 3 – Scale & Continuous Improvement (5-8 months)</h4>
+                            <p><strong>Scope:</strong> Enterprise rollout and innovation lab<br>
+                            <strong>Deliverables:</strong><br>
+                            • Roll out to additional HR processes (onboarding, policy acknowledgments, L&D requests)<br>
+                            • Establish AI-driven "Process Innovation Lab" for continuous harvesting<br>
+                            • Implement feedback loops for continuous optimization</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Technology Stack</h3>
+                    <div class="problem-solution">
+                        <div class="problem-box">
+                            <h3>Core Technologies</h3>
+                            <p><strong>LLM:</strong> GPT-4 or equivalent (with process-engineering fine-tuning)<br>
+                            <strong>Orchestration:</strong> Node.js/Python service to parse and transform AI outputs<br>
+                            <strong>BPM Platform:</strong> ServiceNow or JIRA for workflow execution<br>
+                            <strong>Data Store:</strong> Snowflake or PostgreSQL for process logs and metadata</p>
+                        </div>
+                        <div class="solution-box">
+                            <h3>Advanced Features</h3>
+                            <p><strong>Process Mining:</strong> Automated process discovery from logs<br>
+                            <strong>Simulation Engine:</strong> Monte Carlo simulations for optimization<br>
+                            <strong>Document AI:</strong> OCR and NLP for process artifact parsing<br>
+                            <strong>UI Portal:</strong> Web portal for "Optimize My Process" requests</p>
+                        </div>
+                    </div>
+
+                    <div class="metrics-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>KPI</th>
+                                    <th>Baseline</th>
+                                    <th>Target</th>
+                                    <th>Measurement Approach</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Approval Cycle Time</strong></td>
+                                    <td>15 days/process</td>
+                                    <td class="metric-improve">5 days/process (-67%)</td>
+                                    <td>Compare avg. timestamps before vs. after rollout</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Process Steps per Flow</strong></td>
+                                    <td>12 steps</td>
+                                    <td class="metric-improve">5-7 steps (-40-60%)</td>
+                                    <td>Automated count of nodes in BPMN definition</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>HR Process Throughput</strong></td>
+                                    <td>50 processes/mo</td>
+                                    <td class="metric-improve">80 processes/mo (+60%)</td>
+                                    <td>Count of completed flows per month</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Stakeholder Satisfaction</strong></td>
+                                    <td>60 pts</td>
+                                    <td class="metric-improve">≥90 pts</td>
+                                    <td>Survey of requestors on speed & clarity</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Rework Rate</strong></td>
+                                    <td>20% of processes</td>
+                                    <td class="metric-improve">&lt;5%</td>
+                                    <td>% of flows requiring manual correction or revisit</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Expected Business Impact</h3>
+                    <p style="color: #ccc; margin-bottom: 20px;">By leveraging GenAI to <strong>reimagine and automate</strong> HR processes, this use case dramatically <strong>speeds approvals</strong>, <strong>reduces complexity</strong> and <strong>elevates HR capacity</strong>—turning weeks of manual coordination into days of automated, transparent workflows. In pilot tests in other industries, similar AI tools have achieved "three times faster" process mapping.</p>
+                </div>
+            </div>
+
+            <!-- Use Case 4: Engagement Monitor -->
+            <div class="section" id="use-case-4">
+                <h1 class="section-title">Employee Sentiment & Engagement Monitor</h1>
+                
+                <div class="use-case-detail">
+                    <div class="use-case-header">
+                        <div class="use-case-number">4</div>
+                        <h2>Real-time Culture Intelligence</h2>
+                    </div>
+
+                    <div class="problem-solution">
+                        <div class="problem-box">
+                            <h3 style="margin-bottom: 15px; color: #ff6b6b;">Problem Statement</h3>
+                            <p>High voluntary turnover (<strong>20% annual attrition</strong>) and uneven morale signals indicate that hidden dissatisfaction and emerging culture issues go unnoticed until it's too late. Current pulse surveys are infrequent, manually analyzed and too coarse-grained to pinpoint root causes.</p>
+                        </div>
+                        <div class="solution-box">
+                            <h3 style="margin-bottom: 15px; color: #4ecdc4;">Solution Concept</h3>
+                            <p>Implement a <strong>GenAI-driven Engagement Monitor</strong> that continuously ingests multiple feedback channels—pulse surveys, exit interviews, one-on-one meeting notes, and anonymized internal chat logs—and uses natural-language understanding to:<br>
+                            • Detect real-time sentiment trends and emerging themes<br>
+                            • Diagnose underlying drivers (e.g., workload, manager support, career concerns)<br>
+                            • Recommend targeted interventions<br>
+                            • Report concise, action-oriented "Culture Briefs" to HR and leadership</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Detailed AI Workflow</h3>
+                    <div class="workflow-steps">
+                        <div class="workflow-step">
+                            <div class="step-number">1</div>
+                            <h4>Data Aggregation</h4>
+                            <p><strong>Multi-Source Ingestion:</strong> Scheduled ingestion of:<br>
+                            • Pulse survey responses (weekly/biweekly)<br>
+                            • Exit interview transcripts<br>
+                            • 1:1 meeting summaries (if captured digitally)<br>
+                            • Anonymized chat logs (Slack/MS Teams)<br>
+                            <strong>Real-time Processing:</strong> Continuous monitoring for early issue detection</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">2</div>
+                            <h4>Preprocessing & Anonymity</h4>
+                            <p><strong>Privacy Protection:</strong> NLP pipelines clean text (remove PII), normalize language, and tag by source and time<br>
+                            <strong>Data Security:</strong> GDPR-compliant anonymization and secure data handling</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">3</div>
+                            <h4>Sentiment & Topic Modeling</h4>
+                            <p><strong>Advanced Analytics:</strong> LLM fine-tuned on HR lexicon performs:<br>
+                            • Sentiment scoring (positive/neutral/negative trends)<br>
+                            • Thematic extraction (e.g., "workload stress," "manager support," "career clarity")<br>
+                            <strong>Trend Analysis:</strong> Identification of emerging patterns and correlation analysis</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">4</div>
+                            <h4>Insight Synthesis</h4>
+                            <p><strong>Culture Brief Generation:</strong> GenAI crafts comprehensive narratives:<br>
+                            • High-level sentiment dashboard (trend lines, heat maps)<br>
+                            • Top 3 emerging issues (with representative quotes)<br>
+                            • Priority recommendations ("deploy manager training in Region X," "launch micro-learning on time management")</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">5</div>
+                            <h4>Delivery & Feedback Loop</h4>
+                            <p><strong>Automated Distribution:</strong> Culture Briefs delivered to HR and leadership via email or dashboard<br>
+                            <strong>Continuous Learning:</strong> HR can upvote, comment or reject recommendations to refine future outputs</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Internal Data & Integrations</h3>
+                    <div class="cards-grid">
+                        <div class="card">
+                            <h3>Survey Platform API</h3>
+                            <p>Qualtrics, SurveyMonkey integration for real-time pulse survey data and sentiment tracking across organizational levels.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Exit Interview Records</h3>
+                            <p>Transcripts stored in data lake with automated sentiment analysis and thematic categorization for trend identification.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Meeting Notes Repository</h3>
+                            <p>One-on-one summary logs and team meeting notes for comprehensive organizational sentiment mapping.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Chat Platform Logs</h3>
+                            <p>Slack/MS Teams anonymized data for organic sentiment detection and early warning system.</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Implementation Phases</h3>
+                    <div class="workflow-steps">
+                        <div class="workflow-step">
+                            <div class="step-number">1</div>
+                            <h4>Phase 1 – Data Pipeline & Basic Insights (2-3 months)</h4>
+                            <p><strong>Scope:</strong> Foundation setup and initial sentiment analysis<br>
+                            <strong>Deliverables:</strong><br>
+                            • Connect pulse-survey API and exit transcripts<br>
+                            • Set up anonymization and basic sentiment scoring<br>
+                            • Deliver monthly "Culture Brief" reports</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">2</div>
+                            <h4>Phase 2 – Multi-Source Fusion & Thematic Analysis (4-6 months)</h4>
+                            <p><strong>Scope:</strong> Advanced analytics and comprehensive monitoring<br>
+                            <strong>Deliverables:</strong><br>
+                            • Add 1:1 and chat data ingestion<br>
+                            • Implement LLM-driven thematic extraction and root-cause clustering<br>
+                            • Increase report cadence to bi-weekly</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">3</div>
+                            <h4>Phase 3 – Proactive Intervention & Continuous Learning (7-12 months)</h4>
+                            <p><strong>Scope:</strong> Predictive analytics and automated interventions<br>
+                            <strong>Deliverables:</strong><br>
+                            • Integrate with HRIS to trigger alerts (e.g., sentiment drop >10% in team)<br>
+                            • Develop "Engagement Chatbot" for real-time pulse checks<br>
+                            • Establish model retraining cycles incorporating HR feedback</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Technology Stack</h3>
+                    <div class="problem-solution">
+                        <div class="problem-box">
+                            <h3>Core Technologies</h3>
+                            <p><strong>LLM:</strong> GPT-4 with sentiment & topic-modeling fine-tuning<br>
+                            <strong>ETL & Orchestration:</strong> AWS Glue or Apache Airflow<br>
+                            <strong>Data Store:</strong> Snowflake or Azure Data Lake<br>
+                            <strong>Visualization:</strong> Tableau/Power BI or React-based portal</p>
+                        </div>
+                        <div class="solution-box">
+                            <h3>Advanced Features</h3>
+                            <p><strong>NLP Engine:</strong> Advanced sentiment analysis and entity recognition<br>
+                            <strong>Privacy Filters:</strong> GDPR-compliant data processing<br>
+                            <strong>Bias Audits:</strong> Algorithmic fairness monitoring<br>
+                            <strong>Real-time Alerts:</strong> Proactive notification system</p>
+                        </div>
+                    </div>
+
+                    <div class="metrics-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>KPI</th>
+                                    <th>Baseline</th>
+                                    <th>Target</th>
+                                    <th>Measurement Approach</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Employee Engagement Score (eNPS)</strong></td>
+                                    <td>70 pts</td>
+                                    <td class="metric-improve">≥85 pts (+21%)</td>
+                                    <td>Quarterly survey results</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Attrition Rate (%)</strong></td>
+                                    <td>20%</td>
+                                    <td class="metric-improve">10% (-50%)</td>
+                                    <td>HRIS turnover reports</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Issue Detection Lead Time</strong></td>
+                                    <td>2 quarters</td>
+                                    <td class="metric-improve">1 month</td>
+                                    <td>Time from issue inception to first report</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Recommendation Adoption Rate (%)</strong></td>
+                                    <td>n/a</td>
+                                    <td class="metric-improve">≥75%</td>
+                                    <td>% of AI-generated recommendations implemented by HR</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Sentiment Analysis Accuracy (%)</strong></td>
+                                    <td>n/a</td>
+                                    <td class="metric-improve">≥90%</td>
+                                    <td>Back-testing AI labels vs. manual annotations</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Real-World Applications</h3>
+                    <div class="cards-grid">
+                        <div class="card">
+                            <h3>Early Warning System</h3>
+                            <p>Proactive identification of team-level issues before they escalate, enabling targeted interventions and manager coaching.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Culture Trends Analysis</h3>
+                            <p>Monthly culture reports highlighting recurring complaints, morale dips, and successful intervention outcomes with clear ROI.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Manager Enablement</h3>
+                            <p>AI-generated insights help managers understand team sentiment and receive specific coaching recommendations for improvement.</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Expected Business Impact</h3>
+                    <p style="color: #ccc; margin-bottom: 20px;">By continuously monitoring and interpreting employee sentiment across diverse channels, HR can <strong>detect early warning signs</strong>, <strong>target interventions</strong> with precision and ultimately <strong>halve attrition</strong>—all while maintaining a lean team and fostering a proactive culture. In real-world examples, gen-AI has been used to synthesize 360° feedback into clear development insights.</p>
+                </div>
+            </div>
+
+            <!-- Use Case 5: Performance Assistant -->
+            <div class="section" id="use-case-5">
+                <h1 class="section-title">AI Performance Review & Coaching Companion</h1>
+                
+                <div class="use-case-detail">
+                    <div class="use-case-header">
+                        <div class="use-case-number">5</div>
+                        <h2>Intelligent Performance Management</h2>
+                    </div>
+
+                    <div class="problem-solution">
+                        <div class="problem-box">
+                            <h3 style="margin-bottom: 15px; color: #ff6b6b;">Problem Statement</h3>
+                            <p>Performance management is often <strong>inconsistent and time-consuming</strong>. Managers struggle to provide unbiased, data-driven evaluations and constructive feedback. Review cycles are delayed, quality varies significantly, and the process often feels like a administrative burden rather than a valuable development tool.</p>
+                        </div>
+                        <div class="solution-box">
+                            <h3 style="margin-bottom: 15px; color: #4ecdc4;">Solution Concept</h3>
+                            <p>Envision a <strong>Generative Review Assistant</strong> that helps managers and HR craft data-driven, unbiased evaluations. The AI aggregates goals, peer feedback and self-assessments to draft performance summaries and constructive suggestions. It generates personalized coaching points or learning recommendations for each employee, acting like an "AI intern" that frees up human time for strategic content.</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Key Features & Capabilities</h3>
+                    <div class="cards-grid">
+                        <div class="card">
+                            <h3>Automated Data Synthesis</h3>
+                            <p><strong>Comprehensive Aggregation:</strong> AI collects performance data, peer feedback, self-assessments, goal achievement metrics, and 360° feedback to create holistic employee profiles.<br>
+                            <strong>Multi-Source Integration:</strong> Seamless integration with performance management systems, project tracking tools, and feedback platforms.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Bias Reduction & Consistency</h3>
+                            <p><strong>Standardized Language:</strong> Consistent evaluation criteria and structured feedback reduce unconscious bias in performance reviews.<br>
+                            <strong>Calibration Support:</strong> AI helps ensure fair and equitable assessments across teams and departments.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Personalized Development Plans</h3>
+                            <p><strong>Coaching Recommendations:</strong> Generate specific, actionable coaching points tailored to each employee's performance profile and career aspirations.<br>
+                            <strong>Learning Pathways:</strong> AI suggests relevant training modules, certifications, and development opportunities.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Manager Enablement</h3>
+                            <p><strong>Draft Generation:</strong> AI creates structured review drafts that managers can review, edit, and personalize.<br>
+                            <strong>Conversation Guides:</strong> Provides talking points and development conversation starters for managers.</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Detailed Implementation Approach</h3>
+                    <div class="workflow-steps">
+                        <div class="workflow-step">
+                            <div class="step-number">1</div>
+                            <h4>Data Integration & Preparation</h4>
+                            <p><strong>System Integration:</strong> Connect with performance management systems, HRIS, and feedback platforms<br>
+                            <strong>Data Preparation:</strong> Cleanse and structure performance data for AI processing<br>
+                            <strong>Privacy Controls:</strong> Implement data governance and access controls</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">2</div>
+                            <h4>AI Model Development</h4>
+                            <p><strong>Template Creation:</strong> Develop review templates and coaching frameworks<br>
+                            <strong>Model Training:</strong> Fine-tune LLM on organizational language and performance criteria<br>
+                            <strong>Quality Assurance:</strong> Implement review and approval workflows</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">3</div>
+                            <h4>Manager Portal Development</h4>
+                            <p><strong>User Interface:</strong> Create intuitive portal for managers to input raw data and review AI outputs<br>
+                            <strong>Review Workflow:</strong> Streamlined process for draft review, editing, and finalization<br>
+                            <strong>Mobile Accessibility:</strong> Ensure system works across devices and platforms</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">4</div>
+                            <h4>Employee-Facing Features</h4>
+                            <p><strong>Development Portal:</strong> Employee access to AI-generated learning recommendations and career guidance<br>
+                            <strong>Progress Tracking:</strong> Dashboard showing development progress and goal achievement<br>
+                            <strong>Feedback Integration:</strong> Ability to provide input on AI-generated suggestions</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Technology Integration</h3>
+                    <div class="problem-solution">
+                        <div class="problem-box">
+                            <h3>Core Integration Points</h3>
+                            <p><strong>Performance Systems:</strong> Workday, SuccessFactors, BambooHR integration for seamless data flow<br>
+                            <strong>Learning Platforms:</strong> LMS and external training provider connections<br>
+                            <strong>Communication Tools:</strong> Slack/Teams integration for notifications and reminders<br>
+                            <strong>Analytics Platform:</strong> BI tools for performance trend analysis</p>
+                        </div>
+                        <div class="solution-box">
+                            <h3>Advanced Capabilities</h3>
+                            <p><strong>Natural Language Generation:</strong> Human-like review writing with appropriate tone and style<br>
+                            <strong>Sentiment Analysis:</strong> Emotional intelligence in feedback delivery<br>
+                            <strong>Predictive Analytics:</strong> Performance trend forecasting and retention risk assessment<br>
+                            <strong>Continuous Learning:</strong> Model improvement through feedback and outcome tracking</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Implementation Benefits</h3>
+                    <div class="cards-grid">
+                        <div class="card">
+                            <h3>Speed & Efficiency</h3>
+                            <p>Review cycles complete 50% faster with automated data aggregation and draft generation, freeing managers to focus on meaningful conversations.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Quality & Consistency</h3>
+                            <p>Standardized language and criteria ensure fair, comprehensive evaluations while reducing unconscious bias in performance assessments.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Employee Development</h3>
+                            <p>Personalized coaching recommendations and learning pathways drive targeted skill development and career progression.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Data-Driven Insights</h3>
+                            <p>Analytics on performance trends, development effectiveness, and talent pipeline health inform strategic HR decisions.</p>
+                        </div>
+                    </div>
+
+                    <div class="metrics-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>KPI</th>
+                                    <th>Baseline</th>
+                                    <th>Target</th>
+                                    <th>Measurement Approach</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Review Cycle Time</strong></td>
+                                    <td>2 weeks</td>
+                                    <td class="metric-improve">1 week (-50%)</td>
+                                    <td>Track time from initiation to completion across all reviews</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Review Quality Score</strong></td>
+                                    <td>70 pts</td>
+                                    <td class="metric-improve">≥90 pts (+29%)</td>
+                                    <td>Rating calibration measured by 360° feedback scores</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Manager Satisfaction</strong></td>
+                                    <td>65 pts</td>
+                                    <td class="metric-improve">≥85 pts (+31%)</td>
+                                    <td>Quarterly manager survey on review process effectiveness</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>On-time Review Completion</strong></td>
+                                    <td>80%</td>
+                                    <td class="metric-improve">100% (+25%)</td>
+                                    <td>Percentage of reviews completed within deadline</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Employee Engagement (Reviews)</strong></td>
+                                    <td>70 pts</td>
+                                    <td class="metric-improve">≥85 pts (+21%)</td>
+                                    <td>Employee satisfaction with review quality and development support</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Expected Business Impact</h3>
+                    <p style="color: #ccc; margin-bottom: 20px;">By "taking care of structure," GenAI lets managers focus on content and meaningful development conversations. This approach speeds up review cycles (50% faster completion), improves quality through consistent language and reduced bias, and engages employees with actionable feedback. Improved review timeliness and depth correlate with higher engagement (benchmarked +15% improvement in employee satisfaction).</p>
+                </div>
+            </div>
+
+            <!-- Use Case 6: Workday Data Updater -->
+            <div class="section" id="use-case-6">
+                <h1 class="section-title">GenAI-Powered Workday Data Updater</h1>
+                
+                <div class="use-case-detail">
+                    <div class="use-case-header">
+                        <div class="use-case-number">6</div>
+                        <h2>Automated HRIS Data Management</h2>
+                    </div>
+
+                    <div class="problem-solution">
+                        <div class="problem-box">
+                            <h3 style="margin-bottom: 15px; color: #ff6b6b;">Problem Statement</h3>
+                            <p>HR spends significant time manually updating employee records in Workday—changes to job titles, reporting lines, compensation details, personal information and more. This is <strong>repetitive, error-prone and delays downstream processes</strong> (payroll, org-charts, approvals). Manual data entry creates bottlenecks and increases risk of compliance issues.</p>
+                        </div>
+                        <div class="solution-box">
+                            <h3 style="margin-bottom: 15px; color: #4ecdc4;">Solution Concept</h3>
+                            <p>Deploy a <strong>Generative Workday Data Updater</strong> that ingests natural-language update requests (e.g. "Promote Jill from Specialist to Senior Manager, effective 1 Oct 2025; change her reporting manager to Alex") and executes the corresponding record changes in Workday via API. The AI agent validates entries against business rules, flags anomalies, and logs an audit trail automatically.</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Detailed AI Workflow</h3>
+                    <div class="workflow-steps">
+                        <div class="workflow-step">
+                            <div class="step-number">1</div>
+                            <h4>Capture & Interpret</h4>
+                            <p><strong>Natural Language Interface:</strong> HR types or speaks the update request into a secure interface (chat or form)<br>
+                            <strong>Intent Parsing:</strong> LLM parses intent, extracts key fields (employee ID, field to update, effective date, reason)<br>
+                            <strong>Multi-Modal Input:</strong> Support for voice commands, structured forms, and bulk upload requests</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">2</div>
+                            <h4>Data Validation</h4>
+                            <p><strong>Current State Query:</strong> Query Workday (via API) for current employee record<br>
+                            <strong>Business Rules Check:</strong> Run rule-based checks ("Is the new manager valid?", "Is the effective date in the future?", "Does pay band align?")<br>
+                            <strong>Conflict Resolution:</strong> If any violation detected, AI generates follow-up clarification prompt</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">3</div>
+                            <h4>Change Execution</h4>
+                            <p><strong>API Integration:</strong> For validated updates, AI calls Workday API to apply changes<br>
+                            <strong>Transaction Logging:</strong> AI records comprehensive transaction log with timestamps and change details<br>
+                            <strong>Confirmation Generation:</strong> Generates summary confirmation for HR review</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">4</div>
+                            <h4>Post-Update Verification</h4>
+                            <p><strong>Success Validation:</strong> AI retrieves updated record to confirm successful application<br>
+                            <strong>Stakeholder Notification:</strong> Generates change summary report and notifies relevant stakeholders (payroll, finance)<br>
+                            <strong>Audit Trail:</strong> Complete documentation for compliance and tracking purposes</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Internal Data & Integrations</h3>
+                    <div class="cards-grid">
+                        <div class="card">
+                            <h3>Workday API Integration</h3>
+                            <p>Full API credentials & schema access for employee objects, organizational hierarchy, compensation data, and approval workflows.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Business Rules Repository</h3>
+                            <p>Comprehensive database of pay bands, org-structure constraints, promotion eligibility criteria, and compliance requirements.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Audit Logs Database</h3>
+                            <p>Secure, immutable storage for complete change history with user attribution, timestamps, and change rationale.</p>
+                        </div>
+                        <div class="card">
+                            <h3>HR Chat Interface</h3>
+                            <p>Intuitive conversational interface embedded in existing HR portal or intranet with role-based access controls.</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Implementation Phases</h3>
+                    <div class="workflow-steps">
+                        <div class="workflow-step">
+                            <div class="step-number">1</div>
+                            <h4>Phase 1 - Foundation Pilot (1-2 months)</h4>
+                            <p><strong>Scope:</strong> Configure AI interface to handle subset of updates (job titles & reporting lines)<br>
+                            <strong>Deliverables:</strong><br>
+                            • Workday API integration and authentication<br>
+                            • Basic NLP processing for simple update requests<br>
+                            • Audit logging infrastructure<br>
+                            • Security and access controls</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">2</div>
+                            <h4>Phase 2 - Expansion (3-4 months)</h4>
+                            <p><strong>Scope:</strong> Expand to compensation changes, personal data, and bulk-update capability<br>
+                            <strong>Deliverables:</strong><br>
+                            • Complex business rules engine<br>
+                            • Bulk processing capabilities<br>
+                            • Advanced validation and conflict resolution<br>
+                            • Stakeholder notification system</p>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="step-number">3</div>
+                            <h4>Phase 3 - Enterprise Scale (5-6 months)</h4>
+                            <p><strong>Scope:</strong> Full enterprise deployment with advanced features<br>
+                            <strong>Deliverables:</strong><br>
+                            • Voice recognition and processing<br>
+                            • Predictive validation and suggestions<br>
+                            • Integration with approval workflows<br>
+                            • Advanced analytics and reporting</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Technology Stack</h3>
+                    <div class="problem-solution">
+                        <div class="problem-box">
+                            <h3>Core Technologies</h3>
+                            <p><strong>LLM:</strong> GPT-4 with custom prompt templates for parsing and validation<br>
+                            <strong>Middleware:</strong> Node.js/Python service to orchestrate API calls and rules checks<br>
+                            <strong>Database:</strong> PostgreSQL or Snowflake for secure audit-log datastore<br>
+                            <strong>Security:</strong> Enterprise-grade encryption and access controls</p>
+                        </div>
+                        <div class="solution-box">
+                            <h3>Advanced Features</h3>
+                            <p><strong>NLP Engine:</strong> Advanced intent recognition and entity extraction<br>
+                            <strong>API Gateway:</strong> Secure, scalable API management layer<br>
+                            <strong>Workflow Engine:</strong> Complex approval and validation workflows<br>
+                            <strong>Analytics Platform:</strong> Real-time monitoring and performance tracking</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Governance & Compliance</h3>
+                    <div class="cards-grid">
+                        <div class="card">
+                            <h3>Data Governance</h3>
+                            <p>HR & IT jointly define validation rules with regular review cycles. Role-based access ensures appropriate authorization levels.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Audit & Compliance</h3>
+                            <p>Complete audit trail for all changes with immutable logging. Regular compliance reviews and audit preparation capabilities.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Quality Assurance</h3>
+                            <p>Continuous monitoring of AI-made changes for accuracy and compliance. Automated quality checks and exception reporting.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Risk Management</h3>
+                            <p>Comprehensive validation rules, approval workflows for high-impact changes, and rollback capabilities for error correction.</p>
+                        </div>
+                    </div>
+
+                    <div class="metrics-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>KPI</th>
+                                    <th>Baseline</th>
+                                    <th>Target</th>
+                                    <th>Rationale</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Data-Entry Errors</strong></td>
+                                    <td>~5% of updates require manual fix</td>
+                                    <td class="metric-improve">&lt;1% error rate</td>
+                                    <td>Automated validation slashes mistakes</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Update Cycle Time</strong></td>
+                                    <td>2-3 days per change</td>
+                                    <td class="metric-improve">&lt;1 hour from request to confirm</td>
+                                    <td>Instant API execution vs. manual ticketing</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>HR Processing Hours</strong></td>
+                                    <td>200 hrs/month on updates</td>
+                                    <td class="metric-improve">40 hrs/month (-80%)</td>
+                                    <td>GenAI handles bulk of routine edits</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Stakeholder Satisfaction</strong></td>
+                                    <td>70 pts on "speed & accuracy"</td>
+                                    <td class="metric-improve">≥ 90 pts</td>
+                                    <td>Faster updates, clearer notifications</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Audit Compliance Rate</strong></td>
+                                    <td>85% with full audit details</td>
+                                    <td class="metric-improve">100% comprehensive logging</td>
+                                    <td>AI automatically logs every field change</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px 0;">Expected Business Impact</h3>
+                    <p style="color: #ccc; margin-bottom: 20px;">By automating Workday record maintenance, the HR team reclaims <strong>hundreds of hours</strong>, eliminates error-driven rework and speeds up critical processes (onboarding adjustments, promotions, payroll updates). This use case dovetails with the broader <strong>Phase 1 – Automate</strong> roadmap and sets the stage for even more advanced AI-driven HR workflows.</p>
+                </div>
+            </div>
+
+            <!-- KPIs & Metrics Section -->
+            <div class="section" id="metrics">
+                <h1 class="section-title">KPIs & Success Metrics</h1>
+                
+                <div class="chart-container">
+                    <h3 style="margin-bottom: 20px;">Overall Impact Summary</h3>
+                    <canvas id="impactChart" width="600" height="320" style="max-width: 100%; height: auto;"></canvas>
+                </div>
+
+                <h2 class="section-subtitle">Comprehensive KPI Dashboard</h2>
+                <div class="metrics-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Use Case</th>
+                                <th>Primary KPI</th>
+                                <th>Baseline</th>
+                                <th>Target</th>
+                                <th>Business Impact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td rowspan="2"><strong>Reporting Assistant</strong></td>
+                                <td>HR Admin Hours (monthly)</td>
+                                <td>1,000 hrs</td>
+                                <td class="metric-improve">300 hrs (-70%)</td>
+                                <td>700 hrs/month reclaimed</td>
+                            </tr>
+                            <tr>
+                                <td>Report Turnaround Time</td>
+                                <td>5 days</td>
+                                <td class="metric-improve">&lt;1 day (-80%)</td>
+                                <td>Faster decision-making</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="2"><strong>Career Navigator</strong></td>
+                                <td>Employee Retention Rate</td>
+                                <td>80%</td>
+                                <td class="metric-improve">90% (+12.5%)</td>
+                                <td>50% attrition reduction</td>
+                            </tr>
+                            <tr>
+                                <td>Training Completion Rate</td>
+                                <td>60%</td>
+                                <td class="metric-improve">90% (+50%)</td>
+                                <td>Enhanced skill development</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="2"><strong>Process Optimizer</strong></td>
+                                <td>Approval Cycle Time</td>
+                                <td>15 days</td>
+                                <td class="metric-improve">5 days (-67%)</td>
+                                <td>Faster approvals</td>
+                            </tr>
+                            <tr>
+                                <td>Process Steps per Flow</td>
+                                <td>12 steps</td>
+                                <td class="metric-improve">5-7 steps (-50%)</td>
+                                <td>Simplified workflows</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="2"><strong>Engagement Monitor</strong></td>
+                                <td>Issue Detection Lead Time</td>
+                                <td>2 quarters</td>
+                                <td class="metric-improve">1 month (-83%)</td>
+                                <td>Proactive intervention</td>
+                            </tr>
+                            <tr>
+                                <td>Employee Engagement (eNPS)</td>
+                                <td>70 pts</td>
+                                <td class="metric-improve">≥85 pts (+21%)</td>
+                                <td>Higher satisfaction</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="2"><strong>Performance Assistant</strong></td>
+                                <td>Review Cycle Time</td>
+                                <td>2 weeks</td>
+                                <td class="metric-improve">1 week (-50%)</td>
+                                <td>Efficient evaluations</td>
+                            </tr>
+                            <tr>
+                                <td>Review Quality Score</td>
+                                <td>70 pts</td>
+                                <td class="metric-improve">≥90 pts (+29%)</td>
+                                <td>Better feedback quality</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="2"><strong>Data Updater</strong></td>
+                                <td>Data Entry Errors</td>
+                                <td>5% require fixes</td>
+                                <td class="metric-improve">&lt;1% error rate</td>
+                                <td>Improved accuracy</td>
+                            </tr>
+                            <tr>
+                                <td>Update Processing Time</td>
+                                <td>2-3 days</td>
+                                <td class="metric-improve">&lt;1 hour (-95%)</td>
+                                <td>Real-time updates</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 class="section-subtitle">ROI Analysis & Financial Impact</h2>
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3>Year 1 Cost Savings</h3>
+                        <p><strong>$2.1M annually</strong> from reduced administrative time (700 hrs/month × $50/hr × 12 months = $420K) plus error reduction, faster processes, and retention improvements.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Implementation Investment</h3>
+                        <p><strong>$800K total</strong> across all phases including technology stack, integration, training, and change management. Full ROI achieved within 8-10 months.</p>
+                    </div>
+                    <div class="card">
+                        <h3>Strategic Value</h3>
+                        <p><strong>Immeasurable</strong> transformation from reactive HR to strategic talent enabler. Enhanced employer brand, competitive advantage in talent acquisition.</p>
+                    </div>
+                </div>
+
+                <h2 class="section-subtitle">Strategic Recommendations</h2>
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3>1. Align HR and Tech Teams</h3>
+                        <p><strong>Action:</strong> Form a joint AI Steering Committee (HR leads + IT/data science) to prioritize use cases, allocate data access, and oversee pilots.<br>
+                        <strong>Timeline:</strong> Month 1<br>
+                        <strong>Success Metric:</strong> Committee established with clear governance charter</p>
+                    </div>
+                    <div class="card">
+                        <h3>2. Start with High-Impact Pilots</h3>
+                        <p><strong>Action:</strong> Begin with the Automated Reporting Assistant and Performance Companion for immediate value and confidence building.<br>
+                        <strong>Timeline:</strong> Months 2-4<br>
+                        <strong>Success Metric:</strong> 70% reduction in admin time within 90 days</p>
+                    </div>
+                    <div class="card">
+                        <h3>3. Define Clear Metrics</h3>
+                        <p><strong>Action:</strong> Establish success criteria and track them rigorously using both quantitative and qualitative measures.<br>
+                        <strong>Timeline:</strong> Ongoing<br>
+                        <strong>Success Metric:</strong> Monthly dashboard with all KPIs tracked</p>
+                    </div>
+                    <div class="card">
+                        <h3>4. Invest in Data Readiness</h3>
+                        <p><strong>Action:</strong> Cleanse and consolidate HR data (Workday, surveys, emails) so models learn from accurate inputs.<br>
+                        <strong>Timeline:</strong> Months 1-3<br>
+                        <strong>Success Metric:</strong> Single source of truth established</p>
+                    </div>
+                    <div class="card">
+                        <h3>5. Prioritize Change Management</h3>
+                        <p><strong>Action:</strong> Communicate transparently about AI initiatives and upskill the HR team on AI tools and capabilities.<br>
+                        <strong>Timeline:</strong> Throughout implementation<br>
+                        <strong>Success Metric:</strong> 95% employee adoption rate</p>
+                    </div>
+                    <div class="card">
+                        <h3>6. Iterate & Scale</h3>
+                        <p><strong>Action:</strong> Use agile sprints, gather feedback, refine models, and expand to other departments or geographies (APAC/SEA markets).<br>
+                        <strong>Timeline:</strong> Months 6+<br>
+                        <strong>Success Metric:</strong> Successful rollout to all regions</p>
+                    </div>
+                </div>
+
+                <h2 class="section-subtitle">Risk Mitigation & Success Factors</h2>
+                <div class="problem-solution">
+                    <div class="problem-box">
+                        <h3>Key Risks</h3>
+                        <p><strong>Data Quality:</strong> Poor data quality can undermine AI effectiveness<br>
+                        <strong>Change Resistance:</strong> Employee resistance to AI-driven processes<br>
+                        <strong>Privacy Concerns:</strong> Data security and compliance requirements<br>
+                        <strong>Integration Complexity:</strong> Technical challenges with existing systems</p>
+                    </div>
+                    <div class="solution-box">
+                        <h3>Mitigation Strategies</h3>
+                        <p><strong>Data Governance:</strong> Establish data quality standards and monitoring<br>
+                        <strong>Change Champions:</strong> Identify and train AI advocates across organization<br>
+                        <strong>Privacy by Design:</strong> Build compliance into system architecture<br>
+                        <strong>Agile Implementation:</strong> Phased rollout with continuous testing</p>
+                    </div>
+                </div>
+
+                <h2 class="section-subtitle">Future Vision: AI-Empowered HR</h2>
+                <div class="use-case-detail">
+                    <h3 style="margin-bottom: 20px;">The Transformed HR Organization</h3>
+                    <p style="color: #ccc; margin-bottom: 30px;">By executing this strategy, the media agency's HR can transform from a back-office function into an AI-empowered talent enabler. Routine tasks become automated, freeing the small HR team to focus on people strategy. This creates a competitive advantage in talent acquisition, retention, and organizational agility.</p>
+                    
+                    <div class="cards-grid">
+                        <div class="card">
+                            <h3>Predictive Talent Analytics</h3>
+                            <p>AI models predict talent needs, identify high-potential employees, and recommend strategic workforce planning decisions.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Continuous Employee Experience</h3>
+                            <p>Real-time sentiment monitoring and personalized interventions create exceptional employee experiences throughout the lifecycle.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Strategic HR Partnership</h3>
+                            <p>HR becomes a strategic business partner, providing data-driven insights that drive organizational performance and competitive advantage.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Navigation and UI Functions
+        function showMainContent() {
+            const btn = document.querySelector('.explore-btn');
+            const landingPage = document.getElementById('landingPage');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (!btn || !landingPage || !mainContent) {
+                console.error('Required elements not found');
+                return;
+            }
+            
+            // Add loading state
+            btn.classList.add('loading');
+            btn.style.pointerEvents = 'none';
+            
+            // Smooth transition with better timing
+            setTimeout(() => {
+                landingPage.style.transition = 'all 0.6s cubic-bezier(0.4, 0.0, 0.2, 1)';
+                landingPage.style.opacity = '0';
+                landingPage.style.transform = 'translateY(-30px) scale(0.98)';
+                
+                setTimeout(() => {
+                    landingPage.style.display = 'none';
+                    mainContent.classList.add('active');
+                    
+                    // Initialize charts with error handling
+                    setTimeout(() => {
+                        try {
+                            initCharts();
+                        } catch (error) {
+                            console.warn('Chart initialization failed:', error);
+                        }
+                    }, 300);
+                }, 600);
+            }, 800);
+        }
+
+        function showSection(sectionId, clickedTab) {
+            try {
+                // Hide all sections with animation
+                const sections = document.querySelectorAll('.section');
+                sections.forEach(section => {
+                    if (section.classList.contains('active')) {
+                        section.style.opacity = '0';
+                        section.style.transform = 'translateX(-20px)';
+                        setTimeout(() => {
+                            section.classList.remove('active');
+                        }, 200);
+                    }
+                });
+
+                // Show selected section with animation
+                setTimeout(() => {
+                    const targetSection = document.getElementById(sectionId);
+                    if (targetSection) {
+                        targetSection.classList.add('active');
+                        targetSection.style.opacity = '0';
+                        targetSection.style.transform = 'translateX(20px)';
+                        
+                        setTimeout(() => {
+                            targetSection.style.transition = 'all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)';
+                            targetSection.style.opacity = '1';
+                            targetSection.style.transform = 'translateX(0)';
+                        }, 50);
+                    }
+                }, 200);
+
+                // Update active tab with visual feedback
+                const tabs = document.querySelectorAll('.nav-tab');
+                tabs.forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                
+                if (clickedTab) {
+                    clickedTab.classList.add('active');
+                    
+                    // Smooth scroll to ensure tab is visible on mobile
+                    if (window.innerWidth <= 768) {
+                        clickedTab.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'nearest', 
+                            inline: 'center' 
+                        });
+                    }
+                }
+
+                // Reinitialize charts if needed
+                if (sectionId === 'metrics' || sectionId === 'overview') {
+                    setTimeout(() => {
+                        try {
+                            initCharts();
+                        } catch (error) {
+                            console.warn('Chart reinitialization failed:', error);
+                        }
+                    }, 500);
+                }
+
+                // Analytics tracking (optional)
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'section_view', {
+                        'section_name': sectionId
+                    });
+                }
+            } catch (error) {
+                console.error('Error in showSection:', error);
+            }
+        }
+
+        // Chart Creation Functions
+        // Enhanced Chart Creation Functions with Error Handling
+        function createProductivityChart() {
+            try {
+                const canvas = document.getElementById('productivityChart');
+                if (!canvas) {
+                    console.warn('Productivity chart canvas not found');
+                    return;
+                }
+                
+                // Responsive canvas sizing
+                const container = canvas.parentElement;
+                const containerWidth = container ? container.offsetWidth - 60 : 600;
+                const isMobile = window.innerWidth < 768;
+                
+                canvas.width = Math.min(containerWidth, isMobile ? 500 : 600);
+                canvas.height = isMobile ? 250 : 280;
+                
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    console.error('Unable to get canvas context');
+                    return;
+                }
+                
+                const width = canvas.width;
+                const height = canvas.height;
+
+                // Clear canvas
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, width, height);
+
+                // Chart data
+                const functions = [
+                    { label: 'Reporting', improvement: '70%' },
+                    { label: 'Career Dev', improvement: '50%' },
+                    { label: 'Processes', improvement: '67%' },
+                    { label: 'Engagement', improvement: '83%' }
+                ];
+
+                // Responsive dimensions
+                const barHeight = isMobile ? 35 : 45;
+                const spacing = isMobile ? 20 : 25;
+                const startY = isMobile ? 45 : 50;
+                const labelWidth = isMobile ? 85 : 100;
+                const barWidth = Math.min(isMobile ? 120 : 140, (width - labelWidth - 150) / 2);
+                const gapBetweenBars = isMobile ? 25 : 30;
+
+                functions.forEach((func, index) => {
+                    const y = startY + index * (barHeight + spacing);
+
+                    // Ensure we don't draw outside canvas bounds
+                    if (y + barHeight > height - 20) return;
+
+                    // Draw function label
+                    ctx.fillStyle = '#fff';
+                    ctx.font = `bold ${isMobile ? '12px' : '14px'} -apple-system, BlinkMacSystemFont, sans-serif`;
+                    ctx.textAlign = 'left';
+                    ctx.fillText(func.label, 15, y + barHeight/2 + 5);
+
+                    // Draw "MANUAL" bar
+                    ctx.fillStyle = '#ff6b6b';
+                    ctx.fillRect(labelWidth, y, barWidth, barHeight);
+                    
+                    // Draw "AI-POWERED" bar
+                    ctx.fillStyle = '#4ecdc4';
+                    ctx.fillRect(labelWidth + barWidth + gapBetweenBars, y, barWidth, barHeight);
+
+                    // Draw improvement percentage
+                    ctx.fillStyle = '#4CAF50';
+                    ctx.font = `bold ${isMobile ? '14px' : '16px'} -apple-system, BlinkMacSystemFont, sans-serif`;
+                    ctx.textAlign = 'left';
+                    const textX = labelWidth + barWidth + gapBetweenBars + barWidth + 15;
+                    if (textX < width - 60) {
+                        ctx.fillText('-' + func.improvement, textX, y + barHeight/2 + 6);
+                    }
+
+                    // Draw bar labels
+                    ctx.fillStyle = '#fff';
+                    ctx.font = `bold ${isMobile ? '10px' : '12px'} -apple-system, BlinkMacSystemFont, sans-serif`;
+                    ctx.textAlign = 'center';
+                    
+                    ctx.fillText('MANUAL', labelWidth + barWidth/2, y + barHeight/2 - 8);
+                    ctx.fillText('AI-POWERED', labelWidth + barWidth + gapBetweenBars + barWidth/2, y + barHeight/2 - 8);
+                    
+                    // Draw state labels
+                    ctx.fillStyle = '#999';
+                    ctx.font = `${isMobile ? '9px' : '10px'} -apple-system, BlinkMacSystemFont, sans-serif`;
+                    ctx.fillText('Current', labelWidth + barWidth/2, y + barHeight/2 + 6);
+                    ctx.fillText('Future', labelWidth + barWidth + gapBetweenBars + barWidth/2, y + barHeight/2 + 6);
+                });
+
+                // Chart title
+                ctx.fillStyle = '#fff';
+                ctx.font = `bold ${isMobile ? '14px' : '16px'} -apple-system, BlinkMacSystemFont, sans-serif`;
+                ctx.textAlign = 'left';
+                ctx.fillText('Manual vs AI-Powered HR Operations', 15, 25);
+                
+                // Subtitle
+                ctx.fillStyle = '#999';
+                ctx.font = `${isMobile ? '11px' : '12px'} -apple-system, BlinkMacSystemFont, sans-serif`;
+                ctx.fillText('Efficiency improvements across key HR functions', 15, isMobile ? 38 : 40);
+                
+            } catch (error) {
+                console.error('Error creating productivity chart:', error);
+            }
+        }
+
+        function createImpactChart() {
+            try {
+                const canvas = document.getElementById('impactChart');
+                if (!canvas) {
+                    console.warn('Impact chart canvas not found');
+                    return;
+                }
+                
+                // Responsive canvas sizing
+                const container = canvas.parentElement;
+                const containerWidth = container ? container.offsetWidth - 60 : 600;
+                const isMobile = window.innerWidth < 768;
+                
+                canvas.width = Math.min(containerWidth, isMobile ? 500 : 600);
+                canvas.height = isMobile ? 280 : 320;
+                
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    console.error('Unable to get canvas context');
+                    return;
+                }
+                
+                const width = canvas.width;
+                const height = canvas.height;
+
+                // Clear canvas
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, width, height);
+
+                // Chart data
+                const metrics = [
+                    { label: 'Admin Time Reduction', value: 70, color: '#4CAF50' },
+                    { label: 'Process Speed Improvement', value: 67, color: '#2196F3' },
+                    { label: 'Engagement Increase', value: 21, color: '#FF9800' },
+                    { label: 'Attrition Reduction', value: 50, color: '#9C27B0' }
+                ];
+
+                // Responsive dimensions
+                const barHeight = isMobile ? 35 : 40;
+                const spacing = isMobile ? 40 : 50;
+                const startY = isMobile ? 70 : 80;
+                const maxWidth = Math.min(isMobile ? 280 : 350, width - 250);
+                const labelWidth = isMobile ? 150 : 180;
+
+                metrics.forEach((metric, index) => {
+                    const y = startY + index * (barHeight + spacing);
+                    
+                    // Ensure we don't draw outside canvas bounds
+                    if (y + barHeight > height - 20) return;
+                    
+                    const barWidth = (metric.value / 100) * maxWidth;
+
+                    // Draw background bar
+                    ctx.fillStyle = '#333';
+                    ctx.fillRect(labelWidth, y, maxWidth, barHeight);
+
+                    // Draw value bar with gradient
+                    const gradient = ctx.createLinearGradient(labelWidth, y, labelWidth + barWidth, y);
+                    gradient.addColorStop(0, metric.color);
+                    gradient.addColorStop(1, metric.color + '80');
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(labelWidth, y, barWidth, barHeight);
+
+                    // Draw label
+                    ctx.fillStyle = '#fff';
+                    ctx.font = `${isMobile ? '12px' : '14px'} -apple-system, BlinkMacSystemFont, sans-serif`;
+                    ctx.textAlign = 'right';
+                    ctx.fillText(metric.label, labelWidth - 15, y + barHeight/2 + 5);
+
+                    // Draw value
+                    ctx.fillStyle = '#fff';
+                    ctx.font = `bold ${isMobile ? '14px' : '16px'} -apple-system, BlinkMacSystemFont, sans-serif`;
+                    ctx.textAlign = 'left';
+                    const valueX = labelWidth + barWidth + 15;
+                    if (valueX < width - 60) {
+                        ctx.fillText(metric.value + '%', valueX, y + barHeight/2 + 6);
+                        
+                        // Draw improvement indicator
+                        ctx.fillStyle = '#4CAF50';
+                        ctx.font = `bold ${isMobile ? '11px' : '12px'} -apple-system, BlinkMacSystemFont, sans-serif`;
+                        ctx.fillText('↑', valueX + (isMobile ? 35 : 45), y + barHeight/2 + 4);
+                    }
+                });
+
+                // Chart title
+                ctx.fillStyle = '#fff';
+                ctx.font = `bold ${isMobile ? '16px' : '18px'} -apple-system, BlinkMacSystemFont, sans-serif`;
+                ctx.textAlign = 'left';
+                ctx.fillText('Expected Impact Across Key Metrics', 20, 30);
+                
+                // Subtitle
+                ctx.fillStyle = '#999';
+                ctx.font = `${isMobile ? '12px' : '14px'} -apple-system, BlinkMacSystemFont, sans-serif`;
+                ctx.fillText('Percentage improvements from GenAI implementation', 20, isMobile ? 48 : 50);
+                
+            } catch (error) {
+                console.error('Error creating impact chart:', error);
+            }
+        }
+
+        // Initialize charts with error handling
+        function initCharts() {
+            try {
+                // Small delay to ensure proper rendering
+                setTimeout(() => {
+                    createProductivityChart();
+                    createImpactChart();
+                }, 100);
+            } catch (error) {
+                console.error('Error initializing charts:', error);
+            }
+        }
+
+        // Enhanced initialization and event handling
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                // Initialize charts with delay for proper rendering
+                setTimeout(initCharts, 500);
+                
+                // Enhanced resize handling with debouncing
+                let resizeTimeout;
+                window.addEventListener('resize', function() {
+                    clearTimeout(resizeTimeout);
+                    resizeTimeout = setTimeout(function() {
+                        if (document.getElementById('mainContent').classList.contains('active')) {
+                            initCharts();
+                        }
+                    }, 250);
+                });
+
+                // Keyboard navigation support
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Tab') {
+                        document.body.classList.add('keyboard-nav');
+                    }
+                    
+                    // ESC to close any modals or return to overview
+                    if (e.key === 'Escape') {
+                        const overviewTab = document.querySelector('.nav-tab[onclick*="overview"]');
+                        if (overviewTab && !overviewTab.classList.contains('active')) {
+                            showSection('overview', overviewTab);
+                        }
+                    }
+                });
+
+                document.addEventListener('mousedown', function() {
+                    document.body.classList.remove('keyboard-nav');
+                });
+
+                // Smooth scroll for anchor links with error handling
+                document.addEventListener('click', function(e) {
+                    try {
+                        if (e.target.tagName === 'A') {
+                            const href = e.target.getAttribute('href');
+                            if (href === '#') {
+                                e.preventDefault();
+                            } else if (href && href.startsWith('#') && href.length > 1) {
+                                e.preventDefault();
+                                const targetId = href.substring(1);
+                                const target = document.getElementById(targetId);
+                                if (target) {
+                                    target.scrollIntoView({
+                                        behavior: 'smooth',
+                                        block: 'start'
+                                    });
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.warn('Error handling click event:', error);
+                    }
+                });
+
+                // Intersection Observer for animations
+                if ('IntersectionObserver' in window) {
+                    const observerOptions = {
+                        threshold: 0.1,
+                        rootMargin: '0px 0px -50px 0px'
+                    };
+
+                    const observer = new IntersectionObserver(function(entries) {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                entry.target.style.animationPlayState = 'running';
+                            }
+                        });
+                    }, observerOptions);
+
+                    // Observe cards and workflow steps
+                    document.querySelectorAll('.card, .workflow-step').forEach(el => {
+                        el.style.animationPlayState = 'paused';
+                        observer.observe(el);
+                    });
+                }
+
+                // Performance monitoring (optional)
+                if ('performance' in window) {
+                    window.addEventListener('load', function() {
+                        setTimeout(function() {
+                            const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                            if (loadTime > 3000) {
+                                console.warn('Page load time exceeded 3 seconds:', loadTime + 'ms');
+                            }
+                        }, 0);
+                    });
+                }
+
+                // Add focus trap for better accessibility
+                const trapFocus = function(element) {
+                    const focusableElements = element.querySelectorAll(
+                        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                    );
+                    const firstFocusable = focusableElements[0];
+                    const lastFocusable = focusableElements[focusableElements.length - 1];
+
+                    element.addEventListener('keydown', function(e) {
+                        if (e.key === 'Tab') {
+                            if (e.shiftKey) {
+                                if (document.activeElement === firstFocusable) {
+                                    e.preventDefault();
+                                    lastFocusable.focus();
+                                }
+                            } else {
+                                if (document.activeElement === lastFocusable) {
+                                    e.preventDefault();
+                                    firstFocusable.focus();
+                                }
+                            }
+                        }
+                    });
+                };
+
+                // Apply focus trap to main content
+                const mainContent = document.getElementById('mainContent');
+                if (mainContent) {
+                    trapFocus(mainContent);
+                }
+                
+            } catch (error) {
+                console.error('Error during initialization:', error);
+            }
+        });
+
+        // Enhanced section transition with loading states
+        const originalShowSection = showSection;
+        showSection = function(sectionId, clickedTab) {
+            try {
+                originalShowSection.call(this, sectionId, clickedTab);
+                
+                // Add loading animation for section content
+                const targetSection = document.getElementById(sectionId);
+                if (targetSection) {
+                    const cards = targetSection.querySelectorAll('.card, .workflow-step');
+                    cards.forEach((card, index) => {
+                        card.style.animationDelay = (index * 0.1) + 's';
+                    });
+                }
+                
+                // Reinitialize charts if needed
+                if (sectionId === 'metrics' || sectionId === 'overview') {
+                    setTimeout(() => {
+                        try {
+                            initCharts();
+                        } catch (error) {
+                            console.warn('Chart reinitialization failed:', error);
+                        }
+                    }, 400);
+                }
+
+                // Update URL hash for bookmarking (optional)
+                if (history.replaceState) {
+                    history.replaceState(null, null, '#' + sectionId);
+                }
+                
+            } catch (error) {
+                console.error('Error in enhanced showSection:', error);
+            }
+        };
+
+        // Add CSS class for keyboard navigation
+        const style = document.createElement('style');
+        style.textContent = `
+            .keyboard-nav *:focus {
+                outline: 2px solid #4ecdc4 !important;
+                outline-offset: 2px !important;
+            }
+            
+            @media (prefers-reduced-motion: reduce) {
+                *, *::before, *::after {
+                    animation-duration: 0.01ms !important;
+                    animation-iteration-count: 1 !important;
+                    transition-duration: 0.01ms !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
