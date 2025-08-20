@@ -1,11 +1,4 @@
-        :root {
-            --media-primary: #ff6b6b;
-            --media-secondary: #ff8e53;
-            --media-gradient: linear-gradient(135deg, #ff6b6b, #ff8e53);
-            --tech-primary: #00d4aa;
-            --tech-secondary: #4ecdc4;
-            --tech-gradient: linear-gradient(135deg, #4ecdc4, #44a08d);
-        }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -283,11 +276,11 @@
         }
 
         .media-icon {
-            background: var(--media-gradient);
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
         }
 
         .tech-icon {
-            background: var(--tech-gradient);
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
         }
 
         .divider {
@@ -335,21 +328,21 @@
         }
 
         .category-card.media-card:hover {
-            border-color: var(--media-primary);
+            border-color: #ff6b6b;
             box-shadow: 0 8px 32px rgba(255, 107, 107, 0.15);
         }
 
         .category-card.media-card.expanded {
-            border-color: var(--media-primary);
+            border-color: #ff6b6b;
         }
 
         .category-card.tech-card:hover {
-            border-color: var(--tech-primary);
+            border-color: #00d4aa;
             box-shadow: 0 8px 32px rgba(0, 212, 170, 0.15);
         }
 
         .category-card.tech-card.expanded {
-            border-color: var(--tech-primary);
+            border-color: #00d4aa;
         }
 
         .category-header {
@@ -393,11 +386,11 @@
         }
 
         .media-card .question-count {
-            color: var(--media-primary);
+            color: #ff6b6b;
         }
 
         .tech-card .question-count {
-            color: var(--tech-primary);
+            color: #00d4aa;
         }
 
         .expand-indicator {
@@ -414,13 +407,13 @@
         }
 
         .media-card.expanded .expand-indicator {
-            background: var(--media-primary);
+            background: #ff6b6b;
             color: #0a0a0a;
             transform: rotate(180deg);
         }
 
         .tech-card.expanded .expand-indicator {
-            background: var(--tech-primary);
+            background: #00d4aa;
             color: #0a0a0a;
             transform: rotate(180deg);
         }
@@ -481,11 +474,11 @@
         }
 
         .media-card .question-number {
-            color: var(--media-primary);
+            color: #ff6b6b;
         }
 
         .tech-card .question-number {
-            color: var(--tech-primary);
+            color: #00d4aa;
         }
 
         .question-text {
@@ -506,12 +499,10 @@
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--media-primary), var(--tech-primary));
+            background: linear-gradient(90deg, #ff6b6b, #00d4aa);
             width: 0%;
             transition: width 0.3s ease;
         }
-
-
 
         .hidden {
             display: none !important;
@@ -850,6 +841,21 @@
             }
         }
 
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         /* Touch improvements for all mobile devices */
         @media (hover: none) and (pointer: coarse) {
             .category-card {
@@ -883,21 +889,6 @@
                 margin: 0;
                 padding: 15px 0;
                 transform: none;
-            }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
             }
         }
     </style>
@@ -978,8 +969,6 @@
             </div>
         </section>
     </div>
-
-
 
     <div class="progress-bar">
         <div class="progress-fill" id="progressFill"></div>
@@ -1121,7 +1110,7 @@
                 title: "Technology Solutions & Automation",
                 description: "Proprietary technology architecture and competitive advantages in automation",
                 questions: [
-                    "Please provide a detailed overview and architecture of proprietary technology that will be used for clients.",
+                    "Please provide a detailed overview and architecture of proprietary technology that will be used for this account.",
                     "What is the most valuable proprietary technology your agency has built---and why does it matter?",
                     "How does this actually create better outcomes beyond what platform tools already provide?",
                     "How is this different from what every other agency claims to have built?",
@@ -1427,12 +1416,6 @@
         function updateStats() {
             const totalCategories = mediaData.length + techData.length;
             const expandedCount = expandedCards.size;
-            
-            // Count visible questions
-            let visibleQuestions = 0;
-            document.querySelectorAll('.category-card.expanded').forEach(card => {
-                visibleQuestions += card.querySelectorAll('.question-item').length;
-            });
             
             // Update header stats
             document.getElementById('totalCategories').textContent = totalCategories;
