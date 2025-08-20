@@ -1,0 +1,1528 @@
+        :root {
+            --media-primary: #ff6b6b;
+            --media-secondary: #ff8e53;
+            --media-gradient: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            --tech-primary: #00d4aa;
+            --tech-secondary: #4ecdc4;
+            --tech-gradient: linear-gradient(135deg, #4ecdc4, #44a08d);
+        }<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Media Agency Capabilities Evaluation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            color: #e5e5e5;
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid #2a2a2a;
+            padding: 20px 40px;
+        }
+
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .header-left p {
+            font-size: 0.9rem;
+            color: #888;
+            font-weight: 400;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #00d4aa;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .controls {
+            background: linear-gradient(135deg, #151515 0%, #1a1a1a 100%);
+            border-bottom: 1px solid #2a2a2a;
+            padding: 24px 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 32px;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 89px;
+            z-index: 999;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .control-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            position: relative;
+        }
+
+        .control-section::after {
+            content: '';
+            position: absolute;
+            right: -16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+            height: 30px;
+            background: linear-gradient(to bottom, transparent, #333, transparent);
+        }
+
+        .control-section:last-child::after {
+            display: none;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-right: 8px;
+            min-width: fit-content;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            background: rgba(42, 42, 42, 0.3);
+            padding: 4px;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+
+        .control-btn {
+            padding: 10px 16px;
+            background: transparent;
+            border: none;
+            color: #e5e5e5;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 212, 170, 0.1);
+            color: #00d4aa;
+        }
+
+        .control-btn.active {
+            background: #00d4aa;
+            color: #0a0a0a;
+            box-shadow: 0 2px 8px rgba(0, 212, 170, 0.3);
+        }
+
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            padding: 12px 16px 12px 40px;
+            background: rgba(42, 42, 42, 0.5);
+            border: 1px solid #333;
+            color: #e5e5e5;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            width: 320px;
+            transition: all 0.2s ease;
+        }
+
+        .search-input::placeholder {
+            color: #666;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #00d4aa;
+            background: rgba(42, 42, 42, 0.8);
+            box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            color: #666;
+            font-size: 0.9rem;
+            pointer-events: none;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 10px 16px;
+            background: rgba(42, 42, 42, 0.5);
+            border: 1px solid #333;
+            color: #e5e5e5;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .action-btn:hover {
+            background: rgba(0, 212, 170, 0.1);
+            border-color: #00d4aa;
+            color: #00d4aa;
+        }
+
+        .main-container {
+            margin-top: 89px;
+            height: calc(100vh - 89px);
+            display: flex;
+            position: relative;
+        }
+
+        .section {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #333 transparent;
+        }
+
+        .section::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .section::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .section::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-subtitle {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .media-icon {
+            background: var(--media-gradient);
+        }
+
+        .tech-icon {
+            background: var(--tech-gradient);
+        }
+
+        .divider {
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, #333, transparent);
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 50%;
+        }
+
+        .divider::after {
+            content: '⚡';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.2rem;
+            z-index: 10;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .category-card {
+            background: #151515;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .category-card.media-card:hover {
+            border-color: var(--media-primary);
+            box-shadow: 0 8px 32px rgba(255, 107, 107, 0.15);
+        }
+
+        .category-card.media-card.expanded {
+            border-color: var(--media-primary);
+        }
+
+        .category-card.tech-card:hover {
+            border-color: var(--tech-primary);
+            box-shadow: 0 8px 32px rgba(0, 212, 170, 0.15);
+        }
+
+        .category-card.tech-card.expanded {
+            border-color: var(--tech-primary);
+        }
+
+        .category-header {
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid transparent;
+        }
+
+        .category-card.expanded .category-header {
+            border-bottom-color: #2a2a2a;
+        }
+
+        .category-info h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .category-description {
+            font-size: 0.85rem;
+            color: #888;
+            line-height: 1.5;
+        }
+
+        .category-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .question-count {
+            background: #2a2a2a;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .media-card .question-count {
+            color: var(--media-primary);
+        }
+
+        .tech-card .question-count {
+            color: var(--tech-primary);
+        }
+
+        .expand-indicator {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background: #2a2a2a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .media-card.expanded .expand-indicator {
+            background: var(--media-primary);
+            color: #0a0a0a;
+            transform: rotate(180deg);
+        }
+
+        .tech-card.expanded .expand-indicator {
+            background: var(--tech-primary);
+            color: #0a0a0a;
+            transform: rotate(180deg);
+        }
+
+        .questions-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .category-card.expanded .questions-container {
+            max-height: 2000px;
+        }
+
+        .questions-list {
+            padding: 0 24px 24px;
+        }
+
+        .question-item {
+            padding: 16px 0;
+            border-bottom: 1px solid #2a2a2a;
+            display: flex;
+            gap: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .question-item:last-child {
+            border-bottom: none;
+        }
+
+        .question-item:hover {
+            margin: 0 -16px;
+            padding-left: 16px;
+            padding-right: 16px;
+            border-radius: 6px;
+        }
+
+        .media-card .question-item:hover {
+            background: rgba(255, 107, 107, 0.08);
+        }
+
+        .tech-card .question-item:hover {
+            background: rgba(0, 212, 170, 0.08);
+        }
+
+        .question-number {
+            background: #2a2a2a;
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .media-card .question-number {
+            color: var(--media-primary);
+        }
+
+        .tech-card .question-number {
+            color: var(--tech-primary);
+        }
+
+        .question-text {
+            font-size: 0.9rem;
+            color: #e5e5e5;
+            line-height: 1.6;
+        }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #1a1a1a;
+            z-index: 1000;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--media-primary), var(--tech-primary));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+
+
+        .hidden {
+            display: none !important;
+        }
+
+        .highlight {
+            background: rgba(255, 235, 59, 0.1) !important;
+            border-color: #ffeb3b !important;
+        }
+
+        @media (max-width: 1200px) {
+            .main-container {
+                flex-direction: column;
+                height: auto;
+                margin-top: 0;
+            }
+
+            .divider {
+                width: 100%;
+                height: 1px;
+                background: linear-gradient(to right, transparent, #333, transparent);
+                margin: 20px 0;
+            }
+
+            .divider::before,
+            .divider::after {
+                display: none;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .controls {
+                position: static;
+                padding: 20px;
+                gap: 20px;
+            }
+
+            .control-section::after {
+                display: none;
+            }
+
+            .search-input {
+                width: 280px;
+            }
+
+            .header {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                font-size: 14px;
+            }
+
+            .header {
+                position: static;
+                padding: 20px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+                padding: 0;
+            }
+
+            .header-left h1 {
+                font-size: 1.5rem;
+                line-height: 1.3;
+            }
+
+            .header-left p {
+                font-size: 0.85rem;
+                line-height: 1.4;
+            }
+
+            .header-stats {
+                gap: 30px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .stat-item {
+                min-width: 80px;
+            }
+
+            .stat-number {
+                font-size: 1.3rem;
+            }
+
+            .stat-label {
+                font-size: 0.7rem;
+            }
+
+            .controls {
+                flex-direction: column;
+                gap: 20px;
+                align-items: stretch;
+                padding: 20px 15px;
+                top: 0;
+                position: static;
+            }
+
+            .control-section {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+                text-align: center;
+            }
+
+            .section-label {
+                text-align: center;
+                margin-right: 0;
+                margin-bottom: 8px;
+                font-size: 0.8rem;
+            }
+
+            .control-group {
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 8px;
+                padding: 6px;
+            }
+
+            .control-btn {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+                min-width: 100px;
+                touch-action: manipulation;
+            }
+
+            .action-buttons {
+                justify-content: center;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+
+            .action-btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+                min-width: 120px;
+                touch-action: manipulation;
+            }
+
+            .search-container {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .search-input {
+                width: 100%;
+                max-width: 400px;
+                padding: 14px 16px 14px 45px;
+                font-size: 0.9rem;
+            }
+
+            .search-icon {
+                left: 15px;
+                font-size: 1rem;
+            }
+
+            .main-container {
+                margin-top: 0;
+                height: auto;
+            }
+
+            .section {
+                padding: 15px;
+            }
+
+            .section-title {
+                font-size: 1.2rem;
+                margin-bottom: 6px;
+                text-align: center;
+            }
+
+            .section-subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 25px;
+                text-align: center;
+                line-height: 1.5;
+            }
+
+            .section-icon {
+                width: 28px;
+                height: 28px;
+                font-size: 1rem;
+            }
+
+            .categories-grid {
+                gap: 15px;
+            }
+
+            .category-card {
+                border-radius: 10px;
+            }
+
+            .category-header {
+                padding: 20px 15px;
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+
+            .category-info h3 {
+                font-size: 1rem;
+                margin-bottom: 8px;
+                text-align: center;
+            }
+
+            .category-description {
+                font-size: 0.8rem;
+                line-height: 1.6;
+                text-align: center;
+            }
+
+            .category-meta {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .question-count {
+                font-size: 0.7rem;
+                padding: 6px 12px;
+            }
+
+            .expand-indicator {
+                width: 32px;
+                height: 32px;
+                font-size: 0.9rem;
+            }
+
+            .questions-list {
+                padding: 0 15px 20px;
+            }
+
+            .question-item {
+                padding: 15px 0;
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+
+            .question-item:hover {
+                margin: 0;
+                padding: 15px;
+                border-radius: 8px;
+            }
+
+            .question-number {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
+                align-self: flex-start;
+            }
+
+            .question-text {
+                font-size: 0.85rem;
+                line-height: 1.6;
+                padding-left: 0;
+            }
+
+            .progress-bar {
+                height: 4px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-left h1 {
+                font-size: 1.3rem;
+            }
+
+            .header-left p {
+                font-size: 0.8rem;
+            }
+
+            .header-stats {
+                gap: 20px;
+            }
+
+            .controls {
+                padding: 15px 10px;
+            }
+
+            .control-btn {
+                padding: 10px 12px;
+                font-size: 0.85rem;
+                min-width: 85px;
+            }
+
+            .action-btn {
+                padding: 10px 16px;
+                font-size: 0.85rem;
+                min-width: 100px;
+            }
+
+            .search-input {
+                padding: 12px 14px 12px 40px;
+                font-size: 0.85rem;
+            }
+
+            .section {
+                padding: 10px;
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+            }
+
+            .section-subtitle {
+                font-size: 0.8rem;
+            }
+
+            .category-header {
+                padding: 15px 12px;
+            }
+
+            .category-info h3 {
+                font-size: 0.95rem;
+            }
+
+            .category-description {
+                font-size: 0.75rem;
+            }
+
+            .question-text {
+                font-size: 0.8rem;
+            }
+
+            .questions-list {
+                padding: 0 12px 15px;
+            }
+        }
+
+        /* Touch improvements for all mobile devices */
+        @media (hover: none) and (pointer: coarse) {
+            .category-card {
+                touch-action: manipulation;
+            }
+
+            .control-btn,
+            .action-btn {
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: rgba(0, 212, 170, 0.2);
+            }
+
+            .category-card:hover {
+                transform: none;
+            }
+
+            .category-card:active {
+                transform: scale(0.98);
+                transition: transform 0.1s ease;
+            }
+
+            .media-card .question-item:hover {
+                background: transparent;
+                margin: 0;
+                padding: 15px 0;
+                transform: none;
+            }
+
+            .tech-card .question-item:hover {
+                background: transparent;
+                margin: 0;
+                padding: 15px 0;
+                transform: none;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <h1>Media Agency Capabilities Evaluation</h1>
+                <p>Comprehensive framework for assessing media agency performance and technology capabilities</p>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <span class="stat-number" id="totalCategories">21</span>
+                    <span class="stat-label">Categories</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="totalQuestions">125</span>
+                    <span class="stat-label">Questions</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="expandedCount">0</span>
+                    <span class="stat-label">Expanded</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="controls">
+        <div class="control-section">
+            <span class="section-label">Filter</span>
+            <div class="control-group">
+                <button class="control-btn active" id="showAll">All Categories</button>
+                <button class="control-btn" id="showMedia">Media Only</button>
+                <button class="control-btn" id="showTech">Tech Only</button>
+            </div>
+        </div>
+        
+        <div class="control-section">
+            <span class="section-label">Actions</span>
+            <div class="action-buttons">
+                <button class="action-btn" id="expandAll">Expand All</button>
+                <button class="action-btn" id="collapseAll">Collapse All</button>
+            </div>
+        </div>
+        
+        <div class="control-section">
+            <span class="section-label">Search</span>
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search categories or questions...">
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <section class="section" id="mediaSection">
+            <div class="section-title">
+                <div class="section-icon media-icon">📊</div>
+                MEDIA REQUIREMENTS
+            </div>
+            <div class="section-subtitle">Strategic marketing capabilities, optimization frameworks, and performance measurement</div>
+            <div class="categories-grid" id="mediaGrid">
+                <!-- Media categories will be populated here -->
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="section" id="techSection">
+            <div class="section-title">
+                <div class="section-icon tech-icon">⚙️</div>
+                TECH REQUIREMENTS
+            </div>
+            <div class="section-subtitle">Technology infrastructure, automation capabilities, and data management systems</div>
+            <div class="categories-grid" id="techGrid">
+                <!-- Tech categories will be populated here -->
+            </div>
+        </section>
+    </div>
+
+
+
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <script>
+        // Data remains the same as before
+        const mediaData = [
+            {
+                title: "Core Marketing & Differentiation",
+                description: "Fundamental marketing intelligence and competitive advantages that set your agency apart",
+                questions: [
+                    "What is your agency's raw marketing intelligence advantage?",
+                    "How does that translate into tangible competitive wins in market?",
+                    "How do you make sure this advantage is repeatable across clients and not just a one-off success?",
+                    "If we stripped away all tools and automation, what core principles would still make your agency better?",
+                    "What's the most unconventional but highly effective marketing approach your agency has developed?"
+                ]
+            },
+            {
+                title: "Practical, Fast Use of AI in Marketing",
+                description: "AI implementation strategies, supplier relationships, and performance measurement frameworks",
+                questions: [
+                    "Who are your key suppliers for AI?",
+                    "Detail your core team members driving AI in your organization? And why are they chosen?",
+                    "What process do you have to ensure you have the right AI data sources?",
+                    "How does your agency ensure AI is actually driving performance, not just automating mediocrity?",
+                    "How do you measure the true impact of AI on performance beyond process efficiencies?",
+                    "How do you ensure your AI recommendations aren't just platform-driven suggestions?",
+                    "What's an example where AI-led automation produced a totally unexpected but valuable insight?",
+                    "What's your biggest AI failure, and what did you learn from it?"
+                ]
+            },
+            {
+                title: "Automation of In-Flight Optimization Signals",
+                description: "Real-time campaign optimization and automated decision-making capabilities",
+                questions: [
+                    "What real-time governance or oversight do you have over AdTech and MarTech systems?",
+                    "What data sources do you rely on for your own inflight optimization?",
+                    "What data capabilities can the brand provide to ensure automation algorithms are learning to drive sales?",
+                    "What percentage of campaign decisions are fully automated, semi-automated, or manually optimized?",
+                    "How do you ensure automation is making better choices than a human would?",
+                    "How do you handle conflicting optimization signals (e.g., when CTR is up, but conversion rate is down)?",
+                    "How does your system know when it should intervene vs. letting the campaign run?",
+                    "What's the most aggressive in-flight optimization your system has made, and what was the outcome?"
+                ]
+            },
+            {
+                title: "Brand Performance & Frequency-Centric Thinking",
+                description: "Balancing brand equity with performance metrics and incrementality testing methodologies",
+                questions: [
+                    "How do you design media plans that optimize for both short-term conversions and long-term brand equity?",
+                    "How do you prove that brand exposure is directly contributing to performance lift?",
+                    "How do you optimize frequency in a way that isn't just guesswork but data-driven?",
+                    "How do you bridge gaps between media performance with untracked sales performance?",
+                    "What is your agency's exact framework for testing and proving incrementality? Please provide full details.",
+                    "How do you control for false signals that can make a campaign seem more incremental than it really is?",
+                    "How do you integrate incrementality into ongoing campaign decision-making instead of treating it as a one-time test?",
+                    "What's an example where an incrementality test forced a radical change in budget allocation?",
+                    "What's the biggest mistake brands make in trying to measure incrementality, and how do you fix it?"
+                ]
+            },
+            {
+                title: "Finding & Capturing Intent",
+                description: "Intent modeling and high-value audience identification beyond standard targeting approaches",
+                questions: [
+                    "What's your philosophy on targeting: Are you better at capturing existing intent or generating new intent?",
+                    "What client data integration must have for you to target high-intent audiences?",
+                    "How do you identify high-intent audiences before they even engage?",
+                    "How do you separate weak intent signals from strong, purchase-ready intent?",
+                    "Provide an example where your intent-modelling outperformed standard audience targeting?",
+                    "What's the most surprising insight you've uncovered about audience intent?"
+                ]
+            },
+            {
+                title: "Direct Ad Platform Integrations & Automation",
+                description: "Custom algorithms and platform optimization strategies that outperform native tools",
+                questions: [
+                    "If you have your own algorithms, why are yours better than platform algorithms?",
+                    "What custom automation layers have you built that give you a competitive advantage?",
+                    "How do you ensure your automation is making better decisions than platform-native tools?",
+                    "How do you balance letting platforms optimize themselves vs. overriding their decisions?",
+                    "Provide a real case study where your API-driven automation completely changed campaign performance.",
+                    "What's the biggest risk in over-automating media buying, and how do you prevent it?"
+                ]
+            },
+            {
+                title: "Real Innovation",
+                description: "Genuine innovation beyond trends with measurable business impact and scalable results",
+                questions: [
+                    "What's an innovation your agency has pioneered that actually changed the way campaigns are run?",
+                    "How did this innovation translate into measurable business impact?",
+                    "How do you decide when something is true innovation vs. just another shiny object?",
+                    "What's one trend you've deliberately ignored because it doesn't scale?",
+                    "What's an innovation your agency invested in that failed, and what did you learn?"
+                ]
+            },
+            {
+                title: "In-Flight Optimization & Multi-Channel Orchestration",
+                description: "Dynamic budget allocation and real-time cross-channel management capabilities",
+                questions: [
+                    "How does your agency dynamically shift the budget between channels in real time?",
+                    "How do you determine the exact moment when reallocation should happen?",
+                    "How do you avoid overreacting to short-term signals that could lead to suboptimal shifts?",
+                    "What's the biggest mistake brands make when trying to manage cross-channel optimization?",
+                    "What technology do you have in place to align contract governance with real-time orchestration capabilities?"
+                ]
+            },
+            {
+                title: "Breaking Channel Silos",
+                description: "Cross-channel analysis, measurement, and holistic optimization approaches",
+                questions: [
+                    "How do you avoid the trap of optimizing each channel in isolation instead of holistically?",
+                    "How do you ensure your cross-channel measurement isn't just attribution with a new name?",
+                    "How do you weigh different media touchpoints when calculating impact?",
+                    "What's a cross-channel insight that led to a radical shift in media investment?",
+                    "What's the hardest part about true cross-channel measurement, and how does your agency solve it?"
+                ]
+            },
+            {
+                title: "Scaling Media Buying Without Losing Efficiency",
+                description: "Scaling strategies, efficiency maintenance, and platform adaptation methodologies",
+                questions: [
+                    "What's the single biggest challenge in scaling spending while maintaining efficiency?",
+                    "How do you know when you're hitting diminishing returns before it's too late?",
+                    "How do you adjust creative, targeting, and bidding strategies in response to scale?",
+                    "What's an example of a failed scaling attempt, and what did you learn?",
+                    "When a major platform updates its algorithm, how does your agency adapt faster than competitors?",
+                    "How do you prepare for algorithm shifts before they happen?",
+                    "How do you ensure campaigns don't get disrupted by sudden platform changes?",
+                    "What was a platform shift that caught the industry off guard, and how did your agency respond?",
+                    "What's your best strategy for maintaining performance through unpredictable platform changes?"
+                ]
+            }
+        ];
+
+        const techData = [
+            {
+                title: "Technology Solutions & Automation",
+                description: "Proprietary technology architecture and competitive advantages in automation",
+                questions: [
+                    "Please provide a detailed overview and architecture of proprietary technology that will be used for clients.",
+                    "What is the most valuable proprietary technology your agency has built---and why does it matter?",
+                    "How does this actually create better outcomes beyond what platform tools already provide?",
+                    "How is this different from what every other agency claims to have built?",
+                    "If your tech stack was suddenly banned from use, what manual processes would break first?"
+                ]
+            },
+            {
+                title: "Data Handling, Infrastructure & Clean Data Practices",
+                description: "Data quality assurance, normalization, and integrity management at enterprise scale",
+                questions: [
+                    "How does your agency ensure data quality before it even enters your decision-making process?",
+                    "How do you prevent garbage-in, garbage-out scenarios that lead to bad marketing decisions?",
+                    "How do you clean, normalize, and structure data at scale to make it actionable in real time?",
+                    "What's the biggest data integrity issue you've had to solve, and what was the fix?",
+                    "If we gave you five different datasets with conflicting numbers, how would you determine which one to trust?",
+                    "What are the core data sets needed for your proprietary technology? And what are those data sources?"
+                ]
+            },
+            {
+                title: "Large Language Models (LLMs) & AI-Powered Decision-Making",
+                description: "LLM implementation, validation frameworks, and practical marketing applications",
+                questions: [
+                    "What practical applications of LLMs are you using today that are actively improving marketing performance?",
+                    "How do you ensure that LLM-generated insights aren't just nice-sounding but actually actionable?",
+                    "How do you validate the accuracy of LLM-driven outputs before acting on them?",
+                    "What's an example where an LLM found an insight that a human strategist wouldn't have?",
+                    "What's the biggest mistake you see clients and agencies make when trying to use LLMs, and how do you avoid it?",
+                    "Which LLM technology are you using? How is this delivered to the technologies you use?",
+                    "What's an example where an LLM found an insight that a human strategist wouldn't have?",
+                    "What's the biggest mistake you see clients and agencies make when trying to use LLMs, and how do you avoid it?",
+                    "Which LLM technology are you using? How is this delivered to the technologies you use?",
+                    "For your own LLM's where is this situated (geography), who owns them?",
+                    "What data do the LLMs access? Is client data captured for training? If not how do you clean the system out and, how often?"
+                ]
+            },
+            {
+                title: "Aligned Resources & Human-Machine Collaboration",
+                description: "Human expertise integration with AI systems and automation frameworks",
+                questions: [
+                    "How do you structure human expertise around automation so that both add value rather than compete?",
+                    "How do you ensure that strategists don't become over-reliant on automation, leading to lazy decision-making?",
+                    "How do you train your teams to know when to trust AI vs. when to override it?",
+                    "What's the biggest challenge in blending human expertise with AI, and how does your agency solve it?"
+                ]
+            },
+            {
+                title: "Cross-Platform Reporting & Unified Data View",
+                description: "Unified reporting systems, data pipelines, and actionable insights generation",
+                questions: [
+                    "How does your agency provide a truly unified, cross-channel view of performance beyond siloed reporting?",
+                    "How do you avoid surface-level dashboards that look good but don't actually drive better decisions?",
+                    "How do you structure data pipelines so that reporting is always accurate, timely, and actionable?",
+                    "What's an example where your reporting system uncovered an insight that changed an entire marketing strategy? Please provide full details",
+                    "If we needed to integrate your reporting into our internal BI tools (e.g., Tableau, Power BI), how seamless is that process?"
+                ]
+            },
+            {
+                title: "Privacy-First Data Strategy & Compliance",
+                description: "Privacy compliance frameworks, data ethics, and future-proofing strategies",
+                questions: [
+                    "How do you ensure the real-time data captured through third parties is allowable use under the AI Act?",
+                    "How does your agency ensure data privacy compliance while still enabling high-performance marketing?",
+                    "How do you balance personalization with increasing consumer privacy expectations?",
+                    "What's the biggest challenge your agency has faced in privacy-first marketing, and how did you solve it?",
+                    "If new privacy laws banned most current tracking methods, what would be your next move?"
+                ]
+            },
+            {
+                title: "Predictive Analytics & AI-Driven Forecasting",
+                description: "Predictive modeling frameworks, forecasting accuracy, and model refinement processes",
+                questions: [
+                    "How does your agency use predictive analytics to improve campaign decision making?",
+                    "How do you ensure predictions aren't just educated guesses but genuinely accurate models?",
+                    "How do you test and refine your forecasting models to prevent false positives?",
+                    "What's the biggest failure you've had in predictive modelling, and what did you learn?"
+                ]
+            },
+            {
+                title: "Real-Time Data Integration & Activation",
+                description: "Real-time data processing, integration capabilities, and campaign optimization",
+                questions: [
+                    "How does your agency integrate real-time data feeds into your marketing stack?",
+                    "How do you ensure real-time data isn't just a cool feature but improve decision making",
+                    "What real-time client data feeds do you require? And for what?",
+                    "How do you handle latency issues in real-time decision-making?",
+                    "What's an example where real-time data integration allowed for an immediate campaign pivot that led to better results?",
+                    "What are the biggest technical bottlenecks in real-time data processing, and how do you overcome them?"
+                ]
+            },
+            {
+                title: "Custom API Development & Technology Partnerships",
+                description: "API development strategies, integration capabilities, and competitive advantages",
+                questions: [
+                    "What custom APIs has your agency built to enhance marketing automation and data flow?",
+                    "How do these APIs deliver a competitive advantage beyond what's available off the shelf?",
+                    "How do you ensure API integrations don't just automate bad decisions faster?",
+                    "What's an example where an API-driven approach gave you an edge in media performance?",
+                    "What's the biggest risk in relying too much on API-driven decision-making, and how do you mitigate it?"
+                ]
+            },
+            {
+                title: "Fraud Detection, Ad Verification & Quality Control",
+                description: "Advanced fraud detection systems, quality assurance, and spend optimization",
+                questions: [
+                    "How do you go beyond standard fraud detection tools to identify hidden inefficiencies?",
+                    "How do you ensure every impression, click, and conversion is genuine and high-quality?",
+                    "What's an example where your fraud detection system saved a client from major wasted spend?",
+                    "What's the biggest blind spot most brands have in ad quality, and how does your agency address it?"
+                ]
+            },
+            {
+                title: "Custom Machine Learning Models & Advanced Analytics",
+                description: "ML model development, training methodologies, and performance optimization",
+                questions: [
+                    "What custom machine learning models has your agency developed to optimize media buying?",
+                    "How do these models outperform what's already available from platforms?",
+                    "What level of pre-training do these models have? What client data is captured for training the models?",
+                    "How do you continuously retrain and refine these models to stay ahead of changes in media performance?",
+                    "What's the most unexpected insight a machine learning model has ever surfaced in one of your campaigns?",
+                    "What's the biggest limitation of machine learning in marketing, and how do you work around it?"
+                ]
+            }
+        ];
+
+        // Application state
+        let expandedCards = new Set();
+        let currentFilter = 'all';
+        let searchQuery = '';
+
+        // Initialize the application
+        function init() {
+            renderCategories();
+            setupEventListeners();
+            updateStats();
+        }
+
+        // Create a category card element
+        function createCategoryCard(category, index, type) {
+            const card = document.createElement('div');
+            card.className = `category-card ${type}-card fade-in`;
+            card.dataset.type = type;
+            card.dataset.index = index;
+            card.dataset.title = category.title.toLowerCase();
+            card.dataset.description = category.description.toLowerCase();
+            card.dataset.questions = category.questions.join(' ').toLowerCase();
+            
+            // Add touch attributes for better mobile experience
+            card.setAttribute('role', 'button');
+            card.setAttribute('tabindex', '0');
+            card.setAttribute('aria-expanded', 'false');
+
+            card.innerHTML = `
+                <div class="category-header">
+                    <div class="category-info">
+                        <h3>${category.title}</h3>
+                        <p class="category-description">${category.description}</p>
+                    </div>
+                    <div class="category-meta">
+                        <div class="question-count">${category.questions.length} questions</div>
+                        <div class="expand-indicator">▼</div>
+                    </div>
+                </div>
+                <div class="questions-container">
+                    <div class="questions-list">
+                        ${category.questions.map((question, qIndex) => `
+                            <div class="question-item">
+                                <div class="question-number">${String.fromCharCode(97 + qIndex)}</div>
+                                <div class="question-text">${question}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            // Add both click and keyboard event handlers
+            card.addEventListener('click', (e) => {
+                e.preventDefault();
+                toggleCard(card, type, index);
+            });
+            
+            card.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleCard(card, type, index);
+                }
+            });
+            
+            return card;
+        }
+
+        // Toggle card expansion
+        function toggleCard(card, type, index) {
+            const cardId = `${type}-${index}`;
+            
+            if (expandedCards.has(cardId)) {
+                expandedCards.delete(cardId);
+                card.classList.remove('expanded');
+                card.setAttribute('aria-expanded', 'false');
+            } else {
+                expandedCards.add(cardId);
+                card.classList.add('expanded');
+                card.setAttribute('aria-expanded', 'true');
+            }
+            
+            updateStats();
+        }
+
+        // Render all categories
+        function renderCategories() {
+            const mediaGrid = document.getElementById('mediaGrid');
+            const techGrid = document.getElementById('techGrid');
+            
+            mediaGrid.innerHTML = '';
+            techGrid.innerHTML = '';
+            
+            // Render media categories
+            const filteredMedia = mediaData.filter(category => shouldShowCategory(category, 'media'));
+            filteredMedia.forEach((category, index) => {
+                const originalIndex = mediaData.indexOf(category);
+                const card = createCategoryCard(category, originalIndex, 'media');
+                if (expandedCards.has(`media-${originalIndex}`)) {
+                    card.classList.add('expanded');
+                }
+                mediaGrid.appendChild(card);
+            });
+            
+            // Render tech categories
+            const filteredTech = techData.filter(category => shouldShowCategory(category, 'tech'));
+            filteredTech.forEach((category, index) => {
+                const originalIndex = techData.indexOf(category);
+                const card = createCategoryCard(category, originalIndex, 'tech');
+                if (expandedCards.has(`tech-${originalIndex}`)) {
+                    card.classList.add('expanded');
+                }
+                techGrid.appendChild(card);
+            });
+            
+            // Handle section visibility
+            const mediaSection = document.getElementById('mediaSection');
+            const techSection = document.getElementById('techSection');
+            
+            if (currentFilter === 'tech') {
+                mediaSection.classList.add('hidden');
+                techSection.classList.remove('hidden');
+            } else if (currentFilter === 'media') {
+                mediaSection.classList.remove('hidden');
+                techSection.classList.add('hidden');
+            } else {
+                mediaSection.classList.remove('hidden');
+                techSection.classList.remove('hidden');
+            }
+            
+            highlightSearchResults();
+            updateStats();
+        }
+
+        // Check if category should be shown based on filter and search
+        function shouldShowCategory(category, type) {
+            if (currentFilter !== 'all' && currentFilter !== type) {
+                return false;
+            }
+            
+            if (searchQuery) {
+                const searchLower = searchQuery.toLowerCase();
+                const titleMatch = category.title.toLowerCase().includes(searchLower);
+                const descriptionMatch = category.description.toLowerCase().includes(searchLower);
+                const questionMatch = category.questions.some(q => 
+                    q.toLowerCase().includes(searchLower)
+                );
+                
+                return titleMatch || descriptionMatch || questionMatch;
+            }
+            
+            return true;
+        }
+
+        // Highlight search results
+        function highlightSearchResults() {
+            // Remove previous highlights
+            document.querySelectorAll('.highlight').forEach(el => {
+                el.classList.remove('highlight');
+            });
+            
+            if (!searchQuery) return;
+            
+            const searchLower = searchQuery.toLowerCase();
+            
+            document.querySelectorAll('.category-card').forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const description = card.querySelector('.category-description').textContent.toLowerCase();
+                const questions = Array.from(card.querySelectorAll('.question-text'))
+                    .map(q => q.textContent.toLowerCase());
+                
+                if (title.includes(searchLower) || 
+                    description.includes(searchLower) || 
+                    questions.some(q => q.includes(searchLower))) {
+                    card.classList.add('highlight');
+                }
+            });
+        }
+
+        // Update statistics and progress
+        function updateStats() {
+            const totalCategories = mediaData.length + techData.length;
+            const expandedCount = expandedCards.size;
+            
+            // Count visible questions
+            let visibleQuestions = 0;
+            document.querySelectorAll('.category-card.expanded').forEach(card => {
+                visibleQuestions += card.querySelectorAll('.question-item').length;
+            });
+            
+            // Update header stats
+            document.getElementById('totalCategories').textContent = totalCategories;
+            document.getElementById('expandedCount').textContent = expandedCount;
+            
+            // Update progress bar
+            const progress = (expandedCount / totalCategories) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Filter buttons
+            document.getElementById('showAll').addEventListener('click', (e) => {
+                setActiveFilter(e.target, 'all');
+            });
+
+            document.getElementById('showMedia').addEventListener('click', (e) => {
+                setActiveFilter(e.target, 'media');
+            });
+
+            document.getElementById('showTech').addEventListener('click', (e) => {
+                setActiveFilter(e.target, 'tech');
+            });
+
+            // Expand/collapse buttons
+            document.getElementById('expandAll').addEventListener('click', () => {
+                document.querySelectorAll('.category-card').forEach(card => {
+                    const type = card.dataset.type;
+                    const index = card.dataset.index;
+                    const cardId = `${type}-${index}`;
+                    expandedCards.add(cardId);
+                    card.classList.add('expanded');
+                });
+                updateStats();
+            });
+
+            document.getElementById('collapseAll').addEventListener('click', () => {
+                expandedCards.clear();
+                document.querySelectorAll('.category-card').forEach(card => {
+                    card.classList.remove('expanded');
+                });
+                updateStats();
+            });
+
+            // Search input
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                searchQuery = e.target.value;
+                renderCategories();
+            });
+        }
+
+        // Set active filter
+        function setActiveFilter(button, filter) {
+            document.querySelectorAll('.control-btn').forEach(btn => {
+                if (btn.id.startsWith('show')) {
+                    btn.classList.remove('active');
+                }
+            });
+            button.classList.add('active');
+            currentFilter = filter;
+            renderCategories();
+        }
+
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            init();
+            
+            // Improve mobile scroll performance
+            if ('ontouchstart' in window) {
+                document.body.style.webkitOverflowScrolling = 'touch';
+                
+                // Prevent zoom on double tap for better UX
+                let lastTouchEnd = 0;
+                document.addEventListener('touchend', function (event) {
+                    const now = (new Date()).getTime();
+                    if (now - lastTouchEnd <= 300) {
+                        event.preventDefault();
+                    }
+                    lastTouchEnd = now;
+                }, false);
+            }
+            
+            // Handle orientation changes
+            window.addEventListener('orientationchange', () => {
+                setTimeout(() => {
+                    updateStats();
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>
