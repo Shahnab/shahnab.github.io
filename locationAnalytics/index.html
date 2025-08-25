@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Analytics Capabilities - OOH Media Planning</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Background Animation */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 75% 75%, rgba(255,255,255,0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .main-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff 0%, #cccccc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            color: rgba(255,255,255,0.8);
+            font-weight: 300;
+            letter-spacing: 0.05em;
+        }
+
+        /* Main Content Section */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 4rem;
+            align-items: center;
+            margin-bottom: 6rem;
+            padding: 3rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        }
+
+        .image-section {
+            position: relative;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            transition: transform 0.3s ease;
+        }
+
+        .main-image:hover {
+            transform: scale(1.02);
+        }
+
+        .content-section h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-weight: 600;
+        }
+
+        .content-section p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 2.5rem;
+        }
+
+        /* Glassmorphic Buttons */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .glass-button {
+            padding: 1rem 2rem;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .glass-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .glass-button:hover::before {
+            left: 100%;
+        }
+
+        .glass-button:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255,255,255,0.1);
+        }
+
+        .primary-button {
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
+        }
+
+        /* Gallery Section */
+        .gallery-section {
+            margin-top: 6rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #cccccc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            color: rgba(255,255,255,0.7);
+            font-size: 1.2rem;
+        }
+
+        /* Video Grid */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .video-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .video-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.2);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .video-thumbnail {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            background: #1a1a1a;
+            overflow: hidden;
+        }
+
+        .video-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .video-card:hover .video-preview {
+            transform: scale(1.05);
+        }
+
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .video-card:hover .play-button {
+            background: white;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: white;
+        }
+
+        .card-description {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: relative;
+            background: rgba(20,20,20,0.95);
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 20px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .close {
+            color: rgba(255,255,255,0.7);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: white;
+        }
+
+        .modal-video {
+            width: 100%;
+            height: 60vh;
+            background: black;
+        }
+
+        .modal-details {
+            padding: 2rem;
+        }
+
+        .modal-details h3 {
+            color: white;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .modal-details p {
+            color: rgba(255,255,255,0.9);
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        /* Contact Form */
+        .contact-form {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(5px);
+        }
+
+        .form-content {
+            position: relative;
+            background: rgba(20,20,20,0.95);
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 20px;
+            max-width: 500px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: white;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 2rem;
+            }
+
+            .video-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .button-group {
+                justify-content: center;
+            }
+
+            .glass-button {
+                flex: 1;
+                justify-content: center;
+                min-width: 200px;
+            }
+
+            .modal-content {
+                margin: 5% auto;
+                max-width: 95%;
+            }
+
+            .modal-video {
+                height: 40vh;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Fade In Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-  Header - >
+        <header class="header fade-in">
+            <h1 class="main-title">Location Analytics Capabilities</h1>
+            <p class="subtitle">OOH Media Planning</p>
+        </header>
+
+        <!-  Main Content - >
+        <section class="main-content fade-in">
+            <div class="image-section">
+                <img src="./assets/oohsuite.png" alt="OOH Suite Platform" class="main-image">
+            </div>
+            <div class="content-section">
+                <h2><i class="fas fa-map-marked-alt"></i> Location Intelligence Platform</h2>
+                <p>Transform your Out-of-Home media planning with our comprehensive location analytics platform. Leverage precise audience data, dynamic location heatmapping, and intelligent site selection to maximize campaign effectiveness. Our end-to-end data-driven solution incorporates real-time campaign monitoring, detailed performance reporting, and AI-powered optimization tools that ensure every media placement delivers optimal ROI.</p>
+                
+                <div class="button-group">
+                    <a href="https://oohsuite.a-thing.com.vn/auth/signin.html" target="_blank" class="glass-button primary-button">
+                        <i class="fas fa-external-link-alt"></i>
+                        Access Platform
+                    </a>
+                    <button class="glass-button" onclick="openContactForm()">
+                        <i class="fas fa-envelope"></i>
+                        Request Demo
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-  Gallery Section - >
+        <section class="gallery-section fade-in">
+            <div class="section-header">
+                <h2 class="section-title">Advanced Location Analysis Planning</h2>
+                <p class="section-subtitle">Explore our comprehensive suite of AI-powered tools and analytics capabilities</p>
+            </div>
+
+            <div class="video-grid" id="videoGrid">
+                <!-  Video cards will be dynamically generated - >
+            </div>
+        </section>
+    </div>
+
+    <!-  Video Modal - >
+    <div id="videoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle"></h3>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <video id="modalVideo" class="modal-video" controls>
+                Your browser does not support the video tag.
+            </video>
+            <div class="modal-details">
+                <h3>Details</h3>
+                <p id="modalDetails"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-  Contact Form Modal - >
+    <div id="contactForm" class="contact-form">
+        <div class="form-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Request Demo & Contact Us</h3>
+                <span class="close" onclick="closeContactForm()">&times;</span>
+            </div>
+            <form id="demoForm">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" placeholder="Your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="your.email@company.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="company">Company</label>
+                    <input type="text" id="company" name="company" placeholder="Your company name">
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" placeholder="Tell us about your requirements, questions, or request a demo..."></textarea>
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="glass-button primary-button">
+                        <i class="fas fa-paper-plane"></i>
+                        Send Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Video data
+        const videos = [
+            {
+                title: "Recce Companion App",
+                description: "The virtual companion for OOH media site assessment during OOH Site Recce",
+                details: "Ensure Smart Site Analysis: Evaluation of media placement effectiveness, AI-powered visibility and impact scoring, Automated assessment of surrounding areas, audience insights for the media site location",
+                filename: "recce.mp4"
+            },
+            {
+                title: "Hyperion- Creative Analyzer",
+                description: "Meet Hyperion—our fine-tuned, multimodal LLM trained on real media performance data to unlock next-level creative effectiveness.",
+                details: "The platform Instantly rates your creative on visual impact, attention heatmaps, and platform best practices for OOH Media. Assigns a 'Overall Creative Scores' (out of 100), so you know exactly where you stand in terms of best practices and visual attention factors for the OOH. Provides recommendation on any changes that it might require to increase effectiveness of the creative",
+                filename: "hyperion.mp4"
+            },
+            {
+                title: "OOH Media Plan Optimization Module",
+                description: "AI-Powered Performance Analysis & Site Replacement Recommendation engine",
+                details: "Analyze entire existing OOH plan in minutes. → Identify specific sites that don't align with your KPIs. → Model the impact of replacing them with better alternatives.",
+                filename: "mediaoptimizer1.mp4"
+            },
+            {
+                title: "OOH Media Plan Optimization Advanced Module",
+                description: "AI-Powered Performance Analysis with Creative Analysis",
+                details: "Imagine being able to: → Analyze your entire existing OOH plan in minutes along with Creative Assessments → Identify specific sites that don't align with your KPIs impacting Visual Scores as well as other metrics → Model the impact of replacing them with better alternatives.",
+                filename: "mediaoptimizer2.mp4"
+            },
+            {
+                title: "OOH Media Plan Compliance with Safe Zone",
+                description: "Safe Zone tool instantly validates your Out-of-Home (OOH) media plan against government regulations, saving you from costly fines and compliance headaches.",
+                details: "Safe Zone module automates the entire process. As shown in this video, you can: Upload your media plan with hundreds of locations in seconds. Instantly geocode addresses to precise lat/long coordinates. Set custom safety radiuses (e.g., 200 meters) to match local laws. Visualize your entire plan on a map with clear 'Safe' (Green) and 'Prohibited' (Red) indicators. Get a detailed analysis report for easy sharing and campaign adjustments.",
+                filename: "sazezone.mp4"
+            },
+            {
+                title: "Media Sites Performance Comparison Tool",
+                description: "Module to compare multiple OOH media sites based on key performance indicators",
+                details: "Easily compare multiple OOH media sites side-by-side based on key performance indicators such as reach, impressions, audience demographics, audience personas, and more. This tool helps advertisers and agencies make informed decisions by providing a clear overview of how different media sites perform relative to each other, enabling them to select the most effective locations for their campaigns.",
+                filename: "compare.mp4"
+            },
+            {
+                title: "OOH Campaign Analytics Dashboard",
+                description: "From high-level KPIs to granular, site-by-site performance, this dashboard provides the tools marketers and agencies need to monitor, analyze, and optimize their OOH strategies for maximum ROI.",
+                details: "Campaign Summary: Get a 360-degree view of KPIs, budget, reach, and audience personas. - Audience Report: Dive deep into demographic data for each individual media site. - Performance Report: Identify top-performing locations with detailed reach and impression data. - Monitoring Images: Visually verify your campaign with a live image gallery. - Competition Report: Benchmark your brand against competitors' media mix, spend, and reach. - AI-Powered Creative Analysis: See how we score ad creatives on key performance parameters.",
+                filename: "oohreporting.mp4"
+            },
+            {
+                title: "AI Agents drafting OOH Media Planning",
+                description: "An AI agentic workflow system that crafts an initial Out-of-Home (OOH) media plan, complete with data analytics and budget optimization, fully automated",
+                details: "AI agents workflow creating the OOH media planning: -  Audience Analysis: Generating detailed heatmaps to identify key audience hotspots. - Hotspot Identification: Defining 5 km boundaries around these hotspots for targeted planning. - Media Inventory Access: Accessing available media inventories within these zones to ensure optimal placement. -  Site Quality Assessment: Evaluating media site qualities to ensure your message shines in the best locations. -  Availability Check: Verifying site availability in real-time to avoid potential booking conflicts. -  Budget Optimization: Selecting and optimizing media sites to align perfectly with your budget constraints. -  Comprehensive Planning: Plotting the media plan on a map and generating detailed Excel sheets and PowerPoint presentations for your review",
+                filename: "agenticooh.mp4"
+            }
+            
+            
+        ];
+
+        // Generate video cards
+        function generateVideoCards() {
+            const videoGrid = document.getElementById('videoGrid');
+            
+            videos.forEach((video, index) => {
+                const card = document.createElement('div');
+                card.className = 'video-card';
+                card.onclick = () => openModal(index);
+                
+                card.innerHTML = `
+                    <div class="video-thumbnail">
+                        <video class="video-preview" muted>
+                            <source src="./assets/${video.filename}" type="video/mp4">
+                        </video>
+                        <div class="play-button">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">${video.title}</h3>
+                        <p class="card-description">${video.description}</p>
+                    </div>
+                `;
+                
+                videoGrid.appendChild(card);
+                
+                // Load video preview
+                const videoElement = card.querySelector('.video-preview');
+                videoElement.addEventListener('loadeddata', () => {
+                    videoElement.currentTime = 2; // Show frame at 2 seconds
+                });
+                videoElement.load();
+            });
+        }
+
+        // Modal functions
+        function openModal(videoIndex) {
+            const modal = document.getElementById('videoModal');
+            const modalVideo = document.getElementById('modalVideo');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalDetails = document.getElementById('modalDetails');
+            
+            const video = videos[videoIndex];
+            
+            modalTitle.textContent = video.title;
+            modalDetails.textContent = video.details;
+            modalVideo.src = `./assets/${video.filename}`;
+            
+            modal.style.display = 'block';
+            modalVideo.load();
+            
+            // Auto-play when modal opens
+            modalVideo.addEventListener('loadeddata', () => {
+                modalVideo.volume = 0.45; // Set volume to 45%
+                modalVideo.play();
+            });
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('videoModal');
+            const modalVideo = document.getElementById('modalVideo');
+            
+            modal.style.display = 'none';
+            modalVideo.pause();
+            modalVideo.src = '';
+        }
+
+        // Contact form functions
+        function openContactForm() {
+            document.getElementById('contactForm').style.display = 'block';
+        }
+
+        function closeContactForm() {
+            document.getElementById('contactForm').style.display = 'none';
+        }
+
+        // Form submission
+        document.getElementById('demoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const name = formData.get('name');
+            const email = formData.get('email');
+            const company = formData.get('company');
+            const message = formData.get('message');
+            
+            // Create email body
+            const emailBody = `
+Name: ${name}
+Email: ${email}
+Company: ${company || 'Not specified'}
+
+Message:
+${message || 'Demo request - Please contact me to schedule a demo.'}
+            `.trim();
+            
+            // Open email client
+            const mailtoLink = `mailto:ahmedshahnab@gmail.com?subject=Demo Request from ${name}&body=${encodeURIComponent(emailBody)}`;
+            window.location.href = mailtoLink;
+            
+            // Show success message
+            alert('Email client opened! Please send the email to complete your request.');
+            closeContactForm();
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(e) {
+            const videoModal = document.getElementById('videoModal');
+            const contactForm = document.getElementById('contactForm');
+            
+            if (e.target === videoModal) {
+                closeModal();
+            }
+            if (e.target === contactForm) {
+                closeContactForm();
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            generateVideoCards();
+            
+            // Add fade-in animation to video cards
+            setTimeout(() => {
+                document.querySelectorAll('.video-card').forEach((card, index) => {
+                    setTimeout(() => {
+                        card.classList.add('fade-in');
+                    }, index * 100);
+                });
+            }, 500);
+        });
+
+        // Smooth scrolling for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
