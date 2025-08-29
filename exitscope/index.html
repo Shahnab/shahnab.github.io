@@ -271,6 +271,247 @@
             transition: all 0.5s ease;
         }
 
+        .add-experience-section {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .add-experience-btn {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .add-experience-btn:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .add-experience-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-icon {
+            font-size: 1.2rem;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(20, 20, 20, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            color: white;
+            position: relative;
+            transform: scale(0.8) translateY(50px);
+            transition: all 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .modal-subtitle {
+            color: #ccc;
+            font-size: 1rem;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #ccc;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #ff4444;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #ddd;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #00ff88;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.2);
+        }
+
+        .form-input::placeholder {
+            color: #888;
+        }
+
+        .side-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .side-option {
+            flex: 1;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .side-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .side-option.selected {
+            border-color: var(--accent-color);
+            background: rgba(var(--accent-rgb), 0.1);
+        }
+
+        .side-option.good {
+            --accent-color: #00ff88;
+            --accent-rgb: 0, 255, 136;
+        }
+
+        .side-option.dark {
+            --accent-color: #ff4444;
+            --accent-rgb: 255, 68, 68;
+        }
+
+        .side-option-icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .side-option-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .side-option-desc {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .modal-btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .modal-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-btn-primary {
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+            border: none;
+            color: #000;
+            box-shadow: 0 4px 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .modal-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 255, 136, 0.4);
+        }
+
+        .modal-btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -352,6 +593,11 @@
             
             .health-bar {
                 width: 150px;
+            }
+            
+            .add-experience-btn {
+                padding: 12px 20px;
+                font-size: 1rem;
             }
         }
         
@@ -435,6 +681,11 @@
                 padding: 3px 10px;
                 font-size: 0.75rem;
             }
+            
+            .add-experience-btn {
+                padding: 10px 16px;
+                font-size: 0.95rem;
+            }
         }
         
         @media (max-width: 360px) {
@@ -458,6 +709,34 @@
                 width: 100px;
                 height: 6px;
             }
+            
+            .add-experience-btn {
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+            
+            .modal {
+                padding: 20px;
+                margin: 20px;
+            }
+            
+            .modal-title {
+                font-size: 1.3rem;
+            }
+            
+            .modal-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .modal-btn {
+                width: 100%;
+            }
+            
+            .side-selector {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
     </style>
 </head>
@@ -465,7 +744,7 @@
     <div class="container">
         <header class="header">
             <h1>The Exit Scope</h1>
-            <p>Customized algorithm to check whether should continue to work in the Dentsu (Jan - Aug 2025)</p>
+            <p>Customized algorithm to check whether should continue to work in the company (Jan - Aug 2025)</p>
             <div class="motivation-display">
                 <div class="pulse-indicator"></div>
                 <span class="motivation-level" id="motivationLevel">28%</span>
@@ -508,6 +787,13 @@
             </div>
         </div>
 
+        <div class="add-experience-section">
+            <button class="add-experience-btn" onclick="openPersonalExperienceModal()">
+                <span class="btn-icon"></span>
+                Add Personal Experience
+            </button>
+        </div>
+
         <div class="main-content">
             <div class="side-panel good-side">
                 <div class="side-header">
@@ -531,7 +817,205 @@
         </div>
     </div>
 
+    <!-- Personal Experience Modal -->
+    <div class="modal-overlay" id="personalExperienceModal">
+        <div class="modal">
+            <button class="close-btn" onclick="closePersonalExperienceModal()">&times;</button>
+            
+            <div class="modal-header">
+                <h3 class="modal-title">Add any Personal Experience</h3>
+                <p class="modal-subtitle">Share your own workplace moment and let AI analyze its impact</p>
+            </div>
+            
+            <form class="modal-form">
+                <div class="form-group">
+                    <label class="form-label">Describe your experience:</label>
+                    <textarea 
+                        class="form-input" 
+                        id="experienceText"
+                        placeholder="e.g., 'Got promoted to senior developer after 2 years' or 'Had to work overtime for 3 weeks straight due to poor planning'"
+                        maxlength="500"
+                    ></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Choose the impact type:</label>
+                    <div class="side-selector">
+                        <div class="side-option good" onclick="selectSide('good')">
+                            <div class="side-option-icon">✨</div>
+                            <div class="side-option-title">Good Experience</div>
+                            <div class="side-option-desc">Positive workplace moment</div>
+                        </div>
+                        <div class="side-option dark" onclick="selectSide('dark')">
+                            <div class="side-option-icon">⚡</div>
+                            <div class="side-option-title">Dark Experience</div>
+                            <div class="side-option-desc">Challenging workplace moment</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn modal-btn-secondary" onclick="closePersonalExperienceModal()">
+                        Cancel
+                    </button>
+                    <button type="button" class="modal-btn modal-btn-primary" id="analyzeBtn" onclick="analyzeAndAdd()" disabled>
+                        🔬 Analyze and Add to List
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
+        let selectedSide = null;
+
+        // Personal Experience Modal Functions
+        function openPersonalExperienceModal() {
+            const modal = document.getElementById('personalExperienceModal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closePersonalExperienceModal() {
+            const modal = document.getElementById('personalExperienceModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = ''; // Restore scrolling
+            
+            // Reset form
+            document.getElementById('experienceText').value = '';
+            selectedSide = null;
+            document.querySelectorAll('.side-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            updateAnalyzeButton();
+        }
+
+        function selectSide(side) {
+            selectedSide = side;
+            
+            // Update visual selection
+            document.querySelectorAll('.side-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            document.querySelector(`.side-option.${side}`).classList.add('selected');
+            updateAnalyzeButton();
+        }
+
+        function updateAnalyzeButton() {
+            const text = document.getElementById('experienceText').value.trim();
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            
+            if (text.length > 10 && selectedSide) {
+                analyzeBtn.disabled = false;
+            } else {
+                analyzeBtn.disabled = true;
+            }
+        }
+
+        function analyzeAndAdd() {
+            const text = document.getElementById('experienceText').value.trim();
+            
+            if (!text || !selectedSide) return;
+            
+            // Show analyzing state
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const originalText = analyzeBtn.innerHTML;
+            analyzeBtn.innerHTML = '🔄 Analyzing...';
+            analyzeBtn.disabled = true;
+            
+            // Simulate AI analysis (replace with actual implementation)
+            setTimeout(() => {
+                showAnalysisResult(text, selectedSide);
+                closePersonalExperienceModal();
+                
+                // Reset button
+                analyzeBtn.innerHTML = originalText;
+            }, 2000);
+        }
+
+        function showAnalysisResult(text, side) {
+            const notification = document.createElement('div');
+            const isMobile = window.innerWidth <= 768;
+            
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: rgba(0, 0, 0, 0.95);
+                border: 2px solid ${side === 'good' ? '#00ff88' : '#ff4444'};
+                border-radius: 15px;
+                padding: ${isMobile ? '15px' : '20px'};
+                color: white;
+                font-size: ${isMobile ? '0.9rem' : '1rem'};
+                z-index: 3000;
+                animation: slideInRight 0.5s ease-out;
+                max-width: ${isMobile ? '280px' : '350px'};
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            `;
+            
+            const impact = Math.floor(Math.random() * 15) + 5; // Random impact 5-20
+            const currentDate = new Date().toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <span style="font-size: 1.5rem;">${side === 'good' ? '✨' : '⚡'}</span>
+                    <strong>Analysis Complete!</strong>
+                </div>
+                <div style="margin-bottom: 8px; color: #ddd;">
+                    <strong>Date:</strong> ${currentDate}
+                </div>
+                <div style="margin-bottom: 8px; color: #ddd;">
+                    <strong>Experience:</strong> "${text.substring(0, 50)}${text.length > 50 ? '...' : ''}"
+                </div>
+                <div style="color: ${side === 'good' ? '#00ff88' : '#ff4444'}; font-weight: bold;">
+                    Predicted Impact: ${side === 'good' ? '+' : '-'}${impact} Motivation Points
+                </div>
+                <div style="margin-top: 10px; font-size: 0.85rem; color: #aaa;">
+                    Feature in development - Experience not yet added to timeline
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto-remove notification
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+            
+            // Remove on click
+            notification.addEventListener('click', () => {
+                notification.remove();
+            });
+        }
+
+        // Add event listeners for the experience text input
+        document.addEventListener('DOMContentLoaded', function() {
+            const experienceText = document.getElementById('experienceText');
+            if (experienceText) {
+                experienceText.addEventListener('input', updateAnalyzeButton);
+            }
+            
+            // Close modal on overlay click
+            const modalOverlay = document.getElementById('personalExperienceModal');
+            modalOverlay.addEventListener('click', function(e) {
+                if (e.target === modalOverlay) {
+                    closePersonalExperienceModal();
+                }
+            });
+            
+            // Close modal on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+                    closePersonalExperienceModal();
+                }
+            });
+        });
+
         // News data with detailed events from Jan-Aug 2025
         const newsData = {
             good: [
