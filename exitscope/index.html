@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Exit Scope</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ffffff 0%, #cccccc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #cccccc;
+            margin-bottom: 20px;
+        }
+
+        .motivation-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .motivation-level {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #00ff88;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            transition: all 0.5s ease;
+        }
+
+        .pulse-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #00ff88;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .side-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            height: fit-content;
+        }
+
+        .good-side {
+            border-left: 4px solid #00ff88;
+        }
+
+        .dark-side {
+            border-left: 4px solid #ff4444;
+        }
+
+        .side-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .side-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .good-side .side-icon {
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+        }
+
+        .dark-side .side-icon {
+            background: linear-gradient(135deg, #ff4444 0%, #cc3333 100%);
+        }
+
+        .side-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .news-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .news-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .news-date {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .news-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .news-description {
+            font-size: 0.95rem;
+            color: #ccc;
+            line-height: 1.5;
+        }
+
+        .impact-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+
+        .positive-impact {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .negative-impact {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+            border: 1px solid rgba(255, 68, 68, 0.3);
+        }
+
+        .timeline {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        .timeline-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .timeline-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #ccc;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .health-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .health-bar {
+            width: 200px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .health-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: all 0.5s ease;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            .motivation-level {
+                font-size: 2.5rem;
+            }
+            
+            .side-panel {
+                padding: 20px;
+            }
+            
+            .side-title {
+                font-size: 1.3rem;
+            }
+            
+            .side-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 1.3rem;
+            }
+            
+            .timeline {
+                padding: 20px;
+            }
+            
+            .timeline-title {
+                font-size: 1.5rem;
+            }
+            
+            .chart-container {
+                height: 250px;
+                margin-bottom: 15px;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+            
+            .stat-label {
+                font-size: 0.8rem;
+            }
+            
+            .news-item {
+                padding: 15px;
+                margin-bottom: 12px;
+            }
+            
+            .news-title {
+                font-size: 1rem;
+            }
+            
+            .news-description {
+                font-size: 0.9rem;
+            }
+            
+            .health-bar {
+                width: 150px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .motivation-display {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .motivation-level {
+                font-size: 2rem;
+            }
+            
+            .health-indicator {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .health-bar {
+                width: 120px;
+            }
+            
+            .side-panel {
+                padding: 15px;
+            }
+            
+            .timeline {
+                padding: 15px;
+            }
+            
+            .timeline-title {
+                font-size: 1.3rem;
+            }
+            
+            .chart-container {
+                height: 200px;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-value {
+                font-size: 1.3rem;
+            }
+            
+            .news-item {
+                padding: 12px;
+            }
+            
+            .news-date {
+                font-size: 0.8rem;
+            }
+            
+            .news-title {
+                font-size: 0.95rem;
+            }
+            
+            .news-description {
+                font-size: 0.85rem;
+            }
+            
+            .impact-badge {
+                padding: 3px 10px;
+                font-size: 0.75rem;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .motivation-level {
+                font-size: 1.8rem;
+            }
+            
+            .timeline-title {
+                font-size: 1.2rem;
+            }
+            
+            .chart-container {
+                height: 180px;
+            }
+            
+            .health-bar {
+                width: 100px;
+                height: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>The Exit Scope</h1>
+            <p>Customized algorithm to check whether should continue to work in the Dentsu (Jan - Aug 2025)</p>
+            <div class="motivation-display">
+                <div class="pulse-indicator"></div>
+                <span class="motivation-level" id="motivationLevel">28%</span>
+            </div>
+            <div class="health-indicator">
+                <span>Should Continue to Work Probability (%)</span>
+                <div class="health-bar">
+                    <div class="health-fill" id="healthFill" style="width: 28%; background: linear-gradient(90deg, #ff4444, #cc3333);"></div>
+                </div>
+            </div>
+        </header>
+
+        <div class="timeline">
+            <div class="timeline-header">
+                <h2 class="timeline-title">Quit or Stay?</h2>
+                <p style="color: #ccc;">Probability tracking over the months</p>
+            </div>
+            
+            <div class="chart-container">
+                <canvas id="motivationChart" width="800" height="300"></canvas>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #00ff88;" id="positiveCount">12</div>
+                    <div class="stat-label">Positive Events</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #ff4444;" id="negativeCount">15</div>
+                    <div class="stat-label">Negative Events</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #ffaa00;" id="avgMotivation">58%</div>
+                    <div class="stat-label">Avg. Probability to Continue</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #00aaff;" id="resilience">Medium</div>
+                    <div class="stat-label">Scope for Future Growth</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="side-panel good-side">
+                <div class="side-header">
+                    <div class="side-icon">✨</div>
+                    <div class="side-title">The Good Side</div>
+                </div>
+                <div id="goodNews">
+                    <!-- Good news items will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="side-panel dark-side">
+                <div class="side-header">
+                    <div class="side-icon">⚡</div>
+                    <div class="side-title">The Dark Side</div>
+                </div>
+                <div id="darkNews">
+                    <!-- Dark news items will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // News data with detailed events from Jan-Aug 2025
+        const newsData = {
+            good: [
+                {
+                    date: "January 30, 2025",
+                    title: "Mid-Term Management Plan Announced",
+                    description: "Dentsu unveils ambitious 2025-2027 strategy focusing on 4% organic growth and 16-17% operating margin targets.",
+                    impact: +10,
+                    month: 1
+                },
+                {
+                    date: "February 6, 2025", 
+                    title: "New North America CEO Appointed",
+                    description: "Beth Ann Kaminkow named CEO of Dentsu North America, bringing fresh leadership to drive US expansion.",
+                    impact: +8,
+                    month: 2
+                },
+                {
+                    date: "March 15, 2025",
+                    title: "ADFEST 2025: Network of the Year",
+                    description: "Dentsu wins prestigious Network of the Year award for 4th consecutive year with 43 Lotus awards across Asia-Pacific.",
+                    impact: +15,
+                    month: 3
+                },
+                {
+                    date: "March 25, 2025",
+                    title: "Cultural EQ Innovation Launch",
+                    description: "Carat US announces Cultural EQ - proprietary scoring method to measure brands' cultural influence in the market.",
+                    impact: +7,
+                    month: 3
+                },
+                {
+                    date: "May 15, 2025",
+                    title: "Strong Q1 Japan Performance",
+                    description: "Japan operations deliver record-high net revenue and operating profit, marking 9th consecutive quarter of growth.",
+                    impact: +12,
+                    month: 5
+                },
+                {
+                    date: "June 16, 2025",
+                    title: "Cannes Lions 2025 Success",
+                    description: "Dentsu wins 26 Lions at Cannes including 7 Gold, 4 Silver, and 15 Bronze - showcasing global creative excellence.",
+                    impact: +18,
+                    month: 6
+                },
+                {
+                    date: "June 20, 2025",
+                    title: "Sports & Entertainment Expansion",
+                    description: "Global rollout of dentsu Anime Solutions and expanded Sports Analytics division into MENA markets.",
+                    impact: +9,
+                    month: 6
+                },
+                {
+                    date: "June 22, 2025",
+                    title: "AI Partnership with Evidenza",
+                    description: "Strategic partnership launched to bring AI-generated 'synthetic audiences' into media planning processes.",
+                    impact: +11,
+                    month: 6
+                },
+                {
+                    date: "July 10, 2025",
+                    title: "Dentsu Lab India Launch",
+                    description: "Innovation lab opens in Mumbai, Bengaluru, and Gurgaon, focusing on AI, IoT, and drone technology for brand storytelling.",
+                    impact: +8,
+                    month: 7
+                },
+                {
+                    date: "July 25, 2025",
+                    title: "Campaign Media Awards Wins",
+                    description: "Carat and iProspect triumph at Campaign Media Awards 2025, winning multiple categories including media partnerships.",
+                    impact: +10,
+                    month: 7
+                },
+                {
+                    date: "August 10, 2025",
+                    title: "MOGL Partnership for Athletes",
+                    description: "Strategic partnership with AI-driven athlete-influencer platform connects brands to college athlete influencers at scale.",
+                    impact: +7,
+                    month: 8
+                },
+                {
+                    date: "August 26, 2025",
+                    title: "Kyla Jeffers Named CGO",
+                    description: "First-ever Chief Growth Officer for North America appointed to drive cross-agency growth and innovation.",
+                    impact: +8,
+                    month: 8
+                }
+            ],
+            dark: [
+                {
+                    date: "January 30, 2025",
+                    title: "Olympic Scandal Appeal Filed",
+                    description: "Dentsu appeals Tokyo District Court ruling on Olympic bid-rigging violations, extending legal uncertainty.",
+                    impact: -8,
+                    month: 1
+                },
+                {
+                    date: "February 17, 2025",
+                    title: "Massive 2024 Loss Recorded",
+                    description: "Devastating ¥125bn ($820m) annual loss reported with ¥210bn goodwill impairment, suggesting massive overpayment for acquisitions.",
+                    impact: -18,
+                    month: 2
+                },
+                {
+                    date: "March 13, 2025",
+                    title: "Expo 2025 Contract Ban",
+                    description: "Banned from bidding for Osaka Expo 2025 contracts due to ongoing Olympic corruption scandal fallout.",
+                    impact: -9,
+                    month: 3
+                },
+                {
+                    date: "April 15, 2025",
+                    title: "APAC Revenue Hemorrhaging",
+                    description: "APAC (ex-Japan) posts 12.7% revenue decline in Q2, with China and Australia suffering double-digit drops over 10%.",
+                    impact: -15,
+                    month: 4
+                },
+                {
+                    date: "May 15, 2025",
+                    title: "International Business Collapse",
+                    description: "H1 2025 shows -0.2% organic growth with international operations facing negative growth across ALL three regions.",
+                    impact: -12,
+                    month: 5
+                },
+                {
+                    date: "June 1, 2025",
+                    title: "CXM & Creative Sectors Failing",
+                    description: "Customer experience management and creative services register double-digit negative growth, ongoing client losses reported.",
+                    impact: -11,
+                    month: 6
+                },
+                {
+                    date: "July 25, 2025",
+                    title: "Australia CEO Pushed Out",
+                    description: "Patricio de Matteis forced to step down as ANZ CEO after massive revenue declines, replaced by New Zealand's Rob Harvey.",
+                    impact: -10,
+                    month: 7
+                },
+                {
+                    date: "July 31, 2025",
+                    title: "Olympic Fine Upheld",
+                    description: "Tokyo High Court upholds ¥300 million fine for Olympic bid-rigging. Dentsu appeals to Supreme Court same day.",
+                    impact: -10,
+                    month: 7
+                },
+                {
+                    date: "August 14, 2025",
+                    title: "Massive Layoffs Announced",
+                    description: "Devastating 8% workforce cut affecting 3,400 international employees. Operating loss of ¥62 billion reported for Q2.",
+                    impact: -25,
+                    month: 8
+                },
+                {
+                    date: "August 14, 2025",
+                    title: "¥86 Billion Goodwill Impairment",
+                    description: "Massive write-downs in Americas (¥68.9bn) and EMEA (¥17.1bn) signal severe overvaluation of past acquisitions.",
+                    impact: -15,
+                    month: 8
+                },
+                {
+                    date: "August 14, 2025",
+                    title: "¥168 Billion Subsidiary Loss",
+                    description: "Additional valuation loss on shares of subsidiaries totaling ¥168.1 billion, significantly reducing retained earnings.",
+                    impact: -18,
+                    month: 8
+                },
+                {
+                    date: "August 14, 2025",
+                    title: "Dividend Suspension Shock",
+                    description: "Interim dividend payments suspended due to projected ¥75.4 billion annual net loss, devastating shareholders.",
+                    impact: -12,
+                    month: 8
+                },
+                {
+                    date: "August 14, 2025",
+                    title: "Full-Year Guidance Slashed",
+                    description: "2025 organic growth forecast cut from 1% to 'broadly flat' (0%), operating loss of ¥3.5bn now projected.",
+                    impact: -14,
+                    month: 8
+                },
+                {
+                    date: "August 18, 2025",
+                    title: "Considering International Sale",
+                    description: "CEO signals potential sale or partnership of international operations, marking possible retreat from global ambitions.",
+                    impact: -20,
+                    month: 8
+                },
+                {
+                    date: "August 20, 2025",
+                    title: "UK & Northern Europe Struggles",
+                    description: "EMEA posts 3.8% organic decline in Q2, with challenging CXM markets in UK and Northern Europe underperforming.",
+                    impact: -8,
+                    month: 8
+                },
+                {
+                    date: "January 15, 2025",
+                    title: "Ongoing Talent Exodus Impact",
+                    description: "Continued fallout from 2024 executive departures (Danny Bass, Steve Yurisich, Carat leadership) undermines team morale and client confidence.",
+                    impact: -9,
+                    month: 1
+                },
+                {
+                    date: "March 20, 2025", 
+                    title: "Senior Leadership Instability",
+                    description: "Persistent 'rapid senior exec turnover' pattern continues affecting international operations, with clients questioning management continuity.",
+                    impact: -7,
+                    month: 3
+                },
+                {
+                    date: "May 10, 2025",
+                    title: "Brain Drain to Competitors",
+                    description: "Former executives now at competitors (Danny Bass at Mutinex, others at rivals) using insider knowledge against Dentsu in pitches.",
+                    impact: -10,
+                    month: 5
+                },
+                {
+                    date: "June 25, 2025",
+                    title: "HR Policy Failures Exposed",
+                    description: "Industry reports highlight Dentsu's inability to retain talent, with 'constant restructuring' and poor management practices driving departures.",
+                    impact: -12,
+                    month: 6
+                }
+            ]
+        };
+
+        // Calculate motivation levels over time
+        let motivationData = [];
+        let currentMotivation = 70; // Starting motivation
+        
+        // Create timeline data
+        for (let month = 1; month <= 8; month++) {
+            const goodEvents = newsData.good.filter(item => item.month === month);
+            const darkEvents = newsData.dark.filter(item => item.month === month);
+            
+            const monthlyGoodImpact = goodEvents.reduce((sum, item) => sum + item.impact, 0);
+            const monthlyDarkImpact = darkEvents.reduce((sum, item) => sum + item.impact, 0);
+            
+            currentMotivation = Math.max(10, Math.min(100, currentMotivation + monthlyGoodImpact + monthlyDarkImpact));
+            
+            motivationData.push({
+                month: month,
+                motivation: Math.round(currentMotivation),
+                events: [...goodEvents, ...darkEvents].length
+            });
+        }
+
+        // Populate news sections
+        function populateNews() {
+            const goodContainer = document.getElementById('goodNews');
+            const darkContainer = document.getElementById('darkNews');
+            
+            goodContainer.innerHTML = newsData.good.map(item => `
+                <div class="news-item" onclick="highlightEvent('${item.date}', ${item.impact})">
+                    <div class="news-date">${item.date}</div>
+                    <div class="news-title">${item.title}</div>
+                    <div class="news-description">${item.description}</div>
+                    <div class="impact-badge positive-impact">+${item.impact} Motivation</div>
+                </div>
+            `).join('');
+            
+            darkContainer.innerHTML = newsData.dark.map(item => `
+                <div class="news-item" onclick="highlightEvent('${item.date}', ${item.impact})">
+                    <div class="news-date">${item.date}</div>
+                    <div class="news-title">${item.title}</div>
+                    <div class="news-description">${item.description}</div>
+                    <div class="impact-badge negative-impact">${item.impact} Motivation</div>
+                </div>
+            `).join('');
+        }
+
+        // Chart drawing function
+        function drawChart() {
+            const canvas = document.getElementById('motivationChart');
+            const ctx = canvas.getContext('2d');
+            
+            // Make canvas responsive
+            const container = canvas.parentElement;
+            const containerWidth = container.offsetWidth;
+            const isMobile = window.innerWidth <= 768;
+            
+            // Set canvas size based on container and device
+            canvas.width = containerWidth;
+            canvas.height = isMobile ? 200 : 300;
+            
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Set up chart parameters
+            const padding = isMobile ? 60 : 80;
+            const chartWidth = width - (padding * 2);
+            const chartHeight = height - (padding * 2);
+            
+            // Draw grid lines
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = 1;
+            
+            // Horizontal grid lines
+            for (let i = 0; i <= 10; i++) {
+                const y = padding + (chartHeight * i / 10);
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+                
+                // Y-axis labels
+                ctx.fillStyle = '#888';
+                ctx.font = isMobile ? '10px Inter' : '12px Inter';
+                ctx.textAlign = 'right';
+                ctx.fillText(`${100 - (i * 10)}%`, padding - 10, y + 4);
+            }
+            
+            // Vertical grid lines
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'];
+            for (let i = 0; i < months.length; i++) {
+                const x = padding + (chartWidth * i / (months.length - 1));
+                ctx.beginPath();
+                ctx.moveTo(x, padding);
+                ctx.lineTo(x, height - padding);
+                ctx.stroke();
+                
+                // X-axis labels
+                ctx.fillStyle = '#888';
+                ctx.font = isMobile ? '9px Inter' : '12px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText(months[i], x, height - padding + (isMobile ? 15 : 20));
+            }
+            
+            // Draw motivation line
+            ctx.strokeStyle = '#00ff88';
+            ctx.lineWidth = isMobile ? 2 : 3;
+            ctx.beginPath();
+            
+            for (let i = 0; i < motivationData.length; i++) {
+                const x = padding + (chartWidth * i / (motivationData.length - 1));
+                const y = padding + (chartHeight * (100 - motivationData[i].motivation) / 100);
+                
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+            
+            // Draw data points
+            for (let i = 0; i < motivationData.length; i++) {
+                const x = padding + (chartWidth * i / (motivationData.length - 1));
+                const y = padding + (chartHeight * (100 - motivationData[i].motivation) / 100);
+                
+                // Glow effect
+                ctx.shadowColor = '#00ff88';
+                ctx.shadowBlur = isMobile ? 6 : 10;
+                
+                ctx.fillStyle = '#00ff88';
+                ctx.beginPath();
+                ctx.arc(x, y, isMobile ? 4 : 6, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Reset shadow
+                ctx.shadowBlur = 0;
+                
+                // Point labels
+                if (!isMobile || i % 2 === 0) { // Show fewer labels on mobile
+                    ctx.fillStyle = '#fff';
+                    ctx.font = isMobile ? '9px Inter' : '11px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`${motivationData[i].motivation}%`, x, y - (isMobile ? 12 : 15));
+                }
+            }
+        }
+
+        // Update current motivation display
+        function updateMotivationDisplay() {
+            const currentValue = motivationData[motivationData.length - 1].motivation;
+            const motivationElement = document.getElementById('motivationLevel');
+            const healthFill = document.getElementById('healthFill');
+            
+            motivationElement.textContent = currentValue + '%';
+            healthFill.style.width = currentValue + '%';
+            
+            // Change colors based on level
+            if (currentValue >= 80) {
+                motivationElement.style.color = '#00ff88';
+                healthFill.style.background = 'linear-gradient(90deg, #00ff88, #00cc6a)';
+            } else if (currentValue >= 60) {
+                motivationElement.style.color = '#ffaa00';
+                healthFill.style.background = 'linear-gradient(90deg, #ffaa00, #ff8800)';
+            } else {
+                motivationElement.style.color = '#ff4444';
+                healthFill.style.background = 'linear-gradient(90deg, #ff4444, #cc3333)';
+            }
+        }
+
+        // Event highlighting with touch support
+        function highlightEvent(date, impact) {
+            const motivationElement = document.getElementById('motivationLevel');
+            const originalValue = motivationElement.textContent;
+            
+            // Temporary animation
+            motivationElement.style.transform = 'scale(1.2)';
+            motivationElement.style.textShadow = `0 0 30px ${impact > 0 ? '#00ff88' : '#ff4444'}`;
+            
+            setTimeout(() => {
+                motivationElement.style.transform = 'scale(1)';
+                motivationElement.style.textShadow = `0 0 20px ${impact > 0 ? '#00ff88' : '#ff4444'}`;
+            }, 300);
+            
+            // Show impact notification
+            showNotification(date, impact);
+        }
+
+        function showNotification(date, impact) {
+            const notification = document.createElement('div');
+            const isMobile = window.innerWidth <= 768;
+            
+            notification.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.95);
+                border: 2px solid ${impact > 0 ? '#00ff88' : '#ff4444'};
+                border-radius: 15px;
+                padding: ${isMobile ? '15px' : '20px'};
+                color: white;
+                font-size: ${isMobile ? '1rem' : '1.2rem'};
+                font-weight: 600;
+                z-index: 1000;
+                animation: slideIn 0.3s ease-out;
+                max-width: ${isMobile ? '280px' : 'none'};
+                text-align: center;
+            `;
+            
+            notification.innerHTML = `
+                <div style="font-size: ${isMobile ? '0.9rem' : '1rem'};">${date}</div>
+                <div style="color: ${impact > 0 ? '#00ff88' : '#ff4444'}; margin-top: 5px;">
+                    ${impact > 0 ? '+' : ''}${impact} Motivation Impact
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto-remove notification
+            setTimeout(() => {
+                notification.remove();
+            }, isMobile ? 1500 : 2000);
+            
+            // Remove on tap/click for mobile
+            notification.addEventListener('click', () => {
+                notification.remove();
+            });
+            
+            notification.addEventListener('touchstart', () => {
+                notification.remove();
+            });
+        }
+
+        // Period filtering
+        function showPeriod(period) {
+            // Update active button
+            document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // This could be extended to filter the chart data
+            console.log('Showing period:', period);
+        }
+
+        // Add CSS animation for notifications
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+                to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize the app
+        populateNews();
+        drawChart();
+        updateMotivationDisplay();
+
+        // Update stats
+        document.getElementById('positiveCount').textContent = newsData.good.length;
+        document.getElementById('negativeCount').textContent = newsData.dark.length;
+        const avgMotivation = Math.round(
+            motivationData.reduce((sum, item) => sum + item.motivation, 0) / motivationData.length
+        );
+        document.getElementById('avgMotivation').textContent = avgMotivation + '%';
+        
+        // Update resilience based on average motivation
+        const resilienceElement = document.getElementById('resilience');
+        if (avgMotivation >= 70) {
+            resilienceElement.textContent = 'High';
+            resilienceElement.style.color = '#00aaff';
+        } else if (avgMotivation >= 50) {
+            resilienceElement.textContent = 'Medium';
+            resilienceElement.style.color = '#ffaa00';
+        } else {
+            resilienceElement.textContent = 'Low';
+            resilienceElement.style.color = '#ff4444';
+        }
+
+        // Responsive chart redraw
+        window.addEventListener('resize', () => {
+            setTimeout(drawChart, 100);
+        });
+    </script>
+</body>
+</html>
