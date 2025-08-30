@@ -841,11 +841,323 @@
             }
         }
 
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
+        .landing-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #0a0a0a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .landing-page.hidden {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-100%);
+        }
+
+        .animated-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+        }
+
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, rgba(255, 107, 107, 0.1), rgba(0, 212, 170, 0.1));
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            right: 20%;
+            animation-delay: 7s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 14s;
+        }
+
+        .floating-element:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            top: 20%;
+            right: 10%;
+            animation-delay: 3s;
+        }
+
+        .floating-element:nth-child(5) {
+            width: 80px;
+            height: 80px;
+            bottom: 30%;
+            right: 30%;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+            25% { transform: translateY(-20px) rotate(90deg); opacity: 0.5; }
+            50% { transform: translateY(-40px) rotate(180deg); opacity: 0.7; }
+            75% { transform: translateY(-20px) rotate(270deg); opacity: 0.5; }
+        }
+
+        .grid-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 30s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .landing-content {
+            position: relative;
+            text-align: center;
+            z-index: 10;
+            max-width: 800px;
+            padding: 0 40px;
+            animation: fadeInUp 1.2s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .landing-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #ff6b6b 50%, #00d4aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from {
+                filter: drop-shadow(0 0 20px rgba(255, 107, 107, 0.3));
+            }
+            to {
+                filter: drop-shadow(0 0 30px rgba(0, 212, 170, 0.3));
+            }
+        }
+
+        .landing-subtitle {
+            font-size: 1.8rem;
+            font-weight: 400;
+            color: #888;
+            margin-bottom: 50px;
+            letter-spacing: 0.5px;
+            animation: fadeIn 1.5s ease-out 0.3s both;
         }
 
         @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .explore-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 36px;
+            background: linear-gradient(135deg, #ff6b6b, #00d4aa);
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+            animation: buttonFloat 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes buttonFloat {
+            from { transform: translateY(0px); }
+            to { transform: translateY(-5px); }
+        }
+
+        .explore-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .explore-button:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(255, 107, 107, 0.4);
+        }
+
+        .explore-button:hover::before {
+            left: 100%;
+        }
+
+        .explore-button:active {
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        .explore-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .explore-button:hover .explore-icon {
+            transform: translateX(5px);
+        }
+
+        .main-app {
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .main-app.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .pulse-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            border: 2px solid rgba(255, 107, 107, 0.3);
+            border-radius: 50%;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .pulse-ring:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            border-color: rgba(0, 212, 170, 0.2);
+            animation-delay: 1s;
+        }
+
+        .pulse-ring:nth-child(3) {
+            width: 500px;
+            height: 500px;
+            border-color: rgba(255, 107, 107, 0.1);
+            animation-delay: 2s;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .landing-title {
+                font-size: 2.5rem;
+            }
+
+            .landing-subtitle {
+                font-size: 1.3rem;
+                margin-bottom: 40px;
+            }
+
+            .landing-content {
+                padding: 0 20px;
+            }
+
+            .explore-button {
+                padding: 16px 28px;
+                font-size: 1rem;
+            }
+
+            .floating-element:nth-child(1) {
+                width: 200px;
+                height: 200px;
+            }
+
+            .floating-element:nth-child(2) {
+                width: 150px;
+                height: 150px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .landing-title {
+                font-size: 2rem;
+                line-height: 1.3;
+            }
+
+            .landing-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .explore-button {
+                padding: 14px 24px;
+                font-size: 0.95rem;
+            }
+        }
+
+        .fade-in {
+            animation: cardFadeIn 0.6s ease-out;
+        }
+
+        @keyframes cardFadeIn {
             from {
                 opacity: 0;
                 transform: translateY(20px);
@@ -894,6 +1206,32 @@
     </style>
 </head>
 <body>
+    <!-- Landing Page -->
+    <div class="landing-page" id="landingPage">
+        <div class="animated-background">
+            <div class="grid-background"></div>
+            <div class="pulse-ring"></div>
+            <div class="pulse-ring"></div>
+            <div class="pulse-ring"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+        </div>
+        
+        <div class="landing-content">
+            <h1 class="landing-title">How are new age brands evaluating <span style="white-space: nowrap;">Media agencies?</span></h1>
+            <p class="landing-subtitle">Through a Media and Tech Lens</p>
+            <button class="explore-button" id="exploreButton">
+                <span>Explore</span>
+                <span class="explore-icon">→</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div class="main-app" id="mainApp">
     <header class="header">
         <div class="header-content">
             <div class="header-left">
@@ -947,7 +1285,7 @@
     <div class="main-container">
         <section class="section" id="mediaSection">
             <div class="section-title">
-                <div class="section-icon media-icon"></div>
+                <div class="section-icon media-icon">📊</div>
                 MEDIA REQUIREMENTS
             </div>
             <div class="section-subtitle">Strategic marketing capabilities, optimization frameworks, and performance measurement</div>
@@ -960,7 +1298,7 @@
 
         <section class="section" id="techSection">
             <div class="section-title">
-                <div class="section-icon tech-icon"></div>
+                <div class="section-icon tech-icon">⚙️</div>
                 TECH REQUIREMENTS
             </div>
             <div class="section-subtitle">Technology infrastructure, automation capabilities, and data management systems</div>
@@ -973,6 +1311,8 @@
     <div class="progress-bar">
         <div class="progress-fill" id="progressFill"></div>
     </div>
+
+    </div> <!-- Close main-app -->
 
     <script>
         // Data remains the same as before
@@ -1110,7 +1450,7 @@
                 title: "Technology Solutions & Automation",
                 description: "Proprietary technology architecture and competitive advantages in automation",
                 questions: [
-                    "Please provide a detailed overview and architecture of proprietary technology that will be used for clients.",
+                    "Please provide a detailed overview and architecture of proprietary technology that will be used for this account.",
                     "What is the most valuable proprietary technology your agency has built---and why does it matter?",
                     "How does this actually create better outcomes beyond what platform tools already provide?",
                     "How is this different from what every other agency claims to have built?",
@@ -1482,7 +1822,22 @@
 
         // Initialize the application when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
-            init();
+            // Handle explore button click
+            const exploreButton = document.getElementById('exploreButton');
+            const landingPage = document.getElementById('landingPage');
+            const mainApp = document.getElementById('mainApp');
+
+            exploreButton.addEventListener('click', () => {
+                // Hide landing page with animation
+                landingPage.classList.add('hidden');
+                
+                // Show main application after landing animation
+                setTimeout(() => {
+                    mainApp.classList.add('visible');
+                    // Initialize the main app
+                    init();
+                }, 800);
+            });
             
             // Improve mobile scroll performance
             if ('ontouchstart' in window) {
@@ -1502,7 +1857,9 @@
             // Handle orientation changes
             window.addEventListener('orientationchange', () => {
                 setTimeout(() => {
-                    updateStats();
+                    if (mainApp.classList.contains('visible')) {
+                        updateStats();
+                    }
                 }, 100);
             });
         });
