@@ -512,6 +512,24 @@
             transform: none;
         }
 
+        .new-badge {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 5px rgba(255, 107, 107, 0.5); }
+            to { box-shadow: 0 0 15px rgba(255, 107, 107, 0.8); }
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -744,15 +762,15 @@
     <div class="container">
         <header class="header">
             <h1>The Exit Scope</h1>
-            <p>Customized algorithm to check whether should continue to work in the company (Jan - Aug 2025)</p>
+            <p>Customized algorithm to check whether should continue to work in the company (Jan - Sep 2025)</p>
             <div class="motivation-display">
                 <div class="pulse-indicator"></div>
-                <span class="motivation-level" id="motivationLevel">28%</span>
+                <span class="motivation-level" id="motivationLevel">22%</span>
             </div>
             <div class="health-indicator">
                 <span>Should Continue to Work Probability (%)</span>
                 <div class="health-bar">
-                    <div class="health-fill" id="healthFill" style="width: 28%; background: linear-gradient(90deg, #ff4444, #cc3333);"></div>
+                    <div class="health-fill" id="healthFill" style="width: 22%; background: linear-gradient(90deg, #ff4444, #cc3333);"></div>
                 </div>
             </div>
         </header>
@@ -769,19 +787,19 @@
 
             <div class="stats">
                 <div class="stat-card">
-                    <div class="stat-value" style="color: #00ff88;" id="positiveCount">12</div>
+                    <div class="stat-value" style="color: #00ff88;" id="positiveCount">19</div>
                     <div class="stat-label">Positive Events</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value" style="color: #ff4444;" id="negativeCount">15</div>
+                    <div class="stat-value" style="color: #ff4444;" id="negativeCount">24</div>
                     <div class="stat-label">Negative Events</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value" style="color: #ffaa00;" id="avgMotivation">58%</div>
+                    <div class="stat-value" style="color: #ffaa00;" id="avgMotivation">46%</div>
                     <div class="stat-label">Avg. Probability to Continue</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value" style="color: #00aaff;" id="resilience">Medium</div>
+                    <div class="stat-value" style="color: #ff4444;" id="resilience">Low</div>
                     <div class="stat-label">Scope for Future Growth</div>
                 </div>
             </div>
@@ -789,7 +807,7 @@
 
         <div class="add-experience-section">
             <button class="add-experience-btn" onclick="openPersonalExperienceModal()">
-                <span class="btn-icon"></span>
+                <span class="btn-icon">✨</span>
                 Add Personal Experience
             </button>
         </div>
@@ -1016,9 +1034,10 @@
             });
         });
 
-        // News data with detailed events from Jan-Aug 2025
+        // News data with detailed events from Jan-Sep 2025
         const newsData = {
             good: [
+                // Original events from previous code
                 {
                     date: "January 30, 2025",
                     title: "Mid-Term Management Plan Announced",
@@ -1062,6 +1081,13 @@
                     month: 6
                 },
                 {
+                    date: "June 17, 2025",
+                    title: "Malaysia Digital Agency of the Year",
+                    description: "Dentsu Malaysia crowned Digital Agency of the Year at MDA's D Awards 2025 with impressive 20 wins across categories.",
+                    impact: +9,
+                    month: 6
+                },
+                {
                     date: "June 20, 2025",
                     title: "Sports & Entertainment Expansion",
                     description: "Global rollout of dentsu Anime Solutions and expanded Sports Analytics division into MENA markets.",
@@ -1102,9 +1128,68 @@
                     description: "First-ever Chief Growth Officer for North America appointed to drive cross-agency growth and innovation.",
                     impact: +8,
                     month: 8
+                },
+                
+                // New September 2025 events
+                {
+                    date: "September 1, 2025",
+                    title: "ADFEST 2025 Network Excellence", 
+                    description: "Dentsu celebrates 9th time winning Network of the Year at ADFEST, marking fourth consecutive year with 43 awards across APAC.",
+                    impact: +12,
+                    month: 9,
+                    isNew: true
+                },
+                {
+                    date: "September 2, 2025",
+                    title: "One Show 2025 Global Success",
+                    description: "Dentsu Creative and dentsu Japan win 5 Gold, 3 Silver, 4 Bronze One Show Pencils across multiple markets including US, India, Portugal.",
+                    impact: +14,
+                    month: 9,
+                    isNew: true
+                },
+                {
+                    date: "September 2, 2025",
+                    title: "Performance Marketing Awards Recognition",
+                    description: "Dentsu media agencies secure 8 shortlists at 2025 Performance Marketing Awards across data utilization and programmatic advertising.",
+                    impact: +8,
+                    month: 9,
+                    isNew: true
+                },
+                {
+                    date: "September 2, 2025",
+                    title: "Campaign Media Awards Triple Win",
+                    description: "Carat and iProspect deliver outstanding performance with 3 wins plus highly commended at prestigious UK Campaign Media Awards 2025.",
+                    impact: +11,
+                    month: 9,
+                    isNew: true
+                },
+                {
+                    date: "September 2, 2025",
+                    title: "Ad Age A-List Creative Awards",
+                    description: "Dentsu Creative US honored with two major wins at 2025 Ad Age A-List & Creativity Awards for groundbreaking culturally resonant work.",
+                    impact: +9,
+                    month: 9,
+                    isNew: true
+                },
+                {
+                    date: "September 3, 2025",
+                    title: "Creative Rankings Leadership",
+                    description: "Dentsu ranks No. 1 Holding Company from Asia-Pacific region in World Creative Rankings 2025 by The Drum, showcasing regional dominance.",
+                    impact: +13,
+                    month: 9,
+                    isNew: true
+                },
+                {
+                    date: "September 3, 2025",
+                    title: "Japan Business Excellence Continues",
+                    description: "Strong domestic performance maintained with Japan achieving record net revenue and underlying operating profit for ninth consecutive quarter.",
+                    impact: +10,
+                    month: 9,
+                    isNew: true
                 }
             ],
             dark: [
+                // Original events 
                 {
                     date: "January 30, 2025",
                     title: "Olympic Scandal Appeal Filed",
@@ -1237,6 +1322,80 @@
                     description: "Industry reports highlight Dentsu's inability to retain talent, with 'constant restructuring' and poor management practices driving departures.",
                     impact: -12,
                     month: 6
+                },
+
+                // New September 2025 events - much more impactful negative news
+                {
+                    date: "September 1, 2025",
+                    title: "International Business Sale Confirmed",
+                    description: "Financial Times reports Dentsu has officially engaged Mitsubishi UFJ Morgan Stanley and Nomura Securities to find buyers for entire international business worth $4.5bn.",
+                    impact: -28,
+                    month: 9,
+                    isNew: true
+                },
+                {
+                    date: "September 1, 2025", 
+                    title: "'Natural Selection' Industry Commentary",
+                    description: "Damaging analysis describes Dentsu sale as 'natural selection' with company labeled as 'advertising dinosaur running out of time' by industry experts.",
+                    impact: -15,
+                    month: 9,
+                    isNew: true
+                },
+                {
+                    date: "September 2, 2025",
+                    title: "Complete Global Retreat Signaled",
+                    description: "Reports confirm potential full divestment of all international operations - Americas, EMEA, APAC - marking total withdrawal from global competition.",
+                    impact: -35,
+                    month: 9,
+                    isNew: true
+                },
+                {
+                    date: "September 2, 2025",
+                    title: "Cultural Integration Failures Exposed",
+                    description: "Analysis reveals fundamental 'cultural clashes' and 'parallel company' structure between Japanese HQ and international operations contributed to collapse.",
+                    impact: -18,
+                    month: 9,
+                    isNew: true
+                },
+                {
+                    date: "September 2, 2025",
+                    title: "Acquisition Strategy Catastrophe",
+                    description: "2012 Aegis acquisition for £3.2bn now viewed as strategic disaster, with experts questioning if any buyer would pay acceptable price for damaged assets.",
+                    impact: -22,
+                    month: 9,
+                    isNew: true
+                },
+                {
+                    date: "September 3, 2025",
+                    title: "Investor Confidence Plummets",
+                    description: "Japanese owners reportedly 'lost patience' with international arm after years of losses, considering cutting losses completely on global ambitions.",
+                    impact: -20,
+                    month: 9,
+                    isNew: true
+                },
+                {
+                    date: "September 3, 2025",
+                    title: "Limited Buyer Interest Concerns",
+                    description: "Industry analysts express doubts about viable buyers for Dentsu's international business, with major competitors focused on their own mergers and challenges.",
+                    impact: -16,
+                    month: 9,
+                    isNew: true
+                },
+                {
+                    date: "September 3, 2025",
+                    title: "End of Big Six Era",
+                    description: "Dentsu's retreat from global markets effectively ends its status as one of the 'Big Six' advertising holding companies, reducing industry to Big Five or Four.",
+                    impact: -25,
+                    month: 9,
+                    isNew: true
+                },
+                {
+                    date: "September 3, 2025",
+                    title: "AI Disruption Overwhelm",
+                    description: "Reports highlight Dentsu's inability to compete with tech and consulting companies' massive AI investments, being 'squeezed by rivals' in algorithmic era.",
+                    impact: -19,
+                    month: 9,
+                    isNew: true
                 }
             ]
         };
@@ -1245,15 +1404,15 @@
         let motivationData = [];
         let currentMotivation = 70; // Starting motivation
         
-        // Create timeline data
-        for (let month = 1; month <= 8; month++) {
+        // Create timeline data for 9 months
+        for (let month = 1; month <= 9; month++) {
             const goodEvents = newsData.good.filter(item => item.month === month);
             const darkEvents = newsData.dark.filter(item => item.month === month);
             
             const monthlyGoodImpact = goodEvents.reduce((sum, item) => sum + item.impact, 0);
             const monthlyDarkImpact = darkEvents.reduce((sum, item) => sum + item.impact, 0);
             
-            currentMotivation = Math.max(10, Math.min(100, currentMotivation + monthlyGoodImpact + monthlyDarkImpact));
+            currentMotivation = Math.max(5, Math.min(100, currentMotivation + monthlyGoodImpact + monthlyDarkImpact));
             
             motivationData.push({
                 month: month,
@@ -1269,7 +1428,7 @@
             
             goodContainer.innerHTML = newsData.good.map(item => `
                 <div class="news-item" onclick="highlightEvent('${item.date}', ${item.impact})">
-                    <div class="news-date">${item.date}</div>
+                    <div class="news-date">${item.date}${item.isNew ? '<span class="new-badge">New</span>' : ''}</div>
                     <div class="news-title">${item.title}</div>
                     <div class="news-description">${item.description}</div>
                     <div class="impact-badge positive-impact">+${item.impact} Motivation</div>
@@ -1278,7 +1437,7 @@
             
             darkContainer.innerHTML = newsData.dark.map(item => `
                 <div class="news-item" onclick="highlightEvent('${item.date}', ${item.impact})">
-                    <div class="news-date">${item.date}</div>
+                    <div class="news-date">${item.date}${item.isNew ? '<span class="new-badge">New</span>' : ''}</div>
                     <div class="news-title">${item.title}</div>
                     <div class="news-description">${item.description}</div>
                     <div class="impact-badge negative-impact">${item.impact} Motivation</div>
@@ -1331,7 +1490,7 @@
             }
             
             // Vertical grid lines
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'];
             for (let i = 0; i < months.length; i++) {
                 const x = padding + (chartWidth * i / (months.length - 1));
                 ctx.beginPath();
@@ -1347,7 +1506,7 @@
             }
             
             // Draw motivation line
-            ctx.strokeStyle = '#00ff88';
+            ctx.strokeStyle = '#ff4444'; // Changed to red to reflect low motivation
             ctx.lineWidth = isMobile ? 2 : 3;
             ctx.beginPath();
             
@@ -1369,10 +1528,10 @@
                 const y = padding + (chartHeight * (100 - motivationData[i].motivation) / 100);
                 
                 // Glow effect
-                ctx.shadowColor = '#00ff88';
+                ctx.shadowColor = '#ff4444';
                 ctx.shadowBlur = isMobile ? 6 : 10;
                 
-                ctx.fillStyle = '#00ff88';
+                ctx.fillStyle = '#ff4444';
                 ctx.beginPath();
                 ctx.arc(x, y, isMobile ? 4 : 6, 0, Math.PI * 2);
                 ctx.fill();
@@ -1492,6 +1651,10 @@
             @keyframes slideIn {
                 from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
                 to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            }
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
             }
         `;
         document.head.appendChild(style);
