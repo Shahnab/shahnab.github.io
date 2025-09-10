@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhancing Mental Health with Artificial Intelligence</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-black: #0a0a0a;
+            --secondary-black: #1a1a1a;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --accent: rgba(255, 255, 255, 0.15);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .nav-container {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-item {
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            position: relative;
+        }
+
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: white;
+            transition: width 0.3s ease;
+        }
+
+        .nav-item:hover::after,
+        .nav-item.active::after {
+            width: 100%;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            color: var(--text-primary);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 6rem 2rem 2rem;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #ffffff 0%, #b0b0b0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s ease infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            line-height: 1.8;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.07);
+            transform: scale(1.01);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            opacity: 0.8;
+        }
+
+        .section-content {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+            margin: 2rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 1.2rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        td {
+            padding: 1.2rem;
+            border-bottom: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        /* Button Styles */
+        .glass-button {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .glass-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .glass-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            height: 400px;
+            position: relative;
+        }
+
+        /* Company Grid */
+        .company-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .company-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .company-card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .company-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .company-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Challenge Cards */
+        .challenge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .challenge-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .challenge-card::before {
+            content: '⚠';
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            opacity: 0.3;
+        }
+
+        .challenge-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        /* Future Cards */
+        .future-grid {
+            display: grid;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .future-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .future-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+            animation: sweep 8s linear infinite;
+        }
+
+        @keyframes sweep {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Citations */
+        .citation-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .citation-item {
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            background: var(--glass-bg);
+            border-left: 3px solid var(--glass-border);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .citation-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-left-color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: rgba(10, 10, 10, 0.98);
+                flex-direction: column;
+                padding: 1rem;
+                border-top: 1px solid var(--glass-border);
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .container {
+                padding: 6rem 1rem 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .company-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .challenge-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .glass-card {
+                padding: 1.5rem;
+            }
+
+            table {
+                font-size: 0.85rem;
+            }
+
+            th, td {
+                padding: 0.8rem 0.5rem;
+            }
+        }
+
+        /* Loading Animation */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-black);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-circle {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--glass-border);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Scroll Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ffffff, #808080);
+            z-index: 1001;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loader" id="loader">
+        <div class="loader-circle"></div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Navigation -->
+    <div class="nav-container">
+        <nav>
+            <div class="nav-title">Mental Health and AI</div>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item active" onclick="scrollToSection('overview')">Overview</li>
+                <li class="nav-item" onclick="scrollToSection('applications')">Applications</li>
+                <li class="nav-item" onclick="scrollToSection('companies')">Companies</li>
+                <li class="nav-item" onclick="scrollToSection('market')">Market</li>
+                <li class="nav-item" onclick="scrollToSection('challenges')">Challenges</li>
+                <li class="nav-item" onclick="scrollToSection('future')">Future</li>
+                <li class="nav-item" onclick="scrollToSection('citations')">Sources</li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <section class="hero section" id="overview">
+            <h1>Enhancing Mental Health with Artificial Intelligence</h1>
+            <p class="hero-subtitle">
+                Exploring the transformative potential of AI in revolutionizing mental healthcare delivery, 
+                from chatbots and virtual therapists to predictive analytics and personalized interventions.
+            </p>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">$2.7B</div>
+                    <div class="stat-label">VC Funding in 2024 (38% growth)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">$11.8B</div>
+                    <div class="stat-label">Projected Market Size by 2034</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">24-25%</div>
+                    <div class="stat-label">Annual Growth Rate (CAGR)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">1B+</div>
+                    <div class="stat-label">People Affected Globally</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Current Applications Section -->
+        <section class="section" id="applications">
+            <div class="glass-card">
+                <h2 class="section-title">
+                    <svg class="section-icon" fill="white" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.5 6L12 10.5 8.5 8 11 5.5c.5-.5 1.5-.5 2 0l2.5 2.5zm-7 0L6 10.5 3.5 8 6 5.5c.5-.5 1.5-.5 2 0l.5.5zm3.5 9c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z"/>
+                    </svg>
+                    Current AI Applications in Mental Healthcare
+                </h2>
+                <div class="section-content">
+                    <p>AI technologies are revolutionizing mental health care across multiple dimensions, from initial screening to ongoing treatment and support. The integration of natural language processing, machine learning, and computer vision has enabled unprecedented capabilities in mental health interventions.</p>
+                    
+                    <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Conversational Chatbots & Virtual Therapists</h3>
+                    <p>Leading platforms like Woebot and Wysa utilize sophisticated NLP and Cognitive Behavioral Therapy (CBT) scripts to provide 24/7 mental health support. These AI-powered companions have demonstrated measurable reductions in depressive symptoms, with Wysa achieving FDA Breakthrough Device designation. The latest generation incorporates large language models (LLMs) like GPT-4, enabling more nuanced and personalized conversations that users describe as providing an "emotional sanctuary."</p>
+                    
+                    <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Emotion Recognition Systems</h3>
+                    <p>Advanced AI systems now analyze facial expressions, voice patterns, and text sentiment to assess emotional states in real-time. Companies like BlueSkeye AI employ computer vision and machine learning to map facial muscle movements for depression assessment, while Ellipsis Health analyzes voice biomarkers to detect mental health risks. These affective computing technologies enable continuous monitoring and early intervention.</p>
+                    
+                    <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Predictive Analytics & Digital Phenotyping</h3>
+                    <p>AI algorithms analyze vast amounts of digital data—from smartphone usage patterns to social media activity—to predict mental health crises before they occur. Platforms like Mindstrong use typing patterns and app usage as digital biomarkers for conditions like depression and bipolar disorder. This proactive approach enables interventions days or weeks before traditional methods would detect issues.</p>
+                    
+                    <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Virtual Reality Therapy</h3>
+                    <p>Companies like XRHealth and AppliedVR are pioneering immersive VR environments for treating anxiety, PTSD, and phobias. These platforms combine AI-driven personalization with clinician oversight, creating controlled exposure therapy scenarios that adapt to patient responses. Recent funding rounds, including XRHealth's $6M raise, signal growing confidence in VR/AR therapeutic applications.</p>
+                    
+                    <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Clinical Support Tools</h3>
+                    <p>AI is transforming the administrative burden on mental health professionals. Platforms like Eleos Health and Upheal automatically transcribe therapy sessions, generate clinical notes, and integrate with electronic health records. Upheal's recent $10M Series A funding underscores the demand for AI tools that allow therapists to focus on patient care rather than paperwork.</p>
+                </div>
+            </div>
+
+            <!-- Comparison Table -->
+            <div class="glass-card">
+                <h2 class="section-title">
+                    <svg class="section-icon" fill="white" viewBox="0 0 24 24">
+                        <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+                    </svg>
+                    Comparison of Current AI Mental Health Tools
+                </h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Application</th>
+                                <th>Technology</th>
+                                <th>Key Providers</th>
+                                <th>Primary Region</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Chatbots & Virtual Therapists</td>
+                                <td>NLP, Machine Learning, LLMs (GPT-4)</td>
+                                <td>Wysa, Youper, X2AI's Tess</td>
+                                <td>North America, Europe, Asia-Pacific</td>
+                            </tr>
+                            <tr>
+                                <td>Emotion Recognition</td>
+                                <td>Computer Vision, Speech Analytics</td>
+                                <td>BlueSkeye AI, Ellipsis Health, Affectiva</td>
+                                <td>North America, Europe</td>
+                            </tr>
+                            <tr>
+                                <td>Predictive Analytics</td>
+                                <td>ML on Digital Phenotyping</td>
+                                <td>Mindstrong, NeuroFlow, Spire Health</td>
+                                <td>North America, Global</td>
+                            </tr>
+                            <tr>
+                                <td>Virtual/AR Therapy</td>
+                                <td>VR/AR + AI Coaching</td>
+                                <td>XRHealth, AppliedVR, Limbix, Oxford VR</td>
+                                <td>North America, Europe</td>
+                            </tr>
+                            <tr>
+                                <td>Clinical Support</td>
+                                <td>NLP, Speech-to-Text</td>
+                                <td>Upheal, Eleos Health, Notable</td>
+                                <td>North America, Europe</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Generative AI Section -->
+        <section class="section">
+            <div class="glass-card">
+                <h2 class="section-title">
+                    <svg class="section-icon" fill="white" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    Generative AI in Mental Health Tools
+                </h2>
+                <div class="section-content">
+                    <p>Large language models are rapidly transforming the landscape of AI-powered mental health interventions. Unlike traditional rule-based chatbots, LLM-based companions leverage models like GPT-4 to engage in more nuanced, contextual conversations that adapt to individual user needs.</p>
+                    
+                    <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Enhanced Engagement & Personalization</h3>
+                    <p>Research indicates users perceive generative AI chatbots as "trustworthy confidants" offering genuine companionship. Participants in recent studies report experiencing an "emotional sanctuary" and receiving "insightful guidance" that feels more meaningful than scripted responses. This enhanced engagement translates to better adherence and outcomes.</p>
+                    
+                    <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Content Generation Capabilities</h3>
+                    <p>Beyond conversation, generative AI creates personalized therapeutic content on demand—from mindfulness scripts to CBT worksheets tailored to specific situations. Apps can now generate journaling prompts, coping exercises, and even personalized meditation guidance that evolves with user progress.</p>
+                    
+                    <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Adoption Trends & Demographics</h3>
+                    <p>Survey data reveals significant variations in AI therapy acceptance: 51% of individuals in India express willingness to use AI therapists (reflecting provider shortages), compared to 24% in the US. Younger generations show markedly higher openness to AI mental health support, suggesting accelerating adoption ahead.</p>
+                    
+                    <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Safety & Ethical Considerations</h3>
+                    <p>While generative AI shows promise, experts emphasize critical safeguards. These systems can simulate empathy but lack genuine understanding. The consensus among clinicians: AI should augment, not replace, human care. The WHO's multilingual S.A.R.A.H. chatbot exemplifies responsible deployment with built-in safety protocols and clear scope limitations.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emerging Innovations -->
+        <section class="section">
+            <div class="glass-card">
+                <h2 class="section-title">
+                    <svg class="section-icon" fill="white" viewBox="0 0 24 24">
+                        <path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                    </svg>
+                    Emerging Innovations and Experimental Technologies
+                </h2>
+                <div class="section-content">
+                    <p>The frontier of AI mental health extends far beyond current applications, with breakthrough innovations reshaping what's possible in psychological care and support.</p>
+                    
+                    <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Specialized AI Companions for Neurodegenerative Conditions</h3>
+                    <p>NewDays recently raised $7M to develop "Sunny," an AI conversational companion specifically designed for older adults with mild dementia. This represents a new frontier: AI tools fine-tuned for specific conditions like autism, PTSD, or ADHD, delivering targeted cognitive stimulation and reminiscence therapy with unprecedented personalization.</p>
+                    
+                    <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Multimodal Digital Phenotyping</h3>
+                    <p>Next-generation systems combine smartphones, wearables, and home sensors to create comprehensive mental health profiles. Smart headphones measuring EEG alongside audio analysis, combined with social media sentiment and GPS movement patterns, enable detection of mental health changes before conscious awareness.</p>
+                    
+                    <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Brain-Computer Interfaces (BCIs)</h3>
+                    <p>While still experimental, BCIs represent the cutting edge of AI-mental health fusion. Companies like Flow Neuroscience explore AI-optimized transcranial stimulation protocols for depression. Future applications may include real-time neurofeedback systems that adjust therapeutic interventions based on direct brain activity monitoring.</p>
+                    
+                    <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Advanced Virtual Humans</h3>
+                    <p>Beyond text-based chatbots, "digital humans" combining computer vision, voice synthesis, and LLMs create photorealistic therapy avatars. These systems will replicate facial expressions, body language, and emotional responses in real-time, offering immersive therapeutic experiences indistinguishable from human interaction.</p>
+                    
+                    <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Privacy-Preserving Federated Learning</h3>
+                    <p>Blockchain and federated learning enable secure aggregation of mental health data across institutions without compromising individual privacy. This allows AI models to learn from vast, diverse datasets while maintaining HIPAA compliance and patient confidentiality—crucial for scaling evidence-based interventions.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Companies Section -->
+        <section class="section" id="companies">
+            <div class="glass-card">
+                <h2 class="section-title">
+                    <svg class="section-icon" fill="white" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    Key Companies and Startups in the Space
+                </h2>
+                <div class="section-content">
+                    <p>The AI mental health ecosystem encompasses diverse players from venture-backed startups to established healthcare platforms, each contributing unique innovations to transform psychological care delivery.</p>
+                </div>
+                
+                <div class="company-grid">
+                    <div class="company-card">
+                        <div class="company-name">Wysa (UK/India)</div>
+                        <div class="company-description">AI chatbot with GPT-4 integration, millions of users, FDA Breakthrough Device designation for anxiety and depression support.</div>
+                    </div>
+                    <div class="company-card">
+                        <div class="company-name">XRHealth (US)</div>
+                        <div class="company-description">VR/AR therapeutic platform, recently merged with Amelia Health, raised $6M for AI-powered virtual clinician development.</div>
+                    </div>
+                    <div class="company-card">
+                        <div class="company-name">Ellipsis Health (US)</div>
+                        <div class="company-description">Voice analytics for depression screening, FDA-approved for triage, uses acoustic biomarkers to assess mental state.</div>
+                    </div>
+                    <div class="company-card">
+                        <div class="company-name">Upheal (Czech/US)</div>
+                        <div class="company-description">AI platform automating therapy notes and insights, raised $10M Series A in 2025, integrates with EHR systems.</div>
+                    </div>
+                    <div class="company-card">
+                        <div class="company-name">NewDays (US)</div>
+                        <div class="company-description">Generative AI companion for dementia therapy, raised $7M seed funding, delivers personalized cognitive stimulation.</div>
+                    </div>
+                    <div class="company-card">
+                        <div class="company-name">Mindstrong (US)</div>
+                        <div class="company-description">Digital biomarkers from smartphone usage patterns, predicts mood episodes in bipolar disorder and depression.</div>
+                    </div>
+                    <div class="company-card">
+                        <div class="company-name">Limbic AI (Germany)</div>
+                        <div class="company-description">Building clinically validated generative AI assistants for mental health clinicians, focus on evidence-based interventions.</div>
+                    </div>
+                    <div class="company-card">
+                        <div class="company-name">Oxford VR (UK)</div>
+                        <div class="company-description">VR exposure therapy for phobias and PTSD, clinically studied interventions, international pilot programs.</div>
+                    </div>
+                    <div class="company-card">
+                        <div class="company-name">BlueSkeye AI (UK)</div>
+                        <div class="company-description">Computer vision for facial expression analysis, maps muscle movements to emotions for depression assessment.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Market Size Section -->
+        <section class="section" id="market">
+            <div class="glass-card">
+                <h2 class="section-title">
+                    <svg class="section-icon" fill="white" viewBox="0 0 24 24">
+                        <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
+                    </svg>
+                    Market Size, Investment Trends, and Funding Landscape
+                </h2>
+                <div class="section-content">
+                    <p>The AI mental health market represents one of the fastest-growing segments in digital health, driven by unprecedented demand, technological advancement, and investor confidence.</p>
+                    
+                    <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Market Valuation & Growth Projections</h3>
+                    <p>Current market estimates range from $1.1-1.5 billion (2023-24), with aggressive growth trajectories pointing to $5-12 billion by 2030-34. The 24-25% compound annual growth rate (CAGR) significantly outpaces traditional healthcare sectors. North America currently dominates with 42% market share, while Asia-Pacific emerges as the fastest-growing region, driven by massive populations and government initiatives like India's Tele-MANAS program.</p>
+                    
+                    <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Investment Momentum</h3>
+                    <p>2024 marked a watershed year with $2.7 billion in venture capital flowing into digital mental health—a 38% increase over 2023. Mental health now represents 12% of all digital health funding, second only to oncology. Notable deals include Talkiatry's $130M Series C and multiple eight-figure rounds for AI-focused platforms.</p>
+                    
+                    <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Strategic Consolidation</h3>
+                    <p>Major acquisitions signal market maturation: Teladoc's $3 billion merger combining Ginger and Headspace created a mental health powerhouse. Amazon's partnership with Talkspace and healthcare insurers integrating AI tools indicate mainstream adoption. Over 400 NIH/NIMH grants now target AI mental health research, providing crucial validation.</p>
+                    
+                    <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Investment Outlook</h3>
+                    <p>While AI solutions saw a slight decline in share of mental health VC (53% to 48% in 2024), absolute funding continues growing. Investors increasingly favor companies demonstrating clinical efficacy and clear reimbursement pathways. The combination of social impact and economic returns positions AI mental health as "the next fintech" for venture capital.</p>
+                </div>
+                
+                <!-- Market Chart Placeholder
+                <div class="chart-container">
+                    <canvas id="marketChart"></canvas>
+                </div> -->
+            </div>
+        </section>
+
+        <!-- Challenges Section -->
+        <section class="section" id="challenges">
+            <div class="glass-card">
+                <h2 class="section-title">
+                    <svg class="section-icon" fill="white" viewBox="0 0 24 24">
+                        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                    </svg>
+                    Challenges and Ethical Considerations
+                </h2>
+                <div class="section-content">
+                    <p>Despite promising advances, deploying AI in mental health raises critical challenges that must be addressed to ensure safe, equitable, and effective implementation.</p>
+                </div>
+                
+                <div class="challenge-grid">
+                    <div class="challenge-card">
+                        <h3 class="challenge-title">Efficacy & Clinical Validation</h3>
+                        <p>Many AI tools lack rigorous clinical trials. Even established platforms show modest effects in studies. Users report AI responses can feel "empty" or repetitive. Continuous randomized trials and real-world evidence are essential to validate benefits and avoid hype-driven adoption.</p>
+                    </div>
+                    
+                    <div class="challenge-card">
+                        <h3 class="challenge-title">Data Privacy & Security</h3>
+                        <p>Mental health data represents the most sensitive personal information. Apps collect journals, audio recordings, and behavioral patterns. Despite HIPAA and GDPR regulations, many consumer apps operate outside healthcare frameworks, creating vulnerability to breaches that could devastate users.</p>
+                    </div>
+                    
+                    <div class="challenge-card">
+                        <h3 class="challenge-title">Algorithmic Bias & Fairness</h3>
+                        <p>AI models inherit training data biases, potentially underperforming for minorities, non-native speakers, or specific demographics. Speech recognition may misdiagnose based on accents; emotion detection may not account for cultural expressions. Proactive bias auditing and diverse development teams are crucial.</p>
+                    </div>
+                    
+                    <div class="challenge-card">
+                        <h3 class="challenge-title">Regulatory Uncertainty</h3>
+                        <p>Woebot's 2025 shutdown highlights regulatory challenges. No consistent FDA/CE framework exists for AI mental health apps. Companies navigate gray zones between wellness tools and medical devices. Europe's AI Act and FDA digital health initiatives may provide clarity, but uncertainty persists.</p>
+                    </div>
+                    
+                    <div class="challenge-card">
+                        <h3 class="challenge-title">Crisis Management & Safety</h3>
+                        <p>AI must appropriately handle suicidal ideation and mental health crises. While systems can provide crisis resources, they lack genuine understanding. Users may develop false trust in AI guidance. Human-in-the-loop oversight and clear escalation protocols are essential safeguards.</p>
+                    </div>
+                    
+                    <div class="challenge-card">
+                        <h3 class="challenge-title">Digital Divide & Accessibility</h3>
+                        <p>AI solutions risk excluding populations without technology access. Rural and low-income communities may lack devices or internet connectivity. Cultural acceptance varies significantly across regions. Solutions must address literacy levels, language barriers, and infrastructure limitations.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Future Outlook Section -->
+        <section class="section" id="future">
+            <div class="glass-card">
+                <h2 class="section-title">
+                    <svg class="section-icon" fill="white" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    Future Outlook and Opportunities
+                </h2>
+                <div class="section-content">
+                    <p>The convergence of technological advancement, market demand, and evolving care models positions AI to fundamentally transform mental healthcare delivery over the next decade.</p>
+                </div>
+                
+                <div class="future-grid">
+                    <div class="future-card">
+                        <h3 style="font-size: 1.3rem; margin-bottom: 1rem;">Personalized, Preventive Care at Scale</h3>
+                        <p>Future AI systems will continuously monitor digital biomarkers, predicting mental health changes weeks before symptoms manifest. Personalized AI coaches will proactively deliver interventions tailored to individual patterns, shifting mental healthcare from reactive treatment to preventive wellness maintenance—similar to how fitness trackers revolutionized physical health.</p>
+                    </div>
+                    
+                    <div class="future-card">
+                        <h3 style="font-size: 1.3rem; margin-bottom: 1rem;">Human-AI Collaborative Care Models</h3>
+                        <p>The optimal future combines AI efficiency with human empathy. AI will handle screening, monitoring, documentation, and routine support, while therapists focus on complex cases and human connection. Studies already show hybrid approaches yield superior outcomes. Employers and insurers will adopt AI-augmented programs that maintain professional oversight while dramatically expanding access.</p>
+                    </div>
+                    
+                    <div class="future-card">
+                        <h3 style="font-size: 1.3rem; margin-bottom: 1rem;">Seamless Healthcare Integration</h3>
+                        <p>AI mental health tools will integrate directly with electronic health records, telemedicine platforms, and primary care systems. Pre-visit AI triage will prepare clinicians with comprehensive patient insights. VR therapy data will feed treatment plans. The WHO's S.A.R.A.H. bot exemplifies how AI guidance will embed in public health infrastructure globally.</p>
+                    </div>
+                    
+                    <div class="future-card">
+                        <h3 style="font-size: 1.3rem; margin-bottom: 1rem;">Democratized Global Access</h3>
+                        <p>In regions with severe therapist shortages, AI will become primary mental health support for millions. Multilingual, culturally-adapted AI therapists will reduce stigma through anonymous, always-available care. Young digital natives will normalize AI mental health support, accelerating adoption. India and China will lead innovation, with 51% already expressing willingness to use AI therapists.</p>
+                    </div>
+                    
+                    <div class="future-card">
+                        <h3 style="font-size: 1.3rem; margin-bottom: 1rem;">Convergent Technology Synergies</h3>
+                        <p>5G will enable real-time emotional AI during video therapy. Augmented reality will create calming environments on demand. Genomic data will personalize treatment protocols. Advanced LLMs will model individual psychology with unprecedented accuracy. These converging technologies will create mental health interventions more powerful than anything currently imaginable.</p>
+                    </div>
+                    
+                    <div class="future-card">
+                        <h3 style="font-size: 1.3rem; margin-bottom: 1rem;">New Economic Models</h3>
+                        <p>Insurance reimbursement for AI therapy will become standard, following digital diabetes program precedents. Subscription models will evolve into employer benefits packages. Value-based care contracts will reward AI platforms for measurably improving population mental health. Mental health tech positions as "the next fintech"—ripe for disruption with massive returns.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Citations Section -->
+        <section class="section" id="citations">
+            <div class="glass-card">
+                <h2 class="section-title">
+                    <svg class="section-icon" fill="white" viewBox="0 0 24 24">
+                        <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                    </svg>
+                    Citation Sources
+                </h2>
+                <div class="section-content">
+                    <p>This report synthesizes insights from peer-reviewed research, industry analyses, and company reports to ensure accuracy and currency.</p>
+                </div>
+                
+                <ul class="citation-list">
+                    <li class="citation-item">Galen Growth (2024). Mental Health's Investment Resurgence: A Market Ripe for Innovation.</li>
+                    <li class="citation-item">Grand View Research (2030). AI In Mental Health Market Size, Share, Growth Report.</li>
+                    <li class="citation-item">Global Newswire (2034). AI in Mental Health Market Size Set to Grow USD 11.84 Billion.</li>
+                    <li class="citation-item">PMC (2024). A Scoping Review of AI-Driven Digital Interventions in Mental Health Care.</li>
+                    <li class="citation-item">Nature Mental Health Research (2024). Experiences of generative AI chatbots for mental health.</li>
+                    <li class="citation-item">Menlo Ventures (2024). The State of Generative AI in the Enterprise.</li>
+                    <li class="citation-item">World Economic Forum (2024). How AI could help improve access to mental health treatment.</li>
+                    <li class="citation-item">MedCity News (2024). XRHealth Raises $6M for At-Home VR Therapy.</li>
+                    <li class="citation-item">Telehealth.org (2025). AI Psychotherapy Shutdown: What Woebot's Exit Signals.</li>
+                    <li class="citation-item">EIT Health (2024). 5 mental health start-ups transforming healthcare.</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Page Load Animation
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 1000);
+        });
+
+        // Scroll Progress Bar
+        window.addEventListener('scroll', function() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+        });
+
+        // Navigation Active State
+        const sections = document.querySelectorAll('.section');
+        const navItems = document.querySelectorAll('.nav-item');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.textContent.toLowerCase().includes(current)) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Smooth Scroll
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+            // Close mobile menu if open
+            document.getElementById('navMenu').classList.remove('active');
+        }
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+        }
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationDelay = '0.2s';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.glass-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Add hover effects to stat cards
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.02)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Add click animation to glass buttons
+        document.querySelectorAll('.glass-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+    </script>
+</body>
+</html>
