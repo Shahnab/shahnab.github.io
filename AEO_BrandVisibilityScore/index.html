@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AEO: Understanding Brand Visibility Score Framework</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            background: linear-gradient(45deg, #ffffff, #cccccc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            font-weight: 300;
+        }
+
+        .simulation-section {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
+            height: 600px;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .panel-header i {
+            font-size: 1.2rem;
+            color: #ffffff;
+        }
+
+        .panel-header h3 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .chat-window {
+            height: calc(100% - 80px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-input {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 15px;
+            color: #ffffff;
+            font-size: 14px;
+            resize: none;
+            height: 120px;
+            margin-bottom: 15px;
+            font-family: inherit;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-button {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 12px 24px;
+            color: #ffffff;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+        }
+
+        .glass-button:active {
+            transform: translateY(0);
+        }
+
+        .glass-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .glass-button:hover::before {
+            left: 100%;
+        }
+
+        .response-content {
+            height: calc(100% - 120px);
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .response-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .response-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .response-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        .analyze-btn-container {
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .response-text {
+            font-size: 14px;
+            line-height: 1.6;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .response-text h2 {
+            color: #ffffff;
+            margin: 20px 0 10px 0;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .response-text h3 {
+            color: #ffffff;
+            margin: 15px 0 8px 0;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .response-text ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .response-text li {
+            margin: 5px 0;
+            opacity: 0.9;
+        }
+
+        .response-text strong {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .brand-scores {
+            display: none;
+            background: #111;
+            border-radius: 12px;
+            padding: 10px 0;
+            box-shadow: 0 2px 16px 0 rgba(0,0,0,0.13);
+        }
+
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 18px 14px 18px;
+            margin: 14px 0;
+            background: #111;
+            border-radius: 10px;
+            border-left: 5px solid #fff;
+            box-shadow: 0 2px 12px 0 rgba(0,0,0,0.13);
+            transition: all 0.3s cubic-bezier(.4,2,.6,1);
+            position: relative;
+        }
+
+        .score-item:hover {
+            background: #181818;
+            border-left: 5px solid #e0e0e0;
+            transform: scale(1.03) translateX(8px);
+            box-shadow: 0 6px 24px 0 rgba(0,0,0,0.18);
+        }
+
+        .brand-name {
+            font-weight: 700;
+            font-size: 15px;
+            color: #fff;
+            letter-spacing: 0.5px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+        }
+
+        .score-value {
+            font-weight: 900;
+            font-size: 18px;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.22);
+        }
+
+        .explanation-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .explanation-content h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .explanation-content h3 {
+            font-size: 1.3rem;
+            margin: 25px 0 15px 0;
+            font-weight: 500;
+            color: #ffffff;
+        }
+
+        .explanation-content ul {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .explanation-content li {
+            margin: 8px 0;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .calculation-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .brand-selector {
+            margin-bottom: 25px;
+        }
+
+        .brand-selector select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .brand-selector select option {
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+
+        .calculation-details {
+            display: none;
+        }
+
+        .metric {
+            background: #111;
+            border-radius: 10px;
+            padding: 18px 18px 14px 18px;
+            margin: 18px 0;
+            border-left: 5px solid #fff;
+            box-shadow: 0 2px 12px 0 rgba(0,0,0,0.13);
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .metric-name {
+            font-weight: 700;
+            font-size: 15px;
+            color: #fff;
+            letter-spacing: 0.5px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+        }
+
+        .metric-score {
+            font-weight: 900;
+            font-size: 18px;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.22);
+        }
+
+        .metric-description {
+            color: #e0e0e0;
+            font-size: 13px;
+            opacity: 1;
+            line-height: 1.5;
+        }
+        }
+
+        .metric-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .metric-score {
+            font-weight: 700;
+            font-size: 16px;
+            color: #ffffff;
+        }
+
+        .metric-description {
+            font-size: 13px;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        .final-calculation {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .formula {
+            font-family: 'Courier New', monospace;
+            background: #111;
+            color: #fff;
+            padding: 18px 18px 14px 18px;
+            border-radius: 10px;
+            margin: 18px 0;
+            font-size: 1.1rem;
+            font-weight: bold;
+            box-shadow: 0 2px 16px 0 rgba(0,0,0,0.13);
+            border-left: 5px solid #fff;
+            border-right: none;
+            border-top: none;
+            border-bottom: none;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+        }
+
+        @media (max-width: 1024px) {
+            .simulation-section {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .panel {
+                height: 400px;
+            }
+            
+            .explanation-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .panel {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AEO: Understanding Brand Visibility Score Framework</h1>
+            <p>Module to understand how <strong>brand visibility scores</strong> are calculated</p>
+        </div>
+
+        <div class="simulation-section">
+            <!-- Chat Window -->
+            <div class="panel">
+                <div class="panel-header">
+                    <i class="fas fa-comments"></i>
+                    <h3>User Chat Window</h3>
+                </div>
+                <div class="chat-window">
+                    <textarea class="chat-input" readonly>What minimum balance is usually required for private or priority banking?</textarea>
+                    <button class="glass-button" onclick="generateResponse()">
+                        <i class="fas fa-paper-plane"></i> Send Query
+                    </button>
+                </div>
+            </div>
+
+            <!-- LLM Response -->
+            <div class="panel">
+                <div class="panel-header">
+                    <i class="fas fa-robot"></i>
+                    <h3>LLM Response (Model: ChatGPT)</h3>
+                </div>
+                <div class="analyze-btn-container">
+                    <button class="glass-button" id="analyzeBtn" onclick="analyzeResponse()" style="display: none;">
+                        <i class="fas fa-chart-bar"></i> Analyze Response
+                    </button>
+                </div>
+                <div class="response-content" id="responseContent">
+                    <div class="loading" id="loadingResponse">
+                        <div class="spinner"></div>
+                        <p>Generating response...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Brand Visibility Scoring -->
+            <div class="panel">
+                <div class="panel-header">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Brand Visibility Scores</h3>
+                </div>
+                <div class="response-content">
+                    <div class="loading" id="loadingScores">
+                        <div class="spinner"></div>
+                        <p>Analyzing brand visibility...</p>
+                    </div>
+                    <div class="brand-scores" id="brandScores">
+                        <div class="score-item">
+                            <span class="brand-name">HSBC</span>
+                            <span class="score-value">85.25</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="brand-name">Vietcombank</span>
+                            <span class="score-value">80.50</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="brand-name">VietinBank</span>
+                            <span class="score-value">72.30</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="brand-name">BIDV</span>
+                            <span class="score-value">68.40</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="brand-name">VPBank</span>
+                            <span class="score-value">60.75</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="brand-name">Techcombank</span>
+                            <span class="score-value">55.20</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="brand-name">SHB</span>
+                            <span class="score-value">50.10</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="brand-name">VIB</span>
+                            <span class="score-value">45.60</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="brand-name">Hong Leong Bank</span>
+                            <span class="score-value">30.45</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="explanation-section">
+            <!-- Explanation Content -->
+            <div class="explanation-content">
+                <h2>What is Brand Visibility Score?</h2>
+                
+                <h3>Explain the Brand Visibility Score</h3>
+                <ul>
+                    <li>A <strong> Visibility Score</strong> is a single number from 0 to 100 that tells you how prominent a brand is inside a piece of text compared with other brands.</li>
+                    <li><strong>Need for Brand Visibility Score:</strong> They turn messy text into a quick, comparable number so marketers and managers can see who stands out at a glance.</li>
+                    <li><strong>Calculating the score:</strong> One number summarizes three key metrics: mention strength, clarity & detail, and comparative prominence.</li>
+                </ul>
+
+                <h3>Calculation Methodology</h3>
+                <p>The brand visibility score is calculated using three key signals:</p>
+                <ul>
+                    <li><strong>Mention Strength (50% weight):</strong> How often and how prominently the brand is named in the text</li>
+                    <li><strong>Clarity & Detail (30% weight):</strong> Whether the text provides specific numbers, clear rules, or only vague statements</li>
+                    <li><strong>Comparative Prominence (20% weight):</strong> How the text compares this brand to others or positions it as a leader/laggard</li>
+                </ul>
+
+                <div class="formula">
+                    Visibility Score = 0.5 × Mention Strength + 0.3 × Clarity & Detail + 0.2 × Comparative Prominence
+                </div>
+
+                
+            </div>
+
+            <!-- Calculation Section -->
+            <div class="calculation-section">
+                <h2>Brand Visibility Score Calculation</h2>
+                <p>Calculation on how the Brand visibility score is calculated for the selected brand</p>
+                <br><br>
+                
+                <div class="brand-selector">
+                    <select id="brandSelect" onchange="showCalculation()">
+                        <option value="">Select a brand to see detailed calculation</option>
+                        <option value="HSBC">HSBC (85.25)</option>
+                        <option value="Vietcombank">Vietcombank (80.50)</option>
+                        <option value="VietinBank">VietinBank (72.30)</option>
+                        <option value="BIDV">BIDV (68.40)</option>
+                        <option value="VPBank">VPBank (60.75)</option>
+                        <option value="Techcombank">Techcombank (55.20)</option>
+                        <option value="SHB">SHB (50.10)</option>
+                        <option value="VIB">VIB (45.60)</option>
+                        <option value="Hong Leong Bank">Hong Leong Bank (30.45)</option>
+                    </select>
+                </div>
+
+                <div class="calculation-details" id="calculationDetails">
+                    <div id="mentionMetric" class="metric">
+                        <div class="metric-header">
+                            <span class="metric-name">Mention Strength</span>
+                            <span class="metric-score" id="mentionScore">0</span>
+                        </div>
+                        <div class="metric-description" id="mentionDesc">
+                            Analysis of how frequently and prominently the brand is mentioned
+                        </div>
+                    </div>
+
+                    <div id="clarityMetric" class="metric">
+                        <div class="metric-header">
+                            <span class="metric-name">Clarity & Quantitative Detail</span>
+                            <span class="metric-score" id="clarityScore">0</span>
+                        </div>
+                        <div class="metric-description" id="clarityDesc">
+                            Assessment of specific information, numbers, and detailed explanations
+                        </div>
+                    </div>
+
+                    <div id="comparisonMetric" class="metric">
+                        <div class="metric-header">
+                            <span class="metric-name">Comparative Prominence</span>
+                            <span class="metric-score" id="comparisonScore">0</span>
+                        </div>
+                        <div class="metric-description" id="comparisonDesc">
+                            Evaluation of how the brand is positioned relative to competitors
+                        </div>
+                    </div>
+
+                    <div class="final-calculation">
+                        <h4>Final Calculation:</h4>
+                        <div class="formula" id="calculationFormula">
+                            Visibility Score = 0.5 × 0 + 0.3 × 0 + 0.2 × 0 = 0.00
+                        </div>
+                        <div style="text-align: center; margin-top: 15px;">
+                            <strong>Final Score: <span id="finalScore">0.00</span></strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const brandData = {
+            "HSBC": {
+                score: 85.25,
+                mention: 90,
+                clarity: 85,
+                comparison: 75,
+                description: {
+                    mention: "HSBC Premier is prominently featured with detailed qualification criteria including TRB requirements, salary conditions, and mortgage options. Multiple mentions throughout the text.",
+                    clarity: "Provides specific numbers: VND 1 billion TRB, VND 100 million salary requirement, VND 5 billion mortgage with 60% property value ratio. Clear conditions and trial periods specified.",
+                    comparison: "Positioned as a major international bank with comprehensive requirements. Featured in summary table and ranked high in visibility scoring."
+                }
+            },
+            "Vietcombank": {
+                score: 80.50,
+                mention: 85,
+                clarity: 80,
+                comparison: 70,
+                description: {
+                    mention: "Extensively covered with multiple tier descriptions (Gold, Diamond, Diamond Elite). Featured prominently in the banking landscape analysis.",
+                    clarity: "Detailed tier requirements specified: 5 billion, 20 billion, and 50 billion VND thresholds. Complex scoring system with composite points explained.",
+                    comparison: "Highlighted as having the highest VVIP requirement (50 billion VND). Strong positioning in the premium banking segment."
+                }
+            },
+            "VietinBank": {
+                score: 72.30,
+                mention: 75,
+                clarity: 75,
+                comparison: 65,
+                description: {
+                    mention: "Well-represented with four distinct tiers (Silver through Diamond). Consistent mentions across different service categories.",
+                    clarity: "Clear tier structure with specific amounts: 500M-1B (Silver), 1-3B (Gold), 3-5B (Platinum), 5B+ (Diamond). Multiple qualifying criteria explained.",
+                    comparison: "Compared with other major Vietnamese banks. Diamond tier requirement matches several competitors at 5 billion VND threshold."
+                }
+            },
+            "BIDV": {
+                score: 68.40,
+                mention: 70,
+                clarity: 70,
+                comparison: 62,
+                description: {
+                    mention: "Featured with VIP status explanation and promotional campaigns. Regular mentions in tier comparisons and promotional context.",
+                    clarity: "Specific quarterly balance requirements (1 billion VND for VIP). Promotional offer clearly detailed (200 million VND temporary threshold).",
+                    comparison: "Positioned among major state-owned banks. Notable for promotional campaigns and flexible tier requirements."
+                }
+            },
+            "VPBank": {
+                score: 60.75,
+                mention: 65,
+                clarity: 60,
+                comparison: 55,
+                description: {
+                    mention: "Covered with three tiers (Pre-Diamond, Diamond, Diamond Elite). Moderate presence in the banking analysis.",
+                    clarity: "Detailed asset and payment account balance requirements. Specific thresholds: 500M-1B, 1-5B, 5B+ for different tiers.",
+                    comparison: "Positioned as a private bank with competitive tier structure. Lower profile compared to state-owned banks."
+                }
+            },
+            "Techcombank": {
+                score: 55.20,
+                mention: 60,
+                clarity: 55,
+                comparison: 45,
+                description: {
+                    mention: "Featured with Priority banking service description. Mentioned in context of modern banking solutions.",
+                    clarity: "Clear qualification criteria: 1 billion VND asset balance or 2 billion VND financial relationship value. 3-month averaging period specified.",
+                    comparison: "Positioned as a technology-forward bank with competitive priority banking requirements."
+                }
+            },
+            "SHB": {
+                score: 50.10,
+                mention: 50,
+                clarity: 52,
+                comparison: 45,
+                description: {
+                    mention: "Basic coverage with Super Premier and Premier tiers mentioned. Limited detailed discussion compared to larger banks.",
+                    clarity: "Specific requirements listed: 30 billion VND for Super Premier, various qualifying criteria including deposits, loans, and fees.",
+                    comparison: "Lower prominence compared to major banks. Positioned in the middle tier of banking options."
+                }
+            },
+            "VIB": {
+                score: 45.60,
+                mention: 45,
+                clarity: 48,
+                comparison: 42,
+                description: {
+                    mention: "Brief mention with two-tier system (Priority and Premier). Limited coverage in the overall analysis.",
+                    clarity: "Clear balance requirements: 200 million VND for Priority, 600 million VND for Premier. 6-month averaging period specified.",
+                    comparison: "Positioned as a smaller international bank with basic tier offerings."
+                }
+            },
+            "Hong Leong Bank": {
+                score: 30.45,
+                mention: 30,
+                clarity: 35,
+                comparison: 25,
+                description: {
+                    mention: "Minimal coverage with basic Priority Banking mention. Least discussed bank in the analysis.",
+                    clarity: "Simple requirement stated: 1 billion VND deposit balance for Priority Banking qualification.",
+                    comparison: "Positioned as a foreign bank with minimal market presence. Limited competitive positioning discussed."
+                }
+            }
+        };
+
+        function generateResponse() {
+            const responseContent = document.getElementById('responseContent');
+            const loadingResponse = document.getElementById('loadingResponse');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            
+            loadingResponse.style.display = 'block';
+            
+            setTimeout(() => {
+                loadingResponse.style.display = 'none';
+                analyzeBtn.style.display = 'inline-block';
+                
+                responseContent.innerHTML = `
+                    
+                    <div class="response-text">
+                        <p>Here's a breakdown of the <strong>typical minimum balance or assets required for private or priority banking</strong> tiers across major banks in Vietnam:</p>
+                        <hr style="margin: 20px 0; border: none; border-top: 1px solid rgba(255,255,255,0.2);">
+                        
+                        <h2>Overview by Bank</h2>
+                        
+                        <h3><strong>HSBC Premier</strong></h3>
+                        <p>To qualify, you must meet <strong>one</strong> of the following conditions:</p>
+                        <ul>
+                            <li>Maintain a <strong>minimum average monthly Total Relationship Balance (TRB)</strong> of <strong>VND 1 billion</strong> (or equivalent in foreign currency).</li>
+                            <li>Receive a <strong>monthly salary of VND 100 million</strong> into your HSBC account.</li>
+                            <li>Hold a <strong>mortgage loan</strong> with an outstanding balance of <strong>VND 5 billion</strong>, with loan amount under 60% of property value—and salary credited into HSBC (valid as a 12-month trial period, after which the TRB requirement applies) (<a href="https://www.hsbc.com.vn/en-vn/premier/?utm_source=chatgpt.com" target="_blank" style="color: #ffffff; text-decoration: underline;">HSBC Vietnam</a>).</li>
+                        </ul>
+                        <hr style="margin: 15px 0; border: none; border-top: 1px solid rgba(255,255,255,0.1);">
+                        
+                        <h3><strong>Vietcombank</strong></h3>
+                        <p>They offer multiple tiers based on deposits or loans:</p>
+                        <ul>
+                            <li><strong>Gold tier</strong>: Deposits or loans ≥ <strong>VND 5 billion</strong>, or composite score ≥ 25 points with deposits ≥ VND 2 billion or loans ≥ VND 3 billion.</li>
+                            <li><strong>Diamond tier</strong>: Deposits or loans ≥ <strong>VND 20 billion</strong>, or score ≥ 100 points with deposits ≥ VND 2 billion or loans ≥ VND 10 billion.</li>
+                            <li><strong>Diamond Elite tier</strong>: Deposits or loans ≥ <strong>VND 50 billion</strong>, or score ≥ 250 points with deposits ≥ VND 5 billion or loans ≥ VND 10 billion (<a href="https://xe.today/2024/08/27/how-much-money-do-you-need-in-your-account-to-become-a-bank-vip-vietcombanks-vvip-status-requires-a-balance-of-50-billion-vnd-while-vietinbanks-diamond-tier-asks-for-deposits-of-at-least-5-bil/?utm_source=chatgpt.com" target="_blank" style="color: #ffffff; text-decoration: underline;">Xe Today</a>).</li>
+                        </ul>
+                        <hr style="margin: 15px 0; border: none; border-top: 1px solid rgba(255,255,255,0.1);">
+                        
+                        <h3><strong>VietinBank</strong></h3>
+                        <p>Minimum requirements vary by tier (based on 3-month averages):</p>
+                        <ul>
+                            <li><strong>Silver</strong>: Deposits 500 million – &lt; 1 billion VND; loans 1–2 billion VND; card spending 150–500 million VND.</li>
+                            <li><strong>Gold</strong>: Deposits 1–3 billion VND; loans 2–3 billion VND; card spending 500 million – &lt; 1 billion VND.</li>
+                            <li><strong>Platinum</strong>: Deposits 3–5 billion VND; loans 3–5 billion VND; card spending 1–2 billion VND.</li>
+                            <li><strong>Diamond</strong>: Deposits, loans, and card spending all <strong>≥ 5 billion VND</strong> (<a href="https://xe.today/2024/08/27/how-much-money-do-you-need-in-your-account-to-become-a-bank-vip-vietcombanks-vvip-status-requires-a-balance-of-50-billion-vnd-while-vietinbanks-diamond-tier-asks-for-deposits-of-at-least-5-bil/?utm_source=chatgpt.com" target="_blank" style="color: #ffffff; text-decoration: underline;">Xe Today</a>).</li>
+                        </ul>
+                        <hr style="margin: 15px 0; border: none; border-top: 1px solid rgba(255,255,255,0.1);">
+                        
+                        <h3><strong>BIDV (Bank for Investment & Development of Vietnam)</strong></h3>
+                        <ul>
+                            <li><strong>VIP (Premier) status</strong>: Quarterly average balance ≥ <strong>VND 1 billion</strong> qualifies you for VIP.</li>
+                            <li>Tiered categorization:
+                                <ul>
+                                    <li><strong>Gold</strong>: 1 – &lt; 3 billion VND</li>
+                                    <li><strong>Platinum</strong>: 3 – &lt; 10 billion VND</li>
+                                    <li><strong>Diamond</strong>: ≥ 10 billion VND</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <p>(<a href="https://xe.today/2024/08/27/how-much-money-do-you-need-in-your-account-to-become-a-bank-vip-vietcombanks-vvip-status-requires-a-balance-of-50-billion-vnd-while-vietinbanks-diamond-tier-asks-for-deposits-of-at-least-5-bil/?utm_source=chatgpt.com" target="_blank" style="color: #ffffff; text-decoration: underline;">Xe Today</a>, <a href="https://bidv.com.vn/bidv_en/tin-tuc/tin-ve-bidv/bidv-trien-khai-nang-hang-uu-tien-dac-quyen-dang-cap-danh-cho-khach-hang-ca-nhan?utm_source=chatgpt.com" target="_blank" style="color: #ffffff; text-decoration: underline;">BIDV</a>).</p>
+                        <ul>
+                            <li>As of mid-2025, a promotional offer allows upgrade to Premier with just <strong>VND 200 million in savings or current account balance</strong>—though this is a temporary campaign until end-2025 (<a href="https://bidv.com.vn/bidv_en/tin-tuc/tin-ve-bidv/bidv-trien-khai-nang-hang-uu-tien-dac-quyen-dang-cap-danh-cho-khach-hang-ca-nhan?utm_source=chatgpt.com" target="_blank" style="color: #ffffff; text-decoration: underline;">BIDV</a>).</li>
+                        </ul>
+                        <hr style="margin: 15px 0; border: none; border-top: 1px solid rgba(255,255,255,0.1);">
+                        
+                        <h3><strong>VPBank</strong></h3>
+                        <ul>
+                            <li><strong>Pre-Diamond</strong>:
+                                <ul>
+                                    <li>Total average monthly assets: 500 million – &lt; 1 billion VND</li>
+                                    <li>Avg monthly payment-account balance: 80 million – &lt; 150 million VND</li>
+                                </ul>
+                            </li>
+                            <li><strong>Diamond</strong>:
+                                <ul>
+                                    <li>Assets: 1 – &lt; 5 billion VND</li>
+                                    <li>Payment-account balance: 150 million – &lt; 500 million VND</li>
+                                </ul>
+                            </li>
+                            <li><strong>Diamond Elite</strong>:
+                                <ul>
+                                    <li>Assets: ≥ 5 billion VND</li>
+                                    <li>Payment-account balance: ≥ 500 million VND</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <p>(<a href="https://xe.today/2024/08/27/how-much-money-do-you-need-in-your-account-to-become-a-bank-vip-vietcombanks-vvip-status-requires-a-balance-of-50-billion-vnd-while-vietinbanks-diamond-tier-asks-for-deposits-of-at-least-5-bil/?utm_source=chatgpt.com" target="_blank" style="color: #ffffff; text-decoration: underline;">Xe Today</a>).</p>
+                        <hr style="margin: 15px 0; border: none; border-top: 1px solid rgba(255,255,255,0.1);">
+                        
+                        <h3><strong>Techcombank Priority</strong></h3>
+                        <p>Qualification requires <strong>one</strong> of the following:</p>
+                        <ul>
+                            <li><strong>Average asset balance</strong> ≥ <strong>VND 1 billion</strong> over the past 3 months (inclusive of payment accounts, savings, bonds, fund certificates).</li>
+                            <li>Or total "financial relationship value" ≥ <strong>VND 2 billion</strong> (this includes asset value plus outstanding real estate or auto loans), plus meeting payment-account average balance requirements (<a href="https://techcombank.com/en/priority?utm_source=chatgpt.com" target="_blank" style="color: #ffffff; text-decoration: underline;">Techcombank</a>).</li>
+                        </ul>
+                        <hr style="margin: 15px 0; border: none; border-top: 1px solid rgba(255,255,255,0.1);">
+                        
+                        <h3><strong>SHB VIP Banking</strong></h3>
+                        <ul>
+                            <li><strong>Super Premier</strong>:
+                                <ul>
+                                    <li>Deposits (term) average ≥ <strong>VND 30 billion</strong>, or</li>
+                                    <li>Loan balance avg ≥ 20 billion VND, or</li>
+                                    <li>Demand deposit avg ≥ 500 million VND, or</li>
+                                    <li>Service fee contributions ≥ VND 80 million over past 12 months.</li>
+                                </ul>
+                            </li>
+                            <li><strong>Premier</strong>:
+                                <ul>
+                                    <li>Term deposits avg ≥ 1 billion VND, or</li>
+                                    <li>Loan avg ≥ 3 billion VND, or</li>
+                                    <li>Demand deposits avg ≥ 100 million VND, or</li>
+                                    <li>Service fees ≥ 40 million VND over 12 months.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <hr style="margin: 15px 0; border: none; border-top: 1px solid rgba(255,255,255,0.1);">
+                        
+                        <h3><strong>VIB (Vietnam International Bank)</strong></h3>
+                        <p>Two tiers based on 6-month average balances:</p>
+                        <ul>
+                            <li><strong>Priority</strong>:
+                                <ul>
+                                    <li>Current/Super Account avg ≥ <strong>VND 200 million</strong>, or</li>
+                                    <li>Term Deposit avg ≥ <strong>VND 1 billion</strong></li>
+                                </ul>
+                            </li>
+                            <li><strong>Premier</strong>:
+                                <ul>
+                                    <li>Current/Super Account avg ≥ <strong>VND 600 million</strong>, or</li>
+                                    <li>Term Deposit avg ≥ <strong>VND 5 billion</strong></li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <p>(<a href="https://www.vib.com.vn/i/en/khach-hang-uu-tien?utm_source=chatgpt.com" target="_blank" style="color: #ffffff; text-decoration: underline;">VIB</a>).</p>
+                        <hr style="margin: 15px 0; border: none; border-top: 1px solid rgba(255,255,255,0.1);">
+                        
+                        <h3><strong>Hong Leong Bank Vietnam</strong></h3>
+                        <ul>
+                            <li><strong>Priority Banking</strong> qualification: Total deposit balance ≥ <strong>VND 1 billion</strong> (or equivalent foreign currency) (<a href="https://www.hlbank.com.vn/en/priority-banking/exclusive-privileges.html?utm_source=chatgpt.com" target="_blank" style="color: #ffffff; text-decoration: underline;">Hong Leong Bank</a>).</li>
+                        </ul>
+                        <hr style="margin: 20px 0; border: none; border-top: 1px solid rgba(255,255,255,0.2);">
+                        
+                        <h2>Summary Table</h2>
+                        <div style="overflow-x: auto; margin: 20px 0;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                                <thead>
+                                    <tr style="background: rgba(255,255,255,0.1);">
+                                        <th style="border: 1px solid rgba(255,255,255,0.2); padding: 10px; text-align: left;">Bank</th>
+                                        <th style="border: 1px solid rgba(255,255,255,0.2); padding: 10px; text-align: left;">Entry Tier</th>
+                                        <th style="border: 1px solid rgba(255,255,255,0.2); padding: 10px; text-align: left;">Minimum Balance / Asset Requirement</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;"><strong>HSBC Premier</strong></td>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;">Premier</td>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;">≥ 1 billion VND TRB, or VND 100m salary, or VND 5 b loan</td>
+                                    </tr>
+                                    <tr style="background: rgba(255,255,255,0.02);">
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;"><strong>Vietcombank</strong></td>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;">Gold / Diamond / Elite</td>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;">From 5 b to 50 b+ VND depending on tier</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;"><strong>VietinBank</strong></td>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;">Silver → Diamond</td>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;">From 500 m to 5 b+ VND depending on tier</td>
+                                    </tr>
+                                    <tr style="background: rgba(255,255,255,0.02);">
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;"><strong>BIDV</strong></td>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;">VIP tiers</td>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;">≥ 1 billion VND (Gold to Diamond scale); promo at 200 m</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;"><strong>VPBank</strong></td>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;">Pre-Diamond → Elite</td>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;">From 80 m to 5 b+ VND in assets/account</td>
+                                    </tr>
+                                    <tr style="background: rgba(255,255,255,0.02);">
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;"><strong>Techcombank</strong></td>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;">Priority</td>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;">≥ 1 billion VND in assets or ≥2 b financial relationship</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;"><strong>SHB</strong></td>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;">Premier / Super Premier</td>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;">From 100 m to 30 b+ VND depending on tier</td>
+                                    </tr>
+                                    <tr style="background: rgba(255,255,255,0.02);">
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;"><strong>VIB</strong></td>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;">Priority / Premier</td>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;">From 200 m to 5 b VND depending on tier</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;"><strong>Hong Leong</strong></td>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;">Priority</td>
+                                        <td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;">≥ 1 billion VND deposit balance</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <hr style="margin: 20px 0; border: none; border-top: 1px solid rgba(255,255,255,0.2);">
+                        
+                        <h2>Additional Notes</h2>
+                        <ul>
+                            <li><strong>Promotions can temporarily lower thresholds</strong>—e.g., BIDV's 200 million VND promotion runs through end-2025 (<a href="https://bidv.com.vn/bidv_en/tin-tuc/tin-ve-bidv/bidv-trien-khai-nang-hang-uu-tien-dac-quyen-dang-cap-danh-cho-khach-hang-ca-nhan?utm_source=chatgpt.com" target="_blank" style="color: #ffffff; text-decoration: underline;">BIDV</a>).</li>
+                            <li><strong>Eligibility may include broader relationship criteria</strong> like loans, spending, and fees—not just deposits (e.g., Vietcombank's tiering) (<a href="https://xe.today/2024/08/27/how-much-money-do-you-need-in-your-account-to-become-a-bank-vip-vietcombanks-vvip-status-requires-a-balance-of-50-billion-vnd-while-vietinbanks-diamond-tier-asks-for-deposits-of-at-least-5-bil/?utm_source=chatgpt.com" target="_blank" style="color: #ffffff; text-decoration: underline;">Xe Today</a>).</li>
+                        </ul>
+                        <hr style="margin: 20px 0; border: none; border-top: 1px solid rgba(255,255,255,0.2);">
+                        
+                        <h3>TL;DR</h3>
+                        <p>Most major Vietnamese banks require <strong>entry-level private or priority banking balances between ~VND 1 billion and VND 5 billion</strong> (~USD 40k–200k), with higher tiers demanding <strong>VND 10–50 billion+</strong>. Exceptions or tier reductions can apply depending on promotional campaigns or broader relationship metrics.</p>
+                        
+                        <p>If you'd like, I can dive deeper into any specific bank or tier—just let me know!</p>
+                        
+                        <hr style="margin: 20px 0; border: none; border-top: 1px solid rgba(255,255,255,0.2);">
+                        
+                        <h3>References</h3>
+                        <div style="font-size: 12px; opacity: 0.8; line-height: 1.6;">
+                            <p>[1]: <a href="https://www.hsbc.com.vn/en-vn/premier/?utm_source=chatgpt.com" target="_blank" style="color: #ffffff; text-decoration: underline;">https://www.hsbc.com.vn/en-vn/premier/?utm_source=chatgpt.com</a> "HSBC Premier | Premier Banking and Privilege - HSBC VN"</p>
+                            <p>[2]: <a href="https://xe.today/2024/08/27/how-much-money-do-you-need-in-your-account-to-become-a-bank-vip-vietcombanks-vvip-status-requires-a-balance-of-50-billion-vnd-while-vietinbanks-diamond-tier-asks-for-deposits-of-at-least-5-bil/?utm_source=chatgpt.com" target="_blank" style="color: #ffffff; text-decoration: underline;">https://xe.today/2024/08/27/how-much-money-do-you-need-in-your-account-to-become-a-bank-vip-vietcombanks-vvip-status-requires-a-balance-of-50-billion-vnd-while-vietinbanks-diamond-tier-asks-for-deposits-of-at-least-5-bil/?utm_source=chatgpt.com</a> "How Much Money Do You Need in Your Account to Become a Bank VIP? Vietcombank's VVIP Status Requires a Balance of 50 Billion VND, While VietinBank's Diamond Tier Asks for Deposits of at Least 5 Billion VND for Three Months." - xe.today</p>
+                            <p>[3]: <a href="https://bidv.com.vn/bidv_en/tin-tuc/tin-ve-bidv/bidv-trien-khai-nang-hang-uu-tien-dac-quyen-dang-cap-danh-cho-khach-hang-ca-nhan?utm_source=chatgpt.com" target="_blank" style="color: #ffffff; text-decoration: underline;">https://bidv.com.vn/bidv_en/tin-tuc/tin-ve-bidv/bidv-trien-khai-nang-hang-uu-tien-dac-quyen-dang-cap-danh-cho-khach-hang-ca-nhan?utm_source=chatgpt.com</a> "Chi tiết"</p>
+                            <p>[4]: <a href="https://techcombank.com/en/priority?utm_source=chatgpt.com" target="_blank" style="color: #ffffff; text-decoration: underline;">https://techcombank.com/en/priority?utm_source=chatgpt.com</a> "Priority | Techcombank"</p>
+                            <p>[5]: <a href="https://www.vib.com.vn/i/en/khach-hang-uu-tien?utm_source=chatgpt.com" target="_blank" style="color: #ffffff; text-decoration: underline;">https://www.vib.com.vn/i/en/khach-hang-uu-tien?utm_source=chatgpt.com</a> "Becoming a Preferred Customer | VIB"</p>
+                            <p>[6]: <a href="https://www.hlbank.com.vn/en/priority-banking/exclusive-privileges.html?utm_source=chatgpt.com" target="_blank" style="color: #ffffff; text-decoration: underline;">https://www.hlbank.com.vn/en/priority-banking/exclusive-privileges.html?utm_source=chatgpt.com</a> "Priority Banking Privileges | Hong Leong Bank"</p>
+                        </div>
+                    </div>
+                `;
+            }, 2000);
+        }
+        
+        function analyzeResponse() {
+            const loadingScores = document.getElementById('loadingScores');
+            const brandScores = document.getElementById('brandScores');
+            
+            loadingScores.style.display = 'block';
+            
+            setTimeout(() => {
+                loadingScores.style.display = 'none';
+                brandScores.style.display = 'block';
+                
+                // Animate score items
+                const scoreItems = brandScores.querySelectorAll('.score-item');
+                scoreItems.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.style.opacity = '0';
+                        item.style.transform = 'translateX(-20px)';
+                        setTimeout(() => {
+                            item.style.transition = 'all 0.5s ease';
+                            item.style.opacity = '1';
+                            item.style.transform = 'translateX(0)';
+                        }, 100);
+                    }, index * 150);
+                });
+            }, 3000);
+        }
+        
+        function showCalculation() {
+            const brandSelect = document.getElementById('brandSelect');
+            const calculationDetails = document.getElementById('calculationDetails');
+            const selectedBrand = brandSelect.value;
+            
+            if (!selectedBrand) {
+                calculationDetails.style.display = 'none';
+                return;
+            }
+            
+            const data = brandData[selectedBrand];
+            calculationDetails.style.display = 'block';
+            
+            // Update metric scores
+            document.getElementById('mentionScore').textContent = data.mention;
+            document.getElementById('clarityScore').textContent = data.clarity;
+            document.getElementById('comparisonScore').textContent = data.comparison;
+            
+            // Update descriptions
+            document.getElementById('mentionDesc').textContent = data.description.mention;
+            document.getElementById('clarityDesc').textContent = data.description.clarity;
+            document.getElementById('comparisonDesc').textContent = data.description.comparison;
+            
+            // Update formula and final score
+            const formula = `Visibility Score = 0.5 × ${data.mention} + 0.3 × ${data.clarity} + 0.2 × ${data.comparison} = ${data.score.toFixed(2)}`;
+            document.getElementById('calculationFormula').textContent = formula;
+            document.getElementById('finalScore').textContent = data.score.toFixed(2);
+            
+            // Animate the calculation
+            const metrics = calculationDetails.querySelectorAll('.metric');
+            metrics.forEach((metric, index) => {
+                metric.style.opacity = '0';
+                metric.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    metric.style.transition = 'all 0.5s ease';
+                    metric.style.opacity = '1';
+                    metric.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        }
+    </script>
+</body>
+</html>
