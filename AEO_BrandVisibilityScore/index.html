@@ -737,13 +737,13 @@
                 <h3>Calculation Methodology</h3>
                 <p>The brand visibility score is calculated using three key signals:</p>
                 <ul>
-                    <li><strong>Mention Strength (50% weight):</strong> How often and how prominently the brand is named in the text</li>
-                    <li><strong>Clarity & Detail (30% weight):</strong> Whether the text provides specific numbers, clear rules, or only vague statements</li>
-                    <li><strong>Comparative Prominence (20% weight):</strong> How the text compares this brand to others or positions it as a leader/laggard</li>
+                    <li><strong>Mention Strength :</strong> How often and how prominently the brand is named in the text</li>
+                    <li><strong>Clarity & Detail :</strong> Whether the text provides specific numbers, clear rules, or only vague statements</li>
+                    <li><strong>Comparative Prominence :</strong> How the text compares this brand to others or positions it as a leader/laggard</li>
                 </ul>
 
                 <div class="formula">
-                    Visibility Score = 0.5 × Mention Strength + 0.3 × Clarity & Detail + 0.2 × Comparative Prominence
+                    Visibility Score = Function(Mention Strength, Clarity & Detail, Comparative Prominence)
                 </div>
 
                 
@@ -1188,18 +1188,27 @@
             const data = brandData[selectedBrand];
             calculationDetails.style.display = 'block';
             
-            // Update metric scores
-            document.getElementById('mentionScore').textContent = data.mention;
-            document.getElementById('clarityScore').textContent = data.clarity;
-            document.getElementById('comparisonScore').textContent = data.comparison;
-            
-            // Update descriptions
+            // Helper to convert score to tag and color
+            function getTag(val) {
+                if (val >= 80) return {label: 'High', color: '#43ea7c', bg: '#1a2e1a'};
+                if (val >= 60) return {label: 'Medium', color: '#ffd600', bg: '#2e2e1a'};
+                return {label: 'Low', color: '#ff5252', bg: '#2e1a1a'};
+            }
+            // Update metric tags
+            const mentionTag = getTag(data.mention);
+            const clarityTag = getTag(data.clarity);
+            const comparisonTag = getTag(data.comparison);
+            // Set colored tags
+            document.getElementById('mentionScore').innerHTML = `<span style="display:inline-block;padding:4px 12px;border-radius:12px;font-weight:700;background:${mentionTag.bg};color:${mentionTag.color};font-size:13px;">${mentionTag.label}</span>`;
+            document.getElementById('clarityScore').innerHTML = `<span style="display:inline-block;padding:4px 12px;border-radius:12px;font-weight:700;background:${clarityTag.bg};color:${clarityTag.color};font-size:13px;">${clarityTag.label}</span>`;
+            document.getElementById('comparisonScore').innerHTML = `<span style="display:inline-block;padding:4px 12px;border-radius:12px;font-weight:700;background:${comparisonTag.bg};color:${comparisonTag.color};font-size:13px;">${comparisonTag.label}</span>`;
+            // Update descriptions (one line only)
             document.getElementById('mentionDesc').textContent = data.description.mention;
             document.getElementById('clarityDesc').textContent = data.description.clarity;
             document.getElementById('comparisonDesc').textContent = data.description.comparison;
             
             // Update formula and final score
-            const formula = `Visibility Score = 0.5 × ${data.mention} + 0.3 × ${data.clarity} + 0.2 × ${data.comparison} = ${data.score.toFixed(2)}`;
+            const formula = `Visibility Score = Function(Mention Strength, Clarity & Detail, Comparative Prominence)`;
             document.getElementById('calculationFormula').textContent = formula;
             document.getElementById('finalScore').textContent = data.score.toFixed(2);
             
