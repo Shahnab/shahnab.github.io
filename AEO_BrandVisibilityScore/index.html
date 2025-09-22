@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AEO: Understanding Brand Visibility Score Framework</title>
+    <title>AEO: Understanding Brand Visibility Framework</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -247,46 +247,83 @@
 
         .brand-scores {
             display: none;
-            background: #111;
-            border-radius: 12px;
-            padding: 10px 0;
-            box-shadow: 0 2px 16px 0 rgba(0,0,0,0.13);
         }
 
         .score-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 18px 18px 14px 18px;
-            margin: 14px 0;
-            background: #111;
+            padding: 12px 15px;
+            margin: 8px 0;
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
-            border-left: 5px solid #fff;
-            box-shadow: 0 2px 12px 0 rgba(0,0,0,0.13);
-            transition: all 0.3s cubic-bezier(.4,2,.6,1);
+            border-left: 3px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
             position: relative;
+            overflow: hidden;
+        }
+
+        .score-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.1;
+            border-radius: 10px;
         }
 
         .score-item:hover {
-            background: #181818;
-            border-left: 5px solid #e0e0e0;
-            transform: scale(1.03) translateX(8px);
-            box-shadow: 0 6px 24px 0 rgba(0,0,0,0.18);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(5px);
+        }
+
+        /* Color coding for different score ranges */
+        .score-item[data-score="high"]::before {
+            background: linear-gradient(45deg, #00ff88, #00cc70);
+        }
+        .score-item[data-score="high"] {
+            border-left-color: #00ff88;
+        }
+
+        .score-item[data-score="medium-high"]::before {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+        }
+        .score-item[data-score="medium-high"] {
+            border-left-color: #4CAF50;
+        }
+
+        .score-item[data-score="medium"]::before {
+            background: linear-gradient(45deg, #FFC107, #FFB300);
+        }
+        .score-item[data-score="medium"] {
+            border-left-color: #FFC107;
+        }
+
+        .score-item[data-score="medium-low"]::before {
+            background: linear-gradient(45deg, #FF9800, #F57C00);
+        }
+        .score-item[data-score="medium-low"] {
+            border-left-color: #FF9800;
+        }
+
+        .score-item[data-score="low"]::before {
+            background: linear-gradient(45deg, #f44336, #d32f2f);
+        }
+        .score-item[data-score="low"] {
+            border-left-color: #f44336;
         }
 
         .brand-name {
-            font-weight: 700;
-            font-size: 15px;
-            color: #fff;
-            letter-spacing: 0.5px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+            font-weight: 500;
+            font-size: 14px;
         }
 
         .score-value {
-            font-weight: 900;
-            font-size: 18px;
-            color: #fff;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.22);
+            font-weight: 600;
+            font-size: 16px;
+            color: #ffffff;
         }
 
         .explanation-section {
@@ -355,12 +392,93 @@
         }
 
         .metric {
-            background: #111;
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
-            padding: 18px 18px 14px 18px;
-            margin: 18px 0;
-            border-left: 5px solid #fff;
-            box-shadow: 0 2px 12px 0 rgba(0,0,0,0.13);
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 3px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.08;
+            border-radius: 10px;
+        }
+
+        .metric[data-type="mention"]::before {
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+        }
+        .metric[data-type="mention"] {
+            border-left-color: #2196F3;
+        }
+
+        .metric[data-type="clarity"]::before {
+            background: linear-gradient(45deg, #9C27B0, #7B1FA2);
+        }
+        .metric[data-type="clarity"] {
+            border-left-color: #9C27B0;
+        }
+
+        .metric[data-type="ranking"]::before {
+            background: linear-gradient(45deg, #00BCD4, #0097A7);
+        }
+        .metric[data-type="ranking"] {
+            border-left-color: #00BCD4;
+        }
+
+        .metric-progress {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .metric-progress-bar {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 1s ease-in-out;
+            position: relative;
+        }
+
+        .metric[data-type="mention"] .metric-progress-bar {
+            background: linear-gradient(90deg, #2196F3, #64B5F6);
+        }
+
+        .metric[data-type="clarity"] .metric-progress-bar {
+            background: linear-gradient(90deg, #9C27B0, #BA68C8);
+        }
+
+        .metric[data-type="comparison"] .metric-progress-bar {
+            background: linear-gradient(90deg, #FF5722, #FF8A65);
+        }
+
+        .metric[data-type="ranking"] .metric-progress-bar {
+            background: linear-gradient(90deg, #00BCD4, #4DD0E1);
+        }
+
+        .metric-progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
         .metric-header {
@@ -368,29 +486,6 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
-        }
-
-        .metric-name {
-            font-weight: 700;
-            font-size: 15px;
-            color: #fff;
-            letter-spacing: 0.5px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.18);
-        }
-
-        .metric-score {
-            font-weight: 900;
-            font-size: 18px;
-            color: #fff;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.22);
-        }
-
-        .metric-description {
-            color: #e0e0e0;
-            font-size: 13px;
-            opacity: 1;
-            line-height: 1.5;
-        }
         }
 
         .metric-name {
@@ -411,30 +506,59 @@
         }
 
         .final-calculation {
-            background: rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
             border-radius: 12px;
             padding: 20px;
             margin-top: 20px;
             border: 2px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .final-calculation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(0, 255, 136, 0.05), rgba(33, 150, 243, 0.05));
+            border-radius: 12px;
+        }
+
+        .final-calculation h4 {
+            color: #00ff88;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .final-score-display {
+            text-align: center;
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .final-score-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #00ff88;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+            transition: transform 0.3s ease;
         }
 
         .formula {
             font-family: 'Courier New', monospace;
-            background: #111;
-            color: #fff;
-            padding: 18px 18px 14px 18px;
-            border-radius: 10px;
-            margin: 18px 0;
-            font-size: 1.1rem;
-            font-weight: bold;
-            box-shadow: 0 2px 16px 0 rgba(0,0,0,0.13);
-            border-left: 5px solid #fff;
-            border-right: none;
-            border-top: none;
-            border-bottom: none;
-            letter-spacing: 0.5px;
-            text-align: center;
-        }
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 13px;
         }
 
         @media (max-width: 1024px) {
@@ -444,186 +568,26 @@
             }
             
             .panel {
-                height: auto;
-                min-height: 320px;
-                margin-bottom: 18px;
+                height: 400px;
             }
+            
             .explanation-section {
                 grid-template-columns: 1fr;
                 gap: 20px;
-            }
-            .brand-scores {
-                padding: 0 2vw 0 2vw;
-            }
-            .score-item {
-                font-size: 15px;
-                padding: 14px 10px 12px 12px;
-            }
-            .metric {
-                padding: 14px 10px 12px 12px;
             }
         }
 
         @media (max-width: 768px) {
             .container {
-                padding: 14px 6px 18px 6px;
-                max-width: 100vw;
+                padding: 15px;
             }
+            
             .header h1 {
-                font-size: 1.4rem;
-                line-height: 1.3;
-                margin-bottom: 10px;
+                font-size: 2rem;
             }
-            .header p {
-                font-size: 1.05rem;
-                margin-bottom: 12px;
-            }
-            .simulation-section {
-                display: flex;
-                flex-direction: column;
-                gap: 22px;
-                height: auto;
-            }
+            
             .panel {
-                padding: 18px 8px 18px 8px;
-                min-width: 0;
-                min-height: unset;
-                margin-bottom: 18px;
-                box-shadow: none;
-                border-radius: 16px;
-            }
-            .panel-header {
-                margin-bottom: 18px;
-                padding-bottom: 10px;
-            }
-            .chat-window, .response-content {
-                height: auto !important;
-                min-height: 0;
-                max-height: 340px;
-                overflow-y: auto;
-                margin-bottom: 10px;
-            }
-            .brand-scores {
-                padding: 0 2vw 0 2vw;
-            }
-            .score-item {
-                font-size: 15px;
-                padding: 16px 10px 16px 14px;
-                margin: 12px 0;
-                border-radius: 12px;
-            }
-            .brand-name, .score-value {
-                font-size: 15px;
-            }
-            .metric {
-                padding: 16px 10px 16px 14px;
-                margin: 12px 0;
-                border-radius: 12px;
-            }
-            .metric-name, .metric-score {
-                font-size: 15px;
-            }
-            .formula {
-                font-size: 1rem;
-                padding: 14px 10px 14px 14px;
-                border-radius: 12px;
-            }
-            .final-calculation {
-                padding: 14px 10px 14px 14px;
-                border-radius: 12px;
-            }
-            .brand-selector select {
-                font-size: 15px;
-                padding: 12px 8px;
-                border-radius: 10px;
-            }
-            .explanation-content h2 {
-                font-size: 1.18rem;
-                margin-bottom: 8px;
-            }
-            .explanation-content h3 {
-                font-size: 1.05rem;
-                margin-bottom: 6px;
-            }
-            .explanation-section {
-                grid-template-columns: 1fr;
-                gap: 18px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 6px 2px 10px 2px;
-            }
-            .header h1 {
-                font-size: 1.08rem;
-                margin-bottom: 7px;
-            }
-            .header p {
-                font-size: 0.93rem;
-                margin-bottom: 8px;
-            }
-            .panel {
-                padding: 10px 2px 12px 2px;
-                min-width: 0;
-                margin-bottom: 10px;
-                border-radius: 10px;
-            }
-            .panel-header {
-                margin-bottom: 10px;
-                padding-bottom: 6px;
-            }
-            .brand-scores {
-                padding: 0 1vw 0 1vw;
-            }
-            .score-item {
-                font-size: 12px;
-                padding: 10px 2px 10px 6px;
-                margin: 6px 0;
-                border-radius: 8px;
-            }
-            .brand-name, .score-value {
-                font-size: 12px;
-            }
-            .metric {
-                padding: 10px 2px 10px 6px;
-                margin: 6px 0;
-                border-radius: 8px;
-            }
-            .metric-name, .metric-score {
-                font-size: 12px;
-            }
-            .formula {
-                font-size: 0.8rem;
-                padding: 8px 2px 8px 6px;
-                border-radius: 8px;
-            }
-            .final-calculation {
-                padding: 8px 2px 8px 6px;
-                border-radius: 8px;
-            }
-            .brand-selector select {
-                font-size: 12px;
-                padding: 8px 2px;
-                border-radius: 8px;
-            }
-            .explanation-content h2 {
-                font-size: 1rem;
-                margin-bottom: 5px;
-            }
-            .explanation-content h3 {
-                font-size: 0.9rem;
-                margin-bottom: 4px;
-            }
-            .simulation-section {
-                gap: 12px;
-            }
-            .chat-window, .response-content {
-                max-height: 200px;
-                margin-bottom: 6px;
-            }
-            .explanation-section {
-                gap: 10px;
+                padding: 20px;
             }
         }
     </style>
@@ -631,7 +595,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>AEO: Understanding Brand Visibility Score Framework</h1>
+            <h1>AEO: Understanding Brand Visibility Score </h1>
             <p>Module to understand how <strong>brand visibility scores</strong> are calculated</p>
         </div>
 
@@ -640,7 +604,7 @@
             <div class="panel">
                 <div class="panel-header">
                     <i class="fas fa-comments"></i>
-                    <h3>User Chat Window</h3>
+                    <h3>Chat Window</h3>
                 </div>
                 <div class="chat-window">
                     <textarea class="chat-input" readonly>What minimum balance is usually required for private or priority banking?</textarea>
@@ -654,7 +618,7 @@
             <div class="panel">
                 <div class="panel-header">
                     <i class="fas fa-robot"></i>
-                    <h3>LLM Response (Model: ChatGPT)</h3>
+                    <h3>LLM Response</h3>
                 </div>
                 <div class="analyze-btn-container">
                     <button class="glass-button" id="analyzeBtn" onclick="analyzeResponse()" style="display: none;">
@@ -681,41 +645,41 @@
                         <p>Analyzing brand visibility...</p>
                     </div>
                     <div class="brand-scores" id="brandScores">
-                        <div class="score-item">
+                        <div class="score-item" data-score="high">
                             <span class="brand-name">HSBC</span>
-                            <span class="score-value">85.50</span>
+                            <span class="score-value">85.25</span>
                         </div>
-                        <div class="score-item">
+                        <div class="score-item" data-score="high">
                             <span class="brand-name">Vietcombank</span>
                             <span class="score-value">80.50</span>
                         </div>
-                        <div class="score-item">
+                        <div class="score-item" data-score="medium-high">
                             <span class="brand-name">VietinBank</span>
-                            <span class="score-value">73.00</span>
+                            <span class="score-value">72.30</span>
                         </div>
-                        <div class="score-item">
+                        <div class="score-item" data-score="medium-high">
                             <span class="brand-name">BIDV</span>
                             <span class="score-value">68.40</span>
                         </div>
-                        <div class="score-item">
+                        <div class="score-item" data-score="medium">
                             <span class="brand-name">VPBank</span>
-                            <span class="score-value">61.50</span>
+                            <span class="score-value">60.75</span>
                         </div>
-                        <div class="score-item">
+                        <div class="score-item" data-score="medium">
                             <span class="brand-name">Techcombank</span>
-                            <span class="score-value">55.50</span>
+                            <span class="score-value">55.20</span>
                         </div>
-                        <div class="score-item">
+                        <div class="score-item" data-score="medium-low">
                             <span class="brand-name">SHB</span>
-                            <span class="score-value">49.60</span>
+                            <span class="score-value">50.10</span>
                         </div>
-                        <div class="score-item">
+                        <div class="score-item" data-score="medium-low">
                             <span class="brand-name">VIB</span>
-                            <span class="score-value">45.30</span>
+                            <span class="score-value">45.60</span>
                         </div>
-                        <div class="score-item">
+                        <div class="score-item" data-score="low">
                             <span class="brand-name">Hong Leong Bank</span>
-                            <span class="score-value">30.50</span>
+                            <span class="score-value">30.45</span>
                         </div>
                     </div>
                 </div>
@@ -729,85 +693,100 @@
                 
                 <h3>Explain the Brand Visibility Score</h3>
                 <ul>
-                    <li>A <strong> Visibility Score</strong> is a single number from 0 to 100 that tells you how prominent a brand is inside a piece of text compared with other brands.</li>
-                    <li><strong>Need for Brand Visibility Score:</strong> They turn messy text into a quick, comparable number so marketers and managers can see who stands out at a glance.</li>
-                    <li><strong>Calculating the score:</strong> One number summarizes three key metrics: mention strength, clarity & detail, and comparative prominence.</li>
+                    <li><strong>Definition:</strong> A visibility score is a single number from 0 to 100 that tells you how prominent a brand is inside a piece of text compared with other brands.</li>
+                    <li><strong>Why we use Brand Visibility:</strong> They turn messy text into a quick, comparable number so marketers and managers can see who stands out at a glance.</li>
+                    <li><strong>How we calculate the score:</strong> One number summarizes four key metrics: mention strength, clarity & detail, comparative prominence, and ranking position.</li>
                 </ul>
 
                 <h3>Calculation Methodology</h3>
-                <p>The brand visibility score is calculated using three key signals:</p>
+                <p>The brand visibility score is calculated using four key signals:</p>
                 <ul>
                     <li><strong>Mention Strength :</strong> How often and how prominently the brand is named in the text</li>
                     <li><strong>Clarity & Detail :</strong> Whether the text provides specific numbers, clear rules, or only vague statements</li>
                     <li><strong>Comparative Prominence :</strong> How the text compares this brand to others or positions it as a leader/laggard</li>
+                    <li><strong>Ranking:</strong> Where does the brand appear in comparison to other brands in the text</li>
                 </ul>
 
-                <div class="formula">
-                    Visibility Score = Function(Mention Strength, Clarity & Detail, Comparative Prominence)
-                </div>
-
-                
+                <p>The result is scaled to 0-100 and rounded to two decimal places for the final visibility score.</p>
             </div>
 
             <!-- Calculation Section -->
             <div class="calculation-section">
-                <h2>Brand Visibility Score Calculation</h2>
-                <p>Calculation on how the Brand visibility score is calculated for the selected brand</p>
-                <br><br>
-                
+                <h2>How is Visibility Score calculated?</h2>
+                <p>Show the calculation on how the Brand visibility score is calculated for the selected brand</p>
+                <br> </br>
                 <div class="brand-selector">
                     <select id="brandSelect" onchange="showCalculation()">
                         <option value="">Select a brand to see detailed calculation</option>
-                        <option value="HSBC">HSBC (85.50)</option>
+                        <option value="HSBC">HSBC (85.25)</option>
                         <option value="Vietcombank">Vietcombank (80.50)</option>
-                        <option value="VietinBank">VietinBank (73.00)</option>
+                        <option value="VietinBank">VietinBank (72.30)</option>
                         <option value="BIDV">BIDV (68.40)</option>
-                        <option value="VPBank">VPBank (61.50)</option>
-                        <option value="Techcombank">Techcombank (55.50)</option>
-                        <option value="SHB">SHB (49.60)</option>
-                        <option value="VIB">VIB (45.30)</option>
-                        <option value="Hong Leong Bank">Hong Leong Bank (30.50)</option>
+                        <option value="VPBank">VPBank (60.75)</option>
+                        <option value="Techcombank">Techcombank (55.20)</option>
+                        <option value="SHB">SHB (50.10)</option>
+                        <option value="VIB">VIB (45.60)</option>
+                        <option value="Hong Leong Bank">Hong Leong Bank (30.45)</option>
                     </select>
                 </div>
 
                 <div class="calculation-details" id="calculationDetails">
-                    <div id="mentionMetric" class="metric">
+                    <div id="mentionMetric" class="metric" data-type="mention">
                         <div class="metric-header">
                             <span class="metric-name">Mention Strength</span>
-                            <span class="metric-score" id="mentionScore">0</span>
+                            <span class="metric-score" id="mentionScore">-</span>
                         </div>
                         <div class="metric-description" id="mentionDesc">
                             Analysis of how frequently and prominently the brand is mentioned
                         </div>
+                        <div class="metric-progress">
+                            <div class="metric-progress-bar" id="mentionProgress" style="width: 0%"></div>
+                        </div>
                     </div>
 
-                    <div id="clarityMetric" class="metric">
+                    <div id="clarityMetric" class="metric" data-type="clarity">
                         <div class="metric-header">
                             <span class="metric-name">Clarity & Detail</span>
-                            <span class="metric-score" id="clarityScore">0</span>
+                            <span class="metric-score" id="clarityScore">-</span>
                         </div>
                         <div class="metric-description" id="clarityDesc">
                             Assessment of specific information, numbers, and detailed explanations
                         </div>
+                        <div class="metric-progress">
+                            <div class="metric-progress-bar" id="clarityProgress" style="width: 0%"></div>
+                        </div>
                     </div>
 
-                    <div id="comparisonMetric" class="metric">
+                    <div id="comparisonMetric" class="metric" data-type="comparison">
                         <div class="metric-header">
                             <span class="metric-name">Comparative Prominence</span>
-                            <span class="metric-score" id="comparisonScore">0</span>
+                            <span class="metric-score" id="comparisonScore">-</span>
                         </div>
                         <div class="metric-description" id="comparisonDesc">
                             Evaluation of how the brand is positioned relative to competitors
                         </div>
+                        <div class="metric-progress">
+                            <div class="metric-progress-bar" id="comparisonProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div id="rankingMetric" class="metric" data-type="ranking">
+                        <div class="metric-header">
+                            <span class="metric-name">Ranking</span>
+                            <span class="metric-score" id="rankingScore">-</span>
+                        </div>
+                        <div class="metric-description" id="rankingDesc">
+                            Where does the brand appear in comparison to other brands in the analysis
+                        </div>
+                        <div class="metric-progress">
+                            <div class="metric-progress-bar" id="rankingProgress" style="width: 0%"></div>
+                        </div>
                     </div>
 
                     <div class="final-calculation">
-                        <h4>Final Calculation:</h4>
-                        <div class="formula" id="calculationFormula">
-                            Visibility Score = 0.5 × 0 + 0.3 × 0 + 0.2 × 0 = 0.00
-                        </div>
-                        <div style="text-align: center; margin-top: 15px;">
-                            <strong>Final Score: <span id="finalScore">0.00</span></strong>
+                        <div class="final-score-display">
+                            <div style="font-size: 14px; margin-bottom: 5px; opacity: 0.8;">Final Brand Visibility Score</div>
+                            <div class="final-score-number" id="finalScore">0.00</div>
                         </div>
                     </div>
                 </div>
@@ -818,14 +797,16 @@
     <script>
         const brandData = {
             "HSBC": {
-                score: 85.50,
+                score: 85.25,
                 mention: 90,
                 clarity: 85,
                 comparison: 75,
+                ranking: 90,
                 description: {
                     mention: "HSBC Premier is prominently featured with detailed qualification criteria including TRB requirements, salary conditions, and mortgage options. Multiple mentions throughout the text.",
                     clarity: "Provides specific numbers: VND 1 billion TRB, VND 100 million salary requirement, VND 5 billion mortgage with 60% property value ratio. Clear conditions and trial periods specified.",
-                    comparison: "Positioned as a major international bank with comprehensive requirements. Featured in summary table and ranked high in visibility scoring."
+                    comparison: "Positioned as a major international bank with comprehensive requirements. Featured in summary table and ranked high in visibility scoring.",
+                    ranking: "Ranks #1 in the analysis with the highest visibility score, appearing first in multiple sections and receiving the most comprehensive coverage."
                 }
             },
             "Vietcombank": {
@@ -833,21 +814,25 @@
                 mention: 85,
                 clarity: 80,
                 comparison: 70,
+                ranking: 85,
                 description: {
                     mention: "Extensively covered with multiple tier descriptions (Gold, Diamond, Diamond Elite). Featured prominently in the banking landscape analysis.",
                     clarity: "Detailed tier requirements specified: 5 billion, 20 billion, and 50 billion VND thresholds. Complex scoring system with composite points explained.",
-                    comparison: "Highlighted as having the highest VVIP requirement (50 billion VND). Strong positioning in the premium banking segment."
+                    comparison: "Highlighted as having the highest VVIP requirement (50 billion VND). Strong positioning in the premium banking segment.",
+                    ranking: "Ranks #2 in the analysis, consistently mentioned as a leading Vietnamese bank with comprehensive tier offerings."
                 }
             },
             "VietinBank": {
-                score: 73.00,
+                score: 72.30,
                 mention: 75,
                 clarity: 75,
                 comparison: 65,
+                ranking: 80,
                 description: {
                     mention: "Well-represented with four distinct tiers (Silver through Diamond). Consistent mentions across different service categories.",
                     clarity: "Clear tier structure with specific amounts: 500M-1B (Silver), 1-3B (Gold), 3-5B (Platinum), 5B+ (Diamond). Multiple qualifying criteria explained.",
-                    comparison: "Compared with other major Vietnamese banks. Diamond tier requirement matches several competitors at 5 billion VND threshold."
+                    comparison: "Compared with other major Vietnamese banks. Diamond tier requirement matches several competitors at 5 billion VND threshold.",
+                    ranking: "Ranks #3 among the banks analyzed, positioned as a major Vietnamese bank with well-structured tier system."
                 }
             },
             "BIDV": {
@@ -855,65 +840,77 @@
                 mention: 70,
                 clarity: 70,
                 comparison: 62,
+                ranking: 75,
                 description: {
                     mention: "Featured with VIP status explanation and promotional campaigns. Regular mentions in tier comparisons and promotional context.",
                     clarity: "Specific quarterly balance requirements (1 billion VND for VIP). Promotional offer clearly detailed (200 million VND temporary threshold).",
-                    comparison: "Positioned among major state-owned banks. Notable for promotional campaigns and flexible tier requirements."
+                    comparison: "Positioned among major state-owned banks. Notable for promotional campaigns and flexible tier requirements.",
+                    ranking: "Ranks #4 in the analysis, recognized as a major state-owned bank with competitive promotional offers."
                 }
             },
             "VPBank": {
-                score: 61.50,
+                score: 60.75,
                 mention: 65,
                 clarity: 60,
                 comparison: 55,
+                ranking: 70,
                 description: {
                     mention: "Covered with three tiers (Pre-Diamond, Diamond, Diamond Elite). Moderate presence in the banking analysis.",
                     clarity: "Detailed asset and payment account balance requirements. Specific thresholds: 500M-1B, 1-5B, 5B+ for different tiers.",
-                    comparison: "Positioned as a private bank with competitive tier structure. Lower profile compared to state-owned banks."
+                    comparison: "Positioned as a private bank with competitive tier structure. Lower profile compared to state-owned banks.",
+                    ranking: "Ranks #5 in the analysis, positioned as a private bank with structured tier offerings in the middle tier."
                 }
             },
             "Techcombank": {
-                score: 55.50,
+                score: 55.20,
                 mention: 60,
                 clarity: 55,
                 comparison: 45,
+                ranking: 65,
                 description: {
                     mention: "Featured with Priority banking service description. Mentioned in context of modern banking solutions.",
                     clarity: "Clear qualification criteria: 1 billion VND asset balance or 2 billion VND financial relationship value. 3-month averaging period specified.",
-                    comparison: "Positioned as a technology-forward bank with competitive priority banking requirements."
+                    comparison: "Positioned as a technology-forward bank with competitive priority banking requirements.",
+                    ranking: "Ranks #6 in the analysis, recognized for technology-forward approach but with moderate overall coverage."
                 }
             },
             "SHB": {
-                score: 49.60,
+                score: 50.10,
                 mention: 50,
                 clarity: 52,
                 comparison: 45,
+                ranking: 60,
                 description: {
                     mention: "Basic coverage with Super Premier and Premier tiers mentioned. Limited detailed discussion compared to larger banks.",
                     clarity: "Specific requirements listed: 30 billion VND for Super Premier, various qualifying criteria including deposits, loans, and fees.",
-                    comparison: "Lower prominence compared to major banks. Positioned in the middle tier of banking options."
+                    comparison: "Lower prominence compared to major banks. Positioned in the middle tier of banking options.",
+                    ranking: "Ranks #7 in the analysis, receiving basic coverage among the banks discussed."
                 }
             },
             "VIB": {
-                score: 45.30,
+                score: 45.60,
                 mention: 45,
                 clarity: 48,
                 comparison: 42,
+                ranking: 55,
                 description: {
                     mention: "Brief mention with two-tier system (Priority and Premier). Limited coverage in the overall analysis.",
                     clarity: "Clear balance requirements: 200 million VND for Priority, 600 million VND for Premier. 6-month averaging period specified.",
-                    comparison: "Positioned as a smaller international bank with basic tier offerings."
+                    comparison: "Positioned as a smaller international bank with basic tier offerings.",
+                    ranking: "Ranks #8 in the analysis, receiving limited coverage with basic tier structure mentioned."
                 }
             },
             "Hong Leong Bank": {
-                score: 30.50,
+                score: 30.45,
                 mention: 30,
                 clarity: 35,
                 comparison: 25,
+                ranking: 45,
                 description: {
                     mention: "Minimal coverage with basic Priority Banking mention. Least discussed bank in the analysis.",
                     clarity: "Simple requirement stated: 1 billion VND deposit balance for Priority Banking qualification.",
-                    comparison: "Positioned as a foreign bank with minimal market presence. Limited competitive positioning discussed."
+                    comparison: "Positioned as a foreign bank with minimal market presence. Limited competitive positioning discussed.",
+                    ranking: "Ranks #9 (last) in the analysis, receiving minimal coverage with the least detailed information provided."
                 }
             }
         };
@@ -1175,6 +1172,12 @@
             }, 3000);
         }
         
+        function getScoreLabel(score) {
+            if (score >= 70) return 'High';
+            if (score >= 50) return 'Medium';
+            return 'Low';
+        }
+
         function showCalculation() {
             const brandSelect = document.getElementById('brandSelect');
             const calculationDetails = document.getElementById('calculationDetails');
@@ -1188,29 +1191,31 @@
             const data = brandData[selectedBrand];
             calculationDetails.style.display = 'block';
             
-            // Helper to convert score to tag and color
-            function getTag(val) {
-                if (val >= 80) return {label: 'High', color: '#43ea7c', bg: '#1a2e1a'};
-                if (val >= 60) return {label: 'Medium', color: '#ffd600', bg: '#2e2e1a'};
-                return {label: 'Low', color: '#ff5252', bg: '#2e1a1a'};
-            }
-            // Update metric tags
-            const mentionTag = getTag(data.mention);
-            const clarityTag = getTag(data.clarity);
-            const comparisonTag = getTag(data.comparison);
-            // Set colored tags
-            document.getElementById('mentionScore').innerHTML = `<span style="display:inline-block;padding:4px 12px;border-radius:12px;font-weight:700;background:${mentionTag.bg};color:${mentionTag.color};font-size:13px;">${mentionTag.label}</span>`;
-            document.getElementById('clarityScore').innerHTML = `<span style="display:inline-block;padding:4px 12px;border-radius:12px;font-weight:700;background:${clarityTag.bg};color:${clarityTag.color};font-size:13px;">${clarityTag.label}</span>`;
-            document.getElementById('comparisonScore').innerHTML = `<span style="display:inline-block;padding:4px 12px;border-radius:12px;font-weight:700;background:${comparisonTag.bg};color:${comparisonTag.color};font-size:13px;">${comparisonTag.label}</span>`;
-            // Update descriptions (one line only)
-            document.getElementById('mentionDesc').textContent = data.description.mention;
-            document.getElementById('clarityDesc').textContent = data.description.clarity;
-            document.getElementById('comparisonDesc').textContent = data.description.comparison;
+            // Update metric scores with labels instead of numbers - with error checking
+            const mentionScoreEl = document.getElementById('mentionScore');
+            const clarityScoreEl = document.getElementById('clarityScore');
+            const comparisonScoreEl = document.getElementById('comparisonScore');
+            const rankingScoreEl = document.getElementById('rankingScore');
+            const finalScoreEl = document.getElementById('finalScore');
             
-            // Update formula and final score
-            const formula = `Visibility Score = Function(Mention Strength, Clarity & Detail, Comparative Prominence)`;
-            document.getElementById('calculationFormula').textContent = formula;
-            document.getElementById('finalScore').textContent = data.score.toFixed(2);
+            if (mentionScoreEl) mentionScoreEl.textContent = getScoreLabel(data.mention);
+            if (clarityScoreEl) clarityScoreEl.textContent = getScoreLabel(data.clarity);
+            if (comparisonScoreEl) comparisonScoreEl.textContent = getScoreLabel(data.comparison);
+            if (rankingScoreEl) rankingScoreEl.textContent = getScoreLabel(data.ranking);
+            
+            // Update descriptions
+            const mentionDescEl = document.getElementById('mentionDesc');
+            const clarityDescEl = document.getElementById('clarityDesc');
+            const comparisonDescEl = document.getElementById('comparisonDesc');
+            const rankingDescEl = document.getElementById('rankingDesc');
+            
+            if (mentionDescEl) mentionDescEl.textContent = data.description.mention;
+            if (clarityDescEl) clarityDescEl.textContent = data.description.clarity;
+            if (comparisonDescEl) comparisonDescEl.textContent = data.description.comparison;
+            if (rankingDescEl) rankingDescEl.textContent = data.description.ranking;
+            
+            // Update final score only
+            if (finalScoreEl) finalScoreEl.textContent = data.score.toFixed(2);
             
             // Animate the calculation
             const metrics = calculationDetails.querySelectorAll('.metric');
@@ -1223,6 +1228,35 @@
                     metric.style.transform = 'translateY(0)';
                 }, index * 200);
             });
+
+            // Animate progress bars
+            setTimeout(() => {
+                const mentionProgress = document.getElementById('mentionProgress');
+                const clarityProgress = document.getElementById('clarityProgress');
+                const comparisonProgress = document.getElementById('comparisonProgress');
+                const rankingProgress = document.getElementById('rankingProgress');
+                
+                if (mentionProgress) mentionProgress.style.width = `${data.mention}%`;
+                setTimeout(() => {
+                    if (clarityProgress) clarityProgress.style.width = `${data.clarity}%`;
+                    setTimeout(() => {
+                        if (comparisonProgress) comparisonProgress.style.width = `${data.comparison}%`;
+                        setTimeout(() => {
+                            if (rankingProgress) rankingProgress.style.width = `${data.ranking}%`;
+                        }, 300);
+                    }, 300);
+                }, 300);
+            }, 800);
+
+            // Animate final score
+            setTimeout(() => {
+                if (finalScoreEl) {
+                    finalScoreEl.style.transform = 'scale(1.2)';
+                    setTimeout(() => {
+                        finalScoreEl.style.transform = 'scale(1)';
+                    }, 300);
+                }
+            }, 2000);
         }
     </script>
 </body>
