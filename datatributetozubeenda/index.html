@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Audio Visualization</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 10;
+            padding: 15px;
+            background: rgba(10, 10, 10, 0.5);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .button {
+            padding: 12px 28px;
+            background: rgba(255, 235, 59, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 235, 59, 0.4);
+            border-radius: 8px;
+            color: #FFD700;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .button:hover {
+            background: rgba(255, 235, 59, 0.25);
+            border-color: rgba(255, 235, 59, 0.6);
+            transform: translateY(-1px);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .plus-button {
+            width: 45px;
+            height: 45px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            border-radius: 50%;
+            background: rgba(255, 235, 59, 0.1);
+            border: 1px solid rgba(255, 235, 59, 0.3);
+        }
+
+        .plus-button:hover {
+            background: rgba(255, 235, 59, 0.2);
+            border-color: rgba(255, 235, 59, 0.5);
+        }
+
+        #fileInput, #imageInput {
+            display: none;
+        }
+
+        .title {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            z-index: 10;
+            font-weight: 500;
+        }
+
+        .metrics {
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            background: rgba(10, 10, 10, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            z-index: 10;
+            font-family: 'SF Mono', Monaco, monospace;
+            min-width: 180px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .metric {
+            margin: 6px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .metric-value {
+            color: rgba(255, 215, 0, 0.9);
+            font-weight: 500;
+        }
+
+        .beat-indicator {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: rgba(255, 235, 59, 0.2);
+            border-radius: 2px;
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .beat-pulse {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, #FFD700, transparent);
+            transform: scaleX(0);
+            transition: transform 0.1s ease-out;
+        }
+
+        .beat-active {
+            transform: scaleX(1);
+        }
+
+        .anchor-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 11px;
+            color: rgba(255, 235, 59, 0.6);
+            z-index: 10;
+            display: none;
+        }
+
+        #endText {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #FFD700;
+            font-size: 3rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px #FFD700, 0 0 60px #000;
+            z-index: 1000;
+            display: none;
+        }
+
+        #tryMoreBtn {
+            position: fixed;
+            top: 65%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 18px 48px;
+            background: rgba(255, 235, 59, 0.15);
+            border: 2px solid #FFD700;
+            border-radius: 12px;
+            color: #FFD700;
+            font-size: 2rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            cursor: pointer;
+            z-index: 1001;
+            display: none;
+        }
+
+        /* Progress bar styles */
+        #refreshProgress {
+            position: fixed;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            height: 18px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 9px;
+            overflow: hidden;
+            z-index: 1002;
+            display: none;
+        }
+
+        #refreshProgressInner {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #FFD700, #fffbe6);
+            border-radius: 9px;
+            transition: width 0.3s;
+        }
+
+        @media (max-width: 600px) {
+            #canvas-container {
+                width: 100vw;
+                height: 100vh;
+            }
+            .controls {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100vw;
+                flex-direction: row;
+                justify-content: center;
+                gap: 10px;
+                padding: 10px 0;
+                background: rgba(10, 10, 10, 0.7);
+                border-radius: 0;
+                z-index: 100;
+            }
+            .button, .plus-button {
+                font-size: 1rem;
+                padding: 10px 18px;
+            }
+            .metrics {
+                top: 10px;
+                right: 10px;
+                min-width: 120px;
+                font-size: 10px;
+                padding: 8px;
+            }
+            .title {
+                top: 8px;
+                left: 8px;
+                font-size: 10px;
+            }
+            #endText {
+                font-size: 2.2rem !important;
+                padding: 0 10px;
+            }
+            #refreshProgress {
+                width: 80vw !important;
+                top: 70% !important;
+            }
+            .anchor-indicator {
+                top: 8px;
+                right: 8px;
+                font-size: 9px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="title">/Shahnab</div>
+    
+    <div class="anchor-indicator" id="anchorIndicator">Image Anchored</div>
+    
+    <div class="metrics">
+        <div class="metric">
+            <span>Entropy</span>
+            <span class="metric-value" id="entropy">0.00</span>
+        </div>
+        <div class="metric">
+            <span>Spread</span>
+            <span class="metric-value" id="spread">0.00</span>
+        </div>
+        <div class="metric">
+            <span>Centroid</span>
+            <span class="metric-value" id="centroid">0Hz</span>
+        </div>
+        <div class="metric">
+            <span>Energy</span>
+            <span class="metric-value" id="energy">0.00</span>
+        </div>
+        <div class="metric">
+            <span>Beat</span>
+            <span class="metric-value" id="beat">OFF</span>
+        </div>
+        <div class="metric">
+            <span>Particles</span>
+            <span class="metric-value" id="particleCount">0</span>
+        </div>
+    </div>
+
+    <div class="beat-indicator">
+        <div class="beat-pulse" id="beatPulse"></div>
+    </div>
+    
+    <div id="canvas-container"></div>
+    
+    <div class="controls">
+        <input type="file" id="fileInput" accept="audio/*">
+        <input type="file" id="imageInput" accept="image/*">
+        <button class="button plus-button" id="imageBtn" title="Add Image">+</button>
+        <button class="button" id="uploadBtn">Upload</button>
+        <button class="button" id="analyzeBtn" disabled>Visualize</button>
+    </div>
+
+    <div id="endText">Forever Zubeen Da</div>
+
+    <!-- Progress bar for UI refresh -->
+    <div id="refreshProgress">
+        <div id="refreshProgressInner"></div>
+    </div>
+
+    <script>
+        // Global variables
+        let scene, camera, renderer;
+        let audioContext, analyser, source, audioBuffer;
+        let dataArray, bufferLength;
+        let isPlaying = false;
+        let particles = [];
+        let lines = [];
+        let circularBars = [];
+        let textPoints = [];
+        let imagePlane = null;
+        let imageGroup = null;
+        let colorChangeTimer = 0;
+        
+        // Audio tracking
+        const audioTracker = {
+            spectralCentroid: 0,
+            spectralSpread: 0,
+            spectralEntropy: 0,
+            rmsEnergy: 0,
+            beatStrength: 0,
+            previousEnergy: [],
+            beatHistory: [],
+            bassEnergy: 0,
+            midEnergy: 0,
+            highEnergy: 0,
+            beatThreshold: 1.3,
+            beatDecay: 0.98,
+            beatMin: 0.15,
+            isBeat: false,
+            previousSpectrum: null
+        };
+
+        // Spatial management
+        const spatialData = {
+            positions: [],
+            maxPoints: 10000, // Increased significantly for continuous generation
+            repulsionRadius: 8,
+            repulsionStrength: 0.5,
+            generationRate: 0.3 // Base generation rate
+        };
+
+        // Initialize Three.js
+        function initThreeJS() {
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x000000, 0.002);
+
+            // Use device size for camera aspect
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(60, 40, 60);
+            camera.lookAt(0, 0, 0);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            // Optimize for mobile screens
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Lower pixel ratio for mobile performance
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
+            scene.add(ambientLight);
+            
+            const pointLight = new THREE.PointLight(0xffffff, 0.5);
+            pointLight.position.set(50, 50, 50);
+            scene.add(pointLight);
+            
+            // Add directional light for better image visibility
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.3);
+            directionalLight.position.set(0, 50, 50);
+            scene.add(directionalLight);
+
+            // Create grid and axes
+            createGridAndAxes();
+            
+            // Create circular bars
+            createCircularBars();
+            
+            // Create image group for 3D image display
+            imageGroup = new THREE.Group();
+            scene.add(imageGroup);
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        // Store references to grid and axes for animation
+        let gridHelper, xAxis, yAxis, zAxis;
+
+        function createGridAndAxes() {
+            // Main grid
+            gridHelper = new THREE.GridHelper(100, 20, 0x444444, 0x222222);
+            gridHelper.material.opacity = 0.8;
+            gridHelper.material.transparent = true;
+            scene.add(gridHelper);
+            
+            // X axis (red)
+            const xMaterial = new THREE.LineBasicMaterial({ color: 0x880000 });
+            const xGeometry = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(-50, 0, 0),
+                new THREE.Vector3(50, 0, 0)
+            ]);
+            xAxis = new THREE.Line(xGeometry, xMaterial);
+            scene.add(xAxis);
+
+            // Y axis (green) - hidden
+            const yMaterial = new THREE.LineBasicMaterial({ color: 0x008800 });
+            const yGeometry = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(0, 0, 0),
+                new THREE.Vector3(0, 50, 0)
+            ]);
+            yAxis = new THREE.Line(yGeometry, yMaterial);
+            // Do not add yAxis to the scene
+
+            // Z axis (blue)
+            const zMaterial = new THREE.LineBasicMaterial({ color: 0x000088 });
+            const zGeometry = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(0, 0, -50),
+                new THREE.Vector3(0, 0, 50)
+            ]);
+            zAxis = new THREE.Line(zGeometry, zMaterial);
+            scene.add(zAxis);
+        }
+
+        function createCircularBars() {
+            const barCount = 64;
+            const radius = 30;
+            
+            for (let i = 0; i < barCount; i++) {
+                const angle = (i / barCount) * Math.PI * 2;
+                const geometry = new THREE.BoxGeometry(1, 0.1, 3);
+                const material = new THREE.MeshBasicMaterial({
+                    color: new THREE.Color().setHSL(i / barCount, 1, 0.5),
+                    transparent: true,
+                    opacity: 0.7
+                });
+                const bar = new THREE.Mesh(geometry, material);
+                
+                bar.position.x = Math.cos(angle) * radius;
+                bar.position.z = Math.sin(angle) * radius;
+                bar.position.y = 0.05;
+                bar.rotation.y = -angle;
+                
+                scene.add(bar);
+                circularBars.push(bar);
+            }
+        }
+
+        function createParticle(x, y, z, isBeatPoint = false) {
+            const geometry = new THREE.SphereGeometry(0.3, 8, 8); // Smaller radius
+            // Maximize color diversity: fully random hue, saturation, and lightness
+            const hue = Math.random(); // 0 to 1
+            const saturation = 0.7 + Math.random() * 0.3; // 0.7 to 1
+            const lightness = 0.4 + Math.random() * 0.4; // 0.4 to 0.8
+            const material = new THREE.MeshBasicMaterial({
+                color: new THREE.Color().setHSL(hue, saturation, lightness),
+                transparent: true,
+                opacity: 0.5 // Make dots a little transparent
+            });
+            const particle = new THREE.Mesh(geometry, material);
+            particle.position.set(x, y, z);
+            particle.userData = {
+                age: 0,
+                isBeatPoint: isBeatPoint,
+                intensity: audioTracker.rmsEnergy,
+                centroid: audioTracker.spectralCentroid,
+                baseScale: isBeatPoint ? 1.5 : 1
+            };
+            scene.add(particle);
+            particles.push(particle);
+            return particle;
+        }
+
+        function createLine(start, end) {
+            const geometry = new THREE.BufferGeometry().setFromPoints([start, end]);
+            const material = new THREE.LineBasicMaterial({
+                color: 0xffd700,
+                transparent: true,
+                opacity: 0.4
+            });
+            const line = new THREE.Line(geometry, material);
+            scene.add(line);
+            lines.push(line);
+            return line;
+        }
+
+        function create3DImage(imageUrl) {
+            // Remove existing image if any
+            if (imagePlane) {
+                imageGroup.clear();
+                if (imagePlane.geometry) imagePlane.geometry.dispose();
+                if (imagePlane.material) imagePlane.material.dispose();
+            }
+            
+            const textureLoader = new THREE.TextureLoader();
+            textureLoader.load(imageUrl, (texture) => {
+                // Create main image plane - 60% of circular area (radius 30 * 0.6 = 18)
+                const aspectRatio = texture.image.width / texture.image.height;
+                const targetSize = 36; // 60% of 30 radius circle diameter (60)
+                const planeWidth = aspectRatio >= 1 ? targetSize : targetSize * aspectRatio;
+                const planeHeight = aspectRatio >= 1 ? targetSize / aspectRatio : targetSize;
+                
+                const geometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+                const material = new THREE.MeshBasicMaterial({
+                    map: texture,
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    opacity: 0.85
+                });
+                
+                imagePlane = new THREE.Mesh(geometry, material);
+                imagePlane.position.set(0, 18, 0);
+                imageGroup.add(imagePlane);
+                
+                // Show indicator
+                document.getElementById('anchorIndicator').style.display = 'block';
+            });
+        }
+
+        // Beat detection
+        function detectBeat(frequencyData) {
+            const bassEnd = Math.floor(frequencyData.length * 0.1);
+            const midEnd = Math.floor(frequencyData.length * 0.4);
+            
+            let bassSum = 0, midSum = 0, highSum = 0;
+            
+            for (let i = 0; i < bassEnd; i++) {
+                bassSum += frequencyData[i];
+            }
+            for (let i = bassEnd; i < midEnd; i++) {
+                midSum += frequencyData[i];
+            }
+            for (let i = midEnd; i < frequencyData.length; i++) {
+                highSum += frequencyData[i];
+            }
+            
+            audioTracker.bassEnergy = bassSum / bassEnd / 255;
+            audioTracker.midEnergy = midSum / (midEnd - bassEnd) / 255;
+            audioTracker.highEnergy = highSum / (frequencyData.length - midEnd) / 255;
+            
+            const currentEnergy = audioTracker.bassEnergy * 2 + audioTracker.midEnergy;
+            audioTracker.previousEnergy.push(currentEnergy);
+            
+            if (audioTracker.previousEnergy.length > 43) {
+                audioTracker.previousEnergy.shift();
+            }
+            
+            const avgEnergy = audioTracker.previousEnergy.reduce((a, b) => a + b, 0) / audioTracker.previousEnergy.length;
+            const variance = audioTracker.previousEnergy.reduce((sum, e) => sum + Math.pow(e - avgEnergy, 2), 0) / audioTracker.previousEnergy.length;
+            const dynamicThreshold = audioTracker.beatThreshold + 0.5 * Math.sqrt(variance);
+            
+            const isBeat = currentEnergy > avgEnergy * dynamicThreshold && audioTracker.beatDecay <= audioTracker.beatMin;
+            
+            if (isBeat) {
+                audioTracker.beatStrength = Math.min((currentEnergy / avgEnergy - 1) * 2, 1);
+                audioTracker.beatDecay = 1;
+                audioTracker.isBeat = true;
+            } else {
+                audioTracker.beatStrength *= 0.95;
+                audioTracker.beatDecay *= 0.98;
+                audioTracker.isBeat = false;
+            }
+            
+            return audioTracker.isBeat;
+        }
+
+        // Repulsion algorithm
+        function applyRepulsion(position) {
+            let force = { x: 0, y: 0, z: 0 };
+            
+            // Only check recent positions for performance
+            const checkCount = Math.min(100, spatialData.positions.length);
+            const startIdx = Math.max(0, spatialData.positions.length - checkCount);
+            
+            for (let i = startIdx; i < spatialData.positions.length; i++) {
+                const other = spatialData.positions[i];
+                const dx = position.x - other.x;
+                const dy = position.y - other.y;
+                const dz = position.z - other.z;
+                const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+                
+                if (dist < spatialData.repulsionRadius && dist > 0) {
+                    const strength = (1 - dist / spatialData.repulsionRadius) * spatialData.repulsionStrength;
+                    force.x += (dx / dist) * strength;
+                    force.y += (dy / dist) * strength;
+                    force.z += (dz / dist) * strength;
+                }
+            }
+            
+            return force;
+        }
+
+        // Audio features
+        function calculateSpectralCentroid(data) {
+            let num = 0, den = 0;
+            for (let i = 0; i < data.length; i++) {
+                const freq = i * (audioContext.sampleRate / 2) / data.length;
+                num += freq * data[i];
+                den += data[i];
+            }
+            return den === 0 ? 0 : num / den;
+        }
+
+        function calculateSpectralSpread(data, centroid) {
+            let num = 0, den = 0;
+            for (let i = 0; i < data.length; i++) {
+                const freq = i * (audioContext.sampleRate / 2) / data.length;
+                const diff = freq - centroid;
+                num += (diff * diff) * data[i];
+                den += data[i];
+            }
+            return den === 0 ? 0 : Math.sqrt(num / den);
+        }
+
+        function calculateSpectralEntropy(data) {
+            const total = data.reduce((sum, val) => sum + val, 0.001);
+            let entropy = 0;
+            for (let i = 0; i < data.length; i++) {
+                const p = data[i] / total;
+                if (p > 0) entropy -= p * Math.log2(p);
+            }
+            return entropy / Math.log2(data.length);
+        }
+
+        function calculateRMSEnergy(data) {
+            let sum = 0;
+            for (let i = 0; i < data.length; i++) {
+                sum += data[i] * data[i];
+            }
+            return Math.sqrt(sum / data.length) / 255;
+        }
+
+        // Create final text
+        function createFinalText() {
+            const text = "R.I.P ZUBEEN DA";
+            const letterSpacing = 6;
+            const startX = -(text.length * letterSpacing) / 2;
+            
+            for (let i = 0; i < text.length; i++) {
+                if (text[i] !== ' ') {
+                    for (let j = 0; j < 5; j++) {
+                        const x = startX + i * letterSpacing + (Math.random() - 0.5) * 2;
+                        const y = 20 + (Math.random() - 0.5) * 5;
+                        const z = (Math.random() - 0.5) * 3;
+                        
+                        const particle = createParticle(x, y, z, false);
+                        particle.material.color = new THREE.Color(0xffd700);
+                        particle.material.emissive = new THREE.Color(0xffd700);
+                        particle.material.emissiveIntensity = 0.5;
+                        textPoints.push(particle);
+                    }
+                }
+            }
+        }
+
+        function updateVisualization() {
+            if (!analyser || !isPlaying) return;
+
+            analyser.getByteFrequencyData(dataArray);
+            
+            // Calculate features
+            audioTracker.spectralCentroid = calculateSpectralCentroid(dataArray);
+            audioTracker.spectralSpread = calculateSpectralSpread(dataArray, audioTracker.spectralCentroid);
+            audioTracker.spectralEntropy = calculateSpectralEntropy(dataArray);
+            audioTracker.rmsEnergy = calculateRMSEnergy(dataArray);
+            
+            // Detect beat
+            const isBeat = detectBeat(dataArray);
+            
+            // Update UI
+            document.getElementById('entropy').textContent = audioTracker.spectralEntropy.toFixed(3);
+            document.getElementById('spread').textContent = (audioTracker.spectralSpread / 100).toFixed(2);
+            document.getElementById('centroid').textContent = Math.round(audioTracker.spectralCentroid) + 'Hz';
+            document.getElementById('energy').textContent = audioTracker.rmsEnergy.toFixed(3);
+            document.getElementById('beat').textContent = isBeat ? 'ON' : 'OFF';
+            document.getElementById('particleCount').textContent = particles.length;
+            
+            // Beat pulse
+            if (isBeat) {
+                const beatPulse = document.getElementById('beatPulse');
+                beatPulse.classList.add('beat-active');
+                setTimeout(() => beatPulse.classList.remove('beat-active'), 100);
+            }
+            
+            // Update circular bars
+            for (let i = 0; i < circularBars.length; i++) {
+                const dataIndex = Math.floor(i * dataArray.length / circularBars.length);
+                const value = dataArray[dataIndex] / 255;
+                let beatBoost = isBeat ? 10 * audioTracker.beatStrength : 0;
+                const barHeight = 0.5 + value * 15 + beatBoost;
+                circularBars[i].scale.y = barHeight;
+                circularBars[i].material.opacity = 0.3 + value * 0.7;
+                // Fix the base: keep position.y constant
+                circularBars[i].position.y = 0.05;
+            }
+            
+            // Continuous particle generation based on audio energy
+            const generationChance = spatialData.generationRate + audioTracker.rmsEnergy * 0.7;
+            
+            // Generate multiple particles per frame if energy is high
+            const particlesToGenerate = isBeat ? 4 : (audioTracker.rmsEnergy > 0.5 ? 3 : 2);
+            
+            for (let p = 0; p < particlesToGenerate; p++) {
+                if (particles.length < spatialData.maxPoints && Math.random() < generationChance) {
+                    // Use multiple generation patterns for better spatial distribution
+                    const pattern = particles.length % 4;
+                    let newPos = { x: 0, y: 0, z: 0 };
+                    
+                    if (pattern === 0) {
+                        // Spherical distribution
+                        const theta = Math.random() * Math.PI * 2;
+                        const phi = Math.acos(2 * Math.random() - 1);
+                        const r = 15 + Math.random() * 35 + audioTracker.spectralSpread / 100;
+                        
+                        newPos.x = r * Math.sin(phi) * Math.cos(theta);
+                        newPos.y = r * Math.cos(phi) + 25;
+                        newPos.z = r * Math.sin(phi) * Math.sin(theta);
+                    } else if (pattern === 1) {
+                        // Cylindrical distribution
+                        const angle = audioTracker.spectralEntropy * Math.PI * 6 + p * 1.5;
+                        const radius = 10 + Math.random() * 40;
+                        
+                        newPos.x = Math.cos(angle) * radius;
+                        newPos.y = Math.random() * 50;
+                        newPos.z = Math.sin(angle) * radius;
+                    } else if (pattern === 2) {
+                        // Box distribution with audio influence
+                        newPos.x = (Math.random() - 0.5) * 100 * (0.5 + audioTracker.midEnergy);
+                        newPos.y = Math.random() * 50 * (0.5 + audioTracker.rmsEnergy);
+                        newPos.z = (Math.random() - 0.5) * 100 * (0.5 + audioTracker.highEnergy);
+                    } else {
+                        // Spiral distribution
+                        const t = particles.length * 0.1;
+                        const spiralRadius = 20 + audioTracker.bassEnergy * 30;
+                        
+                        newPos.x = Math.cos(t) * spiralRadius + (Math.random() - 0.5) * 20;
+                        newPos.y = (t * 2) % 50 + Math.random() * 10;
+                        newPos.z = Math.sin(t) * spiralRadius + (Math.random() - 0.5) * 20;
+                    }
+                    
+                    // Apply repulsion
+                    const repulsion = applyRepulsion(newPos);
+                    newPos.x += repulsion.x * 3;
+                    newPos.y += repulsion.y * 3;
+                    newPos.z += repulsion.z * 3;
+                    
+                    // Clamp bounds with full space utilization
+                    newPos.x = Math.max(-50, Math.min(50, newPos.x));
+                    newPos.y = Math.max(0, Math.min(50, newPos.y));
+                    newPos.z = Math.max(-50, Math.min(50, newPos.z));
+                    
+                    spatialData.positions.push({...newPos});
+                    const particle = createParticle(newPos.x, newPos.y, newPos.z, isBeat);
+                    
+                    // Create line to previous particle with better connectivity
+                    if (particles.length > 1 && Math.random() < 0.4) {
+                        const prevIdx = Math.max(0, particles.length - 2 - Math.floor(Math.random() * 10));
+                        const prevParticle = particles[prevIdx];
+                        createLine(prevParticle.position, particle.position);
+                    }
+                }
+            }
+            
+            // Update particles
+            particles.forEach(particle => {
+                particle.userData.age += 0.01;
+                
+                // Fade but never disappear
+                const ageFade = Math.max(0.2, 1 - particle.userData.age * 0.08);
+                particle.material.opacity = ageFade;
+                
+                // Beat effect
+                if (particle.userData.isBeatPoint && isBeat) {
+                    particle.scale.setScalar(particle.userData.baseScale * (1 + audioTracker.beatStrength));
+                } else {
+                    particle.scale.setScalar(particle.userData.baseScale);
+                }
+                // Change color every 1 second (approx every 60 frames)
+                if (colorChangeTimer % 60 === 0) {
+                    const hue = Math.random();
+                    const saturation = 0.7 + Math.random() * 0.3;
+                    const lightness = 0.4 + Math.random() * 0.4;
+                    particle.material.color.setHSL(hue, saturation, lightness);
+                }
+            });
+            colorChangeTimer++;
+            
+            // Update lines
+            lines.forEach(line => {
+                line.material.opacity = Math.max(0.1, line.material.opacity * 0.998);
+            });
+            
+            // Update image if exists - make it react to beats
+            if (imageGroup && imagePlane) {
+                // Remove pulse scaling to prevent blurriness
+                imageGroup.scale.set(1, 1, 1);
+                // Float up and down with bass
+                imageGroup.position.y = audioTracker.bassEnergy * 5;
+                // Always anchor image: keep centered and facing camera
+                imageGroup.position.x = 0;
+                imageGroup.position.z = 0;
+                imageGroup.children.forEach(child => {
+                    child.quaternion.copy(camera.quaternion);
+                });
+            }
+            
+            // Camera movement
+            const time = Date.now() * 0.0003;
+            const beatOffset = audioTracker.beatStrength * 8;
+            camera.position.x = Math.cos(time) * (80 + beatOffset);
+            camera.position.z = Math.sin(time) * (80 + beatOffset);
+            camera.position.y = 40 + Math.sin(time * 2) * 15 + audioTracker.bassEnergy * 10;
+            camera.lookAt(0, 10, 0);
+
+            // Animate grid and axes
+            const timeNow = Date.now() * 0.001;
+            if (gridHelper && gridHelper.material) {
+                gridHelper.material.opacity = 0.6 + 0.3 * Math.sin(timeNow * 2);
+                gridHelper.material.color.setHSL(0.6 + 0.2 * Math.sin(timeNow), 0.5, 0.5);
+            }
+            if (xAxis && xAxis.material) {
+                xAxis.material.color.setHSL(0.02 + 0.02 * Math.sin(timeNow * 1.5), 1, 0.5 + 0.2 * Math.cos(timeNow * 2));
+            }
+            if (yAxis && yAxis.material) {
+                yAxis.material.color.setHSL(0.33 + 0.05 * Math.sin(timeNow * 1.2), 1, 0.5 + 0.2 * Math.sin(timeNow * 2.2));
+            }
+            if (zAxis && zAxis.material) {
+                zAxis.material.color.setHSL(0.65 + 0.05 * Math.cos(timeNow * 1.7), 1, 0.5 + 0.2 * Math.sin(timeNow * 1.7));
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            updateVisualization();
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+                    // Anchor image: always face the camera
+                    imageGroup.lookAt(camera.position);
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Audio handling
+        document.getElementById('uploadBtn').addEventListener('click', () => {
+            document.getElementById('fileInput').click();
+        });
+
+        document.getElementById('fileInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            document.getElementById('uploadBtn').textContent = file.name.substring(0, 10) + '...';
+            
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                document.getElementById('analyzeBtn').disabled = false;
+            } catch (error) {
+                console.error('Error loading audio:', error);
+                alert('Error loading audio file. Please try another file.');
+            }
+        });
+
+        // Image handling
+        document.getElementById('imageBtn').addEventListener('click', () => {
+            document.getElementById('imageInput').click();
+        });
+
+        document.getElementById('imageInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                create3DImage(event.target.result);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        document.getElementById('analyzeBtn').addEventListener('click', () => {
+            const btn = document.getElementById('analyzeBtn');
+            
+            if (!isPlaying) {
+                startAudio();
+                btn.textContent = 'Pause';
+                isPlaying = true;
+            } else {
+                pauseAudio();
+                btn.textContent = 'Play';
+                isPlaying = false;
+            }
+        });
+
+        function startAudio() {
+            if (!audioBuffer) return;
+            
+            // Clear previous visualization
+            particles.forEach(p => scene.remove(p));
+            lines.forEach(l => scene.remove(l));
+            textPoints.forEach(t => scene.remove(t));
+            particles = [];
+            lines = [];
+            textPoints = [];
+            spatialData.positions = [];
+            
+            source = audioContext.createBufferSource();
+                            // Anchor image: always face the camera
+                            imagePlane.quaternion.copy(camera.quaternion);
+            source.buffer = audioBuffer;
+            
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 2048;
+            analyser.smoothingTimeConstant = 0.7;
+            bufferLength = analyser.frequencyBinCount;
+            dataArray = new Uint8Array(bufferLength);
+            
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+            
+            source.start(0);
+            source.onended = () => {
+                isPlaying = false;
+                document.getElementById('analyzeBtn').textContent = 'Visualize';
+                // Fade UI to black
+                document.body.style.transition = 'background 1s';
+                document.body.style.background = '#000';
+                document.getElementById('canvas-container').style.transition = 'opacity 1s';
+                document.getElementById('canvas-container').style.opacity = '0';
+                // Hide upload buttons
+                document.getElementById('uploadBtn').style.display = 'none';
+                document.getElementById('imageBtn').style.display = 'none';
+                document.getElementById('analyzeBtn').style.display = 'none';
+                // Show ending text
+                let endText = document.getElementById('endText');
+                if (!endText) {
+                    endText = document.createElement('div');
+                    endText.id = 'endText';
+                    endText.style.position = 'fixed';
+                    endText.style.top = '50%';
+                    endText.style.left = '50%';
+                    endText.style.transform = 'translate(-50%, -50%)';
+                    endText.style.color = '#FFD700';
+                    endText.style.fontSize = '6rem';
+                    endText.style.fontWeight = 'bold';
+                    endText.style.letterSpacing = '2px';
+                    endText.style.textShadow = '0 0 30px #FFD700, 0 0 60px #000';
+                    endText.style.zIndex = '1000';
+                    endText.textContent = 'Forever Zubeen Da';
+                    document.body.appendChild(endText);
+                } else {
+                    endText.style.display = 'block';
+                }
+                // Show 'Try More' button
+                let tryMoreBtn = document.getElementById('tryMoreBtn');
+                if (!tryMoreBtn) {
+                    tryMoreBtn = document.createElement('button');
+                    tryMoreBtn.id = 'tryMoreBtn';
+                    tryMoreBtn.textContent = 'Try More';
+                    tryMoreBtn.style.position = 'fixed';
+                    tryMoreBtn.style.top = '65%';
+                    tryMoreBtn.style.left = '50%';
+                    tryMoreBtn.style.transform = 'translate(-50%, -50%)';
+                    tryMoreBtn.style.padding = '18px 48px';
+                    tryMoreBtn.style.background = 'rgba(255, 235, 59, 0.15)';
+                    tryMoreBtn.style.border = '2px solid #FFD700';
+                    tryMoreBtn.style.borderRadius = '12px';
+                    tryMoreBtn.style.color = '#FFD700';
+                    tryMoreBtn.style.fontSize = '2rem';
+                    tryMoreBtn.style.fontWeight = 'bold';
+                    tryMoreBtn.style.letterSpacing = '1px';
+                    tryMoreBtn.style.cursor = 'pointer';
+                    tryMoreBtn.style.zIndex = '1001';
+                    tryMoreBtn.style.display = 'block';
+                    tryMoreBtn.onclick = () => {
+                        // Show progress bar
+                        const progressBar = document.getElementById('refreshProgress');
+                        const innerBar = document.getElementById('refreshProgressInner');
+                        progressBar.style.display = 'block';
+                        innerBar.style.width = '0%';
+                        // Animate progress bar for 1s
+                        let progress = 0;
+                        const interval = setInterval(() => {
+                            progress += 10;
+                            innerBar.style.width = progress + '%';
+                            if (progress >= 100) {
+                                clearInterval(interval);
+                                progressBar.style.display = 'none';
+                                // Restore UI to initial state instantly
+                                document.body.style.background = '#000';
+                                document.getElementById('canvas-container').style.opacity = '1';
+                                document.getElementById('uploadBtn').style.display = '';
+                                document.getElementById('imageBtn').style.display = '';
+                                document.getElementById('analyzeBtn').style.display = '';
+                                let endText = document.getElementById('endText');
+                                if (endText) endText.style.display = 'none';
+                                tryMoreBtn.style.display = 'none';
+                                particles.forEach(p => scene.remove(p));
+                                lines.forEach(l => scene.remove(l));
+                                textPoints.forEach(t => scene.remove(t));
+                                particles = [];
+                                lines = [];
+                                textPoints = [];
+                                spatialData.positions = [];
+                                document.getElementById('entropy').textContent = '0.00';
+                                document.getElementById('spread').textContent = '0.00';
+                                document.getElementById('centroid').textContent = '0Hz';
+                                document.getElementById('energy').textContent = '0.00';
+                                document.getElementById('beat').textContent = 'OFF';
+                                document.getElementById('particleCount').textContent = '0';
+                                document.getElementById('canvas-container').style.transition = '';
+                                document.body.style.transition = '';
+                            }
+                        }, 100);
+                    };
+                    document.body.appendChild(tryMoreBtn);
+                } else {
+                    tryMoreBtn.style.display = 'block';
+                }
+                createFinalText();
+            };
+        }
+
+        function pauseAudio() {
+            if (source) {
+                source.stop();
+                source = null;
+            }
+        }
+
+        // Initialize
+        initThreeJS();
+        animate();
+
+        document.addEventListener('DOMContentLoaded', function() {
+    // Automatically load image.png from image folder on initial load
+    const defaultImagePath = 'image/image.png';
+    create3DImage(defaultImagePath);
+});
+    </script>
+</body>
+</html>
