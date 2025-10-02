@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Interactive Flowchart</title>
     <style>
         * {
@@ -15,6 +15,9 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             overflow: hidden;
             background: #0a0a0a;
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         #canvas {
@@ -122,6 +125,107 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             letter-spacing: 0.5px;
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 18px;
+                padding: 10px 20px;
+                top: 15px;
+                max-width: 90%;
+                line-height: 1.3;
+            }
+
+            .toggle-form-btn {
+                top: 70px;
+                right: 10px;
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+
+            .info {
+                top: 70px;
+                left: 10px;
+                font-size: 11px;
+                padding: 8px 12px;
+                max-width: 200px;
+            }
+
+            .info-row {
+                font-size: 10px;
+                gap: 6px;
+                margin-bottom: 3px;
+            }
+
+            .color-indicator {
+                width: 25px;
+                height: 2px;
+            }
+
+            .controls {
+                bottom: 10px;
+                left: 10px;
+                gap: 6px;
+            }
+
+            .controls button {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+
+            .form-container {
+                width: 95%;
+                max-height: 90vh;
+                padding: 20px;
+            }
+
+            .form-header h2 {
+                font-size: 22px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .form-field input,
+            .form-field select {
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-title {
+                font-size: 14px;
+                padding: 8px 12px;
+                top: 10px;
+            }
+
+            .toggle-form-btn {
+                top: 50px;
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .info {
+                font-size: 10px;
+                padding: 6px 10px;
+                max-width: 150px;
+            }
+
+            .controls button {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
         }
 
         /* Form Modal Styles */
@@ -350,7 +454,7 @@
     </div>
     
     <div class="info">
-        <div style="margin-bottom: 8px; font-weight: 600;">Drag to pan • Scroll to zoom</div>
+        <div style="margin-bottom: 8px; font-weight: 600;" id="instructionText">Drag to pan • Scroll to zoom</div>
         <div class="info-row">
             <div class="color-indicator color-process"></div>
             <span>Process Modules</span>
@@ -482,6 +586,19 @@
         let scale = 1;
         let isDragging = false;
         let startX, startY;
+        let lastTouchDistance = 0;
+        let isTouching = false;
+
+        // Detect if mobile device
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+
+        // Update instructions for mobile
+        if (isMobile) {
+            const instructionText = document.getElementById('instructionText');
+            if (instructionText) {
+                instructionText.textContent = 'Touch to pan • Pinch to zoom';
+            }
+        }
 
         const nodes = [
             { id: 'userinput', text: 'User Input', subtitle: 'Project Details', x: -300, y: 300, type: 'input' },
@@ -613,6 +730,13 @@
         offsetX = canvas.width / 2 - 1750;
         offsetY = canvas.height / 2 - 280;
         scale = 0.42;
+
+        // Adjust for mobile devices
+        if (isMobile) {
+            scale = 0.25;
+            offsetX = canvas.width / 2 - 1900;
+            offsetY = canvas.height / 2 - 320;
+        }
 
         function toggleForm() {
             const overlay = document.getElementById('formOverlay');
@@ -1017,6 +1141,80 @@
             isDragging = false;
         });
 
+        // Touch events for mobile
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            
+            if (e.touches.length === 1) {
+                // Single touch - panning
+                isTouching = true;
+                const touch = e.touches[0];
+                startX = touch.clientX - offsetX;
+                startY = touch.clientY - offsetY;
+            } else if (e.touches.length === 2) {
+                // Two fingers - prepare for pinch zoom
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                lastTouchDistance = Math.hypot(
+                    touch2.clientX - touch1.clientX,
+                    touch2.clientY - touch1.clientY
+                );
+            }
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            
+            if (e.touches.length === 1 && isTouching) {
+                // Single touch - panning
+                const touch = e.touches[0];
+                offsetX = touch.clientX - startX;
+                offsetY = touch.clientY - startY;
+                draw();
+            } else if (e.touches.length === 2) {
+                // Two fingers - pinch zoom
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                const currentDistance = Math.hypot(
+                    touch2.clientX - touch1.clientX,
+                    touch2.clientY - touch1.clientY
+                );
+                
+                if (lastTouchDistance > 0) {
+                    const delta = currentDistance / lastTouchDistance;
+                    const centerX = (touch1.clientX + touch2.clientX) / 2;
+                    const centerY = (touch1.clientY + touch2.clientY) / 2;
+                    
+                    const worldX = (centerX - offsetX) / scale;
+                    const worldY = (centerY - offsetY) / scale;
+                    
+                    scale *= delta;
+                    scale = Math.max(0.1, Math.min(3, scale));
+                    
+                    offsetX = centerX - worldX * scale;
+                    offsetY = centerY - worldY * scale;
+                    
+                    draw();
+                }
+                
+                lastTouchDistance = currentDistance;
+            }
+        });
+
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            isTouching = false;
+            if (e.touches.length < 2) {
+                lastTouchDistance = 0;
+            }
+        });
+
+        canvas.addEventListener('touchcancel', (e) => {
+            e.preventDefault();
+            isTouching = false;
+            lastTouchDistance = 0;
+        });
+
         canvas.addEventListener('wheel', (e) => {
             e.preventDefault();
             
@@ -1064,9 +1262,15 @@
         }
 
         function resetView() {
-            offsetX = canvas.width / 2 - 1750;
-            offsetY = canvas.height / 2 - 280;
-            scale = 0.42;
+            if (isMobile) {
+                offsetX = canvas.width / 2 - 1900;
+                offsetY = canvas.height / 2 - 320;
+                scale = 0.25;
+            } else {
+                offsetX = canvas.width / 2 - 1750;
+                offsetY = canvas.height / 2 - 280;
+                scale = 0.42;
+            }
             draw();
         }
 
