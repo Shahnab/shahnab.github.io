@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Flowchart</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            overflow: hidden;
+            background: #0a0a0a;
+        }
+
+        #canvas {
+            display: block;
+            cursor: grab;
+            background: #0a0a0a;
+        }
+
+        #canvas:active {
+            cursor: grabbing;
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .controls button {
+            background: rgba(30, 30, 30, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .controls button:hover {
+            background: rgba(50, 50, 50, 0.9);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .info {
+            position: absolute;
+            top: 110px;
+            left: 20px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            background: rgba(30, 30, 30, 0.6);
+            padding: 10px 16px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 300px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .color-indicator {
+            width: 30px;
+            height: 3px;
+            border-radius: 2px;
+        }
+
+        .color-process {
+            background: linear-gradient(90deg, #E91E63, #9C27B0, #3F51B5);
+        }
+
+        .color-database {
+            background: linear-gradient(90deg, #FF6B35, #F7931E, #FFC300);
+        }
+
+        .color-upload {
+            background: linear-gradient(90deg, #00D9FF, #00B8D4, #0097A7);
+        }
+
+        .color-config {
+            background: linear-gradient(90deg, #8BC34A, #4CAF50);
+        }
+
+        .color-output {
+            background: linear-gradient(90deg, #00E676, #00C853, #00BFA5);
+        }
+
+        .main-title {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            z-index: 10;
+            background: rgba(10, 10, 10, 0.5);
+            padding: 16px 40px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            letter-spacing: 0.5px;
+        }
+
+        /* Form Modal Styles */
+        .form-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .form-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .form-container {
+            background: #f5f3ed;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .form-overlay.active .form-container {
+            transform: scale(1);
+        }
+
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .form-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #666;
+            cursor: pointer;
+            padding: 4px 8px;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: #1a1a1a;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-field.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-field label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .form-field input,
+        .form-field select {
+            padding: 12px 16px;
+            border: 2px solid #d4d2c8;
+            border-radius: 8px;
+            font-size: 15px;
+            background: white;
+            color: #1a1a1a;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-field input:focus,
+        .form-field select:focus {
+            outline: none;
+            border-color: #8fbc3f;
+            box-shadow: 0 0 0 3px rgba(143, 188, 63, 0.1);
+        }
+
+        .form-field input::placeholder {
+            color: #999;
+        }
+
+        .form-field select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+        }
+
+        .form-field.highlighted input,
+        .form-field.highlighted select {
+            border-color: #8fbc3f;
+            background: rgba(143, 188, 63, 0.05);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #d4d2c8;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            font-family: inherit;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            color: #666;
+        }
+
+        .btn-cancel:hover {
+            background: #e8e6dd;
+            color: #1a1a1a;
+        }
+
+        .btn-create {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        .btn-create:hover {
+            background: #000;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .toggle-form-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(30, 30, 30, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .toggle-form-btn:hover {
+            background: rgba(50, 50, 50, 0.9);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Scrollbar styling */
+        .form-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .form-container::-webkit-scrollbar-track {
+            background: #e8e6dd;
+            border-radius: 4px;
+        }
+
+        .form-container::-webkit-scrollbar-thumb {
+            background: #c4c2b8;
+            border-radius: 4px;
+        }
+
+        .form-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a69c;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    
+    <div class="main-title">The New Creative Comms Work Flow</div>
+    
+    <button class="toggle-form-btn" onclick="toggleForm()">📝 Create Project</button>
+    
+    <div class="controls">
+        <button onclick="zoomIn()" title="Zoom In">+</button>
+        <button onclick="zoomOut()" title="Zoom Out">−</button>
+        <button onclick="resetView()" title="Fit to Screen">⊡</button>
+    </div>
+    
+    <div class="info">
+        <div style="margin-bottom: 8px; font-weight: 600;">Drag to pan • Scroll to zoom</div>
+        <div class="info-row">
+            <div class="color-indicator color-process"></div>
+            <span>Process Modules</span>
+        </div>
+        <div class="info-row">
+            <div class="color-indicator color-database"></div>
+            <span>External Databases</span>
+        </div>
+        <div class="info-row">
+            <div class="color-indicator color-upload"></div>
+            <span>Upload Module</span>
+        </div>
+        <div class="info-row">
+            <div class="color-indicator color-output"></div>
+            <span>Output Formats</span>
+        </div>
+        <div class="info-row" style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
+            <div style="width: 18px; height: 18px; border-radius: 50%; background: linear-gradient(135deg, #00D9FF, #0097A7); display: flex; align-items: center; justify-content: center; font-size: 10px;">↑</div>
+            <span>Reference Upload</span>
+        </div>
+        <div class="info-row">
+            <div style="width: 20px; height: 20px; border-radius: 50%; background: linear-gradient(135deg, #8BC34A, #4CAF50); display: flex; align-items: center; justify-content: center; font-size: 11px;">⚙</div>
+            <span>Configurable (1-5)</span>
+        </div>
+    </div>
+
+    <!-- User Input Form -->
+    <div class="form-overlay" id="formOverlay">
+        <div class="form-container">
+            <div class="form-header">
+                <h2>Create Project</h2>
+                <button class="close-btn" onclick="toggleForm()">✕</button>
+            </div>
+
+            <form id="projectForm">
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="projectName">Name</label>
+                        <input type="text" id="projectName" placeholder="Name" required>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="category">Category</label>
+                        <input type="text" id="category" placeholder="Category">
+                    </div>
+
+                    <div class="form-field">
+                        <label for="brand">Brand</label>
+                        <input type="text" id="brand" placeholder="Brand">
+                    </div>
+
+                    <div class="form-field highlighted">
+                        <label for="type">Type</label>
+                        <select id="type">
+                            <option value="product">Product</option>
+                            <option value="service">Service</option>
+                            <option value="campaign">Campaign</option>
+                        </select>
+                    </div>
+
+                    <div class="form-field highlighted">
+                        <label for="business">Business</label>
+                        <select id="business">
+                            <option value="b2c">B2C</option>
+                            <option value="b2b">B2B</option>
+                            <option value="b2b2c">B2B2C</option>
+                        </select>
+                    </div>
+
+                    <div class="form-field highlighted">
+                        <label for="country">Country</label>
+                        <select id="country">
+                            <option value="vietnam">Vietnam</option>
+                            <option value="usa">United States</option>
+                            <option value="uk">United Kingdom</option>
+                            <option value="singapore">Singapore</option>
+                            <option value="thailand">Thailand</option>
+                        </select>
+                    </div>
+
+                    <div class="form-field full-width highlighted">
+                        <label for="ageGroups">Age Groups (comma separated)</label>
+                        <input type="text" id="ageGroups" placeholder="Teens (13-19 years)" value="Teens (13-19 years)">
+                    </div>
+
+                    <div class="form-field highlighted">
+                        <label for="gender">Gender (comma separated)</label>
+                        <input type="text" id="gender" placeholder="Male and Female" value="Male and Female">
+                    </div>
+
+                    <div class="form-field highlighted">
+                        <label for="living">Living (comma separated)</label>
+                        <input type="text" id="living" placeholder="Nationwide" value="Nationwide">
+                    </div>
+
+                    <div class="form-field full-width">
+                        <label for="city">City</label>
+                        <input type="text" id="city" placeholder="City">
+                    </div>
+
+                    <div class="form-field full-width">
+                        <label for="teammates">Teammates</label>
+                        <input type="text" id="teammates" placeholder="Search teammate by name">
+                    </div>
+
+                    <div class="form-field full-width">
+                        <label for="fileUpload">Upload Supporting Files (Optional)</label>
+                        <input type="file" id="fileUpload" multiple accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png" style="padding: 10px;">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-cancel" onclick="toggleForm()">Cancel</button>
+                    <button type="submit" class="btn btn-create">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let offsetX = 0;
+        let offsetY = 0;
+        let scale = 1;
+        let isDragging = false;
+        let startX, startY;
+
+        const nodes = [
+            { id: 'userinput', text: 'User Input', subtitle: 'Project Details', x: -300, y: 300, type: 'input' },
+            { id: 'upload', text: 'Upload Client Brief', subtitle: 'PDF Only', x: -100, y: 300, type: 'upload' },
+            { id: 'brief', text: 'Brief Decoder', subtitle: 'Analysis', x: 100, y: 300, type: 'process' },
+            { id: 'deepresearch', text: 'Deep Research Agent', subtitle: 'External Database', x: 100, y: 450, type: 'database' },
+            { id: 'category', text: 'Category Insights', subtitle: 'Market Research', x: 300, y: 300, type: 'process', allowUpload: true },
+            { id: 'competition', text: 'Competition Insights', subtitle: 'Competitive Analysis', x: 500, y: 300, type: 'process', allowUpload: true },
+            { id: 'brand', text: 'Brand Profile', subtitle: 'Brand Analysis', x: 700, y: 300, type: 'process', allowUpload: true },
+            { id: 'audienceinsights', text: 'Audience Insights', subtitle: 'Configure 1-5 Segments', x: 900, y: 300, type: 'process', allowUpload: true, configurable: true },
+            { id: 'audiencedataset', text: 'Audience Dataset', subtitle: 'External Database', x: 900, y: 450, type: 'database' },
+            
+            // Note indicator
+            { id: 'segmentnote', text: 'Example: 3 Segments', subtitle: '(Configurable: 1-5)', x: 1150, y: 80, type: 'note' },
+            
+            { id: 'persona1', text: 'Audience Segment 1', subtitle: 'Primary Persona', x: 1150, y: 150, type: 'segment', allowUpload: true },
+            { id: 'persona2', text: 'Audience Segment 2', subtitle: 'Secondary Persona', x: 1150, y: 300, type: 'segment', allowUpload: true },
+            { id: 'persona3', text: 'Audience Segment 3', subtitle: 'Tertiary Persona', x: 1150, y: 450, type: 'segment', allowUpload: true },
+            
+            { id: 'journey1', text: 'Customer Journey', subtitle: 'Segment 1', x: 1400, y: 150, type: 'process', allowUpload: true },
+            { id: 'opportunity1', text: 'Opportunity/Problem', subtitle: 'Segment 1', x: 1650, y: 150, type: 'process', allowUpload: true },
+            { id: 'insights1', text: 'Insights', subtitle: 'Segment 1', x: 1900, y: 150, type: 'process', allowUpload: true },
+            { id: 'brandstrategy1', text: 'Brand Strategy', subtitle: 'Segment 1', x: 2150, y: 150, type: 'process', allowUpload: true },
+            { id: 'creative1', text: 'Creative Brief', subtitle: 'Segment 1', x: 2400, y: 150, type: 'process', allowUpload: true },
+            { id: 'ideas1', text: 'Brand Ideas', subtitle: 'Segment 1', x: 2650, y: 150, type: 'process', allowUpload: true },
+            { id: 'awreference1', text: 'Category Award Winning Ads', subtitle: 'External Database', x: 2650, y: 300, type: 'database' },
+            { id: 'comms1', text: 'Comms Framework', subtitle: 'Segment 1', x: 2900, y: 150, type: 'process', allowUpload: true },
+            { id: 'campaign1', text: 'Campaign Concept', subtitle: 'Segment 1', x: 3150, y: 150, type: 'process', allowUpload: true },
+            { id: 'execution1', text: 'Execution Generation', subtitle: 'Segment 1', x: 3400, y: 150, type: 'process', allowUpload: true },
+            { id: 'awexecution1', text: 'Award Winning Executions', subtitle: 'External Database', x: 3400, y: 300, type: 'database' },
+            
+            { id: 'journey2', text: 'Customer Journey', subtitle: 'Segment 2', x: 1400, y: 300, type: 'process', allowUpload: true },
+            { id: 'opportunity2', text: 'Opportunity/Problem', subtitle: 'Segment 2', x: 1650, y: 300, type: 'process', allowUpload: true },
+            { id: 'insights2', text: 'Insights', subtitle: 'Segment 2', x: 1900, y: 300, type: 'process', allowUpload: true },
+            { id: 'brandstrategy2', text: 'Brand Strategy', subtitle: 'Segment 2', x: 2150, y: 300, type: 'process', allowUpload: true },
+            { id: 'creative2', text: 'Creative Brief', subtitle: 'Segment 2', x: 2400, y: 300, type: 'process', allowUpload: true },
+            { id: 'ideas2', text: 'Brand Ideas', subtitle: 'Segment 2', x: 2650, y: 300, type: 'process', allowUpload: true },
+            { id: 'awreference2', text: 'Category Award Winning Ads', subtitle: 'External Database', x: 2650, y: 450, type: 'database' },
+            { id: 'comms2', text: 'Comms Framework', subtitle: 'Segment 2', x: 2900, y: 300, type: 'process', allowUpload: true },
+            { id: 'campaign2', text: 'Campaign Concept', subtitle: 'Segment 2', x: 3150, y: 300, type: 'process', allowUpload: true },
+            { id: 'execution2', text: 'Execution Generation', subtitle: 'Segment 2', x: 3400, y: 300, type: 'process', allowUpload: true },
+            { id: 'awexecution2', text: 'Award Winning Executions', subtitle: 'External Database', x: 3400, y: 450, type: 'database' },
+            
+            { id: 'journey3', text: 'Customer Journey', subtitle: 'Segment 3', x: 1400, y: 450, type: 'process', allowUpload: true },
+            { id: 'opportunity3', text: 'Opportunity/Problem', subtitle: 'Segment 3', x: 1650, y: 450, type: 'process', allowUpload: true },
+            { id: 'insights3', text: 'Insights', subtitle: 'Segment 3', x: 1900, y: 450, type: 'process', allowUpload: true },
+            { id: 'brandstrategy3', text: 'Brand Strategy', subtitle: 'Segment 3', x: 2150, y: 450, type: 'process', allowUpload: true },
+            { id: 'creative3', text: 'Creative Brief', subtitle: 'Segment 3', x: 2400, y: 450, type: 'process', allowUpload: true },
+            { id: 'ideas3', text: 'Brand Ideas', subtitle: 'Segment 3', x: 2650, y: 450, type: 'process', allowUpload: true },
+            { id: 'awreference3', text: 'Category Award Winning Ads', subtitle: 'External Database', x: 2650, y: 600, type: 'database' },
+            { id: 'comms3', text: 'Comms Framework', subtitle: 'Segment 3', x: 2900, y: 450, type: 'process', allowUpload: true },
+            { id: 'campaign3', text: 'Campaign Concept', subtitle: 'Segment 3', x: 3150, y: 450, type: 'process', allowUpload: true },
+            { id: 'execution3', text: 'Execution Generation', subtitle: 'Segment 3', x: 3400, y: 450, type: 'process', allowUpload: true },
+            { id: 'awexecution3', text: 'Award Winning Executions', subtitle: 'External Database', x: 3400, y: 600, type: 'database' },
+            
+            { id: 'download', text: 'Download', subtitle: 'Select Format', x: 3650, y: 300, type: 'output' },
+            
+            // Output format options
+            { id: 'outputpdf', text: 'PDF', subtitle: 'Downloadable Document', x: 3900, y: 150, type: 'output-format' },
+            { id: 'outputhtml', text: 'Interactive HTML', subtitle: 'Web Page', x: 3900, y: 300, type: 'output-format' },
+            { id: 'outputppt', text: 'PPT', subtitle: 'Gamma API', x: 3900, y: 450, type: 'output-format' }
+        ];
+
+        const connections = [
+            ['userinput', 'upload'],
+            ['upload', 'brief'],
+            ['brief', 'category'],
+            ['category', 'competition'],
+            ['competition', 'brand'],
+            ['brand', 'audienceinsights'],
+            ['deepresearch', 'brief'],
+            ['deepresearch', 'category'],
+            ['deepresearch', 'competition'],
+            ['deepresearch', 'brand'],
+            ['deepresearch', 'opportunity1'],
+            ['deepresearch', 'opportunity2'],
+            ['deepresearch', 'opportunity3'],
+            ['audiencedataset', 'audienceinsights'],
+            ['audienceinsights', 'persona1'],
+            ['audienceinsights', 'persona2'],
+            ['audienceinsights', 'persona3'],
+            
+            ['persona1', 'journey1'],
+            ['journey1', 'opportunity1'],
+            ['opportunity1', 'insights1'],
+            ['insights1', 'brandstrategy1'],
+            ['brandstrategy1', 'creative1'],
+            ['creative1', 'ideas1'],
+            ['awreference1', 'ideas1'],
+            ['ideas1', 'comms1'],
+            ['comms1', 'campaign1'],
+            ['campaign1', 'execution1'],
+            ['awexecution1', 'execution1'],
+            
+            ['persona2', 'journey2'],
+            ['journey2', 'opportunity2'],
+            ['opportunity2', 'insights2'],
+            ['insights2', 'brandstrategy2'],
+            ['brandstrategy2', 'creative2'],
+            ['creative2', 'ideas2'],
+            ['awreference2', 'ideas2'],
+            ['ideas2', 'comms2'],
+            ['comms2', 'campaign2'],
+            ['campaign2', 'execution2'],
+            ['awexecution2', 'execution2'],
+            
+            ['persona3', 'journey3'],
+            ['journey3', 'opportunity3'],
+            ['opportunity3', 'insights3'],
+            ['insights3', 'brandstrategy3'],
+            ['brandstrategy3', 'creative3'],
+            ['creative3', 'ideas3'],
+            ['awreference3', 'ideas3'],
+            ['ideas3', 'comms3'],
+            ['comms3', 'campaign3'],
+            ['campaign3', 'execution3'],
+            ['awexecution3', 'execution3'],
+            
+            ['execution1', 'download'],
+            ['execution2', 'download'],
+            ['execution3', 'download'],
+            
+            // Download to output formats
+            ['download', 'outputpdf'],
+            ['download', 'outputhtml'],
+            ['download', 'outputppt']
+        ];
+
+        offsetX = canvas.width / 2 - 1750;
+        offsetY = canvas.height / 2 - 280;
+        scale = 0.42;
+
+        function toggleForm() {
+            const overlay = document.getElementById('formOverlay');
+            overlay.classList.toggle('active');
+        }
+
+        document.getElementById('projectForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('fileUpload');
+            const files = fileInput.files;
+            const fileNames = files.length > 0 ? Array.from(files).map(f => f.name).join(', ') : 'None';
+            
+            const formData = {
+                name: document.getElementById('projectName').value,
+                category: document.getElementById('category').value,
+                brand: document.getElementById('brand').value,
+                type: document.getElementById('type').value,
+                business: document.getElementById('business').value,
+                country: document.getElementById('country').value,
+                ageGroups: document.getElementById('ageGroups').value,
+                gender: document.getElementById('gender').value,
+                living: document.getElementById('living').value,
+                city: document.getElementById('city').value,
+                teammates: document.getElementById('teammates').value,
+                uploadedFiles: fileNames,
+                filesCount: files.length
+            };
+            
+            console.log('Project Created:', formData);
+            alert('Project "' + formData.name + '" created successfully!\nUploaded files: ' + fileNames);
+            toggleForm();
+        });
+
+        function drawGradientBorder(x, y, width, height, radius, nodeType) {
+            const gradient = ctx.createLinearGradient(x - width/2, y, x + width/2, y);
+            
+            // Different gradients for different node types
+            if (nodeType === 'database') {
+                // Orange/Amber gradient for databases
+                gradient.addColorStop(0, '#FF6B35');
+                gradient.addColorStop(0.5, '#F7931E');
+                gradient.addColorStop(1, '#FFC300');
+            } else if (nodeType === 'upload') {
+                // Teal/Cyan gradient for upload
+                gradient.addColorStop(0, '#00D9FF');
+                gradient.addColorStop(0.5, '#00B8D4');
+                gradient.addColorStop(1, '#0097A7');
+            } else if (nodeType === 'output-format') {
+                // Green gradient for output formats
+                gradient.addColorStop(0, '#00E676');
+                gradient.addColorStop(0.5, '#00C853');
+                gradient.addColorStop(1, '#00BFA5');
+            } else {
+                // Default pink-purple-blue gradient for regular modules
+                gradient.addColorStop(0, '#E91E63');
+                gradient.addColorStop(0.5, '#9C27B0');
+                gradient.addColorStop(1, '#3F51B5');
+            }
+            
+            return gradient;
+        }
+
+        function drawNode(node) {
+            const x = node.x * scale + offsetX;
+            const y = node.y * scale + offsetY;
+            const width = 180 * scale;
+            const height = 70 * scale;
+            const radius = 12 * scale;
+            const handleRadius = 12 * scale;
+
+            // Special rendering for note type
+            if (node.type === 'note') {
+                // Note box with dashed border
+                const noteWidth = 200 * scale;
+                const noteHeight = 50 * scale;
+                
+                ctx.fillStyle = 'rgba(139, 195, 74, 0.1)';
+                ctx.beginPath();
+                ctx.roundRect(x - noteWidth/2, y - noteHeight/2, noteWidth, noteHeight, 8 * scale);
+                ctx.fill();
+                
+                // Dashed border
+                ctx.strokeStyle = '#8BC34A';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5 * scale, 3 * scale]);
+                ctx.beginPath();
+                ctx.roundRect(x - noteWidth/2, y - noteHeight/2, noteWidth, noteHeight, 8 * scale);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Text
+                ctx.fillStyle = '#8BC34A';
+                ctx.font = `bold ${12 * scale}px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(node.text, x, y - 8 * scale);
+                
+                ctx.fillStyle = 'rgba(139, 195, 74, 0.7)';
+                ctx.font = `${11 * scale}px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`;
+                ctx.fillText(node.subtitle, x, y + 8 * scale);
+                
+                return; // Skip normal node rendering
+            }
+
+            ctx.fillStyle = '#1a1a1a';
+            ctx.beginPath();
+            ctx.roundRect(x - width/2, y - height/2, width, height, radius);
+            ctx.fill();
+
+            ctx.strokeStyle = drawGradientBorder(x, y, width, height, radius, node.type);
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(x - width/2, y - height/2, width, height, radius);
+            ctx.stroke();
+
+            const handleX = x + width/2 - handleRadius;
+            const handleY = y - height/2 - handleRadius;
+            
+            // Create handle gradient based on node type
+            const handleGradient = ctx.createLinearGradient(handleX - handleRadius, handleY, handleX + handleRadius, handleY);
+            if (node.type === 'database') {
+                handleGradient.addColorStop(0, '#FF6B35');
+                handleGradient.addColorStop(1, '#FFC300');
+            } else if (node.type === 'upload') {
+                handleGradient.addColorStop(0, '#00D9FF');
+                handleGradient.addColorStop(1, '#0097A7');
+            } else if (node.type === 'output-format') {
+                handleGradient.addColorStop(0, '#00E676');
+                handleGradient.addColorStop(1, '#00BFA5');
+            } else {
+                handleGradient.addColorStop(0, '#E91E63');
+                handleGradient.addColorStop(1, '#3F51B5');
+            }
+            
+            ctx.strokeStyle = handleGradient;
+            ctx.fillStyle = '#1a1a1a';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(handleX, handleY, handleRadius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(handleX - 3 * scale, handleY, 3 * scale, Math.PI, 0);
+            ctx.arc(handleX + 3 * scale, handleY, 3 * scale, Math.PI, 0);
+            ctx.stroke();
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.font = `${20 * scale}px monospace`;
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            
+            let icon = '📄';
+            if (node.type === 'input') icon = '✏️';
+            else if (node.type === 'upload') icon = '📤';
+            else if (node.type === 'database') icon = '💾';
+            else if (node.type === 'segment') icon = '👥';
+            else if (node.type === 'output') icon = '⬇️';
+            else if (node.type === 'output-format') {
+                if (node.text === 'PDF') icon = '📑';
+                else if (node.text === 'Interactive HTML') icon = '🌐';
+                else if (node.text === 'PPT') icon = '📊';
+            }
+            
+            ctx.fillText(icon, x - width/2 + 12 * scale, y - height/2 + 12 * scale);
+
+            ctx.fillStyle = 'white';
+            ctx.font = `bold ${13 * scale}px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`;
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.fillText(node.text, x - width/2 + 40 * scale, y - height/2 + 15 * scale);
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.font = `${11 * scale}px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`;
+            ctx.fillText(node.subtitle, x - width/2 + 40 * scale, y - height/2 + 35 * scale);
+
+            // Upload badge indicator for modules that allow uploads
+            if (node.allowUpload) {
+                const badgeSize = 18 * scale;
+                const badgeX = x + width/2 - badgeSize - 8 * scale;
+                const badgeY = y + height/2 - badgeSize - 8 * scale;
+                
+                // Badge background with gradient
+                const badgeGradient = ctx.createLinearGradient(badgeX, badgeY, badgeX + badgeSize, badgeY + badgeSize);
+                badgeGradient.addColorStop(0, '#00D9FF');
+                badgeGradient.addColorStop(1, '#0097A7');
+                
+                ctx.fillStyle = badgeGradient;
+                ctx.beginPath();
+                ctx.arc(badgeX + badgeSize/2, badgeY + badgeSize/2, badgeSize/2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Badge border
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(badgeX + badgeSize/2, badgeY + badgeSize/2, badgeSize/2, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // Upload icon (arrow up)
+                const iconSize = 8 * scale;
+                const iconX = badgeX + badgeSize/2;
+                const iconY = badgeY + badgeSize/2;
+                
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                // Arrow shaft
+                ctx.rect(iconX - iconSize/6, iconY - iconSize/4, iconSize/3, iconSize/2);
+                ctx.fill();
+                
+                // Arrow head
+                ctx.beginPath();
+                ctx.moveTo(iconX, iconY - iconSize/2);
+                ctx.lineTo(iconX - iconSize/3, iconY);
+                ctx.lineTo(iconX + iconSize/3, iconY);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            // Configuration badge for configurable modules
+            if (node.configurable) {
+                const configBadgeSize = 20 * scale;
+                const configBadgeX = x - width/2 + 8 * scale;
+                const configBadgeY = y + height/2 - configBadgeSize - 8 * scale;
+                
+                // Badge background with gradient
+                const configGradient = ctx.createLinearGradient(configBadgeX, configBadgeY, configBadgeX + configBadgeSize, configBadgeY + configBadgeSize);
+                configGradient.addColorStop(0, '#8BC34A');
+                configGradient.addColorStop(1, '#4CAF50');
+                
+                ctx.fillStyle = configGradient;
+                ctx.beginPath();
+                ctx.arc(configBadgeX + configBadgeSize/2, configBadgeY + configBadgeSize/2, configBadgeSize/2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Badge border
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(configBadgeX + configBadgeSize/2, configBadgeY + configBadgeSize/2, configBadgeSize/2, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // Settings gear icon
+                const gearRadius = 5 * scale;
+                const gearCenterX = configBadgeX + configBadgeSize/2;
+                const gearCenterY = configBadgeY + configBadgeSize/2;
+                
+                ctx.fillStyle = 'white';
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 1.5 * scale;
+                
+                // Draw gear teeth
+                ctx.beginPath();
+                for (let i = 0; i < 6; i++) {
+                    const angle = (i * Math.PI * 2) / 6;
+                    const x1 = gearCenterX + Math.cos(angle) * gearRadius * 0.6;
+                    const y1 = gearCenterY + Math.sin(angle) * gearRadius * 0.6;
+                    const x2 = gearCenterX + Math.cos(angle) * gearRadius;
+                    const y2 = gearCenterY + Math.sin(angle) * gearRadius;
+                    
+                    if (i === 0) {
+                        ctx.moveTo(x1, y1);
+                    }
+                    ctx.lineTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                }
+                ctx.closePath();
+                ctx.stroke();
+                
+                // Center circle
+                ctx.beginPath();
+                ctx.arc(gearCenterX, gearCenterY, gearRadius * 0.35, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+        }
+
+        function drawConnection(from, to) {
+            const fromNode = nodes.find(n => n.id === from);
+            const toNode = nodes.find(n => n.id === to);
+
+            const width = 180 * scale;
+            const height = 70 * scale;
+
+            let x1, y1, x2, y2;
+
+            // Special handling for database connections going upward
+            if (fromNode.type === 'database') {
+                x1 = fromNode.x * scale + offsetX;
+                y1 = fromNode.y * scale + offsetY - height/2;
+                x2 = toNode.x * scale + offsetX;
+                y2 = toNode.y * scale + offsetY + height/2;
+            } else {
+                x1 = fromNode.x * scale + offsetX + width/2;
+                y1 = fromNode.y * scale + offsetY;
+                x2 = toNode.x * scale + offsetX - width/2;
+                y2 = toNode.y * scale + offsetY;
+            }
+
+            // Connection dot color based on source node type
+            let dotColor = '#3F51B5';
+            if (fromNode.type === 'database') {
+                dotColor = '#FFC300';
+            } else if (fromNode.type === 'upload') {
+                dotColor = '#00D9FF';
+            } else if (fromNode.type === 'output' && toNode.type === 'output-format') {
+                dotColor = '#00E676';
+            }
+
+            const dotGradient = ctx.createRadialGradient(x1, y1, 0, x1, y1, 4 * scale);
+            dotGradient.addColorStop(0, dotColor);
+            dotGradient.addColorStop(1, dotColor + '00'); // Transparent version
+            ctx.fillStyle = dotGradient;
+            ctx.beginPath();
+            ctx.arc(x1, y1, 4 * scale, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Line gradient based on source node type
+            const lineGradient = ctx.createLinearGradient(x1, y1, x2, y2);
+            if (fromNode.type === 'database') {
+                lineGradient.addColorStop(0, 'rgba(255, 107, 53, 0.6)');   // Orange
+                lineGradient.addColorStop(0.5, 'rgba(247, 147, 30, 0.6)'); // Amber
+                lineGradient.addColorStop(1, 'rgba(255, 195, 0, 0.5)');    // Yellow
+            } else if (fromNode.type === 'upload') {
+                lineGradient.addColorStop(0, 'rgba(0, 217, 255, 0.6)');    // Cyan
+                lineGradient.addColorStop(0.5, 'rgba(0, 184, 212, 0.6)');  // Teal
+                lineGradient.addColorStop(1, 'rgba(0, 151, 167, 0.5)');    // Dark teal
+            } else if (fromNode.type === 'output' && toNode.type === 'output-format') {
+                lineGradient.addColorStop(0, 'rgba(0, 230, 118, 0.6)');    // Green
+                lineGradient.addColorStop(0.5, 'rgba(0, 200, 83, 0.6)');   // Mid green
+                lineGradient.addColorStop(1, 'rgba(0, 191, 165, 0.5)');    // Teal green
+            } else {
+                lineGradient.addColorStop(0, 'rgba(233, 30, 99, 0.6)');
+                lineGradient.addColorStop(0.5, 'rgba(156, 39, 176, 0.6)');
+                lineGradient.addColorStop(1, 'rgba(63, 81, 181, 0.6)');
+            }
+            
+            ctx.strokeStyle = lineGradient;
+            ctx.lineWidth = 2 * scale;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            
+            // Different curve logic for database connections
+            if (fromNode.type === 'database') {
+                const controlY = (y1 + y2) / 2;
+                ctx.bezierCurveTo(x1, controlY, x2, controlY, x2, y2);
+            } else {
+                const midX = (x1 + x2) / 2;
+                ctx.bezierCurveTo(midX, y1, midX, y2, x2, y2);
+            }
+            ctx.stroke();
+
+            // End dot color
+            let endDotColor = '#3F51B5';
+            if (fromNode.type === 'database') {
+                endDotColor = '#FFC300';
+            } else if (fromNode.type === 'upload') {
+                endDotColor = '#00D9FF';
+            } else if (fromNode.type === 'output' && toNode.type === 'output-format') {
+                endDotColor = '#00E676';
+            }
+
+            ctx.fillStyle = endDotColor;
+            ctx.beginPath();
+            ctx.arc(x2, y2, 3 * scale, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            connections.forEach(conn => {
+                drawConnection(conn[0], conn[1]);
+            });
+
+            nodes.forEach(node => {
+                drawNode(node);
+            });
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX - offsetX;
+            startY = e.clientY - offsetY;
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                offsetX = e.clientX - startX;
+                offsetY = e.clientY - startY;
+                draw();
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isDragging = false;
+        });
+
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+            const worldX = (mouseX - offsetX) / scale;
+            const worldY = (mouseY - offsetY) / scale;
+            const delta = e.deltaY > 0 ? 0.9 : 1.1;
+            
+            scale *= delta;
+            scale = Math.max(0.1, Math.min(3, scale));
+            
+            offsetX = mouseX - worldX * scale;
+            offsetY = mouseY - worldY * scale;
+            
+            draw();
+        });
+
+        function zoomIn() {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const worldX = (centerX - offsetX) / scale;
+            const worldY = (centerY - offsetY) / scale;
+            
+            scale *= 1.2;
+            scale = Math.min(3, scale);
+            
+            offsetX = centerX - worldX * scale;
+            offsetY = centerY - worldY * scale;
+            draw();
+        }
+
+        function zoomOut() {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const worldX = (centerX - offsetX) / scale;
+            const worldY = (centerY - offsetY) / scale;
+            
+            scale *= 0.8;
+            scale = Math.max(0.1, scale);
+            
+            offsetX = centerX - worldX * scale;
+            offsetY = centerY - worldY * scale;
+            draw();
+        }
+
+        function resetView() {
+            offsetX = canvas.width / 2 - 1750;
+            offsetY = canvas.height / 2 - 280;
+            scale = 0.42;
+            draw();
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            draw();
+        });
+
+        draw();
+    </script>
+</body>
+</html>
