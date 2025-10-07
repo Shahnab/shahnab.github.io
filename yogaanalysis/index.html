@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minh An Yoga | Vietnam</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #3F3C36;
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #A47E64;
+            border-bottom-color: #A47E64;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .card {
+            background-color: #FFFFFF;
+            border: 1px solid #F3EEEA;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+        }
+        .table-header {
+            background-color: #F8F5F2;
+        }
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+        .tab-button.active {
+            background-color: #A47E64;
+            color: #FFFFFF;
+        }
+        .tab-button:not(.active) {
+            background-color: #F8F5F2;
+            color: #3F3C36;
+        }
+        .module-detail > span {
+            font-weight: 600;
+            color: #A47E64;
+        }
+        .module-card {
+            min-height: 300px; /* Ensure similar heights for better display */
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-[#A47E64]">Minh An Yoga | Analysis Report</h1>
+            <div class="hidden md:flex space-x-8">
+                <a class="nav-link font-medium pb-1 active" data-target="summary">Executive Summary</a>
+                <a class="nav-link font-medium pb-1" data-target="market">Market Pulse</a>
+                <a class="nav-link font-medium pb-1" data-target="customers">Customer Deep-Dive</a>
+                <a class="nav-link font-medium pb-1" data-target="competition">Competitive Matrix</a>
+                <a class="nav-link font-medium pb-1" data-target="strategy">Strategic Path</a>
+            </div>
+            <div class="md:hidden">
+                <select id="mobile-nav" class="bg-gray-100 border border-gray-300 rounded-md p-2">
+                    <option value="summary">Executive Summary</option>
+                    <option value="market">Market Pulse</option>
+                    <option value="customers">Customer Deep-Dive</option>
+                    <option value="competition">Competitive Matrix</option>
+                    <option value="strategy">Strategic Path</option>
+                </select>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-8 md:py-12">
+        
+        <section id="summary" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-[#3F3C36] mb-2">Executive Summary</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">A strategic overview of the Vietnam yoga market and a clear path to revenue growth by focusing on high-demand therapeutic niches and premium teacher training.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div class="card rounded-lg p-6">
+                    <h3 class="text-4xl font-bold text-[#A47E64]">90%</h3>
+                    <p class="mt-2 text-gray-600">Primary student demand is focused on <span class="font-bold">Postural & Pain Correction</span>.</p>
+                </div>
+                <div class="card rounded-lg p-6">
+                    <h3 class="text-4xl font-bold text-[#A47E64]">30-45</h3>
+                    <p class="mt-2 text-gray-600">The core purchasing age group for both Students and Clients.</p>
+                </div>
+                <div class="card rounded-lg p-6">
+                    <h3 class="text-4xl font-bold text-[#A47E64]">3x</h3>
+                    <p class="mt-2 text-gray-600">Premium pricing potential for specialized <span class="font-bold">Therapeutic Teacher Training Modules</span>.</p>
+                </div>
+            </div>
+
+            <!-- START: NEW EXECUTIVE SUMMARY CONTENT -->
+            <div class="card rounded-lg p-6 md:p-8 mt-12">
+                <h3 class="text-2xl font-bold mb-4 text-center">Market Context & Strategic Imperatives</h3>
+                <p class="text-base text-gray-600 mb-6">The Wellness sector represents a high-potential market for specialized yoga services, with the overall Vietnam wellness tourism sector projected to expand from $5.0 Billion in 2024 to $11.7 Billion by 2033, demonstrating a compound annual growth rate (CAGR) of 8.84%. While general Hatha and Vinyasa classes are widely available, the analysis indicates a validated, high-value demand for scientifically-backed therapeutic and posture correction specialization. This demand is critically driven by the widespread incidence of chronic occupational spinal ailments, such as cervical spondylosis and herniated discs, which affect the city's large population of urban professionals.</p>
+                <p class="text-base text-gray-600 mt-4 border-t pt-4">To effectively maximize revenue and secure dominance in this specialized segment, the studio must implement three immediate strategic imperatives:</p>
+                <ul class="mt-4 space-y-3 text-gray-700 list-disc list-inside px-4">
+                    <li><span class="font-bold">Strategic Product Specialization:</span> Mandatory, moving beyond generic offerings to develop branded, high-margin, ailment-specific programs.</li>
+                    <li><span class="font-bold">Dual-Pronged Market Penetration:</span> Adopting premium pricing and English-focused delivery within high-affluence Expat centers like District 2 (Thao Dien), concurrently targeting the Vietnamese professional class in central districts with localized, medium-premium therapeutic branding.</li>
+                    <li><span class="font-bold">Authority & B2B Capture:</span> Expanding certification offerings by introducing advanced, niche <span class="font-bold">Yoga Teacher Training (YTT)</span> modules, such as Functional Anatomy YTT, enabling graduates to command higher earning potential and establishing the studio as a pedagogical authority.</li>
+                </ul>
+            </div>
+            <!-- END: NEW EXECUTIVE SUMMARY CONTENT -->
+
+        </section>
+
+        <section id="market" class="content-section hidden pt-12">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-[#3F3C36] mb-2">Market Pulse</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Understanding the digital landscape and health drivers of the Vietnamese yoga community is key to effective marketing and program development.</p>
+            </div>
+            
+            <h3 class="text-xl font-bold mb-4 text-center md:text-left">Digital Yoga Platforms in Vietnam</h3>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
+                <div class="card rounded-lg p-6">
+                    <h4 class="font-semibold mb-2 text-center border-b pb-2">Facebook Groups (Primary Local Community & Therapy Focus)</h4>
+                    <ul class="space-y-2 text-sm max-h-72 overflow-y-auto">
+                        <li class="p-2 rounded-md bg-gray-50">1. Cộng đồng Yoga Việt Nam (Largest general yoga group)</li>
+                        <li class="p-2 rounded-md bg-gray-50">2. Yoga cho người mới bắt đầu (High volume, general beginner interest)</li>
+                        <li class="p-2 rounded-md bg-gray-50">3. Yêu Yoga (General enthusiast group)</li>
+                        <li class="p-2 rounded-md bg-gray-50">4. <span class="font-bold">Yoga trị liệu & Thiền</span> (Crucial niche group for posture correction)</li>
+                        <li class="p-2 rounded-md bg-gray-50">5. Expats in Ho Chi Minh City (Saigon) (Key for expat student acquisition)</li>
+                        <li class="p-2 rounded-md bg-gray-50">6. Yoga Việt Nam - Group</li>
+                        <li class="p-2 rounded-md bg-gray-50">7. Yoga & Healthy Life</li>
+                        <li class="p-2 rounded-md bg-gray-50">8. Yoga Cùng Bạn</li>
+                        <li class="p-2 rounded-md bg-gray-50">9. Sức Khỏe & Yoga</li>
+                        <li class="p-2 rounded-md bg-gray-50">10. Cộng đồng người tập Yoga HCM</li>
+                    </ul>
+                </div>
+                
+                <div class="card rounded-lg p-6">
+                    <h4 class="font-semibold mb-2 text-center border-b pb-2">YouTube Channels (Online Video Communities)</h4>
+                    <ul class="space-y-2 text-sm max-h-72 overflow-y-auto">
+                        <li class="p-2 rounded-md bg-gray-50">1. <span class="font-bold">Nguyễn Hiếu Yoga</span> (Top instructor, high trust, focus on Hatha/Therapy)</li>
+                        <li class="p-2 rounded-md bg-gray-50">2. Luna Thái Yoga (Popular Hatha/Vinyasa content)</li>
+                        <li class="p-2 rounded-md bg-gray-50">3. Yoga with Briohny (Expat/International reach)</li>
+                        <li class="p-2 rounded-md bg-gray-50">4. Happy Yoga VN (General well-being)</li>
+                        <li class="p-2 rounded-md bg-gray-50">5. Vyoga World (Studio content and tutorials)</li>
+                        <li class="p-2 rounded-md bg-gray-50">6. Yoga Plus Vietnam</li>
+                        <li class="p-2 rounded-md bg-gray-50">7. Hương Yoga</li>
+                        <li class="p-2 rounded-md bg-gray-50">8. Khỏe Đẹp Cùng Yoga</li>
+                        <li class="p-2 rounded-md bg-gray-50">9. Yoga By My</li>
+                        <li class="p-2 rounded-md bg-gray-50">10. Zen Yoga</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-bold mt-12 mb-4 text-center md:text-left">Most Popular Ailments & Required Therapeutic Focus </h3>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 mt-4">
+                <div class="card rounded-lg p-6">
+                    <h4 class="text-lg font-semibold mb-4 text-center">Primary Health Concerns Addressed by Yoga</h4>
+                    <p class="text-center text-sm text-gray-500 mb-4">The market is heavily skewed towards therapeutic solutions for modern lifestyle ailments, validating the posture correction niche.</p>
+                     <div class="chart-container h-80 md:h-96">
+                        <canvas id="healthConcernsChart"></canvas>
+                    </div>
+                </div>
+                 <div class="card rounded-lg p-6">
+                    <h4 class="text-lg font-semibold mb-4 text-center">Therapeutic Yoga Focus Required</h4>
+                     <p class="text-center text-sm text-gray-500 mb-4">Mapping student pain points directly to your specialized module development.</p>
+                     <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="table-header">
+                                <tr>
+                                    <th class="p-3">Ailment / Disease Type</th>
+                                    <th class="p-3">Target Population</th>
+                                    <th class="p-3">Therapeutic Focus</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b">
+                                    <td class="p-3 font-semibold">Back & Neck Pain</td>
+                                    <td class="p-3">Office Workers, IT</td>
+                                    <td class="p-3">Core stabilization, chest/hip openers, traction.</td>
+                                </tr>
+                                <tr class="border-b bg-gray-50">
+                                    <td class="p-3 font-semibold">Stress & Anxiety</td>
+                                    <td class="p-3">Managers, Expats</td>
+                                    <td class="p-3">Restorative poses, Pranayama (breathwork), meditation.</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="p-3 font-semibold">Scoliosis / Kyphosis</td>
+                                    <td class="p-3">Youth/Adults (Genetic/Posture)</td>
+                                    <td class="p-3">Asymmetrical poses, spinal rotation, prop-supported alignment.</td>
+                                </tr>
+                                <tr class="border-b bg-gray-50">
+                                    <td class="p-3 font-semibold">Poor Sleep / Insomnia</td>
+                                    <td class="p-3">All stressed adults</td>
+                                    <td class="p-3">Yin yoga, deep relaxation (Yoga Nidra).</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                     </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="customers" class="content-section hidden pt-12">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-[#3F3C36] mb-2">Customer Deep-Dive</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">We've identified two primary customer archetypes: the 'Student' seeking relief and the 'Aspiring Teacher' (Client) seeking a new career path.</p>
+            </div>
+            
+            <div class="flex justify-center mb-8">
+                <div class="flex rounded-lg p-1 space-x-1 bg-gray-200">
+                    <button class="tab-button text-sm md:text-base px-4 py-2 rounded-md active" data-target="student-persona">The Student (Revenue Stream: Classes & Workshops)</button>
+                    <button class="tab-button text-sm md:text-base px-4 py-2 rounded-md" data-target="client-persona">The Aspiring Teacher (Revenue Stream: Certifications)</button>
+                </div>
+            </div>
+
+            <div id="student-persona" class="persona-content">
+                <div class="card rounded-lg p-6 md:p-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                        <div class="lg:col-span-3">
+                             <h3 class="text-2xl font-bold mb-4">Persona: "Thao" The Office Professional </h3>
+                             <p class="text-gray-600 mb-6">Thao represents the core 'Student' demographic. She seeks a practical, effective solution to the physical and mental strains of her demanding career and urban lifestyle. She values <span class="font-bold">results-driven therapy</span> and <span class="font-bold">convenient online/hybrid access</span>.</p>
+                            <table class="w-full text-left text-sm">
+                                <tbody>
+                                    <tr class="border-b"><td class="py-2 font-semibold">Age Group (Primary)</td><td class="py-2"><span class="font-bold">28 - 45</span> (Established income, peak career stress)</td></tr>
+                                    <tr class="border-b"><td class="py-2 font-semibold">Gender Distribution</td><td class="py-2">Primarily Female (<span class="font-bold">~85%</span>)</td></tr>
+                                    <tr class="border-b"><td class="py-2 font-semibold">Career/Income</td><td class="py-2">Middle to Senior Management (Medium to Premium budget)</td></tr>
+                                    <tr class="border-b"><td class="py-2 font-semibold">Location (HCMC)</td><td class="py-2">Districts 1, 3, Binh Thanh, Phu Nhuan (near business hubs)</td></tr>
+                                    <tr class="border-b"><td class="py-2 font-semibold">Pain Points/Need</td><td class="py-2">Chronic back/neck pain, stress, wants posture correction. <span class="font-bold">Needs proof of therapeutic results.</span></td></tr>
+                                    <tr><td class="py-2 font-semibold">Where to Find Them</td><td class="py-2">LinkedIn, corporate wellness programs, lifestyle blogs, <span class="font-bold">Expats in HCMC</span> groups for English-speaking services.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="lg:col-span-2">
+                             <h4 class="text-lg font-semibold text-center mb-2">Demographic Snapshot</h4>
+                            <div class="chart-container !h-48">
+                                <canvas id="studentGenderChart"></canvas>
+                            </div>
+                            <div class="chart-container !h-48 mt-4">
+                                <canvas id="studentAgeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="client-persona" class="persona-content hidden">
+                 <div class="card rounded-lg p-6 md:p-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                        <div class="lg:col-span-3">
+                             <h3 class="text-2xl font-bold mb-4">Persona: "Linh" The Career Changer </h3>
+                             <p class="text-gray-600 mb-6">Linh is the 'Aspiring Teacher' (Client). She seeks a credible, in-depth certification to build a fulfilling new career. She demands <span class="font-bold">specialization and clinical depth</span> that generic <span class="font-bold">Yoga Teacher Training (YTT) </span> programs lack, justifying a premium price.</p>
+                            <table class="w-full text-left text-sm">
+                                <tbody>
+                                    <tr class="border-b"><td class="py-2 font-semibold">Age Group (Primary)</td><td class="py-2"><span class="font-bold">25 - 40</span> (Career pivot or advancement)</td></tr>
+                                    <tr class="border-b"><td class="py-2 font-semibold">Gender Distribution</td><td class="py-2">Female (<span class="font-bold">~75%</span>), but the <span class="font-bold">male segment is growing for niche therapy</span>.</td></tr>
+                                    <tr class="border-b"><td class="py-2 font-semibold">Background/Budget</td><td class="py-2">Ex-professional, established savings, willing to pay <span class="font-bold">Premium</span> for niche specialization.</td></tr>
+                                    <tr class="border-b"><td class="py-2 font-semibold">Location (HCMC & National)</td><td class="py-2">Seeking online/intensive courses from HCMC, often traveling from Hanoi or Da Nang.</td></tr>
+                                    <tr class="border-b"><td class="py-2 font-semibold">Goals/Need</td><td class="py-2">Wants to teach Posture Correction/Therapy. <span class="font-bold">Needs strong anatomy, business skills, and a unique selling point.</span></td></tr>
+                                    <tr><td class="py-2 font-semibold">Where to Find Them</td><td class="py-2">Advanced yoga workshops, fitness conferences, competitor studios, "Yoga trị liệu" social groups.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="lg:col-span-2">
+                             <h4 class="text-lg font-semibold text-center mb-2">Demographic Snapshot</h4>
+                            <div class="chart-container !h-48">
+                                <canvas id="clientGenderChart"></canvas>
+                            </div>
+                            <div class="chart-container !h-48 mt-4">
+                                <canvas id="clientAgeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="competition" class="content-section hidden pt-12">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-[#3F3C36] mb-2">Competitive Matrix</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Analysis of popular yoga styles and competitor offerings reveals a focus on general wellness, creating an opportunity for a specialized therapeutic leader.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
+                <div class="card rounded-lg p-6">
+                    <h3 class="text-2xl font-bold mb-4 text-center">Most Popular Yoga Types (Student Focus)</h3>
+                    <p class="text-center text-sm text-gray-500 mb-4">Therapeutic yoga is the highest-demand niche, despite being less common in mainstream studios.</p>
+                    <div class="chart-container h-80 md:h-96">
+                        <canvas id="yogaPopularityChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card rounded-lg p-6">
+                     <h3 class="text-2xl font-bold mb-4 text-center">Competitor Teacher Training Modules & Pricing</h3>
+                     <p class="text-center text-sm text-gray-500 mb-4">Competitors focus on generalized <span class="font-bold"> Yoga Teacher Training (YTT)</span>. Your specialty allows for premium pricing in advanced modules.</p>
+                     <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="table-header">
+                                <tr>
+                                    <th class="p-3">Yoga Type / Module</th>
+                                    <th class="p-3">Typical Price (VND)</th>
+                                    <th class="p-3">Market Potential Note</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b">
+                                    <td class="p-3 font-semibold">200hr Hatha/Vinyasa Teacher Training (Basic)</td>
+                                    <td class="p-3">35M - 50M</td>
+                                    <td class="p-3"><span class="font-bold">Crowded Market.</span> Low differentiation unless specialized.</td>
+                                </tr>
+                                <tr class="border-b bg-gray-50">
+                                    <td class="p-3 font-semibold">300hr Advanced Teacher Training (General)</td>
+                                    <td class="p-3">50M - 75M</td>
+                                    <td class="p-3"><span class="font-semibold">Medium Potential.</span> Standard upgrade path.</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="p-3 font-semibold">Prenatal Yoga Certification (Niche)</td>
+                                    <td class="p-3">15M - 25M</td>
+                                    <td class="p-3"><span class="font-bold">High Niche Potential.</span> Strong demand among female clients.</td>
+                                </tr>
+                                <tr class="border-b bg-gray-50">
+                                    <td class="p-3 font-semibold">Restorative Yoga / Yin Modules</td>
+                                    <td class="p-3">10M - 18M</td>
+                                    <td class="p-3"><span class="font-semibold">Growing Demand.</span> Good pairing with therapy and stress relief.</td>
+                                </tr>
+                                 <tr class="border-b">
+                                    <td class="p-3 font-semibold text-[#A47E64]">Your Posture Therapy Module (Premium)</td>
+                                    <td class="p-3"><span class="font-bold">30M - 45M (50hr)</span></td>
+                                    <td class="p-3"><span class="font-bold">Maximum Potential.</span> Highly differentiated, high-value offering.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                     </div>
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-bold mt-12 mb-4 text-center ">Yoga Styles Market Segmentation (Detailed Breakdown)</h3>
+            <p class="text-center text-sm text-gray-500 mb-4 ">Using our specialized focus on therapeutic yoga to capture the highest-value student and client segments across HCMC.</p>
+
+            <div class="card rounded-lg p-6 overflow-x-auto">
+                <table class="w-full text-sm text-left min-w-[700px]">
+                    <thead class="table-header">
+                        <tr>
+                            <!-- FIX: Added explicit percentage widths for alignment -->
+                            <th class="p-3 w-[20%]">Yoga Type</th>
+                            <th class="p-3 w-[30%]">Primary Audience (Age/Gender)</th>
+                            <th class="p-3 w-[20%]">Key HCMC Location</th>
+                            <th class="p-3 w-[10%]">Market Sizing (Est.%)</th>
+                            <th class="p-3 w-[20%]">Revenue Potential</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b">
+                            <td class="p-3 w-[20%] font-semibold text-[#A47E64]">Posture Correction (Therapy)</td>
+                            <td class="p-3 w-[30%]">30-45 F/M Professionals (High Income)</td>
+                            <td class="p-3 w-[20%]">Districts 1, 3, 7 (Business/Expat)</td>
+                            <td class="p-3 w-[10%]">25% (High Concentration/Niche)</td>
+                            <td class="p-3 w-[20%]"><span class="font-bold">Premium.</span> High LTV via long-term therapy packages.</td>
+                        </tr>
+                        <tr class="border-b bg-gray-50">
+                            <td class="p-3 w-[20%] font-semibold">Vinyasa Flow</td>
+                            <td class="p-3 w-[30%]">20-35 F (Fitness Focus)</td>
+                            <td class="p-3 w-[20%]">District 2, Binh Thanh (Younger Lifestyle)</td>
+                            <td class="p-3 w-[10%]">35% (Largest, but Crowded)</td>
+                            <td class="p-3 w-[20%]"><span class="font-semibold">Medium.</span> Volume-driven membership fees.</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-3 w-[20%] font-semibold">Hatha Yoga</td>
+                            <td class="p-3 w-[30%]">40+ F (Wellness & Beginner)</td>
+                            <td class="p-3 w-[20%]">Local residential areas (Phu Nhuan, Go Vap)</td>
+                            <td class="p-3 w-[10%]">30% (Stable, Traditional)</td>
+                            <td class="p-3 w-[20%]"><span class="font-semibold">Medium-Low.</span> Mid-range class pricing.</td>
+                        </tr>
+                        <tr class="border-b bg-gray-50">
+                            <td class="p-3 w-[20%] font-semibold text-[#A47E64]">Prenatal / Postnatal (Therapy Niche)</td>
+                            <td class="p-3 w-[30%]">25-40 F (Pregnant/New Mothers)</td>
+                            <td class="p-3 w-[20%]">District 2, 7 (Family/Expat)</td>
+                            <td class="p-3 w-[10%]">10% (High-Value Niche)</td>
+                            <td class="p-3 w-[20%]"><span class="font-bold">Premium.</span> Tied to health services; high urgency/loyalty.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="strategy" class="content-section hidden pt-12">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-[#3F3C36] mb-2">Strategic Growth Path</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Focusing on specialized, high-margin programs to dominate the therapeutic niche and establish pedagogical authority.</p>
+            </div>
+            
+            <h3 class="text-2xl font-semibold mb-6 border-l-4 border-[#A47E64] pl-4">Developing Modules and Therapies to Meet Demand</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Module 1: Signature Posture‑Correction -->
+                <div class="module-card card rounded-lg p-6">
+                    <h4 class="font-bold text-xl mb-3 text-[#A47E64]">Signature Posture‑Correction & Therapeutic Program</h4>
+                    <ul class="space-y-3 text-sm flex-grow">
+                        <li class="module-detail"><span class="font-semibold block">Content:</span> 12‑week program blending alignment‑focused Hatha, functional movement, myofascial release, and core strengthening. Includes modules on ergonomic awareness, injury‑prevention, and breath work.</li>
+                        <li class="module-detail"><span class="font-semibold block">Audience:</span> Office workers with back/neck pain, varicose veins, and obesity.</li>
+                        <li class="module-detail"><span class="font-semibold block">Delivery:</span> Offer both in‑studio (small groups) and online via Zoom/YouTube. Provide assessment and progress tracking.</li>
+                        <li class="module-detail"><span class="font-semibold block">Pricing:</span> Mid‑range (500–700 k VND/month) with package discounts; optional private sessions (250 k VND/hour).</li>
+                    </ul>
+                    <p class="text-xs text-gray-500 mt-4 border-t pt-3">Justification: Addresses prevalent musculoskeletal problems (vietnam.vn) and capitalizes on the 42% of practitioners focused on weight management (vnua.edu.vn).</p>
+                </div>
+
+                <!-- Module 2: Teacher‑Training Certification -->
+                <div class="module-card card rounded-lg p-6">
+                    <h4 class="font-bold text-xl mb-3 text-[#A47E64]">Teacher‑Training Certification in Posture Correction (200–300 hr)</h4>
+                    <ul class="space-y-3 text-sm flex-grow">
+                        <li class="module-detail"><span class="font-semibold block">Content:</span> Comprehensive curriculum covering anatomy, biomechanics, assessment of misalignment, therapeutic sequencing, and pedagogical skills. Integrate workshops with physiotherapists and doctors.</li>
+                        <li class="module-detail"><span class="font-semibold block">Audience:</span> Aspiring yoga teachers, physiotherapists, and fitness trainers seeking specialization; includes Vietnamese and expat markets.</li>
+                        <li class="module-detail"><span class="font-semibold block">Delivery:</span> Hybrid program (onsite intensives + online modules). Provide continuing education and job placement support.</li>
+                        <li class="module-detail"><span class="font-semibold block">Pricing:</span> Premium (15–20 M VND) with installment plans. Offer early‑bird discounts and scholarships for outstanding students.</li>
+                    </ul>
+                    <p class="text-xs text-gray-500 mt-4 border-t pt-3">Justification: Little competition for this focus. The 4,300 clubs and 550 k practitioners (kalabooks.vn) create a pipeline of potential teacher trainees seeking differentiation.</p>
+                </div>
+
+                <!-- Module 3: Corporate Wellness -->
+                <div class="module-card card rounded-lg p-6">
+                    <h4 class="font-bold text-xl mb-3 text-[#A47E64]">Corporate Wellness & Ergonomic Workshops</h4>
+                    <ul class="space-y-3 text-sm flex-grow">
+                        <li class="module-detail"><span class="font-semibold block">Content:</span> Short workshops (2–4 hr) delivered at companies focusing on desk yoga, ergonomics, stress management, and healthy habits. Provide follow‑up online classes.</li>
+                        <li class="module-detail"><span class="font-semibold block">Audience:</span> Corporate employees in tech, finance, and government sectors (B2B focus).</li>
+                        <li class="module-detail"><span class="font-semibold block">Delivery:</span> On-site workshop delivery. Focus on high-impact, actionable takeaways.</li>
+                        <li class="module-detail"><span class="font-semibold block">Pricing:</span> Charge per workshop (5–10 M VND depending on size). Offer subscription packages for ongoing sessions.</li>
+                    </ul>
+                    <p class="text-xs text-gray-500 mt-4 border-t pt-3">Justification: Companies are concerned about employee health. High prevalence of musculoskeletal issues in sedentary office workers (vietnam.vn) provides a clear value proposition.</p>
+                </div>
+                
+                <!-- Module 4: Prenatal/Postnatal -->
+                <div class="module-card card rounded-lg p-6">
+                    <h4 class="font-bold text-xl mb-3 text-[#A47E64]">Prenatal/Postnatal Alignment Series</h4>
+                    <ul class="space-y-3 text-sm flex-grow">
+                        <li class="module-detail"><span class="font-semibold block">Content:</span> Safe sequences focusing on pelvic alignment, back support, and recovery. Include one‑on‑one sessions and small group classes (4–6 participants).</li>
+                        <li class="module-detail"><span class="font-semibold block">Audience:</span> Pregnant women and new mothers aged 25–38.</li>
+                        <li class="module-detail"><span class="font-semibold block">Delivery:</span> In-studio small groups and personalized one-on-one sessions.</li>
+                        <li class="module-detail"><span class="font-semibold block">Pricing:</span> 300–500 k VND for multi‑session packages. One-on-one sessions at 200 k VND/hour (yeuyoga.com).</li>
+                    </ul>
+                    <p class="text-xs text-gray-500 mt-4 border-t pt-3">Justification: High demand niche. Dedicated classes build trust and can lead to long‑term loyalty when mothers return to general classes.</p>
+                </div>
+
+                <!-- Module 5: Online Subscription Library -->
+                <div class="module-card card rounded-lg p-6">
+                    <h4 class="font-bold text-xl mb-3 text-[#A47E64]">Online Subscription Library</h4>
+                    <ul class="space-y-3 text-sm flex-grow">
+                        <li class="module-detail"><span class="font-semibold block">Content:</span> Recorded classes focusing on posture correction, desk yoga, weight‑loss flows, and meditation. Provide multi-language subtitles (Vietnamese/English).</li>
+                        <li class="module-detail"><span class="font-semibold block">Audience:</span> Existing members, budget-conscious students, and expats seeking English content.</li>
+                        <li class="module-detail"><span class="font-semibold block">Delivery:</span> Digital platform (e.g., private area on website or dedicated app).</li>
+                        <li class="module-detail"><span class="font-semibold block">Pricing:</span> Low monthly fee (~200 k VND) or bundle with in‑studio memberships.</li>
+                    </ul>
+                    <p class="text-xs text-gray-500 mt-4 border-t pt-3">Justification: Digital adoption is booming (Vietnam’s fitness app market is projected to reach US$21 billion by 2031 - vietnam.incorp.asia). Enables scalability and resilience.</p>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+    
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const navLinks = document.querySelectorAll('.nav-link');
+    const mobileNav = document.getElementById('mobile-nav');
+    const contentSections = document.querySelectorAll('.content-section');
+
+    function setActiveLink(targetId) {
+        navLinks.forEach(link => {
+            link.classList.toggle('active', link.dataset.target === targetId);
+        });
+        if (mobileNav.value !== targetId) {
+            mobileNav.value = targetId;
+        }
+    }
+
+    function showSection(targetId) {
+        contentSections.forEach(section => {
+            section.classList.toggle('hidden', section.id !== targetId);
+        });
+        setActiveLink(targetId);
+    }
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = e.target.dataset.target;
+            showSection(targetId);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    });
+
+    mobileNav.addEventListener('change', (e) => {
+        const targetId = e.target.value;
+        showSection(targetId);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const personaContents = document.querySelectorAll('.persona-content');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const targetId = button.dataset.target;
+            
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            
+            personaContents.forEach(content => {
+                content.classList.toggle('hidden', content.id !== targetId);
+            });
+        });
+    });
+
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    font: {
+                        family: 'Inter'
+                    }
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    font: {
+                        family: 'Inter'
+                    }
+                }
+            },
+            y: {
+                 ticks: {
+                    font: {
+                        family: 'Inter'
+                    }
+                }
+            }
+        }
+    };
+    
+    const pieChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                 labels: {
+                    font: {
+                        family: 'Inter'
+                    }
+                }
+            }
+        }
+    };
+
+    new Chart(document.getElementById('healthConcernsChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Back & Neck Pain', 'Stress & Anxiety', 'Scoliosis', 'Poor Sleep', 'Digestive Issues', 'Flexibility'],
+            datasets: [{
+                label: 'Popularity Among Seekers',
+                data: [90, 85, 65, 60, 40, 35],
+                backgroundColor: '#A47E64',
+                borderColor: '#8B6B55',
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            ...chartOptions,
+            indexAxis: 'y', 
+            plugins: { legend: { display: false } },
+            scales: {
+                y: {
+                    ticks: { font: { family: 'Inter', size: 10 } }
+                },
+                x: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    new Chart(document.getElementById('studentGenderChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Female', 'Male'],
+            datasets: [{
+                data: [85, 15],
+                backgroundColor: ['#A47E64', '#D3C1B4'],
+            }]
+        },
+        options: {...pieChartOptions, cutout: '60%'}
+    });
+    
+    new Chart(document.getElementById('studentAgeChart'), {
+        type: 'bar',
+        data: {
+            labels: ['25-34', '35-44', '45+'],
+            datasets: [{
+                label: 'Age Distribution',
+                data: [55, 35, 10],
+                backgroundColor: '#A47E64',
+            }]
+        },
+        options: { ...chartOptions, plugins: { legend: { display: false } } }
+    });
+    
+    new Chart(document.getElementById('clientGenderChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Female', 'Male'],
+            datasets: [{
+                data: [75, 25],
+                backgroundColor: ['#A47E64', '#D3C1B4'],
+            }]
+        },
+        options: {...pieChartOptions, cutout: '60%'}
+    });
+
+    new Chart(document.getElementById('clientAgeChart'), {
+        type: 'bar',
+        data: {
+            labels: ['25-34', '35-44', '18-24'],
+            datasets: [{
+                label: 'Age Distribution',
+                data: [60, 25, 15],
+                backgroundColor: '#A47E64',
+            }]
+        },
+        options: { ...chartOptions, plugins: { legend: { display: false } } }
+    });
+
+    new Chart(document.getElementById('yogaPopularityChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Therapeutic/Restorative', 'Vinyasa Flow', 'Hatha', 'Ashtanga', 'Prenatal'],
+            datasets: [{
+                label: 'Student Popularity Score',
+                data: [88, 75, 70, 50, 60],
+                backgroundColor: [
+                    '#A47E64',
+                    '#C8A992',
+                    '#D3C1B4',
+                    '#E1D5CB',
+                    '#EDE6E1',
+                ],
+            }]
+        },
+        options: { ...chartOptions, plugins: { legend: { display: false } } }
+    });
+});
+</script>
+</body>
+</html>
