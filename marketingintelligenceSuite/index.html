@@ -2558,6 +2558,278 @@
             transform: translateY(0);
         }
 
+        /* Reading Pane Styles */
+        .tab-header-with-action {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .reading-pane-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reading-pane-toggle:hover {
+            background: rgba(139, 92, 246, 0.25);
+            border-color: rgba(139, 92, 246, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .reading-pane-icon {
+            font-size: 16px;
+        }
+
+        .reading-badge {
+            padding: 3px 8px;
+            background: rgba(139, 92, 246, 0.4);
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .reading-pane-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .reading-pane-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .reading-pane {
+            position: fixed;
+            top: 0;
+            right: -550px;
+            width: 550px;
+            height: 100vh;
+            background: rgba(20, 20, 40, 0.98);
+            border-left: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            z-index: 10001;
+            display: flex;
+            flex-direction: column;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .reading-pane.active {
+            right: 0;
+        }
+
+        .reading-pane-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .reading-pane-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .reading-pane-icon-large {
+            font-size: 24px;
+            color: rgba(139, 92, 246, 0.9);
+        }
+
+        .reading-pane-title {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .reading-pane-close {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reading-pane-close:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .reading-pane-content {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .reading-pane-tabs {
+            display: flex;
+            gap: 0;
+            padding: 0;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .reading-pane-tab {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px 20px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reading-pane-tab:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .reading-pane-tab.active {
+            background: rgba(139, 92, 246, 0.1);
+            border-bottom-color: rgba(139, 92, 246, 0.8);
+            color: white;
+        }
+
+        .tab-icon {
+            font-size: 16px;
+        }
+
+        .reading-pane-section {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .reading-pane-scroll {
+            height: 100%;
+            overflow-y: auto;
+            padding: 25px 30px;
+        }
+
+        .reading-pane-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .reading-pane-scroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .reading-pane-scroll::-webkit-scrollbar-thumb {
+            background: rgba(139, 92, 246, 0.4);
+            border-radius: 4px;
+        }
+
+        .reading-pane-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(139, 92, 246, 0.6);
+        }
+
+        .reading-section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 30px 0 20px 0;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .reading-section-header:first-child {
+            margin-top: 0;
+        }
+
+        .reading-section-header h4 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .reading-section-header .country-flag,
+        .reading-section-header .section-icon {
+            font-size: 20px;
+        }
+
+        .reading-content-placeholder {
+            margin-bottom: 30px;
+        }
+
+        .placeholder-text {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+            font-style: italic;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        /* Reading pane content inherits competition insight styles */
+        .reading-pane-scroll .competition-insight-block {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .reading-pane-scroll .competition-insight-title {
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .reading-pane-scroll .competition-paragraph {
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .reading-pane-scroll .competition-bullet-list {
+            gap: 8px;
+        }
+
+        .reading-pane-scroll .competition-bullet-list li {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
         /* Brand Insights Styles */
         .brand-insights-container {
             display: grid;
@@ -5047,6 +5319,21 @@
             .pros-cons-grid {
                 grid-template-columns: 1fr;
             }
+
+            .tab-header-with-action {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+
+            .reading-pane {
+                width: 100%;
+                right: -100%;
+            }
+
+            .reading-pane-scroll {
+                padding: 20px;
+            }
             .main-title {
                 font-size: 2.5rem;
             }
@@ -5475,7 +5762,14 @@
 
                 <!-- Brief Decoder Tab -->
                 <div class="tab-pane" id="brief-decoder">
-                    <h2>Brief Decoder</h2>
+                    <div class="tab-header-with-action">
+                        <h2>Brief Decoder</h2>
+                        <button class="reading-pane-toggle" title="Reading Pane Reference">
+                            <span class="reading-pane-icon">▢</span>
+                            <span class="reading-pane-text">Reading Pane</span>
+                            <span class="reading-badge">Reference</span>
+                        </button>
+                    </div>
                     
                     <div class="brief-decoder-container">
                         <!-- Left Column: Brief Input -->
@@ -5851,7 +6145,14 @@ Would you like me to elaborate on any of these challenges?</div>
 
                 <!-- Category Insights Tab -->
                 <div class="tab-pane" id="category-insights">
-                    <h2>Category Insights</h2>
+                    <div class="tab-header-with-action">
+                        <h2>Category Insights</h2>
+                        <button class="reading-pane-toggle" title="Reading Pane Reference">
+                            <span class="reading-pane-icon">▢</span>
+                            <span class="reading-pane-text">Reading Pane</span>
+                            <span class="reading-badge">Reference</span>
+                        </button>
+                    </div>
                     
                     <div class="category-insights-container">
                         <!-- Left Column: Category Input -->
@@ -6375,7 +6676,14 @@ Examples:
 
                 <!-- Competition Insights Tab -->
                 <div class="tab-pane" id="competition-insights">
-                    <h2>Competition Insights</h2>
+                    <div class="tab-header-with-action">
+                        <h2>Competition Insights</h2>
+                        <button class="reading-pane-toggle" onclick="toggleReadingPane()" title="View insights from Category Insights & Brief Decoder tabs">
+                            <span class="reading-pane-icon">▢</span>
+                            <span class="reading-pane-text">Reading Pane</span>
+                            <span class="reading-badge">Reference</span>
+                        </button>
+                    </div>
                     
                     <div class="competition-insights-container">
                         <!-- Left Column: Competition Input -->
@@ -6915,7 +7223,14 @@ I've updated the Vietnam insights to reflect these competitive strengths.</div>
 
                 <!-- Audience Insights Tab -->
                 <div class="tab-pane" id="audience-insights">
-                    <h2>Audience Insights</h2>
+                    <div class="tab-header-with-action">
+                        <h2>Audience Insights</h2>
+                        <button class="reading-pane-toggle" title="Reading Pane Reference">
+                            <span class="reading-pane-icon">▢</span>
+                            <span class="reading-pane-text">Reading Pane</span>
+                            <span class="reading-badge">Reference</span>
+                        </button>
+                    </div>
                     
                     <!-- Configuration Section -->
                     <div class="audience-config" id="audienceConfig">
@@ -7604,7 +7919,14 @@ Examples:
 
                 <!-- Brand Insights Tab -->
                 <div class="tab-pane" id="brand-insights">
-                    <h2>Brand Insights</h2>
+                    <div class="tab-header-with-action">
+                        <h2>Brand Insights</h2>
+                        <button class="reading-pane-toggle" title="Reading Pane Reference">
+                            <span class="reading-pane-icon">▢</span>
+                            <span class="reading-pane-text">Reading Pane</span>
+                            <span class="reading-badge">Reference</span>
+                        </button>
+                    </div>
                     
                     <div class="brand-insights-container">
                         <!-- Left Column: Brand Input -->
@@ -8247,7 +8569,14 @@ Both brands successfully balance mass-market reach with premium positioning.</di
 
                 <!-- Brand Opportunities Tab -->
                 <div class="tab-pane" id="brand-opportunities">
-                    <h2>Brand Opportunities</h2>
+                    <div class="tab-header-with-action">
+                        <h2>Brand Opportunities</h2>
+                        <button class="reading-pane-toggle" title="Reading Pane Reference">
+                            <span class="reading-pane-icon">▢</span>
+                            <span class="reading-pane-text">Reading Pane</span>
+                            <span class="reading-badge">Reference</span>
+                        </button>
+                    </div>
                     
                     <div class="brand-opportunities-container">
                         <!-- Left Column: Brand Opportunities Input -->
@@ -8862,7 +9191,14 @@ I've updated the opportunities card to highlight this strategic priority.</div>
 
                 <!-- Customer Journey Maps Tab -->
                 <div class="tab-pane" id="customer-journey">
-                    <h2>Customer Journey Maps</h2>
+                    <div class="tab-header-with-action">
+                        <h2>Customer Journey Maps</h2>
+                        <button class="reading-pane-toggle" title="Reading Pane Reference">
+                            <span class="reading-pane-icon">▢</span>
+                            <span class="reading-pane-text">Reading Pane</span>
+                            <span class="reading-badge">Reference</span>
+                        </button>
+                    </div>
                     
                     <div class="customer-journey-container">
                         <!-- Left Column: Customer Journey Input -->
@@ -9277,7 +9613,14 @@ I've updated the consideration stage insights to emphasize this.</div>
 
                 <!-- Brand Strategy Tab -->
                 <div class="tab-pane" id="brand-strategy">
-                    <h2>Brand Strategy</h2>
+                    <div class="tab-header-with-action">
+                        <h2>Brand Strategy</h2>
+                        <button class="reading-pane-toggle" title="Reading Pane Reference">
+                            <span class="reading-pane-icon">▢</span>
+                            <span class="reading-pane-text">Reading Pane</span>
+                            <span class="reading-badge">Reference</span>
+                        </button>
+                    </div>
                     
                     <div class="brand-strategy-container">
                         <!-- Left Column: Inputs -->
@@ -9571,7 +9914,14 @@ Examples:
 
                 <!-- Big Brand Idea Tab -->
                 <div class="tab-pane" id="big-brand-idea">
-                    <h2>Big Brand Idea</h2>
+                    <div class="tab-header-with-action">
+                        <h2>Big Brand Idea</h2>
+                        <button class="reading-pane-toggle" title="Reading Pane Reference">
+                            <span class="reading-pane-icon">▢</span>
+                            <span class="reading-pane-text">Reading Pane</span>
+                            <span class="reading-badge">Reference</span>
+                        </button>
+                    </div>
                     
                     <div class="big-idea-container">
                         <!-- Left Column: Inputs -->
@@ -10059,11 +10409,108 @@ Examples:
                             </div>
                         </div>
                     </div>
+
+                    <!-- Reading Pane Overlay -->
+                    <div class="reading-pane-overlay" id="readingPaneOverlay" onclick="toggleReadingPane()"></div>
+
+                    <!-- Reading Pane -->
+                    <div class="reading-pane" id="readingPane">
+                        <div class="reading-pane-header">
+                            <div class="reading-pane-title-group">
+                                <span class="reading-pane-icon-large">▢</span>
+                                <h3 class="reading-pane-title">Previous Insights Reference</h3>
+                            </div>
+                            <button class="reading-pane-close" onclick="toggleReadingPane()" title="Close">
+                                <span>×</span>
+                            </button>
+                        </div>
+
+                        <div class="reading-pane-content">
+                            <!-- Tab Selector -->
+                            <div class="reading-pane-tabs">
+                                <button class="reading-pane-tab active" onclick="switchReadingTab('category')">
+                                    <span class="tab-icon">▤</span>
+                                    Category Insights
+                                </button>
+                                <button class="reading-pane-tab" onclick="switchReadingTab('brief')">
+                                    <span class="tab-icon">▢</span>
+                                    Brief Decoder
+                                </button>
+                            </div>
+
+                            <!-- Category Insights Content -->
+                            <div class="reading-pane-section" id="readingCategorySection">
+                                <div class="reading-pane-scroll">
+                                    <!-- This will be populated dynamically from Category Insights tab -->
+                                    <div class="reading-section-header">
+                                        <span class="country-flag">🇻🇳</span>
+                                        <h4>Vietnam Category Insights</h4>
+                                    </div>
+                                    <div id="readingVietnamInsights" class="reading-content-placeholder">
+                                        <p class="placeholder-text">Switch to Category Insights tab first to generate insights...</p>
+                                    </div>
+
+                                    <div class="reading-section-header">
+                                        <span class="country-flag">◎</span>
+                                        <h4>APAC Regional Insights</h4>
+                                    </div>
+                                    <div id="readingAPACInsights" class="reading-content-placeholder">
+                                        <p class="placeholder-text">Switch to Category Insights tab first to generate insights...</p>
+                                    </div>
+
+                                    <div class="reading-section-header">
+                                        <span class="country-flag">◎</span>
+                                        <h4>Global Category Insights</h4>
+                                    </div>
+                                    <div id="readingGlobalInsights" class="reading-content-placeholder">
+                                        <p class="placeholder-text">Switch to Category Insights tab first to generate insights...</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Brief Decoder Content -->
+                            <div class="reading-pane-section" id="readingBriefSection" style="display: none;">
+                                <div class="reading-pane-scroll">
+                                    <!-- This will be populated dynamically from Brief Decoder tab -->
+                                    <div class="reading-section-header">
+                                        <span class="section-icon">◉</span>
+                                        <h4>TL;DR - Campaign Overview</h4>
+                                    </div>
+                                    <div id="readingTLDR" class="reading-content-placeholder">
+                                        <p class="placeholder-text">Switch to Brief Decoder tab first to generate insights...</p>
+                                    </div>
+
+                                    <div class="reading-section-header">
+                                        <span class="section-icon">◯</span>
+                                        <h4>Key Business Objectives</h4>
+                                    </div>
+                                    <div id="readingObjectives" class="reading-content-placeholder">
+                                        <p class="placeholder-text">Switch to Brief Decoder tab first to generate insights...</p>
+                                    </div>
+
+                                    <div class="reading-section-header">
+                                        <span class="section-icon">▤</span>
+                                        <h4>Campaign Intelligence</h4>
+                                    </div>
+                                    <div id="readingIntelligence" class="reading-content-placeholder">
+                                        <p class="placeholder-text">Switch to Brief Decoder tab first to generate insights...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Comms Framework Tab -->
                 <div class="tab-pane" id="comms-framework">
-                    <h2>Comms Framework</h2>
+                    <div class="tab-header-with-action">
+                        <h2>Comms Framework</h2>
+                        <button class="reading-pane-toggle" title="Reading Pane Reference">
+                            <span class="reading-pane-icon">▢</span>
+                            <span class="reading-pane-text">Reading Pane</span>
+                            <span class="reading-badge">Reference</span>
+                        </button>
+                    </div>
                     
                     <div class="comms-framework-container">
                         <!-- Left Column: Inputs -->
@@ -10471,7 +10918,14 @@ Examples:
 
                 <!-- Campaign Concept Tab -->
                 <div class="tab-pane" id="campaign-concept">
-                    <h2>Campaign Concept</h2>
+                    <div class="tab-header-with-action">
+                        <h2>Campaign Concept</h2>
+                        <button class="reading-pane-toggle" title="Reading Pane Reference">
+                            <span class="reading-pane-icon">▢</span>
+                            <span class="reading-pane-text">Reading Pane</span>
+                            <span class="reading-badge">Reference</span>
+                        </button>
+                    </div>
                     
                     <div class="campaign-concept-container">
                         <!-- Left Column: Campaign Input -->
@@ -11101,7 +11555,14 @@ Examples:
 
                 <!-- Execution Generator Tab -->
                 <div class="tab-pane" id="execution-generator">
-                    <h2>Execution Generator</h2>
+                    <div class="tab-header-with-action">
+                        <h2>Execution Generator</h2>
+                        <button class="reading-pane-toggle" title="Reading Pane Reference">
+                            <span class="reading-pane-icon">▢</span>
+                            <span class="reading-pane-text">Reading Pane</span>
+                            <span class="reading-badge">Reference</span>
+                        </button>
+                    </div>
                     
                     <div class="execution-generator-container">
                         <!-- Left Column: Execution Input -->
@@ -14350,6 +14811,152 @@ ${conceptId === 'all' ? 'Showing all execution variations across different conce
                         handleExecutionFiles(files);
                     }
                 });
+            }
+        });
+
+        // Reading Pane Functions
+        function toggleReadingPane() {
+            console.log('toggleReadingPane called');
+            const pane = document.getElementById('readingPane');
+            const overlay = document.getElementById('readingPaneOverlay');
+            
+            console.log('Pane element:', pane);
+            console.log('Overlay element:', overlay);
+            
+            if (!pane || !overlay) {
+                console.error('Reading pane elements not found!');
+                return;
+            }
+            
+            const isActive = pane.classList.contains('active');
+            console.log('Is currently active:', isActive);
+
+            if (isActive) {
+                pane.classList.remove('active');
+                overlay.classList.remove('active');
+                console.log('Closed reading pane');
+            } else {
+                pane.classList.add('active');
+                overlay.classList.add('active');
+                console.log('Opened reading pane');
+                // Load content from other tabs when opening
+                loadReadingPaneContent();
+            }
+        }
+
+        function switchReadingTab(tabName) {
+            // Update tab buttons
+            const tabs = document.querySelectorAll('.reading-pane-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.closest('.reading-pane-tab').classList.add('active');
+
+            // Update sections
+            const categorySection = document.getElementById('readingCategorySection');
+            const briefSection = document.getElementById('readingBriefSection');
+
+            if (tabName === 'category') {
+                categorySection.style.display = 'block';
+                briefSection.style.display = 'none';
+            } else if (tabName === 'brief') {
+                categorySection.style.display = 'none';
+                briefSection.style.display = 'block';
+            }
+        }
+
+        function loadReadingPaneContent() {
+            // Load Category Insights content
+            loadCategoryInsights();
+            // Load Brief Decoder content
+            loadBriefDecoderContent();
+        }
+
+        function loadCategoryInsights() {
+            console.log('Loading Category Insights...');
+            
+            // Get Vietnam insights from Category Insights tab
+            const vietnamContent = document.querySelector('#category-insights .category-output-column .insights-output-card:nth-child(1) .insights-card-content');
+            const vietnamTarget = document.getElementById('readingVietnamInsights');
+            
+            console.log('Vietnam content:', vietnamContent);
+            console.log('Vietnam target:', vietnamTarget);
+            
+            if (vietnamContent && vietnamTarget) {
+                vietnamTarget.innerHTML = vietnamContent.innerHTML;
+                console.log('Vietnam insights loaded');
+            } else {
+                console.log('Vietnam insights not found');
+            }
+
+            // Get APAC insights
+            const apacContent = document.querySelector('#category-insights .category-output-column .insights-output-card:nth-child(2) .insights-card-content');
+            const apacTarget = document.getElementById('readingAPACInsights');
+            
+            if (apacContent && apacTarget) {
+                apacTarget.innerHTML = apacContent.innerHTML;
+                console.log('APAC insights loaded');
+            } else {
+                console.log('APAC insights not found');
+            }
+
+            // Get Global insights
+            const globalContent = document.querySelector('#category-insights .category-output-column .insights-output-card:nth-child(3) .insights-card-content');
+            const globalTarget = document.getElementById('readingGlobalInsights');
+            
+            if (globalContent && globalTarget) {
+                globalTarget.innerHTML = globalContent.innerHTML;
+                console.log('Global insights loaded');
+            } else {
+                console.log('Global insights not found');
+            }
+        }
+
+        function loadBriefDecoderContent() {
+            console.log('Loading Brief Decoder content...');
+            
+            // Get TL;DR from Brief Decoder tab
+            const tldrContent = document.querySelector('#brief-decoder .decode-output-column .decode-card:nth-child(1) .decode-card-content');
+            const tldrTarget = document.getElementById('readingTLDR');
+            
+            console.log('TLDR content:', tldrContent);
+            console.log('TLDR target:', tldrTarget);
+            
+            if (tldrContent && tldrTarget) {
+                tldrTarget.innerHTML = tldrContent.innerHTML;
+                console.log('TLDR loaded');
+            } else {
+                console.log('TLDR not found');
+            }
+
+            // Get Key Business Objectives
+            const objectivesContent = document.querySelector('#brief-decoder .decode-output-column .decode-card:nth-child(2) .decode-card-content');
+            const objectivesTarget = document.getElementById('readingObjectives');
+            
+            if (objectivesContent && objectivesTarget) {
+                objectivesTarget.innerHTML = objectivesContent.innerHTML;
+                console.log('Objectives loaded');
+            } else {
+                console.log('Objectives not found');
+            }
+
+            // Get Campaign Intelligence
+            const intelligenceContent = document.querySelector('#brief-decoder .decode-output-column .decode-card:nth-child(3) .decode-card-content');
+            const intelligenceTarget = document.getElementById('readingIntelligence');
+            
+            if (intelligenceContent && intelligenceTarget) {
+                intelligenceTarget.innerHTML = intelligenceContent.innerHTML;
+                console.log('Intelligence loaded');
+            } else {
+                console.log('Intelligence not found');
+            }
+        }
+
+        // Close reading pane with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const pane = document.getElementById('readingPane');
+                if (pane && pane.classList.contains('active')) {
+                    toggleReadingPane();
+                }
             }
         });
     </script>
