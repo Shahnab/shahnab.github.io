@@ -1,0 +1,2582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AETHER - 3D Global Radio</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- OrbitControls -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #1a1a1a; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        #root { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; touch-action: none; }
+        .ui-layer { pointer-events: none; }
+        .ui-layer > * { pointer-events: auto; }
+        
+        /* Transition for UI Hiding */
+        .ui-content { transition: opacity 0.5s ease-in-out; }
+        /* Added !important to override Tailwind's opacity utilities */
+        .ui-hidden { opacity: 0 !important; pointer-events: none !important; }
+
+        /* Custom Scrollbar for station list */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+
+        .glass-panel {
+            background: rgba(20, 20, 20, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        
+        .on-air-glow {
+            animation: text-glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes text-glow {
+            from { text-shadow: 0 0 5px #4ade80; }
+            to { text-shadow: 0 0 15px #4ade80, 0 0 20px #22c55e; }
+        }
+
+        .spin-slow {
+            animation: spin 3s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Color Picker Reset */
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            overflow: hidden;
+            padding: 0;
+            background: none;
+            cursor: pointer;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0; 
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+        }
+        
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .mobile-panel {
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                top: auto !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                border-radius: 24px 24px 0 0 !important;
+                max-height: 70vh !important;
+                padding-bottom: env(safe-area-inset-bottom, 16px) !important;
+            }
+            
+            .mobile-header {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                padding: 12px 16px !important;
+                z-index: 40 !important;
+            }
+            
+            .mobile-collapsed {
+                max-height: 180px !important;
+                overflow: hidden !important;
+            }
+            
+            .mobile-expanded {
+                max-height: 70vh !important;
+                overflow-y: auto !important;
+            }
+            
+            .mobile-now-playing {
+                border-radius: 24px 24px 16px 16px !important;
+            }
+            
+            .mobile-drag-handle {
+                width: 40px;
+                height: 4px;
+                background: rgba(255, 255, 255, 0.3);
+                border-radius: 2px;
+                margin: 8px auto 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useMemo } = React;
+
+        // --- Initial Presets ---
+        const INITIAL_STATIONS = [
+            { id: 1, freq: 88.5, name: "Lofi Hip Hop", genre: "Chill / Study", keywords: ["relax", "sleep", "study", "beats", "calm"], url: "https://stream.zeno.fm/0r0xa792kwzuv", color: "#6366f1" },
+            { id: 2, freq: 92.3, name: "Radio Paradise", genre: "Eclectic Rock", keywords: ["rock", "alternative", "indie", "mix"], url: "https://stream.radioparadise.com/aac-128", color: "#eab308" },
+            { id: 3, freq: 94.0, name: "Classic FM", genre: "Classical", keywords: ["orchestra", "piano", "symphony", "opera"], url: "https://media-ssl.musicradio.com/ClassicFM", color: "#ef4444" },
+            { id: 4, freq: 96.7, name: "Smooth Chill", genre: "Jazz / Lounge", keywords: ["jazz", "smooth", "ambient", "coffee"], url: "https://media-ssl.musicradio.com/SmoothChill", color: "#ec4899" },
+            { id: 5, freq: 98.5, name: "Ibiza Global", genre: "Electronic", keywords: ["house", "techno", "party", "club", "dance"], url: "https://listenssl.ibizaglobalradio.com:8024/ibizaglobalradio.mp3", color: "#10b981" },
+            { id: 6, freq: 101.3, name: "BBC World Service", genre: "News / Talk", keywords: ["news", "politics", "world", "interview"], url: "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service", color: "#f97316" },
+            { id: 7, freq: 104.1, name: "Gold Radio", genre: "Oldies / 60s 70s", keywords: ["oldies", "retro", "nostalgia", "classic rock"], url: "https://media-ssl.musicradio.com/Gold", color: "#8b5cf6" },
+            { id: 8, freq: 106.9, name: "I Love Dance", genre: "Dance / Top 40", keywords: ["pop", "hits", "chart", "upbeat"], url: "https://streams.ilovemusic.de/iloveradio2.mp3", color: "#06b6d4" },
+        ];
+
+        // --- Travel Data ---
+        const COUNTRIES = [
+            { name: "USA", code: "US", lat: 37.09, lon: -95.71 },
+            { name: "UK", code: "GB", lat: 55.37, lon: -3.43 },
+            { name: "Japan", code: "JP", lat: 36.20, lon: 138.25 },
+            { name: "Brazil", code: "BR", lat: -14.23, lon: -51.92 },
+            { name: "France", code: "FR", lat: 46.22, lon: 2.21 },
+            { name: "India", code: "IN", lat: 20.59, lon: 78.96 },
+            { name: "Australia", code: "AU", lat: -25.27, lon: 133.77 },
+            { name: "Germany", code: "DE", lat: 51.16, lon: 10.45 },
+            { name: "S. Africa", code: "ZA", lat: -30.55, lon: 22.93 },
+            { name: "Canada", code: "CA", lat: 56.13, lon: -106.34 },
+            { name: "Spain", code: "ES", lat: 40.46, lon: -3.74 },
+            { name: "Italy", code: "IT", lat: 41.87, lon: 12.56 },
+            { name: "China", code: "CN", lat: 35.86, lon: 104.19 },
+            { name: "Russia", code: "RU", lat: 61.52, lon: 105.31 },
+            { name: "Argentina", code: "AR", lat: -38.41, lon: -63.61 }
+        ];
+
+        // --- Environment Presets ---
+        const ENVIRONMENTS = [
+            { id: 'studio', name: "Gallery", bg: 0xf8f8f8, ambient: 1.3, lightColor: 0xffffff, fog: 0.001 },
+            { id: 'bedroom', name: "Warm Light", bg: 0xfaf5f0, ambient: 1.1, lightColor: 0xfff5e6, fog: 0.002 }, 
+            { id: 'space', name: "Slate", bg: 0x3a3f4a, ambient: 0.9, lightColor: 0xe8eaed, fog: 0.003 }, 
+            { id: 'cafe', name: "Champagne", bg: 0xf5f0e8, ambient: 1.15, lightColor: 0xfffaf0, fog: 0.002 }, 
+            { id: 'rooftop', name: "Daylight", bg: 0xfcfcfc, ambient: 1.4, lightColor: 0xffffff, fog: 0.001 }, 
+            { id: 'midnight', name: "Evening", bg: 0x2a2d35, ambient: 0.8, lightColor: 0xffeedd, fog: 0.004 }
+        ];
+
+        // Helper: Create a Voxel Cloud using InstancedMesh for performance
+        const createVoxelCloud = (voxelSize = 1) => {
+            const cloudGroup = new THREE.Group();
+            const geo = new THREE.BoxGeometry(voxelSize, voxelSize, voxelSize);
+            const mat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.8 });
+            
+            const count = 50 + Math.floor(Math.random() * 50); // Number of voxels per cloud
+            const mesh = new THREE.InstancedMesh(geo, mat, count);
+            
+            const dummy = new THREE.Object3D();
+            for (let i = 0; i < count; i++) {
+                // Random positions within a cloud cluster radius
+                const x = (Math.random() - 0.5) * 10;
+                const y = (Math.random() - 0.5) * 4;
+                const z = (Math.random() - 0.5) * 6;
+                
+                dummy.position.set(x, y, z);
+                // Snap to grid
+                dummy.position.x = Math.round(dummy.position.x / voxelSize) * voxelSize;
+                dummy.position.y = Math.round(dummy.position.y / voxelSize) * voxelSize;
+                dummy.position.z = Math.round(dummy.position.z / voxelSize) * voxelSize;
+                
+                dummy.updateMatrix();
+                mesh.setMatrixAt(i, dummy.matrix);
+            }
+            mesh.instanceMatrix.needsUpdate = true;
+            cloudGroup.add(mesh);
+            return cloudGroup;
+        };
+
+        // Helper: Create a Voxel Building using InstancedMesh
+        const createVoxelBuilding = (height, voxelSize = 1) => {
+            const buildingGroup = new THREE.Group();
+            const geo = new THREE.BoxGeometry(voxelSize, voxelSize, voxelSize);
+            
+            // Random building color
+            const hue = Math.random() * 360;
+            const color = new THREE.Color(`hsl(${hue}, 60%, 50%)`);
+            const mat = new THREE.MeshStandardMaterial({ color: color, roughness: 0.7 });
+
+            const widthVoxels = 2 + Math.floor(Math.random() * 3);
+            const depthVoxels = 2 + Math.floor(Math.random() * 3);
+            const heightVoxels = Math.floor(height / voxelSize);
+            
+            const count = widthVoxels * depthVoxels * heightVoxels;
+            const mesh = new THREE.InstancedMesh(geo, mat, count);
+            
+            const dummy = new THREE.Object3D();
+            let i = 0;
+            for (let y = 0; y < heightVoxels; y++) {
+                for (let x = 0; x < widthVoxels; x++) {
+                    for (let z = 0; z < depthVoxels; z++) {
+                        dummy.position.set(
+                            (x - widthVoxels / 2) * voxelSize + voxelSize / 2,
+                            y * voxelSize + voxelSize / 2,
+                            (z - depthVoxels / 2) * voxelSize + voxelSize / 2
+                        );
+                        dummy.updateMatrix();
+                        mesh.setMatrixAt(i++, dummy.matrix);
+                    }
+                }
+            }
+            mesh.instanceMatrix.needsUpdate = true;
+            buildingGroup.add(mesh);
+            return buildingGroup;
+        };
+
+        // Helper: Lat/Lon to Vector3
+        const latLonToVector3 = (lat, lon, radius) => {
+            const phi = (90 - lat) * (Math.PI / 180);
+            const theta = (lon + 180) * (Math.PI / 180);
+            const x = -(radius * Math.sin(phi) * Math.cos(theta));
+            const z = radius * Math.sin(phi) * Math.sin(theta);
+            const y = radius * Math.cos(phi);
+            return new THREE.Vector3(x, y, z);
+        };
+
+        // Helper: Create Procedural Wood Texture
+        const createWoodTexture = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024;
+            canvas.height = 1024;
+            const ctx = canvas.getContext('2d');
+            
+            // Base Background
+            ctx.fillStyle = '#4a332a';
+            ctx.fillRect(0, 0, 1024, 1024);
+            
+            // Wood Grain
+            for (let i = 0; i < 400; i++) {
+                const x = Math.random() * 1024;
+                const y = Math.random() * 1024;
+                const w = Math.random() * 5 + 1;
+                const h = Math.random() * 200 + 50;
+                
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                // Wavy lines
+                ctx.bezierCurveTo(x + Math.random() * 20 - 10, 300, x + Math.random() * 20 - 10, 600, x, 1024);
+                ctx.lineWidth = Math.random() * 3 + 1;
+                ctx.strokeStyle = `rgba(30, 20, 10, ${Math.random() * 0.15})`;
+                ctx.stroke();
+            }
+            
+            // Add Noise
+            const imageData = ctx.getImageData(0, 0, 1024, 1024);
+            const data = imageData.data;
+            for(let i = 0; i < data.length; i += 4) {
+                const noise = (Math.random() - 0.5) * 20;
+                data[i] += noise;
+                data[i+1] += noise;
+                data[i+2] += noise;
+            }
+            ctx.putImageData(imageData, 0, 0);
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.wrapS = THREE.RepeatWrapping;
+            tex.wrapT = THREE.RepeatWrapping;
+            return tex;
+        };
+
+        // Helper: Create Notebook Text
+        const createNotebookTexture = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 256;
+            canvas.height = 320;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#cc4444'; // Red cover
+            ctx.fillRect(0, 0, 256, 320);
+            ctx.fillStyle = '#111';
+            ctx.font = 'bold 30px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText("MUSIC", 128, 140);
+            ctx.fillText("IS LIFE", 128, 180);
+            return new THREE.CanvasTexture(canvas);
+        };
+
+        // --- 3D Scene Manager ---
+        const SceneManager = ({ isPlaying, currentStation, volume, isMuted, hasError, onVolumeChange, radioColor, isTravelMode, onCountrySelect, environmentId, onRotateReady }) => {
+            const sceneRef = useRef(null);
+            const radioScreenRef = useRef(null);
+            const radioScreenMeshRef = useRef(null);
+            const speakerMeshRef = useRef(null); // New Ref for Speaker Mesh
+            const speakerTextureRef = useRef(null); // New Ref for Speaker Texture
+            const volumeKnobRef = useRef(null);
+            const tunerKnobRef = useRef(null);
+            const animationFrameRef = useRef(null);
+            const controlsRef = useRef(null);
+            
+            // Lighting Refs
+            const ambientLightRef = useRef(null);
+            const dirLightRef = useRef(null);
+            const starsRef = useRef(null);
+            
+            // Environment Group Refs
+            const radioGroupRef = useRef(null);
+            const globeGroupRef = useRef(null);
+            const tableRef = useRef(null); 
+            const markersRef = useRef([]);
+            
+            // Scene Prop Refs
+            const cafeGroupRef = useRef(null);
+            const rooftopGroupRef = useRef(null);
+            const bedroomGroupRef = useRef(null);
+            const midnightGroupRef = useRef(null);
+            const steamParticlesRef = useRef([]); // For cafe
+            const birdsRef = useRef([]); // For rooftop
+            const cloudsRef = useRef([]); // For rooftop
+            const lavaBlobsRef = useRef([]); // For bedroom
+            
+            // Material Ref for Dynamic Color Update
+            const radioBodyMatRef = useRef(null);
+
+            // Refs to bridge React state to 3D loop
+            const isPlayingRef = useRef(isPlaying);
+            const currentStationRef = useRef(currentStation);
+            const hasErrorRef = useRef(hasError);
+            const volumeRef = useRef(volume);
+            const isMutedRef = useRef(isMuted);
+            const isTravelModeRef = useRef(isTravelMode);
+            const environmentIdRef = useRef(environmentId);
+            
+            // Visualizer State
+            const visualizerModeRef = useRef(0); 
+
+            // Interaction State
+            const isDraggingRef = useRef(false);
+            const previousMouseYRef = useRef(0);
+            const raycaster = useMemo(() => new THREE.Raycaster(), []);
+            const mouse = useMemo(() => new THREE.Vector2(), []);
+
+            useEffect(() => { isPlayingRef.current = isPlaying; }, [isPlaying]);
+            useEffect(() => { currentStationRef.current = currentStation; }, [currentStation]);
+            useEffect(() => { hasErrorRef.current = hasError; }, [hasError]);
+            useEffect(() => { volumeRef.current = volume; }, [volume]);
+            useEffect(() => { isMutedRef.current = isMuted; }, [isMuted]);
+            useEffect(() => { isTravelModeRef.current = isTravelMode; }, [isTravelMode]);
+            useEffect(() => { environmentIdRef.current = environmentId; }, [environmentId]);
+
+            // Toggle visibility of Globe vs Radio
+            useEffect(() => {
+                if (radioGroupRef.current && globeGroupRef.current && tableRef.current && controlsRef.current) {
+                    if (isTravelMode) {
+                        radioGroupRef.current.visible = false;
+                        tableRef.current.visible = false; 
+                        globeGroupRef.current.visible = true;
+                        globeGroupRef.current.position.set(0, 0, 0);
+                        
+                        controlsRef.current.target.set(0, 0, 0);
+                        controlsRef.current.autoRotate = true;
+                        controlsRef.current.autoRotateSpeed = 1.0;
+                    } else {
+                        radioGroupRef.current.visible = true;
+                        // Only show table if NOT space mode (Space has no table generally, but we can keep it if desired. 
+                        // The user prompt implied Space is a void, but didn't explicitly say hide table. 
+                        // Usually Space mode hides the table for effect, let's keep logic simple for now: Table visible in Radio Mode.
+                        tableRef.current.visible = (environmentId !== 'space'); 
+                        globeGroupRef.current.visible = false;
+                        
+                        controlsRef.current.target.set(-2, 1.5, 0);
+                        controlsRef.current.object.position.set(3, 3, 9);
+                        controlsRef.current.autoRotate = false;
+                    }
+                    controlsRef.current.update();
+                }
+            }, [isTravelMode, environmentId]);
+
+            // Update radio color dynamically
+            useEffect(() => {
+                if (radioBodyMatRef.current) {
+                    radioBodyMatRef.current.color.set(radioColor);
+                }
+            }, [radioColor]);
+
+            // Handle Environment Changes (Visibility of Props)
+            useEffect(() => {
+                if (sceneRef.current && ambientLightRef.current && dirLightRef.current) {
+                    const env = ENVIRONMENTS.find(e => e.id === environmentId) || ENVIRONMENTS[0];
+                    
+                    // Update Background
+                    sceneRef.current.background = new THREE.Color(env.bg);
+                    sceneRef.current.fog.color.setHex(env.bg);
+                    sceneRef.current.fog.density = env.fog;
+
+                    // Update Lights
+                    ambientLightRef.current.intensity = env.ambient;
+                    dirLightRef.current.color.setHex(env.lightColor);
+
+                    // Toggle Props Visibility
+                    if (starsRef.current) starsRef.current.visible = (env.id === 'space');
+                    if (cafeGroupRef.current) cafeGroupRef.current.visible = (env.id === 'cafe');
+                    if (rooftopGroupRef.current) rooftopGroupRef.current.visible = (env.id === 'rooftop');
+                    if (bedroomGroupRef.current) bedroomGroupRef.current.visible = (env.id === 'bedroom');
+                    if (midnightGroupRef.current) midnightGroupRef.current.visible = (env.id === 'midnight');
+                    
+                    // Table visibility check again
+                    if (tableRef.current && !isTravelMode) {
+                        tableRef.current.visible = (env.id !== 'space');
+                    }
+                }
+            }, [environmentId, isTravelMode]);
+
+            useEffect(() => {
+                // Scene Setup
+                const scene = new THREE.Scene();
+                scene.fog = new THREE.FogExp2(0x1a1a1a, 0.02);
+                sceneRef.current = scene;
+
+                // Detect mobile for camera adjustments
+                const isMobile = window.innerWidth <= 768;
+                const fov = isMobile ? 60 : 45;
+                const camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 0.1, 1000);
+                // Mobile: position camera to show full radio above bottom panel
+                camera.position.set(isMobile ? 0 : 3, isMobile ? 3.5 : 3, isMobile ? 10 : 9);
+                camera.lookAt(isMobile ? 0 : -2, isMobile ? 1.8 : 1.5, 0);
+
+                const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.shadowMap.enabled = true;
+                renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                const container = document.getElementById('canvas-container');
+                container.appendChild(renderer.domElement);
+
+                // Lighting
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+                scene.add(ambientLight);
+                ambientLightRef.current = ambientLight;
+
+                const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                dirLight.position.set(5, 10, 7);
+                dirLight.castShadow = true;
+                scene.add(dirLight);
+                dirLightRef.current = dirLight;
+
+                const spotLight = new THREE.SpotLight(0xffa500, 0.5); 
+                spotLight.position.set(-5, 8, -5);
+                spotLight.lookAt(0,0,0);
+                scene.add(spotLight);
+
+                // --- Stars (Space) ---
+                const starsGeo = new THREE.BufferGeometry();
+                const starCount = 2000;
+                const starPos = new Float32Array(starCount * 3);
+                for(let i=0; i<starCount*3; i++) starPos[i] = (Math.random() - 0.5) * 100;
+                starsGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+                const starsMat = new THREE.PointsMaterial({color: 0xffffff, size: 0.1, transparent: true, opacity: 0.8});
+                const stars = new THREE.Points(starsGeo, starsMat);
+                stars.visible = false;
+                starsRef.current = stars;
+                scene.add(stars);
+
+                // --- CAFE PROPS ---
+                const cafeGroup = new THREE.Group();
+                cafeGroup.visible = false;
+                
+                // Detailed Cup Group
+                const cupGroup = new THREE.Group();
+                cupGroup.position.set(-6, 0, 2);
+                cupGroup.scale.set(1.5, 1.5, 1.5); // Bigger cup as requested
+
+                // Cup Body (Tapered Cylinder)
+                const bodyGeo = new THREE.CylinderGeometry(0.35, 0.25, 0.5, 32); 
+                const bodyMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
+                const body = new THREE.Mesh(bodyGeo, bodyMat);
+                body.position.y = 0.25;
+                body.castShadow = true;
+                cupGroup.add(body);
+
+                // Cup Handle (Torus segment)
+                const handleGeo = new THREE.TorusGeometry(0.15, 0.04, 8, 16, Math.PI * 1.2);
+                const handle = new THREE.Mesh(handleGeo, bodyMat);
+                handle.position.set(0.3, 0.25, 0);
+                handle.rotation.z = -2.5; 
+                cupGroup.add(handle);
+
+                // Coffee Liquid
+                const coffeeGeo = new THREE.CircleGeometry(0.28, 32);
+                const coffeeMat = new THREE.MeshStandardMaterial({ color: 0x3e2723, roughness: 0.5 });
+                const coffee = new THREE.Mesh(coffeeGeo, coffeeMat);
+                coffee.rotation.x = -Math.PI / 2;
+                coffee.position.y = 0.45; // Slightly below rim
+                cupGroup.add(coffee);
+
+                cafeGroup.add(cupGroup);
+
+                // Steam particles
+                for(let i=0; i<10; i++) {
+                    const steamGeo = new THREE.SphereGeometry(0.05, 8, 8);
+                    const steamMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.4 });
+                    const steam = new THREE.Mesh(steamGeo, steamMat);
+                    steam.userData = { offset: Math.random() * 10, speed: 0.02 + Math.random() * 0.02 };
+                    // Position relative to cup group center (-6, ..., 2)
+                    steam.position.set(-6, 0.8, 2); 
+                    cafeGroup.add(steam);
+                    steamParticlesRef.current.push(steam);
+                }
+                // Notebook
+                const bookGeo = new THREE.BoxGeometry(1.5, 0.1, 2);
+                const bookMat = new THREE.MeshStandardMaterial({ color: 0xaa4444 });
+                const book = new THREE.Mesh(bookGeo, bookMat);
+                book.position.set(-6, 0.05, 4);
+                book.rotation.y = 0.3;
+                
+                // Text Texture
+                const textTex = createNotebookTexture();
+                const textMat = new THREE.MeshBasicMaterial({ map: textTex });
+                const textPlane = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 1.8), textMat);
+                textPlane.rotation.x = -Math.PI/2;
+                textPlane.position.set(0, 0.06, 0);
+                book.add(textPlane);
+                
+                cafeGroup.add(book);
+                cafeGroupRef.current = cafeGroup;
+                scene.add(cafeGroup);
+
+                // --- BEDROOM PROPS (Lava Lamp) ---
+                const bedroomGroup = new THREE.Group();
+                bedroomGroup.visible = false;
+                // Scale up the entire lava lamp group
+                bedroomGroup.scale.set(1.5, 1.5, 1.5);
+                
+                // Base
+                const lampBaseGeo = new THREE.ConeGeometry(0.3, 0.5, 16);
+                const lampBaseMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
+                const lampBase = new THREE.Mesh(lampBaseGeo, lampBaseMat);
+                lampBase.position.set(-5, 0.25, 2);
+                bedroomGroup.add(lampBase);
+                
+                // Glass
+                const lampGlassGeo = new THREE.CylinderGeometry(0.2, 0.3, 1.2, 16);
+                const lampGlassMat = new THREE.MeshPhysicalMaterial({ 
+                    color: 0xff00ff, transparent: true, opacity: 0.3, roughness: 0, transmission: 0.5, thickness: 1
+                });
+                const lampGlass = new THREE.Mesh(lampGlassGeo, lampGlassMat);
+                lampGlass.position.set(-5, 1.1, 2);
+                bedroomGroup.add(lampGlass);
+                
+                // Internal Light
+                const lampLight = new THREE.PointLight(0xff00ff, 1, 3);
+                lampLight.position.set(-5, 0.8, 2);
+                bedroomGroup.add(lampLight);
+                
+                // Blobs
+                for(let i=0; i<3; i++) {
+                    const blobGeo = new THREE.SphereGeometry(0.15, 16, 16);
+                    const blobMat = new THREE.MeshBasicMaterial({ color: 0xff66ff });
+                    const blob = new THREE.Mesh(blobGeo, blobMat);
+                    blob.position.set(-5, 0.8, 2);
+                    blob.userData = { offset: i * 2, speed: 0.01 + Math.random() * 0.01 };
+                    bedroomGroup.add(blob);
+                    lavaBlobsRef.current.push(blob);
+                }
+
+                bedroomGroupRef.current = bedroomGroup;
+                scene.add(bedroomGroup);
+
+                // --- ROOFTOP PROPS (Birds, Clouds, Buildings) ---
+                const rooftopGroup = new THREE.Group();
+                rooftopGroup.visible = false;
+
+                // Voxel Clouds
+                for(let i=0; i<8; i++) {
+                    const cloud = createVoxelCloud(0.8);
+                    cloud.position.set(Math.random()*60 - 30, 20 + Math.random()*10, Math.random()*60 - 30);
+                    cloud.userData = { speed: 0.005 + Math.random() * 0.01 };
+                    rooftopGroup.add(cloud);
+                    cloudsRef.current.push(cloud);
+                }
+
+                // Birds
+                for(let i=0; i<5; i++) {
+                    const birdGeo = new THREE.BufferGeometry();
+                    // Initial V shape
+                    const vertices = new Float32Array([ -0.2, 0, 0,  0, 0, 0.1,  0.2, 0, 0 ]); 
+                    birdGeo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+                    const birdMat = new THREE.LineBasicMaterial({ color: 0x000000 });
+                    const bird = new THREE.Line(birdGeo, birdMat);
+                    bird.position.set(-10 + i*2, 8 + Math.random()*2, -15);
+                    bird.userData = { speed: 0.05 + Math.random() * 0.02, offset: Math.random() * 10, flapSpeed: 15 + Math.random()*10 };
+                    rooftopGroup.add(bird);
+                    birdsRef.current.push(bird);
+                }
+                rooftopGroupRef.current = rooftopGroup;
+                scene.add(rooftopGroup);
+
+                // --- MIDNIGHT PROPS (Moon) ---
+                const midnightGroup = new THREE.Group();
+                midnightGroup.visible = false;
+                const moonGeo = new THREE.SphereGeometry(2, 32, 32);
+                const moonMat = new THREE.MeshBasicMaterial({ color: 0xffffee });
+                const moon = new THREE.Mesh(moonGeo, moonMat);
+                moon.position.set(10, 15, -20);
+                midnightGroup.add(moon);
+                
+                midnightGroupRef.current = midnightGroup;
+                scene.add(midnightGroup);
+
+                // --- TABLE ---
+                const woodTex = createWoodTexture();
+                const tableGeo = new THREE.BoxGeometry(20, 0.5, 15);
+                const tableMat = new THREE.MeshStandardMaterial({ 
+                    map: woodTex,
+                    color: 0x886655, 
+                    roughness: 0.6,
+                    bumpMap: woodTex,
+                    bumpScale: 0.05
+                });
+                const table = new THREE.Mesh(tableGeo, tableMat);
+                table.position.y = -0.25;
+                table.receiveShadow = true;
+                tableRef.current = table;
+                scene.add(table);
+
+                // --- RADIO GROUP ---
+                const radioGroup = new THREE.Group();
+                radioGroupRef.current = radioGroup;
+                
+                // === AETHER - ICONIC PREMIUM SPEAKER DESIGN ===
+                
+                // Primary body - Warm off-white with subtle texture
+                const primaryMat = new THREE.MeshPhysicalMaterial({ 
+                    color: 0xf0ebe5, 
+                    roughness: 0.75, 
+                    metalness: 0.0,
+                    clearcoat: 0.15,
+                    clearcoatRoughness: 0.6
+                });
+                radioBodyMatRef.current = primaryMat;
+                
+                // Brushed dark chrome accent
+                const chromeMat = new THREE.MeshPhysicalMaterial({ 
+                    color: 0x2a2a2a, 
+                    roughness: 0.25, 
+                    metalness: 0.95,
+                    clearcoat: 0.4,
+                    clearcoatRoughness: 0.2
+                });
+                
+                // Copper accent - warm metallic highlight
+                const copperMat = new THREE.MeshPhysicalMaterial({ 
+                    color: 0xb87333,
+                    roughness: 0.3,
+                    metalness: 0.9,
+                    clearcoat: 0.3
+                });
+                
+                // Acoustic fabric - charcoal
+                const fabricMat = new THREE.MeshStandardMaterial({ 
+                    color: 0x1a1a1a, 
+                    roughness: 0.98,
+                    metalness: 0.0
+                });
+                
+                // === MAIN BODY - Sculptural curved form ===
+                const bodyWidth = 6.5;
+                const bodyHeight = 2.4;
+                const bodyDepth = 1.6;
+                const cornerRadius = 0.5;
+                
+                // Create smooth rounded rectangle
+                const bodyShape = new THREE.Shape();
+                const bw = bodyWidth / 2, bh = bodyHeight / 2, cr = cornerRadius;
+                bodyShape.moveTo(-bw + cr, -bh);
+                bodyShape.lineTo(bw - cr, -bh);
+                bodyShape.quadraticCurveTo(bw, -bh, bw, -bh + cr);
+                bodyShape.lineTo(bw, bh - cr);
+                bodyShape.quadraticCurveTo(bw, bh, bw - cr, bh);
+                bodyShape.lineTo(-bw + cr, bh);
+                bodyShape.quadraticCurveTo(-bw, bh, -bw, bh - cr);
+                bodyShape.lineTo(-bw, -bh + cr);
+                bodyShape.quadraticCurveTo(-bw, -bh, -bw + cr, -bh);
+                
+                const bodyExtrudeSettings = { 
+                    depth: bodyDepth, 
+                    bevelEnabled: true, 
+                    bevelThickness: 0.12, 
+                    bevelSize: 0.12, 
+                    bevelSegments: 12 
+                };
+                const mainBodyGeo = new THREE.ExtrudeGeometry(bodyShape, bodyExtrudeSettings);
+                mainBodyGeo.rotateX(Math.PI / 2);
+                mainBodyGeo.translate(0, 0, -bodyDepth / 2);
+                
+                const mainBody = new THREE.Mesh(mainBodyGeo, primaryMat);
+                mainBody.castShadow = true;
+                mainBody.receiveShadow = true;
+                mainBody.position.y = 1.5;
+                radioGroup.add(mainBody);
+                
+                // === FRONT DARK PANEL - Recessed area ===
+                const frontPanelShape = new THREE.Shape();
+                const fpw = bodyWidth / 2 - 0.2, fph = bodyHeight / 2 - 0.2, fpcr = cornerRadius - 0.1;
+                frontPanelShape.moveTo(-fpw + fpcr, -fph);
+                frontPanelShape.lineTo(fpw - fpcr, -fph);
+                frontPanelShape.quadraticCurveTo(fpw, -fph, fpw, -fph + fpcr);
+                frontPanelShape.lineTo(fpw, fph - fpcr);
+                frontPanelShape.quadraticCurveTo(fpw, fph, fpw - fpcr, fph);
+                frontPanelShape.lineTo(-fpw + fpcr, fph);
+                frontPanelShape.quadraticCurveTo(-fpw, fph, -fpw, fph - fpcr);
+                frontPanelShape.lineTo(-fpw, -fph + fpcr);
+                frontPanelShape.quadraticCurveTo(-fpw, -fph, -fpw + fpcr, -fph);
+                
+                const frontPanelGeo = new THREE.ShapeGeometry(frontPanelShape);
+                const glassMat = new THREE.MeshPhysicalMaterial({
+                    color: 0x0a0a0a,
+                    roughness: 0.0,
+                    metalness: 0.05,
+                    clearcoat: 1.0,
+                    clearcoatRoughness: 0.0,
+                    transparent: true,
+                    opacity: 0.95
+                });
+                const frontPanel = new THREE.Mesh(frontPanelGeo, glassMat);
+                frontPanel.position.set(0, 1.5, bodyDepth / 2 + 0.005);
+                radioGroup.add(frontPanel);
+                
+                // === MAIN SPEAKER - Large centered driver ===
+                // Outer copper ring - premium accent
+                const speakerOuterGeo = new THREE.TorusGeometry(1.05, 0.04, 24, 64);
+                const speakerOuter = new THREE.Mesh(speakerOuterGeo, copperMat);
+                speakerOuter.position.set(-1.5, 1.5, bodyDepth / 2 + 0.01);
+                radioGroup.add(speakerOuter);
+                
+                // Inner dark bezel
+                const speakerBezelGeo = new THREE.TorusGeometry(0.98, 0.02, 24, 64);
+                const speakerBezel = new THREE.Mesh(speakerBezelGeo, chromeMat);
+                speakerBezel.position.set(-1.5, 1.5, bodyDepth / 2 + 0.02);
+                radioGroup.add(speakerBezel);
+                
+                // Speaker canvas for visualizer
+                const speakerCanvas = document.createElement('canvas');
+                speakerCanvas.width = 256;
+                speakerCanvas.height = 256;
+                const speakerTex = new THREE.CanvasTexture(speakerCanvas);
+                speakerTextureRef.current = speakerTex;
+                
+                // Premium woven speaker grille
+                const createPremiumGrille = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 512;
+                    canvas.height = 512;
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Dark base
+                    ctx.fillStyle = '#0d0d0d';
+                    ctx.fillRect(0, 0, 512, 512);
+                    
+                    // Concentric circle pattern
+                    ctx.strokeStyle = 'rgba(25, 25, 25, 1)';
+                    ctx.lineWidth = 1;
+                    for (let r = 20; r < 256; r += 8) {
+                        ctx.beginPath();
+                        ctx.arc(256, 256, r, 0, Math.PI * 2);
+                        ctx.stroke();
+                    }
+                    
+                    // Radial lines
+                    ctx.strokeStyle = 'rgba(30, 30, 30, 0.8)';
+                    ctx.lineWidth = 0.5;
+                    for (let a = 0; a < 360; a += 15) {
+                        const rad = a * Math.PI / 180;
+                        ctx.beginPath();
+                        ctx.moveTo(256, 256);
+                        ctx.lineTo(256 + Math.cos(rad) * 250, 256 + Math.sin(rad) * 250);
+                        ctx.stroke();
+                    }
+                    
+                    // Center dome highlight
+                    const domeGrad = ctx.createRadialGradient(256, 256, 0, 256, 256, 60);
+                    domeGrad.addColorStop(0, 'rgba(60, 60, 60, 0.8)');
+                    domeGrad.addColorStop(0.5, 'rgba(30, 30, 30, 0.6)');
+                    domeGrad.addColorStop(1, 'rgba(13, 13, 13, 0)');
+                    ctx.fillStyle = domeGrad;
+                    ctx.beginPath();
+                    ctx.arc(256, 256, 60, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Edge vignette
+                    const grad = ctx.createRadialGradient(256, 256, 150, 256, 256, 256);
+                    grad.addColorStop(0, 'rgba(0, 0, 0, 0)');
+                    grad.addColorStop(1, 'rgba(0, 0, 0, 0.6)');
+                    ctx.fillStyle = grad;
+                    ctx.fillRect(0, 0, 512, 512);
+                    
+                    return new THREE.CanvasTexture(canvas);
+                };
+                
+                const speakerGrilleTexture = createPremiumGrille();
+                
+                const speakerGeo = new THREE.CircleGeometry(0.95, 64);
+                const speakerMat = new THREE.MeshStandardMaterial({ 
+                    color: 0x0d0d0d, 
+                    roughness: 0.9,
+                    metalness: 0.1,
+                    map: speakerGrilleTexture,
+                    emissiveMap: speakerTex,
+                    emissive: 0xffffff,
+                    emissiveIntensity: 0.5
+                });
+                const speaker = new THREE.Mesh(speakerGeo, speakerMat);
+                speaker.position.set(-1.5, 1.5, bodyDepth / 2 + 0.025);
+                speaker.name = "radioSpeaker";
+                speakerMeshRef.current = speaker;
+                radioGroup.add(speaker);
+                
+                // === DISPLAY SECTION ===
+                const screenCanvas = document.createElement('canvas');
+                screenCanvas.width = 320;
+                screenCanvas.height = 160;
+                const screenTex = new THREE.CanvasTexture(screenCanvas);
+                radioScreenRef.current = screenTex;
+                
+                // Display bezel - thin chrome frame
+                const displayBezelGeo = new THREE.BoxGeometry(2.5, 1.4, 0.03);
+                const displayBezel = new THREE.Mesh(displayBezelGeo, chromeMat);
+                displayBezel.position.set(1.3, 1.7, bodyDepth / 2 + 0.01);
+                radioGroup.add(displayBezel);
+                
+                // Screen
+                const screenGeo = new THREE.PlaneGeometry(2.4, 1.3);
+                const screenMat = new THREE.MeshBasicMaterial({ map: screenTex });
+                const screenMesh = new THREE.Mesh(screenGeo, screenMat);
+                screenMesh.position.set(1.3, 1.7, bodyDepth / 2 + 0.03);
+                screenMesh.name = "radioScreen"; 
+                radioScreenMeshRef.current = screenMesh;
+                radioGroup.add(screenMesh);
+                
+                // === CONTROL SECTION - Bottom row ===
+                // Volume knob - large premium dial
+                const dialGeo = new THREE.CylinderGeometry(0.32, 0.32, 0.12, 64);
+                dialGeo.rotateX(Math.PI / 2);
+                const dialMat = new THREE.MeshPhysicalMaterial({ 
+                    color: 0x1a1a1a, 
+                    roughness: 0.3, 
+                    metalness: 0.9,
+                    clearcoat: 0.6,
+                    clearcoatRoughness: 0.15
+                });
+                
+                const volKnob = new THREE.Mesh(dialGeo, dialMat);
+                volKnob.position.set(1.3, 0.75, bodyDepth / 2 + 0.08);
+                volKnob.name = "volumeKnob";
+                volumeKnobRef.current = volKnob;
+                radioGroup.add(volKnob);
+                
+                // Knob outer ring - copper accent
+                const knobRingGeo = new THREE.TorusGeometry(0.33, 0.015, 16, 48);
+                const knobRing = new THREE.Mesh(knobRingGeo, copperMat);
+                knobRing.position.set(1.3, 0.75, bodyDepth / 2 + 0.08);
+                radioGroup.add(knobRing);
+                
+                // Knob indicator line
+                const dialLineGeo = new THREE.BoxGeometry(0.02, 0.18, 0.02);
+                const dialLineMat = new THREE.MeshBasicMaterial({ color: 0xb87333 });
+                const dialLine = new THREE.Mesh(dialLineGeo, dialLineMat);
+                dialLine.position.set(0, 0.22, 0.06);
+                volKnob.add(dialLine);
+                
+                // Knob center cap
+                const knobCapGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.02, 32);
+                knobCapGeo.rotateX(Math.PI / 2);
+                const knobCap = new THREE.Mesh(knobCapGeo, copperMat);
+                knobCap.position.set(0, 0, 0.07);
+                volKnob.add(knobCap);
+                
+                // Hidden tuner knob (for compatibility)
+                const tuneKnob = new THREE.Mesh(dialGeo, dialMat);
+                tuneKnob.position.set(2.5, 0.75, bodyDepth / 2 + 0.08);
+                tuneKnob.visible = false;
+                tunerKnobRef.current = tuneKnob;
+                radioGroup.add(tuneKnob);
+                
+                // Markers for compatibility
+                const markerGeo = new THREE.BoxGeometry(0.02, 0.1, 0.02);
+                const markerMat = new THREE.MeshBasicMaterial({ color: 0x333333 });
+                const volMarker = new THREE.Mesh(markerGeo, markerMat);
+                volMarker.position.set(0, 0.22, 0.06);
+                volMarker.visible = false;
+                volKnob.add(volMarker);
+                
+                const tuneMarker = new THREE.Mesh(markerGeo, markerMat);
+                tuneMarker.position.set(0, 0.22, 0.06);
+                tuneMarker.visible = false;
+                tuneKnob.add(tuneMarker);
+                
+                // === PRESET BUTTONS ===
+                const btnGeo = new THREE.CylinderGeometry(0.1, 0.1, 0.04, 32);
+                btnGeo.rotateX(Math.PI / 2);
+                const btnMat = new THREE.MeshPhysicalMaterial({ 
+                    color: 0x2a2a2a, 
+                    roughness: 0.4, 
+                    metalness: 0.8,
+                    clearcoat: 0.3
+                });
+                
+                [-0.3, 0.1, 0.5].forEach((x, i) => {
+                    const btn = new THREE.Mesh(btnGeo, btnMat);
+                    btn.position.set(x, 0.75, bodyDepth / 2 + 0.04);
+                    radioGroup.add(btn);
+                });
+                
+                // === STATUS LED ===
+                const ledGeo = new THREE.CircleGeometry(0.03, 16);
+                const ledMat = new THREE.MeshBasicMaterial({ color: 0x4ade80 });
+                const led = new THREE.Mesh(ledGeo, ledMat);
+                led.position.set(2.5, 1.7, bodyDepth / 2 + 0.03);
+                radioGroup.add(led);
+                
+                // === BRAND LOGO ===
+                const logoCanvas = document.createElement('canvas');
+                logoCanvas.width = 256;
+                logoCanvas.height = 48;
+                const logoCtx = logoCanvas.getContext('2d');
+                
+                // Copper colored text
+                logoCtx.fillStyle = 'rgba(184, 115, 51, 0.8)';
+                logoCtx.font = '300 16px "SF Pro Display", "Helvetica Neue", Arial, sans-serif';
+                logoCtx.textAlign = 'center';
+                logoCtx.fillText('AETHER', 128, 30);
+                
+                const logoTex = new THREE.CanvasTexture(logoCanvas);
+                
+                const logoGeo = new THREE.PlaneGeometry(1.4, 0.26);
+                const logoMat = new THREE.MeshBasicMaterial({ map: logoTex, transparent: true });
+                const logo = new THREE.Mesh(logoGeo, logoMat);
+                logo.position.set(-1.5, 2.55, bodyDepth / 2 + 0.01);
+                radioGroup.add(logo);
+                
+                // === DECORATIVE ELEMENTS ===
+                // Copper accent line at top
+                const accentLineGeo = new THREE.BoxGeometry(bodyWidth - 1.0, 0.02, 0.02);
+                const accentLine = new THREE.Mesh(accentLineGeo, copperMat);
+                accentLine.position.set(0, 2.65, bodyDepth / 2 + 0.01);
+                radioGroup.add(accentLine);
+                
+                // Side vents (left)
+                const ventGeo = new THREE.BoxGeometry(0.02, 0.8, 0.3);
+                const ventMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.9 });
+                for (let i = 0; i < 5; i++) {
+                    const vent = new THREE.Mesh(ventGeo, ventMat);
+                    vent.position.set(-bodyWidth / 2 + 0.01, 1.5, -0.4 + i * 0.2);
+                    radioGroup.add(vent);
+                }
+                
+                // === STAND - Elegant A-frame design ===
+                // Left leg
+                const legGeo = new THREE.BoxGeometry(0.08, 1.0, 0.5);
+                const legMat = new THREE.MeshPhysicalMaterial({ 
+                    color: 0x1a1a1a, 
+                    roughness: 0.35, 
+                    metalness: 0.9,
+                    clearcoat: 0.4
+                });
+                const leftLeg = new THREE.Mesh(legGeo, legMat);
+                leftLeg.position.set(-1.8, 0.5, 0);
+                leftLeg.rotation.z = 0.1;
+                radioGroup.add(leftLeg);
+                
+                // Right leg
+                const rightLeg = new THREE.Mesh(legGeo, legMat);
+                rightLeg.position.set(1.8, 0.5, 0);
+                rightLeg.rotation.z = -0.1;
+                radioGroup.add(rightLeg);
+                
+                // Foot pads
+                const footGeo = new THREE.CylinderGeometry(0.12, 0.14, 0.03, 32);
+                const footMat = new THREE.MeshStandardMaterial({ color: 0x0a0a0a, roughness: 0.95 });
+                const leftFoot = new THREE.Mesh(footGeo, footMat);
+                leftFoot.position.set(-1.9, 0.015, 0);
+                radioGroup.add(leftFoot);
+                
+                const rightFoot = new THREE.Mesh(footGeo, footMat);
+                rightFoot.position.set(1.9, 0.015, 0);
+                radioGroup.add(rightFoot);
+
+                scene.add(radioGroup);
+
+                // --- GLOBE GROUP ---
+                const globeGroup = new THREE.Group();
+                globeGroupRef.current = globeGroup;
+                globeGroup.visible = false; 
+                globeGroup.position.set(0, 0, 0); 
+
+                // Earth Sphere with Textures
+                const texLoader = new THREE.TextureLoader();
+                const earthMap = texLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_atmos_2048.jpg');
+                const earthSpec = texLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_specular_2048.jpg');
+                const earthNormal = texLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_normal_2048.jpg');
+
+                const earthGeo = new THREE.SphereGeometry(2.5, 64, 64);
+                const earthMat = new THREE.MeshPhongMaterial({ 
+                    map: earthMap,
+                    specularMap: earthSpec,
+                    normalMap: earthNormal,
+                    specular: new THREE.Color(0x333333),
+                    shininess: 5
+                });
+                const earth = new THREE.Mesh(earthGeo, earthMat);
+                globeGroup.add(earth);
+
+                const atmosGeo = new THREE.SphereGeometry(2.53, 64, 64);
+                const atmosMat = new THREE.MeshPhongMaterial({
+                    color: 0x4fa1c6,
+                    transparent: true,
+                    opacity: 0.15,
+                    side: THREE.BackSide
+                });
+                const atmosphere = new THREE.Mesh(atmosGeo, atmosMat);
+                globeGroup.add(atmosphere);
+
+                // Country Markers
+                COUNTRIES.forEach(country => {
+                    const pos = latLonToVector3(country.lat, country.lon, 2.55); 
+                    const markerGeo = new THREE.SphereGeometry(0.08, 16, 16);
+                    const markerMat = new THREE.MeshBasicMaterial({ color: 0xff3333 });
+                    const marker = new THREE.Mesh(markerGeo, markerMat);
+                    marker.position.copy(pos);
+                    marker.name = `marker_${country.code}`;
+                    marker.userData = { country }; 
+                    globeGroup.add(marker);
+                    markersRef.current.push(marker);
+                });
+
+                scene.add(globeGroup);
+
+
+                // Controls
+                const controls = new THREE.OrbitControls(camera, renderer.domElement);
+                controls.enableDamping = true;
+                controls.dampingFactor = 0.05;
+                controls.minDistance = 5;
+                controls.maxDistance = 20;
+                controls.maxPolarAngle = Math.PI / 2 - 0.1;
+                controls.target.set(-2, 1.5, 0);
+                
+                // Enable panning and configure touch controls
+                controls.enablePan = true;
+                controls.panSpeed = 1.0;
+                controls.screenSpacePanning = true; // Pan parallel to screen
+                
+                // Touch configuration: 1 finger = rotate, 2 fingers = pan, pinch = zoom
+                controls.touches = {
+                    ONE: THREE.TOUCH.ROTATE,
+                    TWO: THREE.TOUCH.DOLLY_PAN
+                };
+                
+                controlsRef.current = controls;
+
+                // Expose rotation function for mobile controls
+                if (onRotateReady) {
+                    onRotateReady((direction) => {
+                        if (controlsRef.current && !isTravelModeRef.current) {
+                            // Rotate camera around target by a small angle
+                            const angle = direction === 'left' ? 0.3 : -0.3;
+                            const offset = new THREE.Vector3();
+                            offset.copy(controlsRef.current.object.position).sub(controlsRef.current.target);
+                            
+                            // Rotate offset around Y axis
+                            const cos = Math.cos(angle);
+                            const sin = Math.sin(angle);
+                            const x = offset.x * cos - offset.z * sin;
+                            const z = offset.x * sin + offset.z * cos;
+                            offset.x = x;
+                            offset.z = z;
+                            
+                            controlsRef.current.object.position.copy(controlsRef.current.target).add(offset);
+                            controlsRef.current.update();
+                        }
+                    });
+                }
+
+                // --- Update Screen Logic (Visualizer) ---
+                const updateScreen = (text, subtext, freq, active, error, time, volumeLvl) => {
+                    // 1. Update Radio Screen
+                    if (radioScreenRef.current) {
+                        const canvas = radioScreenRef.current.image;
+                        const ctx = canvas.getContext('2d');
+                        
+                        ctx.fillStyle = active ? '#222' : '#151515';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                        const mode = visualizerModeRef.current;
+
+                        if (active) {
+                            ctx.shadowBlur = 10;
+                            if (error) {
+                                ctx.shadowColor = "#ef4444";
+                                ctx.fillStyle = '#ef4444';
+                                ctx.font = 'bold 30px monospace';
+                                ctx.textAlign = 'center';
+                                ctx.fillText("SIGNAL LOST", canvas.width / 2, 55);
+                                ctx.font = '20px monospace';
+                                ctx.fillText("CHECK TUNING", canvas.width / 2, 85);
+                            } else {
+                                ctx.shadowColor = "#4ade80";
+                                
+                                // Get screen mode (0-3, speaker handles radial independently)
+                                const screenMode = mode % 4;
+                                
+                                // --- SCREEN VISUALIZERS - Ultra Premium Minimal ---
+                                if (screenMode === 0) {
+                                    // Classic Bars - Clean white/cyan gradient
+                                    const numBars = 40;
+                                    const barWidth = canvas.width / numBars;
+                                    const maxBarHeight = 50;
+                                    for (let i = 0; i < numBars; i++) {
+                                        const noise = Math.sin(time * 0.012 + i * 0.7) * Math.cos(time * 0.008 + i * 1.1);
+                                        const height = Math.abs(noise) * maxBarHeight * volumeLvl * 1.6; 
+                                        const lightness = 85 + (height / maxBarHeight) * 15;
+                                        const hue = 200 - (height / maxBarHeight) * 15;
+                                        ctx.fillStyle = `hsla(${hue}, 20%, ${lightness}%, ${0.4 + (height / maxBarHeight) * 0.6})`;
+                                        ctx.shadowBlur = 3;
+                                        ctx.shadowColor = 'rgba(255, 255, 255, 0.15)';
+                                        ctx.fillRect(i * barWidth + 1, canvas.height - height - 8, barWidth - 2, height);
+                                    }
+                                    ctx.shadowBlur = 0;
+                                }
+                                else if (screenMode === 1) {
+                                    // Floating Particles - Soft white
+                                    const numParticles = 60;
+                                    for (let i = 0; i < numParticles; i++) {
+                                        const x = (i / numParticles) * canvas.width;
+                                        const wave1 = Math.sin(time * 0.008 + i * 0.25) * 22 * volumeLvl;
+                                        const wave2 = Math.cos(time * 0.012 + i * 0.18) * 16 * volumeLvl;
+                                        const y = canvas.height / 2 + 6 + wave1 + wave2;
+                                        const size = 1.5 + Math.abs(Math.sin(time * 0.01 + i)) * 3 * volumeLvl;
+                                        const alpha = 0.3 + Math.abs(wave1 / 22) * 0.6;
+                                        ctx.beginPath();
+                                        ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                                        ctx.shadowBlur = 6;
+                                        ctx.shadowColor = 'rgba(184, 115, 51, 0.3)'; // subtle copper glow
+                                        ctx.arc(x, y, size, 0, Math.PI * 2);
+                                        ctx.fill();
+                                    }
+                                    ctx.shadowBlur = 0;
+                                }
+                                else if (screenMode === 2) {
+                                    // Concentric Rings - Clean geometric pulse
+                                    const centerX = canvas.width / 2;
+                                    const centerY = canvas.height / 2 + 6;
+                                    const numRings = 6;
+                                    
+                                    for (let i = 0; i < numRings; i++) {
+                                        const phase = (time * 0.003 + i * 0.15) % 1;
+                                        const radius = phase * 55 * volumeLvl + 8;
+                                        const alpha = (1 - phase) * 0.4;
+                                        ctx.beginPath();
+                                        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+                                        ctx.shadowBlur = 5;
+                                        ctx.shadowColor = 'rgba(184, 115, 51, 0.25)';
+                                        ctx.lineWidth = 1;
+                                        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+                                        ctx.stroke();
+                                    }
+                                    
+                                    // Center dot - copper accent
+                                    const pulse = 0.5 + Math.sin(time * 0.02) * 0.5;
+                                    const grd = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 8 + pulse * 4);
+                                    grd.addColorStop(0, `rgba(255, 255, 255, ${0.9})`);
+                                    grd.addColorStop(0.5, `rgba(184, 115, 51, ${0.4 + pulse * 0.3})`);
+                                    grd.addColorStop(1, 'rgba(184, 115, 51, 0)');
+                                    ctx.beginPath();
+                                    ctx.fillStyle = grd;
+                                    ctx.arc(centerX, centerY, 8 + pulse * 4 * volumeLvl, 0, Math.PI * 2);
+                                    ctx.fill();
+                                    ctx.shadowBlur = 0;
+                                }
+                                else if (screenMode === 3) {
+                                    // Smooth Waveform - Premium oscilloscope
+                                    ctx.shadowBlur = 6;
+                                    ctx.beginPath();
+                                    ctx.lineWidth = 1.5;
+                                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                                    ctx.shadowColor = 'rgba(184, 115, 51, 0.35)';
+                                    let x = 0;
+                                    for (let i = 0; i <= 80; i++) {
+                                        const freq1 = (time * 0.08) + (i * 0.1);
+                                        const freq2 = (time * 0.04) - (i * 0.05);
+                                        const v = (Math.sin(freq1) * 0.5 + Math.sin(freq2) * 0.35) * volumeLvl;
+                                        const y = (canvas.height / 2) + 6 + (v * (canvas.height / 2.8));
+                                        if (i === 0) ctx.moveTo(x, y);
+                                        else ctx.lineTo(x, y);
+                                        x += canvas.width / 80;
+                                    }
+                                    ctx.stroke();
+                                    ctx.shadowBlur = 0;
+                                }
+                                // Screen always shows one of these 4 visualizers (speaker shows radial independently)
+
+                                // --- Info Overlay - Ultra Minimal ---
+                                ctx.shadowBlur = 0;
+                                ctx.font = '300 8px "Helvetica Neue", sans-serif';
+                                ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+                                ctx.textAlign = 'right';
+                                const modeNames = ["BARS", "PARTICLES", "PULSE", "WAVE"];
+                                ctx.fillText(modeNames[mode % 4], canvas.width - 8, 12);
+
+                                const pulse = 0.5 + 0.5 * Math.sin(time * 0.008); 
+                                ctx.fillStyle = `rgba(74, 222, 128, ${0.6 + (pulse * 0.3)})`; 
+                                ctx.font = '500 9px "Helvetica Neue", sans-serif';
+                                ctx.textAlign = 'left';
+                                ctx.fillText("● ON AIR", 8, 14);
+
+                                ctx.textAlign = 'center';
+                                ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                                ctx.font = '200 28px "Helvetica Neue", sans-serif';
+                                ctx.fillText(freq, canvas.width / 2, 46);
+                                
+                                ctx.font = '400 11px "Helvetica Neue", sans-serif';
+                                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                                ctx.fillText(text.substring(0, 22), canvas.width / 2, 68);
+                            }
+                        } else {
+                            // STANDBY - Ultra minimal clock
+                            const now = new Date();
+                            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            
+                            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+                            ctx.font = '100 38px "Helvetica Neue", sans-serif';
+                            ctx.textAlign = 'center';
+                            ctx.fillText(timeStr, canvas.width / 2, 65);
+                            
+                            ctx.font = '300 9px "Helvetica Neue", sans-serif';
+                            ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+                            ctx.fillText("STANDBY", canvas.width / 2, 88);
+                        }
+                        radioScreenRef.current.needsUpdate = true;
+                    }
+
+                    // 2. Update Speaker - Always show radial visualizer when playing
+                    if (speakerTextureRef.current) {
+                        const sCanvas = speakerTextureRef.current.image;
+                        const sCtx = sCanvas.getContext('2d');
+                        
+                        // Always clear speaker first
+                        sCtx.fillStyle = '#000000';
+                        sCtx.fillRect(0, 0, sCanvas.width, sCanvas.height);
+
+                        // Always draw when active and no error (not dependent on mode)
+                        if (active && !error) {
+                            const centerX = sCanvas.width / 2;
+                            const centerY = sCanvas.height / 2;
+                            const radius = 40;
+                            const numBars = 48;
+                            
+                            sCtx.lineCap = 'round';
+                            
+                            // Radial bars
+                            for (let i = 0; i < numBars; i++) {
+                                const angle = (i / numBars) * Math.PI * 2;
+                                const val = Math.abs(Math.sin(time * 0.06 + i * 0.35) * Math.cos(time * 0.03 + i * 0.18)) * volumeLvl; 
+                                const barLength = val * 55;
+
+                                const x1 = centerX + Math.cos(angle) * radius;
+                                const y1 = centerY + Math.sin(angle) * radius;
+                                const x2 = centerX + Math.cos(angle) * (radius + barLength);
+                                const y2 = centerY + Math.sin(angle) * (radius + barLength);
+
+                                const alpha = 0.25 + val * 0.7;
+                                // Copper color for the bars
+                                const r = 184 + Math.floor(val * 50);
+                                const g = 115 + Math.floor(val * 80);
+                                const b = 51 + Math.floor(val * 50);
+                                sCtx.beginPath();
+                                sCtx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                                sCtx.lineWidth = 2.5;
+                                sCtx.shadowBlur = 8;
+                                sCtx.shadowColor = 'rgba(184, 115, 51, 0.5)';
+                                sCtx.moveTo(x1, y1);
+                                sCtx.lineTo(x2, y2);
+                                sCtx.stroke();
+                            }
+                            
+                            // Inner pulsing ring
+                            const ringPulse = 0.5 + Math.sin(time * 0.015) * 0.5;
+                            sCtx.beginPath();
+                            sCtx.strokeStyle = `rgba(184, 115, 51, ${0.3 + ringPulse * 0.3})`;
+                            sCtx.lineWidth = 1.5;
+                            sCtx.arc(centerX, centerY, radius - 5, 0, Math.PI * 2);
+                            sCtx.stroke();
+                            // Center glow - copper accent
+                            const pulse = 0.5 + Math.sin(time * 0.02) * 0.5;
+                            const centerGrad = sCtx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 10 + pulse * 6);
+                            centerGrad.addColorStop(0, `rgba(255, 255, 255, ${0.8})`);
+                            centerGrad.addColorStop(0.4, `rgba(184, 115, 51, ${0.3 + pulse * 0.2})`);
+                            centerGrad.addColorStop(1, 'rgba(184, 115, 51, 0)');
+                            sCtx.beginPath();
+                            sCtx.fillStyle = centerGrad;
+                            sCtx.arc(centerX, centerY, 10 + pulse * 6 * volumeLvl, 0, Math.PI * 2);
+                            sCtx.fill();
+                        }
+                        speakerTextureRef.current.needsUpdate = true;
+                    }
+                };
+
+                // Animation Loop
+                const animate = (time) => {
+                    animationFrameRef.current = requestAnimationFrame(animate);
+                    
+                    const playing = isPlayingRef.current;
+                    const station = currentStationRef.current;
+                    const err = hasErrorRef.current;
+                    // Volume is 0 if muted or if volume slider is 0
+                    const vol = isMutedRef.current ? 0 : volumeRef.current;
+
+                    if (playing && radioScreenRef.current) {
+                         const freqStr = station.freq ? station.freq.toFixed(1) + " FM" : "WEB";
+                         updateScreen(station.name, station.genre, freqStr, true, err, time, vol);
+                    } else {
+                         updateScreen("", "", "", false, false, 0, 0);
+                    }
+
+                    // Rotate stars in Space mode
+                    if (starsRef.current && starsRef.current.visible) {
+                        starsRef.current.rotation.y += 0.0005;
+                    }
+
+                    // Animate Props
+                    // Cafe Steam
+                    if (steamParticlesRef.current.length > 0 && cafeGroupRef.current.visible) {
+                        const now = time * 0.001;
+                        steamParticlesRef.current.forEach(p => {
+                            // Reset position if too high
+                            const cycle = (now * p.userData.speed + p.userData.offset) % 1;
+                            p.position.y = 0.8 + cycle * 1.2; // Rise from cup
+                            p.position.x = -6 + Math.sin(now * 2 + p.userData.offset) * 0.15; // Wiggle
+                            p.material.opacity = 0.6 * (1 - cycle); // Fade out
+                        });
+                    }
+                    // Lava Lamp
+                    if (lavaBlobsRef.current.length > 0 && bedroomGroupRef.current.visible) {
+                        const now = time * 0.001;
+                        lavaBlobsRef.current.forEach((b, i) => {
+                            b.position.y = 0.8 + Math.sin(now * b.userData.speed + b.userData.offset) * 0.4;
+                            const scale = 1 + Math.sin(now * 2 + i) * 0.2;
+                            b.scale.set(scale, scale, scale);
+                        });
+                    }
+                    // Birds
+                    if (birdsRef.current.length > 0 && rooftopGroupRef.current.visible) {
+                        const now = time * 0.001;
+                        birdsRef.current.forEach((b, i) => {
+                            // Fly right to left or random
+                            let x = -10 + ((now * 20 * b.userData.speed + i * 5) % 40) - 20; 
+                            // Loop around
+                            if(x > 20) x -= 40;
+                            b.position.x = x;
+                            
+                            // Flap wings by updating vertices
+                            const positions = b.geometry.attributes.position.array;
+                            const flap = Math.sin(now * b.userData.flapSpeed);
+                            positions[1] = flap * 0.1; // Left wing tip Y
+                            positions[7] = flap * 0.1; // Right wing tip Y
+                            b.geometry.attributes.position.needsUpdate = true;
+                        });
+                    }
+                    // Clouds
+                    if (cloudsRef.current.length > 0 && rooftopGroupRef.current.visible) {
+                        cloudsRef.current.forEach(c => {
+                            c.position.x += c.userData.speed;
+                            if(c.position.x > 30) c.position.x = -30;
+                        });
+                    }
+
+                    controls.update();
+                    renderer.render(scene, camera);
+                };
+
+                animate(0);
+
+                // --- Interaction Handlers ---
+                const handlePointerDown = (event) => {
+                    // Normalize mouse position
+                    const rect = renderer.domElement.getBoundingClientRect();
+                    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+                    raycaster.setFromCamera(mouse, camera);
+                    
+                    // IF TRAVEL MODE: Check markers
+                    if (isTravelModeRef.current) {
+                        const intersects = raycaster.intersectObjects(markersRef.current, false);
+                        if (intersects.length > 0) {
+                            const marker = intersects[0].object;
+                            if (onCountrySelect) {
+                                onCountrySelect(marker.userData.country.code);
+                            }
+                        }
+                        return; // Skip radio controls if in travel mode
+                    }
+
+                    // IF RADIO MODE: Check Knobs
+                    const objectsToTest = [];
+                    if (volumeKnobRef.current) objectsToTest.push(volumeKnobRef.current);
+                    if (radioScreenMeshRef.current) objectsToTest.push(radioScreenMeshRef.current);
+                    if (speakerMeshRef.current) objectsToTest.push(speakerMeshRef.current); // Add Speaker to raycast
+
+                    const intersects = raycaster.intersectObjects(objectsToTest, false);
+
+                    if (intersects.length > 0) {
+                        const hitObject = intersects[0].object;
+
+                        // 1. Volume Knob Interaction
+                        if (hitObject.name === "volumeKnob") {
+                            isDraggingRef.current = true;
+                            previousMouseYRef.current = event.clientY;
+                            if (controlsRef.current) controlsRef.current.enabled = false;
+                            document.body.style.cursor = 'grabbing';
+                        }
+                        
+                        // 2. Screen Interaction (Toggle Visualizer on OLED screen only)
+                        else if (hitObject.name === "radioScreen") {
+                             // Cycle modes: 0 -> 1 -> 2 -> 3 -> 0 (4 screen modes, speaker always shows radial)
+                             visualizerModeRef.current = (visualizerModeRef.current + 1) % 4;
+                        }
+                    }
+                };
+
+                const handlePointerMove = (event) => {
+                    // Normalize mouse for raycasting hover effect
+                    const rect = renderer.domElement.getBoundingClientRect();
+                    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+                    // 1. Dragging Logic (Radio only)
+                    if (isDraggingRef.current && !isTravelModeRef.current) {
+                        const deltaY = previousMouseYRef.current - event.clientY;
+                        previousMouseYRef.current = event.clientY;
+                        const change = deltaY * 0.005; 
+                        onVolumeChange(change);
+                        return;
+                    }
+
+                    // 2. Hover Logic
+                    raycaster.setFromCamera(mouse, camera);
+                    
+                    let objectsToTest = [];
+                    if (isTravelModeRef.current) {
+                        objectsToTest = markersRef.current;
+                    } else {
+                        if (volumeKnobRef.current) objectsToTest.push(volumeKnobRef.current);
+                        if (radioScreenMeshRef.current) objectsToTest.push(radioScreenMeshRef.current);
+                        if (speakerMeshRef.current) objectsToTest.push(speakerMeshRef.current); // Add speaker
+                    }
+
+                    const intersects = raycaster.intersectObjects(objectsToTest, false);
+                    
+                    if (intersects.length > 0) {
+                        const obj = intersects[0].object;
+                        if (obj.name === "volumeKnob") document.body.style.cursor = 'grab';
+                        else if (obj.name === "radioScreen" || obj.name === "radioSpeaker" || obj.name.startsWith("marker_")) document.body.style.cursor = 'pointer';
+                    } else {
+                        document.body.style.cursor = 'default';
+                    }
+                };
+
+                const handlePointerUp = () => {
+                    isDraggingRef.current = false;
+                    document.body.style.cursor = 'default';
+                    if (controlsRef.current) controlsRef.current.enabled = true; // Re-enable orbit
+                };
+
+                // Attach Listeners
+                const canvasEl = renderer.domElement;
+                canvasEl.addEventListener('pointerdown', handlePointerDown);
+                window.addEventListener('pointermove', handlePointerMove);
+                window.addEventListener('pointerup', handlePointerUp);
+
+                const handleResize = () => {
+                    const isMobileNow = window.innerWidth <= 768;
+                    camera.fov = isMobileNow ? 60 : 45;
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                    
+                    // Adjust camera position on resize for mobile/desktop switch
+                    if (!isTravelModeRef.current) {
+                        if (isMobileNow) {
+                            // Position to show full radio above bottom panel
+                            camera.position.set(0, 3.5, 10);
+                            controlsRef.current.target.set(0, 1.8, 0);
+                        } else {
+                            camera.position.set(3, 3, 9);
+                            controlsRef.current.target.set(-2, 1.5, 0);
+                        }
+                        controlsRef.current.update();
+                    }
+                };
+                window.addEventListener('resize', handleResize);
+
+                return () => {
+                    window.removeEventListener('resize', handleResize);
+                    canvasEl.removeEventListener('pointerdown', handlePointerDown);
+                    window.removeEventListener('pointermove', handlePointerMove);
+                    window.removeEventListener('pointerup', handlePointerUp);
+                    cancelAnimationFrame(animationFrameRef.current);
+                    if (container.contains(renderer.domElement)) {
+                         container.removeChild(renderer.domElement);
+                    }
+                };
+            }, []); 
+
+            // knob rotation effects
+            useEffect(() => {
+                if (volumeKnobRef.current) {
+                    // Logic: Start at +2.5 (Left/Min), Rotate to -2.5 (Right/Max) = Clockwise
+                    volumeKnobRef.current.rotation.z = 2.5 - (volume * 5);
+                }
+            }, [volume]);
+
+            useEffect(() => {
+                if (tunerKnobRef.current && currentStation) {
+                     if (!currentStation.freq) {
+                        tunerKnobRef.current.rotation.z = Math.sin(Date.now() * 0.001); 
+                     } else {
+                         const minF = 88;
+                         const maxF = 108;
+                         const range = maxF - minF;
+                         const pct = (currentStation.freq - minF) / range;
+                         // Inverted logic for consistency: +2.5 to -2.5 (CW)
+                         tunerKnobRef.current.rotation.z = 2.5 - (pct * 5);
+                     }
+                }
+            }, [currentStation]);
+
+            return null;
+        };
+
+        // --- Main App Component ---
+        const App = () => {
+            // --- 4. Persistence: Load State ---
+            const savedState = useMemo(() => {
+                try {
+                    const data = localStorage.getItem('AETHER_SAVE_V1');
+                    return data ? JSON.parse(data) : null;
+                } catch (e) {
+                    console.error("Failed to load save state:", e);
+                    return null;
+                }
+            }, []);
+
+            // Initialize state with saved data or defaults
+            const [stations, setStations] = useState(savedState?.stations || INITIAL_STATIONS);
+            
+            // Determine initial station safely
+            const initialStation = useMemo(() => {
+                if (savedState?.currentStation) return savedState.currentStation;
+                return (savedState?.stations || INITIAL_STATIONS)[0];
+            }, [savedState]);
+
+            const [isPlaying, setIsPlaying] = useState(false); // Always start paused for browser autoplay policies
+            const [currentStation, setCurrentStation] = useState(initialStation);
+            const [volume, setVolume] = useState(savedState?.volume ?? 0.5);
+            const [isMuted, setIsMuted] = useState(savedState?.isMuted || false); // Now persisted
+            const [isTravelMode, setIsTravelMode] = useState(false);
+            const [environmentId, setEnvironmentId] = useState(savedState?.environmentId || 'studio'); // New Env State
+            const [favorites, setFavorites] = useState(savedState?.favorites || []);
+            const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+            const [isMenuOpen, setIsMenuOpen] = useState(true);
+            const [smartQuery, setSmartQuery] = useState(""); 
+            const [error, setError] = useState(false);
+            const [isSearching, setIsSearching] = useState(false);
+            const [isUIHidden, setIsUIHidden] = useState(false); // New state for Immersive Mode
+            const [isMobilePanelExpanded, setIsMobilePanelExpanded] = useState(false); // Mobile panel state
+            
+            // Mobile rotation control
+            const rotateRadioRef = useRef(null);
+            const handleRotateReady = (rotateFn) => {
+                rotateRadioRef.current = rotateFn;
+            };
+            const rotateRadio = (direction) => {
+                if (rotateRadioRef.current) {
+                    rotateRadioRef.current(direction);
+                }
+            };
+            
+            // New State for Radio Body Color (Default Teal)
+            const [radioColor, setRadioColor] = useState(savedState?.radioColor || '#2dd4bf');
+
+            // --- Sleep Timer State ---
+            const [sleepTimer, setSleepTimer] = useState(0); // Total duration in minutes
+            const [sleepEndTime, setSleepEndTime] = useState(null);
+            const [timeLeft, setTimeLeft] = useState(null);
+            const [isSleepModalOpen, setIsSleepModalOpen] = useState(false); // Modal visibility
+            const [customSleepInput, setCustomSleepInput] = useState(""); // Custom input
+
+            // --- Persistence: Save Effect ---
+            useEffect(() => {
+                const stateToSave = {
+                    stations,
+                    currentStation,
+                    volume,
+                    isMuted,
+                    favorites,
+                    radioColor,
+                    environmentId
+                };
+                try {
+                    localStorage.setItem('AETHER_SAVE_V1', JSON.stringify(stateToSave));
+                } catch (err) {
+                    console.warn("Failed to save state:", err);
+                }
+            }, [stations, currentStation, volume, isMuted, favorites, radioColor, environmentId]);
+
+            // --- Sleep Timer Logic ---
+            useEffect(() => {
+                let interval = null;
+                if (sleepEndTime) {
+                    interval = setInterval(() => {
+                        const now = Date.now();
+                        const diff = sleepEndTime - now;
+                        
+                        if (diff <= 0) {
+                            // Time's up!
+                            setIsPlaying(false);
+                            setSleepTimer(0);
+                            setSleepEndTime(null);
+                            setTimeLeft(null);
+                            setVolume(savedState?.volume || 0.5); // Reset volume for next time
+                        } else {
+                            // Format display
+                            const m = Math.floor(diff / 60000);
+                            const s = Math.floor((diff % 60000) / 1000);
+                            setTimeLeft(`${m}:${s.toString().padStart(2, '0')}`);
+
+                            // Fade out in the last 30 seconds
+                            if (diff < 30000) {
+                                // More aggressive fade (x0.85 per sec) ensures volume hits ~0 by the end
+                                setVolume(v => Math.max(0, v * 0.85)); 
+                            }
+                        }
+                    }, 1000);
+                } else {
+                    setTimeLeft(null);
+                }
+                return () => {
+                    if (interval) clearInterval(interval);
+                };
+            }, [sleepEndTime]);
+
+            const startSleepTimer = (minutes) => {
+                if (!minutes || isNaN(minutes) || minutes <= 0) return;
+                setSleepTimer(minutes);
+                setSleepEndTime(Date.now() + minutes * 60 * 1000);
+                setIsSleepModalOpen(false);
+                setCustomSleepInput("");
+            };
+
+            const cancelSleepTimer = () => {
+                setSleepTimer(0);
+                setSleepEndTime(null);
+                setTimeLeft(null);
+                setIsSleepModalOpen(false);
+            };
+
+            // Cycle through environments
+            const cycleEnvironment = () => {
+                const currentIndex = ENVIRONMENTS.findIndex(e => e.id === environmentId);
+                const nextIndex = (currentIndex + 1) % ENVIRONMENTS.length;
+                setEnvironmentId(ENVIRONMENTS[nextIndex].id);
+            };
+
+            const currentEnvName = ENVIRONMENTS.find(e => e.id === environmentId)?.name || "Studio";
+
+            // The main HTML Audio element for streaming
+            const audioRef = useRef(new Audio()); 
+
+            // Ref for Web Audio API Context and Nodes
+            const audioGraphRef = useRef({
+                context: null
+            });
+
+            // --- Static Noise Generator (used only for transition static burst) ---
+            const playStatic = () => {
+                const graph = audioGraphRef.current;
+                if (!graph.context) return;
+                const ctx = graph.context;
+
+                // Create noise buffer (0.5 seconds)
+                const bufferSize = ctx.sampleRate * 0.5;
+                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+
+                // Fill with random white noise
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+
+                const noise = ctx.createBufferSource();
+                noise.buffer = buffer;
+
+                // Gain node for volume envelope
+                const gainNode = ctx.createGain();
+                // Scale static volume relative to master volume (max 0.2 to avoid being too loud)
+                const staticVol = Math.max(0.05, volume * 0.2); 
+                
+                gainNode.gain.setValueAtTime(staticVol, ctx.currentTime);
+                // Fade out quickly
+                gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+
+                noise.connect(gainNode);
+                gainNode.connect(ctx.destination);
+                noise.start();
+            };
+
+            // --- 1. Web Audio Graph Initialization (on mount) ---
+            useEffect(() => {
+                const graph = audioGraphRef.current;
+                const audioEl = audioRef.current;
+
+                try {
+                    // Initialize context on user gesture (click/tap) to ensure it works in modern browsers
+                    const initContext = () => {
+                        if (!graph.context) {
+                            const AudioContext = window.AudioContext || window.webkitAudioContext;
+                            if (AudioContext) {
+                                graph.context = new AudioContext();
+                                
+                                // Remove listener after first interaction
+                                window.removeEventListener('click', initContext);
+                                window.removeEventListener('touchstart', initContext);
+                            }
+                        }
+                    };
+
+                    // Add listeners to initialize context on the first user interaction
+                    window.addEventListener('click', initContext);
+                    window.addEventListener('touchstart', initContext);
+                    
+                } catch (e) {
+                    console.error("Web Audio API initialization failed:", e.message || e);
+                }
+
+                return () => {
+                    // Close context only if it was successfully initialized
+                    if (graph.context && graph.context.state !== 'closed') {
+                        graph.context.close().catch(e => console.error("Error closing context:", e.message || e));
+                    }
+                    window.removeEventListener('click', initContext);
+                    window.removeEventListener('touchstart', initContext);
+                };
+            }, []);
+
+            // --- 2. Handle Volume/Mute Changes ---
+            useEffect(() => {
+                const audioEl = audioRef.current;
+                // Still control the raw HTML element for stream compatibility
+                if (audioEl) {
+                    audioEl.muted = isMuted; 
+                    audioEl.volume = volume; 
+                }
+            }, [volume, isMuted]);
+
+
+            useEffect(() => {
+                const audio = audioRef.current;
+                
+                const handleError = () => {
+                    console.warn("Stream error for:", currentStation.name);
+                    setError(true);
+                };
+
+                const handleCanPlay = () => {
+                    setError(false);
+                    if(isPlaying) audio.play().catch(e => console.log(e));
+                };
+
+                audio.addEventListener('error', handleError);
+                audio.addEventListener('playing', handleCanPlay);
+                return () => {
+                    audio.pause();
+                    audio.removeEventListener('error', handleError);
+                    audio.removeEventListener('playing', handleCanPlay);
+                };
+            }, [currentStation]);
+
+            // Handle Play/Pause & Station Change
+            useEffect(() => {
+                const audio = audioRef.current;
+                
+                if (isPlaying) {
+                    if (audio.src !== currentStation.url) {
+                        // Station changed!
+                        playStatic(); // <--- Trigger Static Sound
+                        
+                        audio.src = currentStation.url;
+                        audio.load();
+                        setError(false);
+                    }
+                    const playPromise = audio.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(err => {
+                            if (err.name !== "NotAllowedError") {
+                                console.warn("Play error", err);
+                            } else {
+                                setIsPlaying(false);
+                            }
+                        });
+                    }
+                } else {
+                    audio.pause();
+                }
+            }, [isPlaying, currentStation]);
+
+
+            const handleVolumeDrag = (change) => {
+                setVolume(prev => {
+                    const newVal = prev + change;
+                    return Math.max(0, Math.min(1, newVal));
+                });
+            };
+
+            const toggleFavorite = (id) => {
+                if (favorites.includes(id)) {
+                    setFavorites(favorites.filter(fid => fid !== id));
+                } else {
+                    setFavorites([...favorites, id]);
+                }
+            };
+
+            const fetchGlobalStations = async (query) => {
+                setIsSearching(true);
+                try {
+                    const cleanQuery = query.trim();
+                    let response = await fetch(`https://de1.api.radio-browser.info/json/stations/search?limit=5&order=clickcount&reverse=true&tag=${encodeURIComponent(cleanQuery)}&hidebroken=true`);
+                    let data = await response.json();
+
+                    if (data.length === 0) {
+                         response = await fetch(`https://de1.api.radio-browser.info/json/stations/search?limit=5&order=clickcount&reverse=true&name=${encodeURIComponent(cleanQuery)}&hidebroken=true`);
+                         data = await response.json();
+                    }
+
+                    if (data && data.length > 0) {
+                        const topHit = data[0];
+                        const newStation = {
+                            id: topHit.stationuuid, 
+                            name: topHit.name.trim(),
+                            genre: topHit.tags ? topHit.tags.split(',')[0] : "Global",
+                            freq: null, 
+                            url: topHit.url_resolved || topHit.url,
+                            color: `hsl(${Math.random() * 360}, 70%, 50%)`, 
+                            keywords: topHit.tags ? topHit.tags.split(',') : []
+                        };
+
+                        setStations(prev => {
+                            if (prev.find(s => s.id === newStation.id)) return prev;
+                            return [newStation, ...prev];
+                        });
+
+                        setCurrentStation(newStation);
+                        setIsPlaying(true);
+                        setError(false);
+                        setSmartQuery("");
+                    } else {
+                        // Using a custom message instead of alert
+                        console.log(`No global stations found for "${cleanQuery}".`);
+                    }
+                } catch (err) {
+                    console.error("API Error", err.message || err);
+                    // Using a custom message instead of alert
+                    console.log("Unable to connect to Global Radio Network.");
+                } finally {
+                    setIsSearching(false);
+                }
+            };
+
+            // --- FETCH STATION BY COUNTRY CODE (For Travel Mode) ---
+            const fetchStationByCountry = async (countryCode) => {
+                setIsSearching(true);
+                try {
+                    const url = `https://de1.api.radio-browser.info/json/stations/search?limit=1&order=clickcount&reverse=true&countrycode=${countryCode}&hidebroken=true`;
+                    const res = await fetch(url);
+                    const data = await res.json();
+
+                    if (data && data.length > 0) {
+                        const hit = data[0];
+                        const newStation = {
+                            id: hit.stationuuid, 
+                            name: hit.name.trim(),
+                            genre: hit.tags ? hit.tags.split(',')[0] : "Travel",
+                            freq: null, 
+                            url: hit.url_resolved || hit.url,
+                            color: `hsl(${Math.random() * 360}, 70%, 50%)`, 
+                            keywords: hit.tags ? hit.tags.split(',') : []
+                        };
+
+                        setStations(prev => {
+                            if (prev.find(s => s.id === newStation.id)) return prev;
+                            return [newStation, ...prev];
+                        });
+                        setCurrentStation(newStation);
+                        setIsPlaying(true);
+                        setError(false);
+                        setSmartQuery("");
+                        
+                        // Switch back to Radio view after picking
+                        setIsTravelMode(false);
+                    } else {
+                        console.log("No stations found for this country.");
+                        setIsTravelMode(false);
+                    }
+                } catch (e) {
+                    console.error("Travel Error", e);
+                    setIsTravelMode(false);
+                } finally {
+                    setIsSearching(false);
+                }
+            };
+
+            const handleFeelingLucky = async () => {
+                setIsSearching(true);
+                try {
+                    // Randomly choose between a genre or country
+                    const modes = ['tag', 'country'];
+                    const mode = modes[Math.floor(Math.random() * modes.length)];
+                    let url = 'https://de1.api.radio-browser.info/json/stations/search?limit=1&order=random&hidebroken=true';
+
+                    if (mode === 'tag') {
+                        const tags = ["jazz", "lofi", "news", "rock", "pop", "classical", "electronic", "folk", "hip hop", "ambient", "metal", "reggae", "blues"];
+                        const tag = tags[Math.floor(Math.random() * tags.length)];
+                        url += `&tag=${tag}`;
+                    } else if (mode === 'country') {
+                        const countries = ["US", "GB", "DE", "FR", "JP", "BR", "CA", "AU", "IT", "ES", "NL", "RU"]; 
+                        const country = countries[Math.floor(Math.random() * countries.length)];
+                        url += `&countrycode=${country}`;
+                    }
+
+                    const res = await fetch(url);
+                    const data = await res.json();
+                    
+                    if (data && data.length > 0) {
+                        const hit = data[0];
+                        const newStation = {
+                            id: hit.stationuuid, 
+                            name: hit.name.trim(),
+                            genre: hit.tags ? hit.tags.split(',')[0] : "Lucky Pick",
+                            freq: null, 
+                            url: hit.url_resolved || hit.url,
+                            color: `hsl(${Math.random() * 360}, 70%, 50%)`, 
+                            keywords: hit.tags ? hit.tags.split(',') : []
+                        };
+
+                        setStations(prev => {
+                            if (prev.find(s => s.id === newStation.id)) return prev;
+                            return [newStation, ...prev];
+                        });
+                        setCurrentStation(newStation);
+                        setIsPlaying(true);
+                        setError(false);
+                        setSmartQuery("");
+                    } else {
+                        console.log("Lucky dip came up empty, try again!");
+                    }
+                } catch(e) {
+                    console.error("Lucky Error", e.message || e);
+                } finally {
+                    setIsSearching(false);
+                }
+            };
+
+            const handleSmartTune = (e) => {
+                e.preventDefault();
+                const query = smartQuery.trim().toLowerCase();
+                if (!query) return;
+
+                const freqInput = parseFloat(query);
+                
+                if (!isNaN(freqInput) && freqInput >= 87 && freqInput <= 109 && query.length < 6) {
+                    const closest = stations.filter(s => s.freq).reduce((prev, curr) => {
+                        return (Math.abs(curr.freq - freqInput) < Math.abs(prev.freq - freqInput) ? curr : prev);
+                    }, stations[0]);
+
+                    if (closest && Math.abs(closest.freq - freqInput) <= 0.5) {
+                        setCurrentStation(closest);
+                        setIsPlaying(true);
+                        setSmartQuery(closest.freq.toString());
+                        setError(false);
+                        return;
+                    }
+                } 
+
+                const localMatch = stations.find(s => 
+                    s.name.toLowerCase().includes(query) || 
+                    s.genre.toLowerCase().includes(query) ||
+                    (s.keywords && s.keywords.some(k => k.includes(query)))
+                );
+
+                if (localMatch) {
+                    setCurrentStation(localMatch);
+                    setIsPlaying(true);
+                    setError(false);
+                    setSmartQuery("");
+                    return;
+                }
+
+                fetchGlobalStations(query);
+            };
+
+            const filteredStations = showFavoritesOnly 
+                ? stations.filter(s => favorites.includes(s.id))
+                : stations;
+
+            // --- Icons ---
+            const IconHeart = ({ filled }) => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={filled ? "text-red-500" : "text-gray-400"}>
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                </svg>
+            );
+
+            const IconPlay = () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            );
+
+            const IconPause = () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            );
+            
+            const IconVolume = () => (
+                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            );
+
+            const IconMute = () => (
+                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+            );
+
+            const IconRadio = () => (
+                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>
+            );
+            
+            const IconMenu = () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+            );
+
+            const IconSearch = () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            );
+
+            const IconSparkles = () => (
+                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M9 3v4"/><path d="M3 5h4"/><path d="M3 9h4"/></svg>
+            );
+            
+            const IconLoader = () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="animate-spin"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+            );
+
+            const IconDice = () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M12 12h.01"/></svg>
+            );
+
+            const IconGlobe = () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+            );
+
+            const IconClock = () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            );
+
+            const IconX = () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            );
+
+            const IconLeaf = () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+            );
+
+            const IconEye = () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            );
+
+            const IconEyeOff = () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" y1="2" x2="22" y2="22"/></svg>
+            );
+
+            const IconRotateLeft = () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 2v6h6"/><path d="M2.66 15.57a10 10 0 1 0 .57-8.38"/></svg>
+            );
+
+            const IconRotateRight = () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.5 2v6h-6"/><path d="M21.34 15.57a10 10 0 1 1-.57-8.38"/></svg>
+            );
+
+            return (
+                <>
+                    <SceneManager 
+                        isPlaying={isPlaying} 
+                        currentStation={currentStation} 
+                        volume={volume}
+                        isMuted={isMuted}
+                        hasError={error}
+                        onVolumeChange={handleVolumeDrag}
+                        radioColor={radioColor}
+                        isTravelMode={isTravelMode}
+                        onCountrySelect={fetchStationByCountry}
+                        environmentId={environmentId}
+                        onRotateReady={handleRotateReady}
+                    />
+
+                    {/* Sleep Timer Modal */}
+                    {isSleepModalOpen && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 animate-[fadeIn_0.2s_ease-out] pointer-events-auto">
+                            <div className="bg-black/60 backdrop-blur-2xl border border-white/10 w-full max-w-sm rounded-3xl p-6 text-white relative">
+                                <button 
+                                    onClick={() => setIsSleepModalOpen(false)}
+                                    className="absolute top-5 right-5 text-white/40 hover:text-white transition-colors"
+                                >
+                                    <IconX />
+                                </button>
+                                
+                                <div className="flex items-center gap-3 mb-5">
+                                    <div className="p-2.5 bg-white/10 rounded-full text-white/80">
+                                        <IconClock />
+                                    </div>
+                                    <h2 className="text-lg font-medium tracking-tight">Sleep Timer</h2>
+                                </div>
+
+                                <p className="text-sm text-white/50 mb-6 leading-relaxed font-light">
+                                    The radio will fade out gently over the final 30 seconds.
+                                </p>
+
+                                <div className="grid grid-cols-4 gap-2 mb-5">
+                                    {[15, 30, 45, 60].map(min => (
+                                        <button
+                                            key={min}
+                                            onClick={() => startSleepTimer(min)}
+                                            className="bg-white/5 hover:bg-white/15 border border-white/10 hover:border-white/20 rounded-xl py-3 text-sm font-medium transition-all"
+                                        >
+                                            {min}m
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <div className="flex gap-2 mb-5">
+                                    <input 
+                                        type="number" 
+                                        placeholder="Custom mins" 
+                                        value={customSleepInput}
+                                        onChange={(e) => setCustomSleepInput(e.target.value)}
+                                        className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 w-full text-sm focus:outline-none focus:border-white/30 focus:bg-white/10 transition-all placeholder-white/30"
+                                        min="1"
+                                    />
+                                    <button 
+                                        onClick={() => startSleepTimer(parseInt(customSleepInput))}
+                                        disabled={!customSleepInput}
+                                        className="bg-white hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed text-black px-5 py-2.5 rounded-xl text-sm font-medium transition-all"
+                                    >
+                                        Set
+                                    </button>
+                                </div>
+
+                                {sleepEndTime && (
+                                    <div className="border-t border-white/10 pt-5 flex justify-between items-center">
+                                        <span className="text-sm text-green-400/90 font-mono">
+                                            {timeLeft} remaining
+                                        </span>
+                                        <button 
+                                            onClick={cancelSleepTimer}
+                                            className="text-xs text-white/50 hover:text-white font-medium uppercase tracking-wider transition-colors"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="ui-layer absolute top-0 left-0 w-full h-full flex flex-col justify-between p-4 md:p-4 pointer-events-none">
+                        
+                        {/* Header - Ultra Minimal */}
+                        <div className="flex justify-between items-start pointer-events-auto mobile-header md:relative md:p-0">
+                            <div className={`bg-black/40 backdrop-blur-xl px-4 md:px-5 py-2 md:py-2.5 rounded-full flex items-center gap-2 md:gap-3 border border-white/5 ui-content ${isUIHidden ? 'ui-hidden' : ''}`}>
+                                <div className={`w-1.5 h-1.5 rounded-full ${isPlaying && !error ? 'bg-green-400 animate-pulse' : error ? 'bg-red-400' : 'bg-white/30'}`}></div>
+                                <span className="text-white/90 text-[10px] md:text-xs font-extralight tracking-[0.2em] md:tracking-[0.3em] uppercase">Aether</span>
+                            </div>
+                            
+                            <div className="flex gap-1.5 md:gap-2">
+                                {/* Environment Toggle */}
+                                <button 
+                                    onClick={cycleEnvironment}
+                                    className={`bg-black/40 backdrop-blur-xl px-3 md:px-4 py-2 md:py-2.5 rounded-full text-white/70 hover:text-white hover:bg-black/50 transition-all text-[10px] md:text-xs font-light border border-white/5 ui-content ${isUIHidden ? 'ui-hidden' : ''}`}
+                                    title="Change Environment"
+                                >
+                                    {currentEnvName}
+                                </button>
+
+                                {/* Immersive Mode Toggle - Hidden on mobile */}
+                                <button 
+                                    onClick={() => setIsUIHidden(!isUIHidden)}
+                                    className={`hidden md:flex bg-black/40 backdrop-blur-xl p-2.5 rounded-full text-white/70 hover:text-white hover:bg-black/50 transition-all border border-white/5 ${isUIHidden ? 'opacity-30 hover:opacity-100' : ''}`}
+                                    title={isUIHidden ? "Show UI" : "Hide UI"}
+                                >
+                                    {isUIHidden ? <IconEyeOff /> : <IconEye />}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Desktop Side Panel */}
+                        <div className={`pointer-events-auto transition-all duration-300 ease-in-out hidden md:flex absolute md:static top-16 right-4 w-72 md:w-80 flex-col gap-3 ${isMenuOpen ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10 md:opacity-100 md:translate-x-0'} ui-content ${isUIHidden ? 'ui-hidden' : ''}`}>
+                            
+                            {/* Now Playing Card */}
+                            <div className="bg-black/50 backdrop-blur-2xl rounded-3xl p-5 text-white border border-white/5">
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className="overflow-hidden flex-1">
+                                        <h2 className="font-medium text-lg truncate text-white tracking-tight">{currentStation.name}</h2>
+                                        <p className="text-xs text-white/50 truncate mt-0.5">{currentStation.freq ? currentStation.freq + " FM" : "Streaming"} · {currentStation.genre}</p>
+                                    </div>
+                                    
+                                    <div className="flex items-center gap-2 ml-3">
+                                        <input 
+                                            type="color" 
+                                            value={radioColor} 
+                                            onChange={(e) => setRadioColor(e.target.value)}
+                                            className="w-5 h-5 rounded-full cursor-pointer opacity-60 hover:opacity-100 transition-opacity"
+                                            title="Color"
+                                        />
+                                        <button 
+                                            onClick={() => toggleFavorite(currentStation.id)}
+                                            className="p-0.5 opacity-60 hover:opacity-100 transition-opacity"
+                                        >
+                                            <IconHeart filled={favorites.includes(currentStation.id)} />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-4">
+                                    <button 
+                                        onClick={() => {
+                                            if(error) setError(false); 
+                                            setIsPlaying(!isPlaying);
+                                        }}
+                                        className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${error ? 'bg-red-500/90 text-white' : 'bg-white text-black hover:scale-105'}`}
+                                    >
+                                        {isPlaying && !error ? <IconPause /> : <IconPlay />}
+                                    </button>
+                                    
+                                    <div className="flex-1 flex items-center gap-3">
+                                        <button onClick={() => setIsMuted(!isMuted)} className="text-white/50 hover:text-white transition-colors">
+                                            {isMuted || volume === 0 ? <IconMute /> : <IconVolume />}
+                                        </button>
+                                        <input 
+                                            type="range" 
+                                            min="0" 
+                                            max="1" 
+                                            step="0.01" 
+                                            value={volume}
+                                            onChange={(e) => {
+                                                setVolume(parseFloat(e.target.value));
+                                                if (isMuted) setIsMuted(false);
+                                            }}
+                                            className="w-full h-1 bg-white/20 rounded-full appearance-none cursor-pointer accent-white"
+                                        />
+                                    </div>
+                                    
+                                    <button 
+                                        onClick={() => setIsSleepModalOpen(true)}
+                                        className={`p-1.5 transition-colors ${sleepEndTime ? 'text-white' : 'text-white/30 hover:text-white/60'}`}
+                                        title="Sleep Timer"
+                                    >
+                                        <IconClock />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Search - Minimal */}
+                            <div className="bg-black/50 backdrop-blur-2xl rounded-3xl p-4 border border-white/5">
+                                <form onSubmit={handleSmartTune} className="flex w-full gap-2">
+                                    <div className="relative flex-1">
+                                        <input 
+                                            type="text" 
+                                            placeholder='Search stations...'
+                                            value={smartQuery}
+                                            onChange={(e) => setSmartQuery(e.target.value)}
+                                            className="w-full bg-white/10 border-0 rounded-full px-4 py-2.5 text-white text-sm placeholder-white/30 focus:outline-none focus:bg-white/15 focus:ring-1 focus:ring-white/20 transition-all"
+                                            disabled={isSearching}
+                                        />
+                                    </div>
+                                    <button type="submit" disabled={isSearching} className="bg-white/15 hover:bg-white/25 text-white p-2.5 rounded-full transition-all disabled:opacity-50">
+                                        {isSearching ? <IconLoader /> : <IconSearch />}
+                                    </button>
+                                </form>
+                                <div className="flex gap-2 mt-3">
+                                    <button 
+                                        onClick={handleFeelingLucky}
+                                        className="flex-1 bg-white/5 hover:bg-white/10 text-xs text-white/60 hover:text-white py-2 rounded-full flex items-center justify-center gap-1.5 transition-all border border-white/5"
+                                        disabled={isSearching}
+                                    >
+                                        <IconDice /> Surprise Me
+                                    </button>
+                                    
+                                    <button 
+                                        onClick={() => setIsTravelMode(!isTravelMode)}
+                                        className={`flex-1 text-xs py-2 rounded-full flex items-center justify-center gap-1.5 transition-all border ${isTravelMode ? 'bg-white/20 text-white border-white/20' : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10 border-white/5'}`}
+                                        disabled={isSearching}
+                                    >
+                                        <IconGlobe /> {isTravelMode ? "Exit Globe" : "Explore"}
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Station List */}
+                            <div className="bg-black/50 backdrop-blur-2xl rounded-3xl overflow-hidden flex flex-col max-h-[35vh] border border-white/5">
+                                <div className="p-4 border-b border-white/5 flex justify-between items-center">
+                                    <span className="text-white/50 text-xs font-medium uppercase tracking-wider">Stations</span>
+                                    <div className="flex gap-0.5 bg-white/10 p-0.5 rounded-full">
+                                        <button 
+                                            onClick={() => setShowFavoritesOnly(false)}
+                                            className={`text-[10px] px-3 py-1 rounded-full transition-all font-medium ${!showFavoritesOnly ? 'bg-white text-black' : 'text-white/50 hover:text-white'}`}
+                                        >
+                                            All
+                                        </button>
+                                        <button 
+                                            onClick={() => setShowFavoritesOnly(true)}
+                                            className={`text-[10px] px-3 py-1 rounded-full transition-all ${showFavoritesOnly ? 'bg-white text-black' : 'text-white/50 hover:text-white'}`}
+                                        >
+                                            ♥
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div className="overflow-y-auto p-2 space-y-0.5">
+                                    {filteredStations.length === 0 ? (
+                                        <div className="text-center text-white/40 py-10 text-sm">
+                                            No stations found
+                                        </div>
+                                    ) : (
+                                        filteredStations.map(station => (
+                                            <div 
+                                                key={station.id}
+                                                onClick={() => {
+                                                    setCurrentStation(station);
+                                                    setIsPlaying(true);
+                                                    setSmartQuery(""); 
+                                                    setError(false);
+                                                }}
+                                                className={`group flex items-center justify-between p-3 rounded-2xl cursor-pointer transition-all ${currentStation.id === station.id ? 'bg-white/15' : 'hover:bg-white/5'}`}
+                                            >
+                                                <div className="flex items-center gap-3 overflow-hidden">
+                                                    <div 
+                                                        className="w-1 h-8 rounded-full flex-shrink-0 opacity-80" 
+                                                        style={{ backgroundColor: station.color }}
+                                                    ></div>
+                                                    <div className="overflow-hidden">
+                                                        <h4 className={`text-sm font-medium truncate ${currentStation.id === station.id ? 'text-white' : 'text-white/80 group-hover:text-white'}`}>
+                                                            {station.name}
+                                                        </h4>
+                                                        <p className="text-[11px] text-white/40 truncate">{station.genre}</p>
+                                                    </div>
+                                                </div>
+                                                {currentStation.id === station.id && isPlaying && !error && (
+                                                    <div className="flex gap-0.5 items-end h-3 mr-1">
+                                                        <div className="w-0.5 bg-white/70 animate-[pulse_0.6s_ease-in-out_infinite] h-full rounded-full"></div>
+                                                        <div className="w-0.5 bg-white/70 animate-[pulse_0.8s_ease-in-out_infinite] h-2/3 rounded-full"></div>
+                                                        <div className="w-0.5 bg-white/70 animate-[pulse_0.5s_ease-in-out_infinite] h-full rounded-full"></div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Mobile Bottom Panel */}
+                        <div className={`md:hidden pointer-events-auto fixed bottom-0 left-0 right-0 bg-black/70 backdrop-blur-2xl border-t border-white/10 rounded-t-3xl transition-all duration-300 ease-out ui-content ${isUIHidden ? 'ui-hidden' : ''} ${isMobilePanelExpanded ? 'mobile-expanded' : 'mobile-collapsed'}`}>
+                            
+                            {/* Drag Handle */}
+                            <div 
+                                className="mobile-drag-handle cursor-pointer"
+                                onClick={() => setIsMobilePanelExpanded(!isMobilePanelExpanded)}
+                            ></div>
+                            
+                            {/* Now Playing - Always Visible */}
+                            <div className="px-4 pb-3">
+                                <div className="flex items-center gap-3">
+                                    <button 
+                                        onClick={() => {
+                                            if(error) setError(false); 
+                                            setIsPlaying(!isPlaying);
+                                        }}
+                                        className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${error ? 'bg-red-500/90 text-white' : 'bg-white text-black active:scale-95'}`}
+                                    >
+                                        {isPlaying && !error ? <IconPause /> : <IconPlay />}
+                                    </button>
+                                    
+                                    <div className="flex-1 min-w-0">
+                                        <h2 className="font-medium text-sm text-white truncate">{currentStation.name}</h2>
+                                        <p className="text-[11px] text-white/50 truncate">{currentStation.freq ? currentStation.freq + " FM" : "Streaming"} · {currentStation.genre}</p>
+                                    </div>
+                                    
+                                    <div className="flex items-center gap-2 flex-shrink-0">
+                                        <button onClick={() => setIsMuted(!isMuted)} className="text-white/50 active:text-white p-1">
+                                            {isMuted || volume === 0 ? <IconMute /> : <IconVolume />}
+                                        </button>
+                                        <button 
+                                            onClick={() => toggleFavorite(currentStation.id)}
+                                            className="p-1"
+                                        >
+                                            <IconHeart filled={favorites.includes(currentStation.id)} />
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                {/* Volume Slider */}
+                                <div className="mt-3 flex items-center gap-3">
+                                    <input 
+                                        type="range" 
+                                        min="0" 
+                                        max="1" 
+                                        step="0.01" 
+                                        value={volume}
+                                        onChange={(e) => {
+                                            setVolume(parseFloat(e.target.value));
+                                            if (isMuted) setIsMuted(false);
+                                        }}
+                                        className="w-full h-1 bg-white/20 rounded-full appearance-none cursor-pointer accent-white"
+                                    />
+                                </div>
+                            </div>
+                            
+                            {/* Expanded Content */}
+                            {isMobilePanelExpanded && (
+                                <div className="px-4 pb-4 space-y-3 border-t border-white/10 pt-3">
+                                    {/* Search */}
+                                    <form onSubmit={handleSmartTune} className="flex w-full gap-2">
+                                        <input 
+                                            type="text" 
+                                            placeholder='Search stations...'
+                                            value={smartQuery}
+                                            onChange={(e) => setSmartQuery(e.target.value)}
+                                            className="flex-1 bg-white/10 border-0 rounded-full px-4 py-2.5 text-white text-sm placeholder-white/30 focus:outline-none focus:bg-white/15 transition-all"
+                                            disabled={isSearching}
+                                        />
+                                        <button type="submit" disabled={isSearching} className="bg-white/15 active:bg-white/25 text-white p-2.5 rounded-full transition-all disabled:opacity-50">
+                                            {isSearching ? <IconLoader /> : <IconSearch />}
+                                        </button>
+                                    </form>
+                                    
+                                    {/* Quick Actions */}
+                                    <div className="flex gap-2">
+                                        <button 
+                                            onClick={handleFeelingLucky}
+                                            className="flex-1 bg-white/5 active:bg-white/15 text-xs text-white/60 py-2.5 rounded-full flex items-center justify-center gap-1.5 transition-all border border-white/5"
+                                            disabled={isSearching}
+                                        >
+                                            <IconDice /> Surprise
+                                        </button>
+                                        <button 
+                                            onClick={() => setIsTravelMode(!isTravelMode)}
+                                            className={`flex-1 text-xs py-2.5 rounded-full flex items-center justify-center gap-1.5 transition-all border ${isTravelMode ? 'bg-white/20 text-white border-white/20' : 'bg-white/5 text-white/60 border-white/5'}`}
+                                            disabled={isSearching}
+                                        >
+                                            <IconGlobe /> Globe
+                                        </button>
+                                        <button 
+                                            onClick={() => setIsSleepModalOpen(true)}
+                                            className={`flex-1 text-xs py-2.5 rounded-full flex items-center justify-center gap-1.5 transition-all border ${sleepEndTime ? 'bg-white/20 text-white border-white/20' : 'bg-white/5 text-white/60 border-white/5'}`}
+                                        >
+                                            <IconClock /> {sleepEndTime ? timeLeft : 'Sleep'}
+                                        </button>
+                                    </div>
+                                    
+                                    {/* Station List Header */}
+                                    <div className="flex justify-between items-center pt-1">
+                                        <span className="text-white/50 text-xs font-medium uppercase tracking-wider">Stations</span>
+                                        <div className="flex gap-0.5 bg-white/10 p-0.5 rounded-full">
+                                            <button 
+                                                onClick={() => setShowFavoritesOnly(false)}
+                                                className={`text-[10px] px-3 py-1 rounded-full transition-all font-medium ${!showFavoritesOnly ? 'bg-white text-black' : 'text-white/50'}`}
+                                            >
+                                                All
+                                            </button>
+                                            <button 
+                                                onClick={() => setShowFavoritesOnly(true)}
+                                                className={`text-[10px] px-3 py-1 rounded-full transition-all ${showFavoritesOnly ? 'bg-white text-black' : 'text-white/50'}`}
+                                            >
+                                                ♥
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Scrollable Station List */}
+                                    <div className="overflow-y-auto max-h-[35vh] space-y-1 -mx-1 px-1">
+                                        {filteredStations.length === 0 ? (
+                                            <div className="text-center text-white/40 py-6 text-sm">
+                                                No stations found
+                                            </div>
+                                        ) : (
+                                            filteredStations.map(station => (
+                                                <div 
+                                                    key={station.id}
+                                                    onClick={() => {
+                                                        setCurrentStation(station);
+                                                        setIsPlaying(true);
+                                                        setSmartQuery(""); 
+                                                        setError(false);
+                                                    }}
+                                                    className={`flex items-center justify-between p-3 rounded-2xl cursor-pointer transition-all active:scale-[0.98] ${currentStation.id === station.id ? 'bg-white/15' : 'bg-white/5'}`}
+                                                >
+                                                    <div className="flex items-center gap-3 overflow-hidden">
+                                                        <div 
+                                                            className="w-1 h-8 rounded-full flex-shrink-0 opacity-80" 
+                                                            style={{ backgroundColor: station.color }}
+                                                        ></div>
+                                                        <div className="overflow-hidden">
+                                                            <h4 className={`text-sm font-medium truncate ${currentStation.id === station.id ? 'text-white' : 'text-white/80'}`}>
+                                                                {station.name}
+                                                            </h4>
+                                                            <p className="text-[11px] text-white/40 truncate">{station.genre}</p>
+                                                        </div>
+                                                    </div>
+                                                    {currentStation.id === station.id && isPlaying && !error && (
+                                                        <div className="flex gap-0.5 items-end h-3 mr-1">
+                                                            <div className="w-0.5 bg-white/70 animate-[pulse_0.6s_ease-in-out_infinite] h-full rounded-full"></div>
+                                                            <div className="w-0.5 bg-white/70 animate-[pulse_0.8s_ease-in-out_infinite] h-2/3 rounded-full"></div>
+                                                            <div className="w-0.5 bg-white/70 animate-[pulse_0.5s_ease-in-out_infinite] h-full rounded-full"></div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className={`hidden md:block pointer-events-none text-center p-2 ui-content ${isUIHidden ? 'ui-hidden' : ''}`}>
+                            <p className="text-[10px] text-white/30 font-light">
+                                Tap display to change visualizer • Drag to rotate
+                            </p>
+                        </div>
+                    </div>
+                </>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
